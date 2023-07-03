@@ -1,0 +1,39 @@
+[
+  {
+    "alternativeName": [
+      "CHLD",
+      "C1 Sub-Unit",
+      "C1 Unterabteilung"
+    ],
+    "identifier": "child-unit",
+    "name": {
+      "de": "CHLD Unterabteilung",
+      "en": "C1: Sub Unit"
+    },
+    "parentUnit": "parent-unit",
+    "shortName": "C1"
+  },
+  {
+    "alternativeName": [
+      "PRNT Abteilung",
+      "PARENT Dept."
+    ],
+    "email": [
+      "pu@example.com",
+      "PARENT@example.com"
+    ],
+    "identifier": "parent-unit",
+    "name": {
+      "de": "Abteilung",
+      "en": "Department"
+    },
+    "shortName": "PRNT",
+    "website": [
+      {
+        "language": "en",
+        "title": "Example | Parent Department",
+        "url": "https://www.example.com/departments/parent.html"
+      }
+    ]
+  }
+]

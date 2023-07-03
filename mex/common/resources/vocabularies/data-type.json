@@ -1,0 +1,54 @@
+[
+  {
+    "altLabel": {
+      "de": "Zahl",
+      "en": "number"
+    },
+    "definition": {
+      "de": "Mit Integer wird in der Informatik ein Datentyp bezeichnet, der ganzzahlige Werte speichert.",
+      "en": "An integer is a datum of integral data type, a data type that represents some range of mathematical integers."
+    },
+    "identifier": "https://mex.rki.de/item/data-type-1",
+    "inScheme": "https://mex.rki.de/item/data-type",
+    "prefLabel": {
+      "de": "Integer",
+      "en": "integer"
+    }
+  },
+  {
+    "altLabel": {
+      "de": "Text",
+      "en": "text"
+    },
+    "definition": {
+      "de": "Eine Zeichenkette, Zeichenfolge, Zeichenreihe oder ein String ist in der Informatik eine endliche Folge von Zeichen (z. B. Buchstaben, Ziffern, Sonderzeichen und Steuerzeichen) aus einem definierten Zeichensatz. ",
+      "en": "In computer programming, a string is traditionally a sequence of characters, either as a literal constant or as some kind of variable."
+    },
+    "identifier": "https://mex.rki.de/item/data-type-2",
+    "inScheme": "https://mex.rki.de/item/data-type",
+    "prefLabel": {
+      "de": "Zeichenkette",
+      "en": "string"
+    }
+  },
+  {
+    "definition": {
+      "de": "Ein Boolean ist ein Element einer booleschen Algebra. Eine Sonderform mit nur zwei Zust\u00e4nden ist in der Digitaltechnik die Schaltvariable bzw. bei der Programmierung der boolesche Datentyp zur Darstellung der logischen Wahrheitswerte wahr und falsch. ",
+      "en": "In computer science, the Boolean is a data type that has one of two possible values (usually denoted true and false) which is intended to represent the two truth values of logic and Boolean algebra."
+    },
+    "identifier": "https://mex.rki.de/item/data-type-3",
+    "inScheme": "https://mex.rki.de/item/data-type",
+    "prefLabel": {
+      "de": "Boolean",
+      "en": "boolean"
+    }
+  },
+  {
+    "identifier": "https://mex.rki.de/item/data-type-4",
+    "inScheme": "https://mex.rki.de/item/data-type",
+    "prefLabel": {
+      "de": "Datum und Zeit",
+      "en": "datetime"
+    }
+  }
+]

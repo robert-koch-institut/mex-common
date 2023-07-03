@@ -1,0 +1,257 @@
+[
+  {
+    "definition": {
+      "de": "Das Ereignis findet alle drei Jahre statt.",
+      "en": "The event occurs every three years."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/triennial"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-1",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "dreij\u00e4hrlich",
+      "en": "triennial"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet alle zwei Jahre statt.",
+      "en": "The event occurs every two years."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/biennial"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-2",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "zweij\u00e4hrlich",
+      "en": "biennial"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet einmal im Jahr statt.",
+      "en": "The event occurs once a year."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/annual"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-3",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "j\u00e4hrlich",
+      "en": "annual"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet zweimal im Jahr statt.",
+      "en": "The event occurs twice a year."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/semiannual"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-4",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "halbj\u00e4hrlich",
+      "en": "semiannual"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet dreimal im Jahr statt.",
+      "en": "The event occurs three times a year."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/threeTimesAYear"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-5",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "dreimal im Jahr",
+      "en": "three times a year"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet alle drei Monate statt.",
+      "en": "The event occurs every three months."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/quarterly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-6",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "viertelj\u00e4hrlich",
+      "en": "quaterly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet alle zwei Monate statt.",
+      "en": "The event occurs every two months."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/bimonthly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-7",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "zweimonatlich",
+      "en": "bimonthly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet einmal im Monat statt.",
+      "en": "The event occurs once a month."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/monthly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-8",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "monatlich",
+      "en": "monthly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet zweimal im Monat statt.",
+      "en": "The event occurs twice a month."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/semimonthly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-9",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "halbmonatlich",
+      "en": "semimonthly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet alle zwei Wochen statt.",
+      "en": "The event occurs every two weeks."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/biweekly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-10",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "zweiw\u00f6chentlich",
+      "en": "biweekly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet dreimal im Monat statt.",
+      "en": "The event occurs three times a month."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/threeTimesAMonth"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-11",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "dreimal im Monat",
+      "en": "three times a month"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet einmal in der Woche statt.",
+      "en": "The event occurs once a week."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/weekly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-12",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "w\u00f6chentlich",
+      "en": "weekly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet zweimal in der Woche statt.",
+      "en": "The event occurs twice a week."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/semiweekly"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-13",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "halbw\u00f6chentlich",
+      "en": "semiweekly"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet dreimal in der Woche statt.",
+      "en": "The event occurs three times a week."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/threeTimesAWeek"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-14",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "dreimal in der Woche",
+      "en": "three time a week"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet einmal am Tag statt.",
+      "en": "The event occurs once a day."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/daily"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-15",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "t\u00e4glich",
+      "en": "daily"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis wiederholt sich ununterbrochen.",
+      "en": "The event repeats without interruption."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/continuous"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-16",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "andauernd",
+      "en": "continuous"
+    }
+  },
+  {
+    "definition": {
+      "de": "Das Ereignis findet unregelm\u00e4\u00dfig statt.",
+      "en": "The event occurs at uneven intervals."
+    },
+    "exactMatch": [
+      "http://purl.org/cld/freq/irregular"
+    ],
+    "identifier": "https://mex.rki.de/item/frequency-17",
+    "inScheme": "https://mex.rki.de/item/frequency",
+    "prefLabel": {
+      "de": "unregelm\u00e4\u00dfig",
+      "en": "irregular"
+    }
+  }
+]

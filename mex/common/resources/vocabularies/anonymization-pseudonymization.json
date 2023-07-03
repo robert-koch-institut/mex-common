@@ -1,0 +1,26 @@
+[
+  {
+    "definition": {
+      "de": "Die Anonymisierung ist das Ver\u00e4ndern personenbezogener Daten derart, dass diese Daten nicht mehr oder nur mit einem unverh\u00e4ltnism\u00e4\u00dfig gro\u00dfen Aufwand an Zeit, Kosten und Arbeitskraft einer bestimmten oder bestimmbaren nat\u00fcrlichen Person zugeordnet werden k\u00f6nnen.",
+      "en": "Data anonymization is a type of information sanitization whose intent is privacy protection. It is the process of removing personally identifiable information from data sets, so that the people whom the data describe remain anonymous."
+    },
+    "identifier": "https://mex.rki.de/item/anonymization-pseudonymization-1",
+    "inScheme": "https://mex.rki.de/item/anonymization-pseudonymization",
+    "prefLabel": {
+      "de": "anonymisiert",
+      "en": "anonymized"
+    }
+  },
+  {
+    "definition": {
+      "de": "Bei der Pseudonymisierung wird der Name oder ein anderes Identifikationsmerkmal durch ein Pseudonym (zumeist ein Code, bestehend aus einer Buchstaben- oder Zahlenkombination) ersetzt, um die Feststellung der Identit\u00e4t des Betroffenen auszuschlie\u00dfen oder wesentlich zu erschweren.",
+      "en": "Pseudonymization is a data management and de-identification procedure by which personally identifiable information fields within a data record are replaced by one or more artificial identifiers, or pseudonyms. A single pseudonym for each replaced field or collection of replaced fields makes the data record less identifiable while remaining suitable for data analysis and data processing."
+    },
+    "identifier": "https://mex.rki.de/item/anonymization-pseudonymization-2",
+    "inScheme": "https://mex.rki.de/item/anonymization-pseudonymization",
+    "prefLabel": {
+      "de": "pseudonymisiert",
+      "en": "pseudonymized"
+    }
+  }
+]

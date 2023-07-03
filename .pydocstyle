@@ -1,0 +1,10 @@
+[pydocstyle]
+ignore = D100,D104,D106,D203,D213,D406,D407,D413
+; D100: Allow missing module docstring for brevity
+; D104: Allow missing package docstring for brevity
+; D106: Allow missing nested class docstring (eg pydantic Config)
+; D203: Disallow blank line before class docstring (inverse of D211)
+; D213: Disallow multi-line docstring starting at second line (inverse of D212)
+; D406: Allow section name ending with newline (google style compat)
+; D407: Allow missing dashed underline after section (google style compat)
+; D413: Allow missing blank line after last section (google style compat)

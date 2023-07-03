@@ -1,0 +1,28 @@
+[
+  {
+    "altLabel": {
+      "de": "de",
+      "en": "de"
+    },
+    "exactMatch": "",
+    "identifier": "https://mex.rki.de/item/language-1",
+    "inScheme": "https://mex.rki.de/item/language",
+    "prefLabel": {
+      "de": "Deutsch",
+      "en": "German"
+    }
+  },
+  {
+    "altLabel": {
+      "de": "en",
+      "en": "en"
+    },
+    "exactMatch": "",
+    "identifier": "https://mex.rki.de/item/language-2",
+    "inScheme": "https://mex.rki.de/item/language",
+    "prefLabel": {
+      "de": "Englisch",
+      "en": "English"
+    }
+  }
+]

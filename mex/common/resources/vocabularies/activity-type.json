@@ -1,0 +1,77 @@
+[
+  {
+    "definition": {
+      "de": "Drittmittelprojekte werden durch F\u00f6rdermittelgebende mitfinanziert. Diese finanziellen Mittel (Drittmittel) werden durch die Forschungseinrichtungen neben den laufenden Haushaltsmitteln (vom Bund zur Verf\u00fcgung gestellt) zus\u00e4tzlich von dritter Seite eingeworben. Sie werden f\u00fcr die F\u00f6rderung von Forschung und Entwicklung sowie des wissenschaftlichen Nachwuchses f\u00fcr einen befristeten Zeitraum zur Verf\u00fcgung gestellt.",
+      "en": "Third-party funded projects are co-financed by funding agencies. These financial resources (third-party funds) are raised by the research institutions from third parties in addition to the current budget funds (provided by the federal government). They are made available for a limited period of time to support research and development as well as young scientists."
+    },
+    "entityType": "Concept",
+    "identifier": "https://mex.rki.de/item/activity-type-1",
+    "inScheme": "https://mex.rki.de/item/activity-type",
+    "prefLabel": {
+      "de": "Drittmittelprojekt",
+      "en": "Third Party funded Project"
+    }
+  },
+  {
+    "definition": {
+      "de": "Projekt, an dem Akteure aus verschiedenen L\u00e4ndern der Welt beteiligt sind.",
+      "en": "Project involving parties from different countries of the world."
+    },
+    "entityType": "Concept",
+    "identifier": "https://mex.rki.de/item/activity-type-2",
+    "inScheme": "https://mex.rki.de/item/activity-type",
+    "prefLabel": {
+      "de": "Internationales Projekt",
+      "en": "International Project"
+    }
+  },
+  {
+    "definition": {
+      "de": "Von Haushaltsmitteln des RKI  (vom Bund zur Verf\u00fcgung gestellt) finanziertes Projekt.",
+      "en": "Project financed with RKI budget (provided by the federal government)."
+    },
+    "entityType": "Concept",
+    "identifier": "https://mex.rki.de/item/activity-type-3",
+    "inScheme": "https://mex.rki.de/item/activity-type",
+    "prefLabel": {
+      "de": "RKI internes Projekt",
+      "en": "RKI internal Project"
+    }
+  },
+  {
+    "definition": {
+      "de": "Von Auftraggebenden beauftragtes Forschungsvorhaben, z. B. gesetzlicher Erlass.",
+      "en": "Research project comissioned by client, e. g. federal mandate."
+    },
+    "identifier": "https://mex.rki.de/item/activity-type-4",
+    "inScheme": "https://mex.rki.de/item/activity-type",
+    "prefLabel": {
+      "de": "Auftragsforschung",
+      "en": "Contract Research"
+    }
+  },
+  {
+    "definition": {
+      "de": "Zur internen Forschungsf\u00f6rderung stehen in begrenztem Umfang Sonderforschungsmittel aus dem Institutsetat zur Verf\u00fcgung. Ziel der eingesetzten Sonderforschungsmittel ist die Verst\u00e4rkung als priorit\u00e4r erachteter Forschungsprojekte. Die Vergabe erfolgt auf schriftlichen Antrag nach Begutachtung durch den Forschungsrat und nach Zustimmung der Institutsleitung.",
+      "en": "Special research funds from the institute's budget are available to a limited extent for internal research funding. The aim of the special research funds is to strengthen priority research projects. The allocation is made upon written application after review by the Research Council and approval by the Institute's management."
+    },
+    "identifier": "https://mex.rki.de/item/activity-type-5",
+    "inScheme": "https://mex.rki.de/item/activity-type",
+    "prefLabel": {
+      "de": "Sonderforschungsprojekt",
+      "en": "Special Research Project"
+    }
+  },
+  {
+    "definition": {
+      "de": "Nicht n\u00e4her definierte oder unbekannte Projektart.",
+      "en": "Undefined or unknown project type."
+    },
+    "identifier": "https://mex.rki.de/item/activity-type-6",
+    "inScheme": "https://mex.rki.de/item/activity-type",
+    "prefLabel": {
+      "de": "Sonstige",
+      "en": "Other"
+    }
+  }
+]

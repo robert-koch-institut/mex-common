@@ -1,0 +1,11 @@
+json schema property;required;expected default value;comment
+alternativeTitle;;"`{""value"": ""DPS""}`";
+contact;;dummyprimarysource@test.de;
+description;;"`{""language"": ""en"", ""value"": ""This is a dummy primary source.""}`";
+documentation;;n/a;n/a
+identifier;y;n/a;assign item identifier automatically
+identifierInPrimarySource;y;dummy-primary-source;
+locatedAt;y;"`{""language"": ""de"", ""title"": ""Dummy Primary Source"", ""url"": ""https://dummy.primary.source""}`";
+title;;"`{""language"": ""en"", ""value"": ""Dummy Primary Source""}`";
+unitInCharge;y;C1;
+version;;n/a;

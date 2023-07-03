@@ -1,0 +1,17 @@
+from pydantic import UUID4, NoneStr
+
+from mex.common.models.base import BaseModel
+from mex.common.types import Email
+
+
+class LDAPActor(BaseModel):
+    """Model class for generic LDAP accounts."""
+
+    sAMAccountName: NoneStr = None
+    objectGUID: UUID4
+    mail: list[Email] = []
+
+    @staticmethod
+    def get_ldap_fields() -> tuple[str, ...]:
+        """Return the fields that should be fetched from LDAP."""
+        return tuple(sorted(LDAPActor.__fields__))
