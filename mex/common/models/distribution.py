@@ -1,6 +1,8 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     AccessPlatformID,
     AccessRestriction,
@@ -13,13 +15,13 @@ from mex.common.types import (
 
 
 class MIMEType(VocabularyEnum):
-    """the mime type."""
+    """The mime type."""
 
     __vocabulary__ = "mime-type"
 
 
-class ExtractedDistribution(ExtractedData):
-    """A distribution."""
+class BaseDistribution(BaseModel):
+    """A specific representation of a dataset."""
 
     stableTargetId: DistributionID
     accessService: AccessPlatformID | None = None
@@ -50,3 +52,11 @@ class ExtractedDistribution(ExtractedData):
         examples=["theNameOfTheFile"],
         min_length=1,
     )
+
+
+class ExtractedDistribution(BaseDistribution, ExtractedData):
+    """An automatically extracted metadata set describing a distribution."""
+
+
+class MergedDistribution(BaseDistribution, MergedItem):
+    """The result of merging all extracted data and rules for a distribution."""

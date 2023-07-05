@@ -1,6 +1,8 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     ActivityID,
     ContactPointID,
@@ -22,7 +24,7 @@ class ActivityType(VocabularyEnum):
     __vocabulary__ = "activity-type"
 
 
-class ExtractedActivity(ExtractedData):
+class BaseActivity(BaseModel):
     """The context a resource was generated in.
 
     This may be a project, an area of work or an administrative procedure.
@@ -64,3 +66,11 @@ class ExtractedActivity(ExtractedData):
     theme: list[Theme] = Field([], examples=["https://mex.rki.de/concept/theme-1"])
     title: list[Text] = Field(..., min_items=1)
     website: list[Link] = []
+
+
+class ExtractedActivity(BaseActivity, ExtractedData):
+    """An automatically extracted metadata set describing an activity."""
+
+
+class MergedActivity(BaseActivity, MergedItem):
+    """The result of merging all extracted data and rules for an activity."""

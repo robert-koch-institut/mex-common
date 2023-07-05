@@ -1,6 +1,8 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     ResourceID,
     Text,
@@ -16,7 +18,7 @@ class DataType(VocabularyEnum):
     __vocabulary__ = "data-type"
 
 
-class ExtractedVariable(ExtractedData):
+class BaseVariable(BaseModel):
     """A single piece of information within a resource."""
 
     stableTargetId: VariableID
@@ -44,3 +46,11 @@ class ExtractedVariable(ExtractedData):
             "Nein, überhaupt nicht eingeschränkt",
         ],
     )
+
+
+class ExtractedVariable(BaseVariable, ExtractedData):
+    """An automatically extracted metadata set describing a variable."""
+
+
+class MergedVariable(BaseVariable, MergedItem):
+    """The result of merging all extracted data and rules for a variable."""

@@ -1,6 +1,8 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     AccessPlatformID,
     AccessRestriction,
@@ -49,7 +51,7 @@ class License(VocabularyEnum):
     __vocabulary__ = "license"
 
 
-class ExtractedResource(ExtractedData):
+class BaseResource(BaseModel):
     """A defined piece or collection of information."""
 
     stableTargetId: ResourceID
@@ -113,3 +115,11 @@ class ExtractedResource(ExtractedData):
     title: list[Text] = Field(..., min_items=1)
     unitInCharge: list[OrganizationalUnitID] = Field(..., min_items=1)
     wasGeneratedBy: ActivityID | None = None
+
+
+class ExtractedResource(BaseResource, ExtractedData):
+    """An automatically extracted metadata set describing a resource."""
+
+
+class MergedResource(BaseResource, MergedItem):
+    """The result of merging all extracted data and rules for a resource."""
