@@ -52,7 +52,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         self.session = Session()
         self.session.headers["Accept"] = "application/json"
         self.session.headers["User-Agent"] = "rki/mex"
-        self.session.verify = settings.verify_session  # type: ignore
+        self.session.verify = settings.public_api_verify_session  # type: ignore
         self.url = settings.public_api_url
         self.token_provider = settings.public_api_token_provider
         self.token_payload = settings.public_api_token_payload
