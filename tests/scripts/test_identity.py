@@ -19,12 +19,14 @@ def settings() -> IdentityScriptsSettings:
     return IdentityScriptsSettings.get()
 
 
-class BaseDummyModel(BaseModel):
+class BaseDummy(BaseModel):
+    """Dummy model defining a generic stableTargetId."""
+
     stableTargetId: Identifier
 
 
-class ExtractedDummyModel(BaseDummyModel, ExtractedData):
-    pass
+class ExtractedDummy(BaseDummy, ExtractedData):
+    """Extracted version of a dummy model."""
 
 
 def test_identity_scripts_roundtrip() -> None:
@@ -33,10 +35,10 @@ def test_identity_scripts_roundtrip() -> None:
     primary_source_id = Identifier.generate(seed=400)
 
     # create two extracted data instances
-    ed_0_A = ExtractedDummyModel(
+    ed_0_A = ExtractedDummy(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="0"
     )
-    ed_1_A = ExtractedDummyModel(
+    ed_1_A = ExtractedDummy(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="1"
     )
     assert ed_0_A.identifier != ed_1_A.identifier
@@ -54,7 +56,7 @@ def test_identity_scripts_roundtrip() -> None:
             "merged_id": str(ed_0_A.stableTargetId),
             "platform_id": str(primary_source_id),
             "original_id": "0",
-            "entity_type": ExtractedDummyModel.get_entity_type(),
+            "entity_type": ExtractedDummy.get_entity_type(),
             "annotation": Joker(),
         },
         {
@@ -62,7 +64,7 @@ def test_identity_scripts_roundtrip() -> None:
             "merged_id": str(ed_1_A.stableTargetId),
             "platform_id": str(primary_source_id),
             "original_id": "1",
-            "entity_type": ExtractedDummyModel.get_entity_type(),
+            "entity_type": ExtractedDummy.get_entity_type(),
             "annotation": Joker(),
         },
     ]
@@ -76,10 +78,10 @@ def test_identity_scripts_roundtrip() -> None:
     assert result.exit_code == 0, result.stdout
 
     # recreate both extracted data instances
-    ed_0_B = ExtractedDummyModel(
+    ed_0_B = ExtractedDummy(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="0"
     )
-    ed_1_B = ExtractedDummyModel(
+    ed_1_B = ExtractedDummy(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="1"
     )
 
