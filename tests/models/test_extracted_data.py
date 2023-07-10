@@ -17,33 +17,33 @@ class Animal(Enum):
     DOG = "dog"
 
 
-class BaseDummy(BaseModel):
+class BaseThing(BaseModel):
     """Dummy model defining a generic stableTargetId."""
 
     stableTargetId: Identifier
 
 
-class ExtractedDummy(BaseDummy, ExtractedData):
-    """Extracted version of a dummy model."""
+class ExtractedThing(BaseThing, ExtractedData):
+    """Extracted version of a dummy thing model."""
 
 
 def test_extracted_data_requires_identifier_in_primary_source() -> None:
     with pytest.raises(ValidationError, match="identifierInPrimarySource"):
-        ExtractedDummy(
+        ExtractedThing(
             hadPrimarySource=Identifier.generate(seed=1),
         )
 
 
 def test_extracted_data_requires_hadPrimarySource() -> None:
     with pytest.raises(ValidationError, match="hadPrimarySource"):
-        ExtractedDummy(
+        ExtractedThing(
             identifierInPrimarySource="0",
         )
 
 
 def test_extracted_data_does_not_allow_custom_identifiers() -> None:
     with pytest.raises(ValidationError, match="Identifier not found"):
-        ExtractedDummy(
+        ExtractedThing(
             identifier=uuid4(),
             hadPrimarySource=Identifier.generate(seed=1),
             identifierInPrimarySource="0",
@@ -51,13 +51,13 @@ def test_extracted_data_does_not_allow_custom_identifiers() -> None:
 
 
 def test_extracted_data_does_not_allow_altered_identities() -> None:
-    extracted_data = ExtractedDummy(
+    extracted_data = ExtractedThing(
         hadPrimarySource=Identifier.generate(seed=1),
         identifierInPrimarySource="this",
     )
 
     with pytest.raises(ValidationError, match="Identifier not found"):
-        ExtractedDummy(
+        ExtractedThing(
             identifier=extracted_data.identifier,
             hadPrimarySource=Identifier.generate(seed=1),
             identifierInPrimarySource="that",
@@ -65,11 +65,11 @@ def test_extracted_data_does_not_allow_altered_identities() -> None:
 
 
 def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
-    extracted_data_1 = ExtractedDummy(
+    extracted_data_1 = ExtractedThing(
         hadPrimarySource=Identifier.generate(seed=1),
         identifierInPrimarySource="0",
     )
-    extracted_data_2 = ExtractedDummy(
+    extracted_data_2 = ExtractedThing(
         identifier=extracted_data_1.identifier,
         hadPrimarySource=Identifier.generate(seed=1),
         identifierInPrimarySource="0",
@@ -79,16 +79,10 @@ def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
 
 
 def test_extracted_data_get_entity_type() -> None:
-    class ExtractedThing(ExtractedDummy):
-        pass
-
     assert ExtractedThing.get_entity_type() == "ExtractedThing"
 
 
 def test_entity_merged_id() -> None:
-    class ExtractedThing(ExtractedDummy):
-        pass
-
     identity_connector = IdentityConnector.get()
 
     thing = ExtractedThing(

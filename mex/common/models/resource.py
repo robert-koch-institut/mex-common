@@ -28,7 +28,7 @@ class ResourceTypeGeneral(VocabularyEnum):
 
 
 class AnonymizationPseudonymization(VocabularyEnum):
-    """Whether the resource is anonymized/pesudonymized."""
+    """Whether the resource is anonymized/pseudonymized."""
 
     __vocabulary__ = "anonymization-pseudonymization"
 

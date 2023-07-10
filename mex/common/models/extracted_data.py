@@ -25,7 +25,7 @@ class BaseExtractedData(MExModel):
         return cls.__name__
 
     def __str__(self) -> str:
-        """Format this extrated data instance as a string for logging."""
+        """Format this extracted data instance as a string for logging."""
         return (
             f"{self.__class__.__name__}: "
             f"{self.identifierInPrimarySource} "
