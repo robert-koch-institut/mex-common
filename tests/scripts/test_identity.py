@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 from click.testing import CliRunner
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.scripts.identity import (
     IdentityScriptsSettings,
@@ -18,16 +19,24 @@ def settings() -> IdentityScriptsSettings:
     return IdentityScriptsSettings.get()
 
 
+class BaseDummyModel(BaseModel):
+    stableTargetId: Identifier
+
+
+class ExtractedDummyModel(BaseDummyModel, ExtractedData):
+    pass
+
+
 def test_identity_scripts_roundtrip() -> None:
     runner = CliRunner()
     settings = IdentityScriptsSettings.get()
     primary_source_id = Identifier.generate(seed=400)
 
     # create two extracted data instances
-    ed_0_A = ExtractedData(
+    ed_0_A = ExtractedDummyModel(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="0"
     )
-    ed_1_A = ExtractedData(
+    ed_1_A = ExtractedDummyModel(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="1"
     )
     assert ed_0_A.identifier != ed_1_A.identifier
@@ -45,7 +54,7 @@ def test_identity_scripts_roundtrip() -> None:
             "merged_id": str(ed_0_A.stableTargetId),
             "platform_id": str(primary_source_id),
             "original_id": "0",
-            "entity_type": ExtractedData.get_entity_type(),
+            "entity_type": ExtractedDummyModel.get_entity_type(),
             "annotation": Joker(),
         },
         {
@@ -53,7 +62,7 @@ def test_identity_scripts_roundtrip() -> None:
             "merged_id": str(ed_1_A.stableTargetId),
             "platform_id": str(primary_source_id),
             "original_id": "1",
-            "entity_type": ExtractedData.get_entity_type(),
+            "entity_type": ExtractedDummyModel.get_entity_type(),
             "annotation": Joker(),
         },
     ]
@@ -62,15 +71,15 @@ def test_identity_scripts_roundtrip() -> None:
     df["merged_id"] = str(ed_0_A.stableTargetId)
     df.to_csv(settings.csv_file, lineterminator="\n")
 
-    # import indentities back into db
+    # import identities back into db
     result = runner.invoke(import_identities, env=settings.env())
     assert result.exit_code == 0, result.stdout
 
     # recreate both extracted data instances
-    ed_0_B = ExtractedData(
+    ed_0_B = ExtractedDummyModel(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="0"
     )
-    ed_1_B = ExtractedData(
+    ed_1_B = ExtractedDummyModel(
         hadPrimarySource=primary_source_id, identifierInPrimarySource="1"
     )
 
