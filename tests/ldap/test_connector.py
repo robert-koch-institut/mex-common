@@ -8,7 +8,9 @@ from mex.common.ldap.connector import LDAPConnector
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
     XY2_DEPARTMENT_ATTRS,
+    XY2_FUNC_ACCOUNT_ATTRS,
     XY_DEPARTMENT_ATTRS,
+    XY_FUNC_ACCOUNT_ATTRS,
     LDAPMocker,
     PagedSearchResults,
 )
@@ -55,6 +57,26 @@ def test_get_persons_ldap(kwargs: dict[str, str], pattern: str) -> None:
     assert re.match(pattern, flat_result)
 
 
+@pytest.mark.parametrize(
+    "kwargs, pattern",
+    [
+        ({"mail": "mex@rki.de"}, r".{36}"),  # exactly one guid
+        ({"mail": "non-existent@function.xyz"}, r"^$"),  # empty result
+    ],
+    ids=[
+        "mex_functional_account",
+        "nonexistent_functional_account",
+    ],
+)
+@pytest.mark.integration
+def test_get_functional_accounts_ldap(kwargs: dict[str, str], pattern: str) -> None:
+    connector = LDAPConnector.get()
+    functional_accounts = list(connector.get_functional_accounts(**kwargs))
+
+    flat_result = ",".join(str(p.objectGUID) for p in functional_accounts)
+    assert re.match(pattern, flat_result)
+
+
 def test_get_units_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_DEPARTMENT_ATTRS]])
     connector = LDAPConnector.get()
@@ -64,6 +86,19 @@ def test_get_units_mocked(ldap_mocker: LDAPMocker) -> None:
     assert units[0].dict(exclude_none=True) == {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
+        "sAMAccountName": "XY",
+    }
+
+
+def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
+    ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
+    connector = LDAPConnector.get()
+    functional_accounts = list(connector.get_functional_accounts(sAMAccountName="XY"))
+
+    assert len(functional_accounts) == 1
+    assert functional_accounts[0].dict(exclude_none=True) == {
+        "mail": ["XY@mail.tld"],
+        "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
     }
 
@@ -131,6 +166,41 @@ def test_get_unit_mocked(ldap_mocker: LDAPMocker) -> None:
     expected = {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
+        "sAMAccountName": "XY",
+    }
+    assert unit.dict(exclude_none=True) == expected
+
+
+@pytest.mark.parametrize(
+    "search_results, error_text",
+    [
+        ([[]], "Cannot find AD functional account"),
+        (
+            [[XY_FUNC_ACCOUNT_ATTRS, XY2_FUNC_ACCOUNT_ATTRS]],
+            "Found multiple AD functional accounts",
+        ),
+    ],
+)
+def test_get_functional_account_mocked_error(
+    ldap_mocker: LDAPMocker, search_results: PagedSearchResults, error_text: str
+) -> None:
+    ldap_mocker(search_results)
+    connector = LDAPConnector.get()
+    with pytest.raises(MExError, match=error_text):
+        connector.get_functional_account(sAMAccountName="whatever")
+
+
+def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
+    ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
+    connector = LDAPConnector.get()
+
+    unit = connector.get_functional_account(
+        sAMAccountName=XY_FUNC_ACCOUNT_ATTRS["sAMAccountName"][0]
+    )
+
+    expected = {
+        "mail": ["XY@mail.tld"],
+        "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
     }
     assert unit.dict(exclude_none=True) == expected
