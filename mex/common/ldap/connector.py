@@ -180,21 +180,21 @@ class LDAPConnector(BaseConnector):
         Returns:
             Single LDAP functional account matching the filters
         """
-        persons = list(
+        functional_accounts = list(
             self.get_functional_accounts(
                 objectGUID=objectGUID,
                 **filters,
             )
         )
-        if not persons:
+        if not functional_accounts:
             raise EmptySearchResultError(
                 f"Cannot find AD functional account for filters 'objectGUID: {objectGUID}, {filters}'"
             )
-        if len(persons) > 1:
+        if len(functional_accounts) > 1:
             raise FoundMoreThanOneError(
                 f"Found multiple AD functional accounts for filters 'objectGUID: {objectGUID}, {filters}'"
             )
-        return persons[0]
+        return functional_accounts[0]
 
     def get_person(
         self, objectGUID: str = "*", employeeID: str = "*", **filters: str
