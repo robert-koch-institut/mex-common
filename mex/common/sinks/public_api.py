@@ -1,7 +1,7 @@
 from typing import Generator, Iterable
 
 from mex.common.logging import watch
-from mex.common.models.base import MExModel
+from mex.common.models import ExtractedData, MergedItem, MExModel
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.public_api.models import PublicApiItem, PublicApiItemWithoutValues
 from mex.common.types import Identifier
@@ -10,12 +10,12 @@ from mex.common.utils import grouper
 
 @watch
 def post_to_public_api(
-    models: Iterable[MExModel], chunk_size: int = 100
+    models: Iterable[ExtractedData | MergedItem], chunk_size: int = 100
 ) -> Generator[Identifier, None, None]:
     """Load models to the Public API using bulk insertion.
 
     Args:
-        models: Iterable of MEx models
+        models: Iterable of extracted or merged models
         chunk_size: Optional size to chunks to post in one request
 
     Returns:

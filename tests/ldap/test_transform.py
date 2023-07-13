@@ -9,8 +9,7 @@ from mex.common.ldap.transform import (
     analyse_person_string,
     transform_ldap_persons_to_mex_persons,
 )
-from mex.common.models.organizational_unit import ExtractedOrganizationalUnit
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.testing import Joker
 
 

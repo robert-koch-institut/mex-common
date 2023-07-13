@@ -5,7 +5,7 @@ from uuid import UUID, uuid4
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.models.person import ExtractedPerson
+from mex.common.models import ExtractedPerson
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.sinks.public_api import post_to_public_api, purge_models_from_public_api
 from mex.common.types import Identifier

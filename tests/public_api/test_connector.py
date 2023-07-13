@@ -6,8 +6,8 @@ from uuid import UUID
 import pytest
 import requests
 
-from mex.common.models.activity import ActivityType, ExtractedActivity
-from mex.common.models.person import ExtractedPerson
+from mex.common.models import ExtractedActivity, ExtractedPerson
+from mex.common.models.activity import ActivityType
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.public_api.models import PublicApiMetadataItemsResponse
 from mex.common.settings import BaseSettings
@@ -171,6 +171,7 @@ def test_search_model_mocked(mocked_api_session: MagicMock) -> None:
                 {
                     "itemId": item_id,
                     "entityType": ExtractedActivity.get_entity_type(),
+                    "businessId": "vhK1I2voBK5bO12MAfZYmi",
                     "values": [
                         {
                             "fieldName": "abstract",
@@ -274,18 +275,22 @@ def test_get_all_items_mocked(
         "items": [
             {
                 "itemId": "00005da9-f653-4c9c-b123-7b555d36b0fd",
+                "businessId": "bgmAz9QJ7IaHGNyMamwhUx",
                 "entityType": "Datum",
             },
             {
                 "itemId": "000054a2-b16a-4f4e-82d2-1a222dba41e6",
+                "businessId": "hLRKpjTpCS06BniW1l2NcU",
                 "entityType": "ExtractedDatum",
             },
             {
                 "itemId": "000054a2-b16a-4f4e-82d2-1a222fba41e6",
+                "businessId": "g5MAfZYmivhK1I2voBK5bO",
                 "entityType": "ExtractedPerson",
             },
             {
                 "itemId": "000054a3-b16a-4f4e-82d2-1a222fbc41e6",
+                "businessId": "cOfkBGYSeIjcKCdDZJQ0yk",
                 "entityType": "Person",
             },
         ],

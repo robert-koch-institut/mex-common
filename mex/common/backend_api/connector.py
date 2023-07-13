@@ -9,7 +9,7 @@ from requests.exceptions import HTTPError, RequestException
 
 from mex.common.backend_api.models import BulkInsertResponse
 from mex.common.connector import BaseConnector
-from mex.common.models.base import MExModel
+from mex.common.models import ExtractedData, MergedItem, MExModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 from mex.common.types import Identifier
@@ -101,11 +101,11 @@ class BackendApiConnector(BaseConnector):
         """Close the connector's underlying requests session."""
         self.session.close()
 
-    def post_models(self, models: list[MExModel]) -> list[Identifier]:
+    def post_models(self, models: list[ExtractedData | MergedItem]) -> list[Identifier]:
         """Post models to Backend API in a bulk insertion request.
 
         Args:
-            models: MEx models to post
+            models: Extracted or merged models to post
 
         Raises:
             HTTPError: If insert was not accepted, crashes or times out
@@ -115,7 +115,7 @@ class BackendApiConnector(BaseConnector):
         """
         response = self.request(
             "POST",
-            "entity",
+            "ingest",
             {
                 entity_type: list(entities)
                 for entity_type, entities in groupby(

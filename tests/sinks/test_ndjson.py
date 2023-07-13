@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import UUID4
 
-from mex.common.models.base import MExModel
+from mex.common.models import MExModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks.ndjson import write_ndjson
 from mex.common.types import Timestamp

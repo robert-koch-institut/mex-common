@@ -1,7 +1,7 @@
 import json
 from operator import attrgetter, itemgetter
 
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import Text, TextLanguage
 from mex.common.wikidata.models.organization import (

@@ -37,6 +37,9 @@ class BaseExtractedData(MExModel):
 class ExtractedData(BaseExtractedData):
     """Base model class for extracted data instances that ensures identities."""
 
+    if TYPE_CHECKING:
+        stableTargetId: Identifier
+
     @root_validator(pre=True)
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Ensure identifier and provenance attributes are set for this instance.

@@ -1,4 +1,4 @@
-from mex.common.models.merged_item import MergedItem
+from mex.common.models import MergedItem
 from mex.common.types import Identifier
 
 

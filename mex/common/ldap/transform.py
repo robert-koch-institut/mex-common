@@ -6,9 +6,11 @@ from typing import Generator, Iterable
 from mex.common.exceptions import MExError
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.logging import watch
-from mex.common.models.organizational_unit import ExtractedOrganizationalUnit
-from mex.common.models.person import ExtractedPerson
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import (
+    ExtractedOrganizationalUnit,
+    ExtractedPerson,
+    ExtractedPrimarySource,
+)
 
 
 @watch

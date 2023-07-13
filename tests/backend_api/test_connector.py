@@ -8,7 +8,7 @@ from requests import JSONDecodeError, Response
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models.person import ExtractedPerson
+from mex.common.models import ExtractedPerson
 from mex.common.testing import Joker
 
 

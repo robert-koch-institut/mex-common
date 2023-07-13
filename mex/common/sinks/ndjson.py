@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import IO, Any, Generator, Iterable
 
 from mex.common.logging import echo, watch
-from mex.common.models.base import MExModel
+from mex.common.models import MExModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 from mex.common.types import Identifier

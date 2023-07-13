@@ -5,8 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from mex.common.identity.connector import IdentityConnector
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
+from mex.common.models import BaseModel, ExtractedData
 from mex.common.types import Identifier
 
 

@@ -1,6 +1,6 @@
 import pytest
 
-from mex.common.models.organizational_unit import ExtractedOrganizationalUnit
+from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import (
     OrganigramName,
     OrganigramUnit,
