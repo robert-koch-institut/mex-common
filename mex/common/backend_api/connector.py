@@ -1,6 +1,6 @@
 import json
 from itertools import groupby
-from typing import Any, Literal, TypeVar, cast
+from typing import Any, Literal, cast
 from urllib.parse import urljoin
 
 import backoff
@@ -9,12 +9,10 @@ from requests.exceptions import HTTPError, RequestException
 
 from mex.common.backend_api.models import BulkInsertResponse
 from mex.common.connector import BaseConnector
-from mex.common.models import ExtractedData, MergedItem, MExModel
+from mex.common.models import MExModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 from mex.common.types import Identifier
-
-ModelT = TypeVar("ModelT", bound=MExModel)
 
 
 class BackendApiConnector(BaseConnector):
@@ -101,7 +99,7 @@ class BackendApiConnector(BaseConnector):
         """Close the connector's underlying requests session."""
         self.session.close()
 
-    def post_models(self, models: list[ExtractedData | MergedItem]) -> list[Identifier]:
+    def post_models(self, models: list[MExModel]) -> list[Identifier]:
         """Post models to Backend API in a bulk insertion request.
 
         Args:

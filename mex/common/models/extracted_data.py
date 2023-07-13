@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from pydantic import Field, root_validator
 
@@ -16,8 +16,6 @@ class BaseExtractedData(MExModel):
     identifierInPrimarySource: str = Field(
         ..., examples=["123456", "item-501", "D7/x4/zz.final3"], min_length=1
     )
-    if TYPE_CHECKING:
-        stableTargetId: Any  # to be defined in subclasses
 
     @classmethod
     def get_entity_type(cls) -> str:
@@ -36,9 +34,6 @@ class BaseExtractedData(MExModel):
 
 class ExtractedData(BaseExtractedData):
     """Base model class for extracted data instances that ensures identities."""
-
-    if TYPE_CHECKING:
-        stableTargetId: Identifier
 
     @root_validator(pre=True)
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:

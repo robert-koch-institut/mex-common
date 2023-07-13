@@ -3,8 +3,7 @@ from collections import defaultdict
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES_BY_NAME,
     MERGED_MODEL_CLASSES_BY_NAME,
-    ExtractedData,
-    MergedItem,
+    MExModel,
 )
 from mex.common.public_api.models import (
     PublicApiField,
@@ -14,9 +13,7 @@ from mex.common.public_api.models import (
 from mex.common.types import Link, LinkLanguage, Text, TextLanguage
 
 
-def transform_mex_model_to_public_api_item(
-    model: ExtractedData | MergedItem,
-) -> PublicApiItem:
+def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
     """Convert a ExtractedData instance into a Public API item.
 
     Args:
@@ -55,16 +52,16 @@ def transform_mex_model_to_public_api_item(
 
 def transform_public_api_item_to_mex_model(
     api_item: PublicApiItem,
-) -> ExtractedData | MergedItem | None:
+) -> MExModel | None:
     """Try to convert a Public API item into an extracted data instance.
 
     Args:
         api_item: Public API item
 
     Returns:
-        Instance of a ExtractedData or MergedItem or None if unknown type
+        Transformed model or None if unknown type
     """
-    classes_by_name: dict[str, type[ExtractedData] | type[MergedItem]] = dict(
+    classes_by_name: dict[str, type[MExModel]] = dict(
         **EXTRACTED_MODEL_CLASSES_BY_NAME, **MERGED_MODEL_CLASSES_BY_NAME
     )
     cls = classes_by_name.get(api_item.entityType)

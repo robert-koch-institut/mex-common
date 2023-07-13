@@ -2,14 +2,14 @@ from typing import Generator, Iterable
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import watch
-from mex.common.models import ExtractedData, MergedItem
+from mex.common.models import MExModel
 from mex.common.types import Identifier
 from mex.common.utils import grouper
 
 
 @watch
 def post_to_backend_api(
-    models: Iterable[ExtractedData | MergedItem], chunk_size: int = 100
+    models: Iterable[MExModel], chunk_size: int = 100
 ) -> Generator[Identifier, None, None]:
     """Load models to the Backend API using bulk insertion.
 

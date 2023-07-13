@@ -12,7 +12,7 @@ from requests.exceptions import HTTPError, RequestException
 
 from mex.common.connector import BaseConnector
 from mex.common.logging import echo
-from mex.common.models import ExtractedData, MergedItem, MExModel
+from mex.common.models import MExModel
 from mex.common.public_api.models import (
     PublicApiAuthResponse,
     PublicApiAxisConstraint,
@@ -215,7 +215,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         return []
 
     def post_models(
-        self, models: list[ExtractedData | MergedItem], wait_for_done: bool = True
+        self, models: list[MExModel], wait_for_done: bool = True
     ) -> list[Identifier]:
         """Convert models to public API items and post them.
 
@@ -298,7 +298,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
 
     def search_model(
         self, model_cls: type[ModelT], identifier: Identifier
-    ) -> ExtractedData | MergedItem | None:
+    ) -> MExModel | None:
         """Get an item from the Public API and convert it to a model.
 
         Args:
@@ -354,7 +354,10 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         return None
 
     def search_items(
-        self, model_cls: type[MExModel], offset: int = 0, limit: int = 10
+        self,
+        model_cls: type[MExModel],
+        offset: int = 0,
+        limit: int = 10,
     ) -> list[PublicApiItem]:
         """Get all Public API items corresponding to `model_cls` with pagination.
 
