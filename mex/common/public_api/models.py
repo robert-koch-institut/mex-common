@@ -70,6 +70,11 @@ class PublicApiItem(PublicApiBaseModel):
     businessId: str
     values: list[PublicApiField] = Field(..., include=True)
 
+    @property
+    def stableTargetId(self) -> Identifier:
+        """Return the stableTargetId of this item."""
+        return Identifier(self.businessId.removesuffix("#"))
+
 
 class PublicApiSearchResponse(PublicApiBaseModel):
     """Response body that is expected for search results."""
