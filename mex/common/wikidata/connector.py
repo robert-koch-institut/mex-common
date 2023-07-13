@@ -11,6 +11,10 @@ class WikidataQueryServiceConnector(HTTPConnector):
         """Set url of the host."""
         self.url = settings.wiki_query_service_url
 
+    def _check_availability(self) -> None:
+        """Send a GET request to verify the host is available."""
+        self.request("GET", self.url, params={"format": "json"})
+
     def get_data_by_query(self, query: str) -> list[dict[str, dict[str, str]]]:
         """Run provided query on wikidata using wikidata query service.
 
@@ -34,6 +38,12 @@ class WikidataAPIConnector(HTTPConnector):
         """Set url of the host."""
         self.url = settings.wiki_api_url
 
+    def _check_availability(self) -> None:
+        """Send a GET request to verify the host is available."""
+        self.request(
+            "GET", self.url, params={"format": "json", "action": "wbgetentities"}
+        )
+
     def get_wikidata_item_details_by_id(self, item_id: str) -> dict[str, str]:
         """Get details of a wikidata item by item id.
 
@@ -52,5 +62,4 @@ class WikidataAPIConnector(HTTPConnector):
         }
 
         results = self.request("GET", params=params)
-
         return results["entities"][item_id]  # type: ignore

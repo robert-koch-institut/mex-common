@@ -73,15 +73,15 @@ class HTTPConnector(BaseConnector):
         else:
             url = self.url
         kwargs.setdefault("timeout", self.TIMEOUT)
+        kwargs.setdefault("headers", {})
+        kwargs["headers"].setdefault("Accept", "application/json")
+
         if payload:
-            kwargs.setdefault("headers", {})
             kwargs["data"] = json.dumps(payload, cls=MExEncoder)
-            kwargs["headers"].setdefault("Accept", "application/json")
             kwargs["headers"].setdefault("User-Agent", "rki/mex")
 
         # Send request
         response = self._send_request(method, url, params, **kwargs)
-
         try:
             response.raise_for_status()
         except HTTPError as error:

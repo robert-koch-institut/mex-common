@@ -1,4 +1,3 @@
-from functools import cache
 from typing import Generator
 
 import requests
@@ -58,7 +57,6 @@ def search_organization_by_label(
         yield get_organization_details(wd_item_id)
 
 
-@cache
 def get_organization_details(item_id: str) -> WikidataOrganization:
     """Get a wikidata item details by its ID.
 
