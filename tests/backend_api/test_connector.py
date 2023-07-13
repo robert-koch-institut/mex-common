@@ -96,7 +96,7 @@ def test_request_error_mocked(monkeypatch: MonkeyPatch) -> None:
         connector.request("GET", "fail")
 
 
-def test_post_models(
+def test_post_models_mocked(
     monkeypatch: MonkeyPatch, extracted_person: ExtractedPerson
 ) -> None:
     mocked_send_request = MagicMock(
@@ -110,7 +110,7 @@ def test_post_models(
 
     assert mocked_send_request.call_args_list[-1] == call(
         "POST",
-        "http://localhost:8080/v0/entity",
+        "http://localhost:8080/v0/ingest",
         timeout=BackendApiConnector.TIMEOUT,
         headers={"Content-Type": "application/json"},
         data=Joker(),
