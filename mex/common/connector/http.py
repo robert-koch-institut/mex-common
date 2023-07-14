@@ -28,9 +28,14 @@ class HTTPConnector(BaseConnector):
         self.session = requests.Session()
 
         self.session.verify = settings.verify_session  # type: ignore
+
+        self.session.headers["User-Agent"] = "rki/mex"
+        self.token_provider = settings.public_api_token_provider
+        self.token_payload = settings.public_api_token_payload
+
         self._set_url(settings)
         self._set_authentication(settings)
-        self._check_availability()
+        # self._check_availability()
 
     def _set_authentication(self, settings: BaseSettings) -> None:
         """Authenticate to the host."""
@@ -41,7 +46,9 @@ class HTTPConnector(BaseConnector):
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the host is available."""
-        self.request("GET", self.url)
+        # self.request("GET", self.url)
+        response = self._send_request("HEAD", self.url, params={})
+        response.raise_for_status
 
     def request(
         self,

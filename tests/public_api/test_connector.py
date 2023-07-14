@@ -29,7 +29,7 @@ def test_authenticate_mocked(mocked_api_session: MagicMock) -> None:
         }
     )
 
-    connector.authenticate()
+    connector._set_authentication(settings)
 
     mocked_post.assert_called_once_with(
         settings.public_api_token_provider,
