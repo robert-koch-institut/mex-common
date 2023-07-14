@@ -4,8 +4,10 @@ from functools import cache
 from typing import Generator, Iterable
 
 from mex.common.exceptions import MExError
+from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.logging import watch
+from mex.common.models.contact_point import ExtractedContactPoint
 from mex.common.models.organizational_unit import ExtractedOrganizationalUnit
 from mex.common.models.person import ExtractedPerson
 from mex.common.models.primary_source import ExtractedPrimarySource
@@ -34,6 +36,24 @@ def transform_ldap_persons_to_mex_persons(
         yield transform_ldap_person_to_mex_person(
             person, primary_source, units_by_identifier_in_primary_source
         )
+
+
+@watch
+def transform_ldap_actors_to_mex_contact_points(
+    ldap_actors: Iterable[LDAPActor],
+    primary_source: ExtractedPrimarySource,
+) -> Generator[ExtractedContactPoint, None, None]:
+    """Transform LDAP actors (e.g. functional accounts) to ExtractedContactPoints.
+
+    Args:
+        ldap_actors: LDAP actors
+        primary_source: Primary source for LDAP
+
+    Returns:
+        Generator for extracted contact points
+    """
+    for actor in ldap_actors:
+        yield transform_ldap_actor_to_mex_contact_point(actor, primary_source)
 
 
 @watch
@@ -94,6 +114,26 @@ def transform_ldap_person_to_mex_person(
         isniId=None,
         memberOf=member_of,
         orcidId=None,
+    )
+
+
+def transform_ldap_actor_to_mex_contact_point(
+    ldap_actor: LDAPActor,
+    primary_source: ExtractedPrimarySource,
+) -> ExtractedContactPoint:
+    """Transform a single LDAPActor (a functional account) to an ExtractedContactPoint.
+
+    Args:
+        ldap_actor: LDAP actor
+        primary_source: Primary source for LDAP
+
+    Returns:
+        Extracted contact point
+    """
+    return ExtractedContactPoint(
+        identifierInPrimarySource=str(ldap_actor.objectGUID),
+        hadPrimarySource=primary_source.stableTargetId,
+        email=ldap_actor.mail,
     )
 
 
