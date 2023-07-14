@@ -1,4 +1,4 @@
-from mex.common.models.base import BaseModel
+from mex.common.models import BaseModel
 from mex.common.types import Identifier
 
 

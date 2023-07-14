@@ -4,7 +4,7 @@ from io import StringIO
 from pytest import LogCaptureFixture
 
 from mex.common.extract import get_dtypes_for_model, parse_csv
-from mex.common.models.base import BaseModel
+from mex.common.models import BaseModel
 
 
 class DummyModel(BaseModel):

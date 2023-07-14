@@ -1,7 +1,7 @@
 import json
 from typing import Optional
 
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.models import MExDBPrimarySource
 from mex.common.types import Identifier, Link, Text
 

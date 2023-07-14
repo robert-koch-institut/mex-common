@@ -6,7 +6,7 @@ from ldap3 import Connection
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_mex_db_primary_source_by_id
 from mex.common.primary_source.transform import (
     transform_mex_db_primary_source_to_extracted_primary_source,

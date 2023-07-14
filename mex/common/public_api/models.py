@@ -4,8 +4,15 @@ from uuid import UUID
 
 from pydantic import Extra, Field, validator
 
-from mex.common.models.base import BaseModel
-from mex.common.types import Link, LinkLanguage, Text, TextLanguage, Timestamp
+from mex.common.models import BaseModel
+from mex.common.types import (
+    Identifier,
+    Link,
+    LinkLanguage,
+    Text,
+    TextLanguage,
+    Timestamp,
+)
 
 PublicApiFieldValueTypes = UUID | Enum | Timestamp | str | Link | Text
 PublicApiFieldValueTypesOrList = (
@@ -60,7 +67,13 @@ class PublicApiItem(PublicApiBaseModel):
 
     entityType: str = Field(..., include=True)
     itemId: UUID | None
+    businessId: str
     values: list[PublicApiField] = Field(..., include=True)
+
+    @property
+    def stableTargetId(self) -> Identifier:
+        """Return the stableTargetId of this item."""
+        return Identifier(self.businessId.removesuffix("#"))
 
 
 class PublicApiSearchResponse(PublicApiBaseModel):
@@ -84,6 +97,12 @@ class PublicApiItemWithoutValues(PublicApiBaseModel):
 
     entityType: str = Field(..., include=True)
     itemId: UUID | None
+    businessId: str
+
+    @property
+    def stableTargetId(self) -> Identifier:
+        """Return the stableTargetId of this item."""
+        return Identifier(self.businessId.removesuffix("#"))
 
 
 class PublicApiMetadataItemsResponse(PublicApiBaseModel):

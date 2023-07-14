@@ -12,7 +12,7 @@ from requests.exceptions import HTTPError, RequestException
 
 from mex.common.connector import BaseConnector
 from mex.common.logging import echo
-from mex.common.models.base import MExModel
+from mex.common.models import MExModel
 from mex.common.public_api.models import (
     PublicApiAuthResponse,
     PublicApiAxisConstraint,
@@ -220,7 +220,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         """Convert models to public API items and post them.
 
         Args:
-            models: MEx models to post
+            models: Extracted or merged models to post
             wait_for_done: If the return should block until the job is done
 
         Raises:
@@ -253,7 +253,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         request = PublicApiSearchRequest(
             offset=0,
             limit=1,
-            facetConstraints=[
+            axisConstraints=[
                 PublicApiAxisConstraint(values=[str(identifier)], axis="identifier"),
                 PublicApiAxisConstraint(
                     values=[model_cls.get_entity_type()], axis="entityName"
@@ -306,7 +306,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
             identifier: Identifier of the model
 
         Returns:
-            MEx model instance, if ID was found, else None
+            Extracted or merged model instance, if ID was found, else None
         """
         if item := self.search_item(model_cls, identifier):
             return transform_public_api_item_to_mex_model(item)
@@ -354,7 +354,10 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         return None
 
     def search_items(
-        self, model_cls: type[MExModel], offset: int = 0, limit: int = 10
+        self,
+        model_cls: type[MExModel],
+        offset: int = 0,
+        limit: int = 10,
     ) -> list[PublicApiItem]:
         """Get all Public API items corresponding to `model_cls` with pagination.
 
@@ -372,7 +375,7 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         request = PublicApiSearchRequest(
             offset=offset,
             limit=limit,
-            facetConstraints=[
+            axisConstraints=[
                 PublicApiAxisConstraint(
                     values=[model_cls.get_entity_type()], axis="entityName"
                 )

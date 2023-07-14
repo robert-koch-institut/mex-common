@@ -1,7 +1,10 @@
 from collections import defaultdict
 
-from mex.common.models import MODEL_CLASSES_BY_ENTITY_TYPE
-from mex.common.models.base import MExModel
+from mex.common.models import (
+    EXTRACTED_MODEL_CLASSES_BY_NAME,
+    MERGED_MODEL_CLASSES_BY_NAME,
+    MExModel,
+)
 from mex.common.public_api.models import (
     PublicApiField,
     PublicApiFieldValueTypes,
@@ -10,13 +13,11 @@ from mex.common.public_api.models import (
 from mex.common.types import Link, LinkLanguage, Text, TextLanguage
 
 
-def transform_mex_model_to_public_api_item(
-    model: MExModel,
-) -> PublicApiItem:
-    """Convert a MExModel instance into a Public API item.
+def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
+    """Convert a ExtractedData instance into a Public API item.
 
     Args:
-        model: Instance of a subclass of MExModel
+        model: Instance of a subclass of ExtractedData
 
     Returns:
         Public API item
@@ -42,8 +43,11 @@ def transform_mex_model_to_public_api_item(
                     fieldName=field_name, fieldValue=value, language=language
                 )
             )
-
-    return PublicApiItem(entityType=model.get_entity_type(), values=api_values)
+    return PublicApiItem(
+        entityType=model.get_entity_type(),
+        businessId=model.stableTargetId,
+        values=api_values,
+    )
 
 
 def transform_public_api_item_to_mex_model(
@@ -55,11 +59,14 @@ def transform_public_api_item_to_mex_model(
         api_item: Public API item
 
     Returns:
-        Instance of a subclass of MExModel or None if unknown type
+        Transformed model or None if unknown type
     """
-    if api_item.entityType not in MODEL_CLASSES_BY_ENTITY_TYPE:
+    classes_by_name: dict[str, type[MExModel]] = dict(
+        **EXTRACTED_MODEL_CLASSES_BY_NAME, **MERGED_MODEL_CLASSES_BY_NAME
+    )
+    cls = classes_by_name.get(api_item.entityType)
+    if cls is None:
         return None
-    cls = MODEL_CLASSES_BY_ENTITY_TYPE[api_item.entityType]
     dct_to_parse: dict[str, list[PublicApiFieldValueTypes]] = defaultdict(list)
     for value in api_item.values:
         field_name = value.fieldName

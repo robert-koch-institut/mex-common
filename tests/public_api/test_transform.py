@@ -3,8 +3,7 @@ from typing import Any, Optional
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.models import MODEL_CLASSES_BY_ENTITY_TYPE
-from mex.common.models.base import MExModel
+from mex.common.models import EXTRACTED_MODEL_CLASSES_BY_NAME, MExModel
 from mex.common.public_api.models import PublicApiItem
 from mex.common.public_api.transform import (
     transform_mex_model_to_public_api_item,
@@ -23,6 +22,7 @@ from mex.common.types import (
 
 
 class DummyModel(MExModel):
+    stableTargetId: Identifier
     optional: Optional[str]
     oneString: str
     manyStrings: list[str]
@@ -43,6 +43,7 @@ class DummyModel(MExModel):
 def raw_mex_model() -> dict[str, Any]:
     return {
         "identifier": Identifier("0000000000046f"),
+        "stableTargetId": Identifier("00000000000fds"),
         "manyLinks": [
             {
                 "title": "Example PDF",
@@ -116,6 +117,7 @@ def raw_api_item() -> dict[str, Any]:
                 "fieldName": "reference",
                 "fieldValue": Identifier("00000000001eab"),
             },
+            {"fieldName": "stableTargetId", "fieldValue": Identifier("00000000000fds")},
             {
                 "fieldName": "timestamp",
                 "fieldValue": Timestamp("2010-12-24T22:00"),
@@ -141,9 +143,9 @@ def test_transform_public_api_item_to_mex_model(
     raw_mex_model: dict[str, Any],
 ) -> None:
     monkeypatch.setitem(
-        MODEL_CLASSES_BY_ENTITY_TYPE, DummyModel.get_entity_type(), DummyModel
+        EXTRACTED_MODEL_CLASSES_BY_NAME, DummyModel.get_entity_type(), DummyModel
     )
-    dummy_item = PublicApiItem(**raw_api_item)
+    dummy_item = PublicApiItem(**raw_api_item, businessId="00000000000fds")
 
     dummy_model = transform_public_api_item_to_mex_model(dummy_item)
 
@@ -152,6 +154,8 @@ def test_transform_public_api_item_to_mex_model(
 
 
 def test_transform_public_api_item_to_mex_model_unknown() -> None:
-    api_item = PublicApiItem(entityType="UnknownModel", values=[])
+    api_item = PublicApiItem(
+        entityType="UnknownModel", values=[], businessId="a00b02800211BD90"
+    )
     returned = transform_public_api_item_to_mex_model(api_item)
     assert returned is None

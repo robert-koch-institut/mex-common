@@ -1,7 +1,6 @@
 from typing import Generator, Iterable
 
-from mex.common.models.organization import ExtractedOrganization
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.types import Text, TextLanguage
 from mex.common.wikidata.models.organization import (
     Aliases,
