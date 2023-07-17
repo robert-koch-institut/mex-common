@@ -3,10 +3,12 @@ from uuid import UUID
 import pytest
 
 from mex.common.exceptions import MExError
+from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson
 from mex.common.ldap.transform import (
     PersonName,
     analyse_person_string,
+    transform_ldap_actors_to_mex_contact_points,
     transform_ldap_persons_to_mex_persons,
 )
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
@@ -21,6 +23,34 @@ def extracted_unit(
         name=["MF"],
         hadPrimarySource=extracted_primary_source.stableTargetId,
         identifierInPrimarySource="mf",
+    )
+
+
+def test_transform_ldap_actors_to_mex_contact_points(
+    extracted_primary_source: ExtractedPrimarySource,
+) -> None:
+    ldap_actor = LDAPActor(
+        mail=["mail@example3.com"],
+        objectGUID=UUID(int=42, version=4),
+        sAMAccountName="samples",
+    )
+
+    extracted_contact_points = transform_ldap_actors_to_mex_contact_points(
+        [ldap_actor], extracted_primary_source
+    )
+    extracted_contact_point = list(extracted_contact_points)[0]
+
+    expected = {
+        "email": ["mail@example3.com"],
+        "hadPrimarySource": extracted_primary_source.stableTargetId,
+        "identifier": Joker(),
+        "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
+        "stableTargetId": Joker(),
+    }
+
+    assert (
+        extracted_contact_point.dict(exclude_none=True, exclude_defaults=True)
+        == expected
     )
 
 

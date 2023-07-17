@@ -44,6 +44,18 @@ XY2_DEPARTMENT_ATTRS = dict(
     sAMAccountName=["XY2"],
 )
 
+XY_FUNC_ACCOUNT_ATTRS = dict(
+    mail=["XY@mail.tld"],
+    objectGUID=["{00000000-0000-4000-8000-000000000044}"],
+    sAMAccountName=["XY"],
+)
+
+XY2_FUNC_ACCOUNT_ATTRS = dict(
+    mail=["XY2@mail.tld"],
+    objectGUID=["{00000000-0000-4000-8000-000000000045}"],
+    sAMAccountName=["XY2"],
+)
+
 
 @pytest.fixture(autouse=True)
 def seed_primary_sources_into_db() -> None:
