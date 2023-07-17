@@ -96,8 +96,8 @@ class LDAPConnector(BaseConnector):
         Some projects/resources declare functional mailboxes as their contact.
 
         Args:
-            sAMAccountName: Account name
             mail: Email address of the functional account
+            sAMAccountName: Account name
             **filters: Additional filters
 
         Returns:
