@@ -8,7 +8,7 @@ from mex.common.ldap.models.actor import LDAPActor
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.logging import watch
 from mex.common.models import (
-    ExtractedContactPoint
+    ExtractedContactPoint,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
     ExtractedPrimarySource,
