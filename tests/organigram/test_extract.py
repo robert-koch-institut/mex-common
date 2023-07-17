@@ -1,4 +1,4 @@
-from mex.common.models.organizational_unit import ExtractedOrganizationalUnit
+from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.extract import (
     extract_oranigram_units,
     get_unit_merged_ids_by_emails,

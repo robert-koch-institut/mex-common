@@ -1,6 +1,6 @@
 from pydantic import AnyUrl
 
-from mex.common.models.base import BaseModel
+from mex.common.models import BaseModel
 
 
 class OrganigramName(BaseModel):

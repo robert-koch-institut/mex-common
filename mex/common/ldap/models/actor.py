@@ -1,6 +1,6 @@
 from pydantic import UUID4, NoneStr
 
-from mex.common.models.base import BaseModel
+from mex.common.models import BaseModel
 from mex.common.types import Email
 
 

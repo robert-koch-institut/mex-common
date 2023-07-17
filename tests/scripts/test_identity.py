@@ -2,8 +2,7 @@ import pandas as pd
 import pytest
 from click.testing import CliRunner
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
+from mex.common.models import BaseModel, ExtractedData
 from mex.common.scripts.identity import (
     IdentityScriptsSettings,
     export_identities,

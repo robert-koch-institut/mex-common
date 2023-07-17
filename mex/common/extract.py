@@ -11,7 +11,7 @@ from mex.common.logging import echo
 if TYPE_CHECKING:  # pragma: no cover
     from pandas._typing import Dtype, ReadCsvBuffer
 
-    from mex.common.models.base import BaseModel
+    from mex.common.models import BaseModel
 
 ModelT = TypeVar("ModelT", bound="BaseModel")
 

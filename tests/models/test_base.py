@@ -3,7 +3,8 @@ from typing import Any, Optional, Union
 
 import pytest
 
-from mex.common.models.base import BaseModel, FlatValueMap
+from mex.common.models import BaseModel
+from mex.common.models.base import FlatValueMap
 from mex.common.types import Timestamp
 
 

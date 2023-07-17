@@ -1,7 +1,7 @@
 from typing import Callable, Iterable
 
 from mex.common.exceptions import MExError
-from mex.common.models.base import MExModel
+from mex.common.models import MExModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks import Sink
 from mex.common.sinks.backend_api import post_to_backend_api

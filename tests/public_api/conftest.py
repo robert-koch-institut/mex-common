@@ -33,18 +33,22 @@ def mex_metadata_items_response() -> PublicApiMetadataItemsResponse:
             "items": [
                 {
                     "itemId": "00005da9-f653-4c9c-b123-7b555d36b0fd",
+                    "businessId": "bgmAz9QJ7IaHGNyMamwhUx",
                     "entityType": "Datum",
                 },
                 {
                     "itemId": "000054a2-b16a-4f4e-82d2-1a222dba41e6",
+                    "businessId": "hLRKpjTpCS06BniW1l2NcU",
                     "entityType": "ExtractedDatum",
                 },
                 {
                     "itemId": "000054a2-b16a-4f4e-82d2-1a222fba41e6",
+                    "businessId": "g5MAfZYmivhK1I2voBK5bO",
                     "entityType": "ExtractedPerson",
                 },
                 {
                     "itemId": "000054a3-b16a-4f4e-82d2-1a222fbc41e6",
+                    "businessId": "cOfkBGYSeIjcKCdDZJQ0yk",
                     "entityType": "Person",
                 },
             ],

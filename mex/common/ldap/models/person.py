@@ -1,7 +1,7 @@
 from pydantic import Field, NoneStr
 
 from mex.common.ldap.models.actor import LDAPActor
-from mex.common.models.base import BaseModel
+from mex.common.models import BaseModel
 
 
 class LDAPPerson(LDAPActor):
