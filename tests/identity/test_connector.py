@@ -1,84 +1,62 @@
-from unittest.mock import MagicMock, Mock
-
-import pytest
-from pytest import MonkeyPatch
-from sqlalchemy.exc import SQLAlchemyError
-
-from mex.common.exceptions import MExError
 from mex.common.identity.connector import IdentityConnector
-from mex.common.settings import BaseSettings
+from mex.common.testing import Joker
+from mex.common.types.identifier import Identifier
 
 
-def test_db_connection() -> None:
+def test_upsert_identity() -> None:
     connector = IdentityConnector.get()
-    assert connector.engine.execute("SELECT 1;").scalar_one() == 1
-
-
-def test_service_unavailable_init(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr(IdentityConnector, "_is_service_available", lambda _: False)
-    settings = BaseSettings.get()
-    with pytest.raises(MExError):
-        IdentityConnector(settings)
-
-
-def test_connector_is_service_available(monkeypatch: MonkeyPatch) -> None:
-    connector = IdentityConnector.get()
-    assert connector._is_service_available() is True
-
-    faulty_engine = Mock()
-    faulty_engine.execute = MagicMock(side_effect=SQLAlchemyError)
-    monkeypatch.setattr(connector, "engine", faulty_engine)
-    assert connector._is_service_available() is False
-
-
-def test_upsert_identitfication() -> None:
-    connector = IdentityConnector.get()
+    system_a_id = Identifier.generate()
+    old_target_id = Identifier.generate()
+    new_target_id = Identifier.generate()
     identity_after_insert = connector.upsert(
-        "system-a", "thing-1", "old-target", "type-x"
+        system_a_id, "thing-1", old_target_id, "type-x"
+    )
+
+    assert identity_after_insert.dict() == dict(
+        hadPrimarySource=system_a_id,
+        identifierInPrimarySource="thing-1",
+        stableTargetId=old_target_id,
+        entityType="type-x",
+        identifier=Joker(),
     )
 
     identity_after_update = connector.upsert(
-        "system-a", "thing-1", "new-target", "type-x"
+        system_a_id, "thing-1", new_target_id, "type-x"
     )
-    assert identity_after_update != identity_after_insert
 
-    assert (
-        identity_after_insert.platform_id
-        == identity_after_update.platform_id
-        == "system-a"
-    )
-    assert (
-        identity_after_insert.original_id
-        == identity_after_update.original_id
-        == "thing-1"
-    )
-    assert identity_after_insert.fragment_id == identity_after_update.fragment_id
-    assert identity_after_insert.merged_id != identity_after_update.merged_id
-    assert (
-        identity_after_insert.entity_type
-        == identity_after_update.entity_type
-        == "type-x"
+    assert identity_after_update.dict() == dict(
+        hadPrimarySource=system_a_id,
+        identifierInPrimarySource="thing-1",
+        stableTargetId=new_target_id,
+        entityType="type-x",
+        identifier=Joker(),
     )
 
 
 def test_fetch_identity() -> None:
     connector = IdentityConnector.get()
+    system_a_id = Identifier.generate()
+    entity_1 = Identifier.generate()
 
     result = connector.fetch()
     assert result is None
 
-    identity = connector.upsert("system-a", "thing-1", "entity-1", "type-x")
+    identity = connector.upsert(system_a_id, "thing-1", entity_1, "type-x")
 
     result = connector.fetch(
-        had_primary_source=str(identity.platform_id),
-        identifier_in_primary_source=str(identity.original_id),
-        stable_target_id=str(identity.merged_id),
+        had_primary_source=identity.platform_id,
+        identifier_in_primary_source=identity.original_id,
+        stable_target_id=identity.merged_id,
     )
     assert result == identity
 
+
+def test_fetch_nothing_found() -> None:
+    connector = IdentityConnector.get()
+
     result = connector.fetch(
-        had_primary_source="no-such",
-        identifier_in_primary_source="no-such",
-        stable_target_id="no-such",
+        had_primary_source=Identifier.generate(),
+        identifier_in_primary_source=Identifier.generate(),
+        stable_target_id=Identifier.generate(),
     )
     assert result is None

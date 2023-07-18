@@ -1,25 +1,37 @@
-from typing import TYPE_CHECKING
-
-from sqlalchemy import Column, Text, UniqueConstraint
-from sqlalchemy.orm.decl_api import DeclarativeMeta
-
-if TYPE_CHECKING:  # pragma: no cover
-
-    class Base(metaclass=DeclarativeMeta):
-        """Type hint for declarative ORM base class."""
-
-else:
-    from mex.common.db.models import Base
+from mex.common.models import BaseModel
+from mex.common.types import Identifier, PrimarySourceID
 
 
-class Identity(Base):
-    """SQLAlchemy model for the identifier lookup database."""
+class Identity(BaseModel):
+    """Model for identifier lookup."""
 
-    __tablename__ = "identity"
-    __table_args__ = (UniqueConstraint("platform_id", "original_id"),)
-    fragment_id = Column(Text(36), primary_key=True)  # identifier
-    platform_id = Column(Text(36), nullable=False)  # had_primary_source
-    original_id = Column(Text(256), nullable=False)  # identifier_in_primary_source
-    merged_id = Column(Text(36), nullable=False)  # stable_target_id
-    entity_type = Column(Text(32), nullable=False)  # get_entity_type()
-    annotation = Column(Text(4048), nullable=False)  # deprecated
+    identifier: Identifier
+    hadPrimarySource: PrimarySourceID
+    identifierInPrimarySource: str
+    stableTargetId: Identifier
+    entityType: str
+
+    @property
+    def fragment_id(self) -> Identifier:
+        """Return identifier."""
+        return self.identifier
+
+    @property
+    def platform_id(self) -> PrimarySourceID:
+        """Return hadPrimarySource."""
+        return self.hadPrimarySource
+
+    @property
+    def original_id(self) -> str:
+        """Return identifierInPrimarySource."""
+        return self.identifierInPrimarySource
+
+    @property
+    def merged_id(self) -> Identifier:
+        """Return stableTargetId."""
+        return self.stableTargetId
+
+    @property
+    def entity_type(self) -> str:
+        """Return entityType."""
+        return self.entityType

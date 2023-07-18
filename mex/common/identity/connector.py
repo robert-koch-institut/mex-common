@@ -1,15 +1,17 @@
-from typing import Optional, cast
+from typing import Iterable, Optional
 
-from sqlalchemy import select
-from sqlalchemy.dialects.sqlite import insert
-
-from mex.common.db.connector import MexDBConnector
+from mex.common.connector import BaseConnector
 from mex.common.identity.models import Identity
+from mex.common.settings import BaseSettings
 from mex.common.types import Identifier
 
 
-class IdentityConnector(MexDBConnector):
+class IdentityConnector(BaseConnector):
     """Connector class to handle read/write to the identity database."""
+
+    def __init__(self, settings: BaseSettings) -> None:
+        """Initialize a dummy identity database as a list of identity instances."""
+        self.dummy_identity_db: list[Identity] = []
 
     def upsert(
         self,
@@ -29,28 +31,22 @@ class IdentityConnector(MexDBConnector):
         Returns:
             Newly created or updated Identity instance
         """
-        self.engine.execute(
-            insert(Identity)
-            .values(
-                fragment_id=str(Identifier.generate()),
-                platform_id=str(had_primary_source),
-                original_id=identifier_in_primary_source,
-                merged_id=str(stable_target_id),
-                entity_type=entity_type,
-                annotation="-",  # deprecated
-            )
-            .on_conflict_do_update(
-                ["platform_id", "original_id"],
-                set_={"merged_id": str(stable_target_id)},
-            )
+        identity = self.fetch(
+            had_primary_source=had_primary_source,
+            identifier_in_primary_source=identifier_in_primary_source,
         )
-        return cast(
-            Identity,
-            self.fetch(
-                had_primary_source=had_primary_source,
-                identifier_in_primary_source=identifier_in_primary_source,
-            ),
-        )
+        if identity:
+            identity.stableTargetId = stable_target_id
+        else:
+            identity = Identity(
+                hadPrimarySource=had_primary_source,
+                identifierInPrimarySource=identifier_in_primary_source,
+                stableTargetId=stable_target_id,
+                entityType=entity_type,
+                identifier=Identifier.generate(),
+            )
+            self.dummy_identity_db.append(identity)
+        return identity
 
     def fetch(
         self,
@@ -69,14 +65,26 @@ class IdentityConnector(MexDBConnector):
         Returns:
             Optional Identity instance
         """
-        query = select(Identity)
+        identities: Iterable[Identity] = self.dummy_identity_db
+
         if had_primary_source:
-            query = query.where(Identity.platform_id == str(had_primary_source))
+            identities = filter(
+                lambda i: i.hadPrimarySource == had_primary_source, identities
+            )
         if identifier_in_primary_source:
-            query = query.where(
-                Identity.original_id == str(identifier_in_primary_source)
+            identities = filter(
+                lambda i: i.identifierInPrimarySource == identifier_in_primary_source,
+                identities,
             )
         if stable_target_id:
-            query = query.where(Identity.merged_id == str(stable_target_id))
-        cursor = self.engine.execute(query)
-        return cast(Optional[Identity], cursor.fetchone())
+            identities = filter(
+                lambda i: i.stableTargetId == stable_target_id, identities
+            )
+
+        if identities := list(identities):
+            return identities[0]
+        return None
+
+    def close(self) -> None:
+        """Trash the dummy identity database."""
+        self.dummy_identity_db.clear()
