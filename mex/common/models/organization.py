@@ -1,11 +1,16 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import OrganizationID, Text
 
 
-class ExtractedOrganization(ExtractedData):
-    """Model class definition for extracted organizations."""
+class BaseOrganization(BaseModel):
+    """Represents a collection of people organized together.
+
+    This can be any community or other social, commercial or political structure.
+    """
 
     stableTargetId: OrganizationID
     alternativeName: list[Text] = []
@@ -41,3 +46,11 @@ class ExtractedOrganization(ExtractedData):
         examples=["http://www.wikidata.org/entity/Q679041"],
         regex=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
     )
+
+
+class ExtractedOrganization(BaseOrganization, ExtractedData):
+    """An automatically extracted metadata set describing an organization."""
+
+
+class MergedOrganization(BaseOrganization, MergedItem):
+    """The result of merging all extracted data and rules for an organization."""

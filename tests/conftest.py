@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.models.person import ExtractedPerson
+from mex.common.models import ExtractedPerson
 from mex.common.types import Email, Identifier
 
 pytest_plugins = ("mex.common.testing.plugin",)

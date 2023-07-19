@@ -5,7 +5,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
-from mex.common.models.base import BaseModel
+from mex.common.models import BaseModel
 
 if TYPE_CHECKING:  # pragma: no cover
 

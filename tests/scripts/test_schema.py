@@ -3,8 +3,8 @@ import json
 import pytest
 from click.testing import CliRunner
 
+from mex.common.models import ExtractedResource
 from mex.common.models.access_platform import TechnicalAccessibility
-from mex.common.models.resource import ExtractedResource
 from mex.common.scripts.schema import SchemaScriptsSettings, dump_schema
 
 

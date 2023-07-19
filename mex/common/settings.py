@@ -148,6 +148,14 @@ class BaseSettings(PydanticBaseSettings):
         ),
         env="MEX_PUBLIC_API_TOKEN_PAYLOAD",
     )
+    public_api_verify_session: Union[bool, AssetsPath] = Field(
+        True,
+        description=(
+            "Public API-specific session verification setting, "
+            "see `verify_session` for possible values."
+        ),
+        env="MEX_PUBLIC_API_VERIFY_SESSION",
+    )
     organigram_path: AssetsPath = Field(
         "raw-data/organigram/organizational_units.json",
         description=(

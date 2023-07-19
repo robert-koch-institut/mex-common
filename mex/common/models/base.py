@@ -168,6 +168,9 @@ class MExModel(BaseModel):
     class Config:
         extra = Extra.forbid
 
+    if TYPE_CHECKING:
+        stableTargetId: Any
+
     identifier: Identifier = Field(
         ...,
         description="The identifier of this instance.",

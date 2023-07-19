@@ -5,7 +5,7 @@ from pydantic.schema import schema
 
 from mex.common.cli import entrypoint
 from mex.common.logging import echo
-from mex.common.models import MODEL_CLASSES
+from mex.common.models import EXTRACTED_MODEL_CLASSES
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 from mex.common.types import WorkPath
@@ -36,7 +36,7 @@ def dump_schema() -> None:
     """
     settings = SchemaScriptsSettings.get()
     mex_schema = schema(
-        models=MODEL_CLASSES,
+        models=EXTRACTED_MODEL_CLASSES,
         title=settings.schema_title,
     )
 

@@ -4,7 +4,7 @@ from uuid import UUID
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models.person import ExtractedPerson
+from mex.common.models import ExtractedPerson
 from mex.common.sinks.backend_api import post_to_backend_api
 
 

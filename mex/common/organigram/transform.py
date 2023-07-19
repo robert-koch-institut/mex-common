@@ -1,7 +1,7 @@
 from typing import Generator, Iterable
 
 from mex.common.logging import watch
-from mex.common.models.organizational_unit import ExtractedOrganizationalUnit
+from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import Identifier, OrganizationalUnitID, Text, TextLanguage
 

@@ -1,6 +1,8 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     ContactPointID,
     Link,
@@ -11,8 +13,8 @@ from mex.common.types import (
 )
 
 
-class ExtractedPrimarySource(ExtractedData):
-    """Model class definition for extracted primary source."""
+class BasePrimarySource(BaseModel):
+    """A collection of information, that is managed and curated by an RKI unit."""
 
     stableTargetId: PrimarySourceID
     alternativeTitle: list[Text] = []
@@ -26,3 +28,11 @@ class ExtractedPrimarySource(ExtractedData):
         None,
         examples=["v1", "2023-01-16", "Schema 9"],
     )
+
+
+class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
+    """An automatically extracted metadata set describing a primary source."""
+
+
+class MergedPrimarySource(BasePrimarySource, MergedItem):
+    """The result of merging all extracted data and rules for a primary source."""

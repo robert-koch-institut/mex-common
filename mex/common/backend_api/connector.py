@@ -1,14 +1,12 @@
 from itertools import groupby
-from typing import TypeVar
 from urllib.parse import urljoin
 
 from mex.common.backend_api.models import BulkInsertResponse
 from mex.common.connector import HTTPConnector
+from mex.common.models import MExModel
 from mex.common.models.base import MExModel
 from mex.common.settings import BaseSettings
 from mex.common.types import Identifier
-
-ModelT = TypeVar("ModelT", bound=MExModel)
 
 
 class BackendApiConnector(HTTPConnector):
@@ -27,7 +25,7 @@ class BackendApiConnector(HTTPConnector):
         """Post models to Backend API in a bulk insertion request.
 
         Args:
-            models: MEx models to post
+            models: Extracted or merged models to post
 
         Raises:
             HTTPError: If insert was not accepted, crashes or times out
@@ -37,7 +35,7 @@ class BackendApiConnector(HTTPConnector):
         """
         response = self.request(
             "POST",
-            "entity",
+            "ingest",
             {
                 entity_type: list(entities)
                 for entity_type, entities in groupby(

@@ -6,7 +6,7 @@ from ldap3 import Connection
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.models.primary_source import ExtractedPrimarySource
+from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_mex_db_primary_source_by_id
 from mex.common.primary_source.transform import (
     transform_mex_db_primary_source_to_extracted_primary_source,
@@ -41,6 +41,18 @@ XY_DEPARTMENT_ATTRS = dict(
 XY2_DEPARTMENT_ATTRS = dict(
     mail=["XY2@mail.tld"],
     objectGUID=["{00000000-0000-4000-8000-000000000043}"],
+    sAMAccountName=["XY2"],
+)
+
+XY_FUNC_ACCOUNT_ATTRS = dict(
+    mail=["XY@mail.tld"],
+    objectGUID=["{00000000-0000-4000-8000-000000000044}"],
+    sAMAccountName=["XY"],
+)
+
+XY2_FUNC_ACCOUNT_ATTRS = dict(
+    mail=["XY2@mail.tld"],
+    objectGUID=["{00000000-0000-4000-8000-000000000045}"],
     sAMAccountName=["XY2"],
 )
 

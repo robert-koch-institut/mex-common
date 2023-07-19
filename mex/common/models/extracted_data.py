@@ -7,8 +7,8 @@ from mex.common.models.base import MExModel
 from mex.common.types import Identifier, PrimarySourceID
 
 
-class ExtractedData(MExModel):
-    """Base model class definition for all extracted data."""
+class BaseExtractedData(MExModel):
+    """Base model class definition for all extracted data instances."""
 
     hadPrimarySource: PrimarySourceID = Field(
         ..., examples=[Identifier.generate(seed=42)]
@@ -16,7 +16,24 @@ class ExtractedData(MExModel):
     identifierInPrimarySource: str = Field(
         ..., examples=["123456", "item-501", "D7/x4/zz.final3"], min_length=1
     )
-    stableTargetId: Identifier = Field(..., examples=[Identifier.generate(seed=42)])
+
+    @classmethod
+    def get_entity_type(cls) -> str:
+        """Get the schema-conform name of this model class."""
+        return cls.__name__
+
+    def __str__(self) -> str:
+        """Format this extracted data instance as a string for logging."""
+        return (
+            f"{self.__class__.__name__}: "
+            f"{self.identifierInPrimarySource} "
+            f"{self.identifier} "
+            f"{self.stableTargetId}"
+        )
+
+
+class ExtractedData(BaseExtractedData):
+    """Base model class for extracted data instances that ensures identities."""
 
     @root_validator(pre=True)
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:
@@ -91,17 +108,3 @@ class ExtractedData(MExModel):
         values["identifier"] = Identifier(identity.fragment_id)
         values["stableTargetId"] = Identifier(identity.merged_id)
         return values
-
-    @classmethod
-    def get_entity_type(cls) -> str:
-        """Get the schema-conform name of this model class."""
-        return cls.__name__
-
-    def __str__(self) -> str:
-        """Format this extrated data instance as a string for logging."""
-        return (
-            f"{self.__class__.__name__}: "
-            f"{self.identifierInPrimarySource} "
-            f"{self.identifier} "
-            f"{self.stableTargetId}"
-        )

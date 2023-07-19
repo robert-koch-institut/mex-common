@@ -88,6 +88,30 @@ class LDAPConnector(BaseConnector):
         )
         return list(entries)
 
+    def get_functional_accounts(
+        self, mail: str = "*", sAMAccountName: str = "*", **filters: str
+    ) -> Generator[LDAPActor, None, None]:
+        """Get LDAP functional accounts that match provided filters.
+
+        Some projects/resources declare functional mailboxes as their contact.
+
+        Args:
+            mail: Email address of the functional account
+            sAMAccountName: Account name
+            **filters: Additional filters
+
+        Returns:
+            Generator for LDAP functional accounts
+        """
+        yield from self._fetch(
+            LDAPUnit,
+            objectCategory="Person",
+            OU="Funktion",
+            sAMAccountName=sAMAccountName,
+            mail=mail,
+            **filters,
+        )
+
     def get_persons(
         self, surname: str = "*", given_name: str = "*", mail: str = "*", **filters: str
     ) -> Generator[LDAPPerson, None, None]:
@@ -140,6 +164,37 @@ class LDAPConnector(BaseConnector):
             mail=mail,
             **filters,
         )
+
+    def get_functional_account(
+        self, objectGUID: str = "*", **filters: str
+    ) -> LDAPActor:
+        """Get a single LDAP functional account for the given filters.
+
+        Args:
+            objectGUID: Internal LDAP identifier
+            **filters: Filters for LDAP search
+
+        Raises:
+            MExError: If number of LDAP entries that match the filters is not 1
+
+        Returns:
+            Single LDAP functional account matching the filters
+        """
+        functional_accounts = list(
+            self.get_functional_accounts(
+                objectGUID=objectGUID,
+                **filters,
+            )
+        )
+        if not functional_accounts:
+            raise EmptySearchResultError(
+                f"Cannot find AD functional account for filters 'objectGUID: {objectGUID}, {filters}'"
+            )
+        if len(functional_accounts) > 1:
+            raise FoundMoreThanOneError(
+                f"Found multiple AD functional accounts for filters 'objectGUID: {objectGUID}, {filters}'"
+            )
+        return functional_accounts[0]
 
     def get_person(
         self, objectGUID: str = "*", employeeID: str = "*", **filters: str

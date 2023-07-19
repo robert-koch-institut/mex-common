@@ -7,7 +7,7 @@ import backoff
 import requests
 from requests import HTTPError, RequestException, Response
 
-from mex.common.connector.base import BaseConnector
+from mex.common.connector import BaseConnector
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 

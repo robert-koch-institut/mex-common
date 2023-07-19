@@ -1,6 +1,8 @@
 from pydantic import Field
 
+from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
+from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     AccessPlatformID,
     ContactPointID,
@@ -24,7 +26,7 @@ class APIType(VocabularyEnum):
     __vocabulary__ = "api-type"
 
 
-class ExtractedAccessPlatform(ExtractedData):
+class BaseAccessPlatform(BaseModel):
     """A way of physically accessing the Resource for re-use."""
 
     stableTargetId: AccessPlatformID
@@ -42,3 +44,11 @@ class ExtractedAccessPlatform(ExtractedData):
     )
     title: list[Text] = []
     unitInCharge: list[OrganizationalUnitID] = []
+
+
+class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
+    """An automatically extracted metadata set describing an access platform."""
+
+
+class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
+    """The result of merging all extracted data and rules for an access platform."""

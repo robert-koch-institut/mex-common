@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mex-common"
-version = "0.8.1"
+version = "0.10.0"
 description = "RKI MEx common library."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
