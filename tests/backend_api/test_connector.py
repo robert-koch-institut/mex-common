@@ -13,18 +13,6 @@ from mex.common.models import ExtractedPerson
 from mex.common.settings import BaseSettings
 from mex.common.testing import Joker
 
-# def test_init_mocked(monkeypatch: MonkeyPatch) -> None:
-#     mocked_request = MagicMock(
-#         spec=requests.Request, headers={"Accept": "application/json"}
-#     )
-#     monkeypatch.setattr(BackendApiConnector, "request", mocked_request)
-#     connector = BackendApiConnector.get()
-
-#     mocked_request.assert_called_once_with("GET", "_system/check")
-#     assert connector.session.headers["Accept"] == "application/json"
-#     assert connector.session.headers["User-Agent"] == "rki/mex"
-#     assert connector.url == "http://localhost:8080/v0"
-
 
 @pytest.mark.parametrize(
     "sent_payload, mocked_response, expected_response, expected_kwargs",
