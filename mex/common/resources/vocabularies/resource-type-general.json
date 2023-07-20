@@ -81,5 +81,14 @@
       "de": "Ad-hoc-Studie",
       "en": "Ad hoc Study"
     }
+  },
+  {
+    "identifier": "https://mex.rki.de/item/resource-type-general-8",
+    "inScheme": "https://mex.rki.de/item/resource-type-general",
+    "notation": "4.",
+    "prefLabel": {
+      "de": "Fragebogen",
+      "en": "Questionnaire"
+    }
   }
 ]
