@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 import requests
@@ -12,17 +12,34 @@ from mex.common.settings import BaseSettings
 @pytest.fixture
 def mocked_api_session(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock the PublicApiConnector with a MagicMock session and return that."""
-    mocked_session = MagicMock(spec=requests.Session)
+    mocked_session = MagicMock(spec=requests.Session, name="public_api_session")
+    mocked_session.request = MagicMock(
+        return_value=Mock(spec=requests.Response, status_code=200)
+    )
 
-    def mocked_init(self: PublicApiConnector, settings: BaseSettings) -> None:
+    def set_mocked_session(self: PublicApiConnector, settings: BaseSettings) -> None:
         self.session = mocked_session
-        self.url = settings.public_api_url
-        self.token_provider = settings.public_api_token_provider
-        self.token_payload = settings.public_api_token_payload
 
-    monkeypatch.setattr(PublicApiConnector, "__init__", mocked_init)
+    monkeypatch.setattr(PublicApiConnector, "_set_session", set_mocked_session)
     monkeypatch.setattr(PublicApiConnector, "wait_for_job", MagicMock())
     return mocked_session
+
+
+@pytest.fixture
+def mocked_api_session_authenticated(mocked_api_session: MagicMock) -> MagicMock:
+    """Get the authenticated MagicMock session."""
+    mocked_api_session.post = mocked_post = MagicMock(
+        return_value=Mock(spec=requests.Response),
+    )
+    mocked_api_session.headers = {}
+    mocked_post.return_value.json = MagicMock(
+        return_value={
+            "access_token": "expected-jwt",
+            "expires_in": 300,
+            "token_type": "Bearer",
+        },
+    )
+    return mocked_api_session
 
 
 @pytest.fixture

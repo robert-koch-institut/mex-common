@@ -40,16 +40,16 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     TIMEOUT = 10
     API_VERSION = "v0"
 
-    # def __init__(self, settings: BaseSettings) -> None:
-    #     """Create a new Pulic API connection.
+    def __init__(self, settings: BaseSettings) -> None:
+        """Create a new Pulic API connection.
 
-    #     Args:
-    #         settings: Configured settings instance
-    #     """
-    #     super().__init__(settings)
-    #     self.session.headers["User-Agent"] = "rki/mex"
-    #     self.token_provider = settings.public_api_token_provider
-    #     self.token_payload = settings.public_api_token_payload
+        Args:
+            settings: Configured settings instance
+        """
+        self.token_provider = settings.public_api_token_provider
+        self.token_payload = settings.public_api_token_payload
+        super().__init__(settings)
+        self.session.headers["User-Agent"] = "rki/mex"
 
     def _set_url(self, settings: BaseSettings) -> None:
         """Set url of the host."""
