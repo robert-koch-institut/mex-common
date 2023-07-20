@@ -72,8 +72,9 @@ class HTTPConnector(BaseConnector):
             Parsed JSON body of the response
         """
         # Prepare request
+        self.url.removeprefix
         if endpoint:
-            url = urljoin(self.url, endpoint)
+            url = urljoin(self.url + "/", endpoint)
         else:
             url = self.url
         kwargs.setdefault("timeout", self.TIMEOUT)
