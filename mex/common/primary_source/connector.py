@@ -42,14 +42,6 @@ class MExDBPrimarySourceConnector(BaseConnector):
         except SQLAlchemyError:
             return False
 
-    def close(self) -> None:
-        """Do nothing because no clean up is needed.
-
-        We don't use ORM sessions yet, so nothing to do there. We also don't need to
-        close connections or pools because with sqlite, they are closed immediately
-        after query execution / cursor exhaustion.
-        """
-
     def upsert(
         self,
         identifier: str,
@@ -174,3 +166,6 @@ class MExDBPrimarySourceConnector(BaseConnector):
             )
 
         return primary_source
+
+    def close(self) -> None:
+        """Do nothing because no clean up is needed."""
