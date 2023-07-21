@@ -4,7 +4,7 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from mex.common.identity.connector import IdentityConnector
+from mex.common.identity.query import fetch_identity
 from mex.common.models import BaseModel, ExtractedData
 from mex.common.types import Identifier
 
@@ -82,14 +82,12 @@ def test_extracted_data_get_entity_type() -> None:
 
 
 def test_entity_merged_id() -> None:
-    identity_connector = IdentityConnector.get()
-
     thing = ExtractedThing(
         identifierInPrimarySource="123",
         hadPrimarySource=Identifier.generate(seed=1),
     )
 
-    identity = identity_connector.fetch(
+    identity = fetch_identity(
         had_primary_source=thing.hadPrimarySource,
         identifier_in_primary_source=thing.identifierInPrimarySource,
     )

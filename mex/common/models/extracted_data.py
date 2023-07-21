@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import Field, root_validator
 
+from mex.common.identity.query import fetch_identity, upsert_identity
 from mex.common.models.base import MExModel
 from mex.common.types import Identifier, PrimarySourceID
 
@@ -70,10 +71,7 @@ class ExtractedData(BaseExtractedData):
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 
-        from mex.common.identity.connector import IdentityConnector  # noqa
-
-        connector = IdentityConnector.get()
-        identity = connector.fetch(
+        identity = fetch_identity(
             had_primary_source=had_primary_source,
             identifier_in_primary_source=identifier_in_primary_source,
         )
@@ -98,7 +96,7 @@ class ExtractedData(BaseExtractedData):
             stable_target_id = Identifier.generate()
 
         # update identity map
-        identity = connector.upsert(
+        identity = upsert_identity(
             had_primary_source,
             identifier_in_primary_source,
             stable_target_id,

@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Hashable, Iterable, cast
 
-from mex.common.identity.connector import IdentityConnector
+from mex.common.identity.query import fetch_identity
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
@@ -27,10 +27,9 @@ def get_merged_ids_by_attribute(
     """
     if attribute not in LDAPPerson.__fields__:
         raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
-    identity_connector = IdentityConnector.get()
     merged_ids_by_attribute = defaultdict(list)
     for person in persons:
-        if identity := identity_connector.fetch(
+        if identity := fetch_identity(
             had_primary_source=primary_source.stableTargetId,
             identifier_in_primary_source=str(person.objectGUID),
         ):
@@ -92,10 +91,9 @@ def get_merged_ids_by_query_string(
     Returns:
         Mapping from `LDAPPersonWithQuery.query` to corresponding `Identity.merged_id`
     """
-    identity_connector = IdentityConnector.get()
     merged_ids_by_attribute = defaultdict(list)
     for person_with_query in persons_with_query:
-        if identity := identity_connector.fetch(
+        if identity := fetch_identity(
             had_primary_source=primary_source.stableTargetId,
             identifier_in_primary_source=str(person_with_query.person.objectGUID),
         ):
