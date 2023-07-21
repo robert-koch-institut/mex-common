@@ -1,4 +1,9 @@
+import pytest
+from pytest import MonkeyPatch
+
+from mex.common.exceptions import MExError
 from mex.common.identity.query import fetch_identity, upsert_identity
+from mex.common.settings import BaseSettings
 from mex.common.testing import Joker
 from mex.common.types.identifier import Identifier
 
@@ -32,6 +37,20 @@ def test_upsert_identity() -> None:
     )
 
 
+def test_unsupported_providers(monkeypatch: MonkeyPatch) -> None:
+    settings = BaseSettings.get()
+    monkeypatch.setattr(BaseSettings, "__setattr__", object.__setattr__)
+    monkeypatch.setattr(settings, "identity_provider", "bogus-provider")
+
+    with pytest.raises(MExError, match="Cannot fetch identity from bogus-provider."):
+        fetch_identity()
+
+    with pytest.raises(MExError, match="Cannot upsert identity to bogus-provider."):
+        upsert_identity(
+            Identifier.generate(), "thing-1", Identifier.generate(), "type-x"
+        )
+
+
 def test_fetch_identity() -> None:
     system_a_id = Identifier.generate()
     entity_1 = Identifier.generate()
@@ -49,7 +68,7 @@ def test_fetch_identity() -> None:
     assert result == identity
 
 
-def test_fetch_nothing_found() -> None:
+def test_fetch_identity_nothing_found() -> None:
     result = fetch_identity(
         had_primary_source=Identifier.generate(),
         identifier_in_primary_source=Identifier.generate(),
