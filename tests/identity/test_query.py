@@ -1,14 +1,13 @@
-from mex.common.identity.connector import IdentityConnector
+from mex.common.identity.query import fetch_identity, upsert_identity
 from mex.common.testing import Joker
 from mex.common.types.identifier import Identifier
 
 
 def test_upsert_identity() -> None:
-    connector = IdentityConnector.get()
     system_a_id = Identifier.generate()
     old_target_id = Identifier.generate()
     new_target_id = Identifier.generate()
-    identity_after_insert = connector.upsert(
+    identity_after_insert = upsert_identity(
         system_a_id, "thing-1", old_target_id, "type-x"
     )
 
@@ -20,7 +19,7 @@ def test_upsert_identity() -> None:
         identifier=Joker(),
     )
 
-    identity_after_update = connector.upsert(
+    identity_after_update = upsert_identity(
         system_a_id, "thing-1", new_target_id, "type-x"
     )
 
@@ -34,16 +33,15 @@ def test_upsert_identity() -> None:
 
 
 def test_fetch_identity() -> None:
-    connector = IdentityConnector.get()
     system_a_id = Identifier.generate()
     entity_1 = Identifier.generate()
 
-    result = connector.fetch()
+    result = fetch_identity()
     assert result is None
 
-    identity = connector.upsert(system_a_id, "thing-1", entity_1, "type-x")
+    identity = upsert_identity(system_a_id, "thing-1", entity_1, "type-x")
 
-    result = connector.fetch(
+    result = fetch_identity(
         had_primary_source=identity.platform_id,
         identifier_in_primary_source=identity.original_id,
         stable_target_id=identity.merged_id,
@@ -52,9 +50,7 @@ def test_fetch_identity() -> None:
 
 
 def test_fetch_nothing_found() -> None:
-    connector = IdentityConnector.get()
-
-    result = connector.fetch(
+    result = fetch_identity(
         had_primary_source=Identifier.generate(),
         identifier_in_primary_source=Identifier.generate(),
         stable_target_id=Identifier.generate(),
