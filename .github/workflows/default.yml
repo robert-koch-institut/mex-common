@@ -1,5 +1,6 @@
 name: default
-on: [push]
+on:
+  push:
 env:
   PIP_NO_OPTION: on
   PIP_NO_CLEAN: on
