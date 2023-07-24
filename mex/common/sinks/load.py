@@ -21,17 +21,17 @@ def load(models: Iterable[MExModel]) -> None:
         sink: Where to load the provided models
     """
     settings = BaseSettings.get()
-    sink_function: Callable[[Iterable[MExModel]], Iterable[Identifier]]
+    func: Callable[[Iterable[MExModel]], Iterable[Identifier]]
 
     for sink, model_gen in zip(settings.sink, tee(models, len(settings.sink))):
         if sink == Sink.BACKEND:
-            sink_function = post_to_backend_api
+            func = post_to_backend_api
         elif sink == Sink.PUBLIC:
-            sink_function = post_to_public_api
+            func = post_to_public_api
         elif sink == Sink.NDJSON:
-            sink_function = write_ndjson
+            func = write_ndjson
         else:
             raise MExError(f"Cannot load to {sink}.")
 
-        for _ in sink_function(model_gen):
+        for _ in func(model_gen):
             continue  # unpacking the generator
