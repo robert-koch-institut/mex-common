@@ -1,8 +1,10 @@
-name: pages
+name: Documentation
+
 on:
   push:
-    branches: ["feature/mx-1314-gh-pages"]
+    branches: ["main"]
   workflow_dispatch:
+
 env:
   PIP_NO_OPTION: on
   PIP_NO_CLEAN: on

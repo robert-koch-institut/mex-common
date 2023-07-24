@@ -1,9 +1,10 @@
-# adapted from: https://raw.githubusercontent.com/intel/cve-bin-tool/main/doc/how_to_guides/cve_scanner_gh_action.yml
-name: CVE scanner
+name: Security
+
 on:
-  push:
+  pull_request:
   schedule:
-    - cron: '0 2 * * *' # run at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   scan:

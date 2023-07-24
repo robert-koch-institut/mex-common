@@ -2,6 +2,11 @@
 
 Common library for MEx python projects.
 
+[![testing](https://github.com/robert-koch-institut/mex-common/actions/workflows/testing.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/testing.yml)
+[![linting](https://github.com/robert-koch-institut/mex-common/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/linting.yml)
+[![security](https://github.com/robert-koch-institut/mex-common/actions/workflows/security.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/security.yml)
+[![documentation](https://github.com/robert-koch-institut/mex-common/actions/workflows/documentation.yml/badge.svg)](https://robert-koch-institut.github.io/mex-common)
+
 ## project
 
 With the Metadata Exchange (MEx) project, the [RKI](https://www.rki.de) is developing a
