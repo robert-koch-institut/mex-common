@@ -176,7 +176,7 @@ class Timestamp:
     @staticmethod
     def _parse_string(value: str) -> tuple[datetime, TimestampPrecision]:
         """Parse a string containing a timestamp using pandas' tslibs."""
-        parsed, precision = parsing.parse_time_string(
+        parsed, precision = parsing.parse_datetime_string_with_reso(
             value, freq=None, dayfirst=False, yearfirst=True
         )
         if parsed.tzinfo is None:
