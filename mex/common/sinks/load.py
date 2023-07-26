@@ -1,3 +1,4 @@
+from itertools import tee
 from typing import Callable, Iterable
 
 from mex.common.exceptions import MExError
@@ -20,15 +21,17 @@ def load(models: Iterable[MExModel]) -> None:
         sink: Where to load the provided models
     """
     settings = BaseSettings.get()
-    sink: Callable[[Iterable[MExModel]], Iterable[Identifier]]
-    if settings.sink == Sink.BACKEND:
-        sink = post_to_backend_api
-    elif settings.sink == Sink.PUBLIC:
-        sink = post_to_public_api
-    elif settings.sink == Sink.NDJSON:
-        sink = write_ndjson
-    else:
-        raise MExError(f"Cannot load to {settings.sink}")
+    func: Callable[[Iterable[MExModel]], Iterable[Identifier]]
 
-    for _ in sink(models):
-        continue  # unpacking the generator
+    for sink, model_gen in zip(settings.sink, tee(models, len(settings.sink))):
+        if sink == Sink.BACKEND:
+            func = post_to_backend_api
+        elif sink == Sink.PUBLIC:
+            func = post_to_public_api
+        elif sink == Sink.NDJSON:
+            func = write_ndjson
+        else:
+            raise MExError(f"Cannot load to {sink}.")
+
+        for _ in func(model_gen):
+            continue  # unpacking the generator

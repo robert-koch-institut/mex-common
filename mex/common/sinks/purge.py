@@ -1,4 +1,5 @@
-from typing import Any, Callable, Iterable, Union
+from itertools import tee
+from typing import Any, Callable, Iterable
 
 from mex.common.exceptions import MExError
 from mex.common.models import MExModel
@@ -11,7 +12,7 @@ from mex.common.sinks.public_api import (
     purge_models_from_public_api,
 )
 
-PublicApiItemOptionalValues = Union[PublicApiItem, PublicApiItemWithoutValues]
+PublicApiItemOptionalValues = PublicApiItem | PublicApiItemWithoutValues
 
 
 def purge_items(items: Iterable[PublicApiItemOptionalValues]) -> None:
@@ -24,16 +25,18 @@ def purge_items(items: Iterable[PublicApiItemOptionalValues]) -> None:
         sink: Where to purge the provided items
     """
     settings = BaseSettings.get()
-    sink: Callable[[Iterable[PublicApiItemOptionalValues]], Iterable[Any]]
-    if settings.sink == Sink.PUBLIC:
-        sink = purge_items_from_public_api
-    elif settings.sink == Sink.NDJSON:
-        sink = write_ndjson
-    else:
-        raise MExError(f"Cannot purge from {settings.sink}")
+    func: Callable[[Iterable[PublicApiItemOptionalValues]], Iterable[Any]]
 
-    for _ in sink(items):
-        continue  # unpacking the generator
+    for sink, item_gen in zip(settings.sink, tee(items, len(settings.sink))):
+        if sink == Sink.PUBLIC:
+            func = purge_items_from_public_api
+        elif sink == Sink.NDJSON:
+            func = write_ndjson
+        else:
+            raise MExError(f"Cannot purge from {sink}.")
+
+        for _ in func(item_gen):
+            continue  # unpacking the generator
 
 
 def purge_models(models: Iterable[MExModel]) -> None:
@@ -46,13 +49,15 @@ def purge_models(models: Iterable[MExModel]) -> None:
         sink: Where to purge the provided models
     """
     settings = BaseSettings.get()
-    sink: Callable[[MExModel], Iterable[Any]]
-    if settings.sink == Sink.PUBLIC:
-        sink = purge_models_from_public_api
-    elif settings.sink == Sink.NDJSON:
-        sink = write_ndjson
-    else:
-        raise MExError(f"Cannot purge from {settings.sink}")
+    func: Callable[[MExModel], Iterable[Any]]
 
-    for _ in sink(models):
-        continue  # unpacking the generator
+    for sink, model_gen in zip(settings.sink, tee(models, len(settings.sink))):
+        if sink == Sink.PUBLIC:
+            func = purge_models_from_public_api
+        elif sink == Sink.NDJSON:
+            func = write_ndjson
+        else:
+            raise MExError(f"Cannot purge from {sink}.")
+
+        for _ in func(model_gen):
+            continue  # unpacking the generator
