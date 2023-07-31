@@ -1,4 +1,4 @@
-PHONY: all test setup hooks install pytest linter build docs
+.PHONY: all test setup hooks install pytest linter build docs
 all: install test
 test: linter pytest
 

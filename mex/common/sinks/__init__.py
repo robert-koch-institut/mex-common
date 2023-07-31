@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Sink(Enum):
-    """Configuration enum to choose where to funnel inbound data."""
+    """Configuration to choose where to send outbound data."""
 
     BACKEND = "backend"
     GRAPH = "graph"
