@@ -27,6 +27,7 @@ repos:
         args: [--autofix]
       - id: end-of-file-fixer
       - id: debug-statements
+        exclude: "cli\\.py$"
   - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.3.0
     hooks:
