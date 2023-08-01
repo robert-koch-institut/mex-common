@@ -1,82 +1,31 @@
-from typing import Optional, cast
+import warnings
 
-from sqlalchemy import select
-from sqlalchemy.dialects.sqlite import insert
-
-from mex.common.db.connector import MexDBConnector
+from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
+from mex.common.identity.query import fetch_identity, upsert_identity
 from mex.common.types import Identifier
 
 
-class IdentityConnector(MexDBConnector):
+class IdentityConnector(BaseProvider):
     """Connector class to handle read/write to the identity database."""
 
-    def upsert(
-        self,
-        had_primary_source: Identifier,
-        identifier_in_primary_source: str,
-        stable_target_id: Identifier,
-        entity_type: str,
-    ) -> Identity:
-        """Insert a new identity or update an existing one.
+    @classmethod
+    def get(cls) -> "IdentityConnector":
+        """Create or retrieve an identity provider from the context."""
+        return cls()
 
-        Args:
-            had_primary_source: Stable target ID of primary source
-            identifier_in_primary_source: Identifier in the primary source
-            stable_target_id: Stable target ID of the entity
-            entity_type: Type of the entity
-
-        Returns:
-            Newly created or updated Identity instance
-        """
-        self.engine.execute(
-            insert(Identity)
-            .values(
-                fragment_id=str(Identifier.generate()),
-                platform_id=str(had_primary_source),
-                original_id=identifier_in_primary_source,
-                merged_id=str(stable_target_id),
-                entity_type=entity_type,
-                annotation="-",  # deprecated
-            )
-            .on_conflict_do_update(
-                ["platform_id", "original_id"],
-                set_={"merged_id": str(stable_target_id)},
-            )
+    def upsert(self, *args: Identifier | str) -> Identity:
+        """Insert a new identity or update an existing one."""
+        warnings.warn(
+            "IdentityConnector.upsert is deprecated. Use upsert_identity instead.",
+            DeprecationWarning,
         )
-        return cast(
-            Identity,
-            self.fetch(
-                had_primary_source=had_primary_source,
-                identifier_in_primary_source=identifier_in_primary_source,
-            ),
+        return upsert_identity(*args)  # type: ignore
+
+    def fetch(self, **kwargs: Identifier | str | None) -> Identity | None:
+        """Find an Identity instance from the database if it can be found."""
+        warnings.warn(
+            "IdentityConnector.fetch is deprecated. Use fetch_identity instead.",
+            DeprecationWarning,
         )
-
-    def fetch(
-        self,
-        *,
-        had_primary_source: Identifier | None = None,
-        identifier_in_primary_source: str | None = None,
-        stable_target_id: Identifier | None = None,
-    ) -> Optional[Identity]:
-        """Find an Identity instance from the database if it can be found.
-
-        Args:
-            had_primary_source: Stable target ID of primary source
-            identifier_in_primary_source: Identifier in the primary source
-            stable_target_id: Stable target ID of the entity
-
-        Returns:
-            Optional Identity instance
-        """
-        query = select(Identity)
-        if had_primary_source:
-            query = query.where(Identity.platform_id == str(had_primary_source))
-        if identifier_in_primary_source:
-            query = query.where(
-                Identity.original_id == str(identifier_in_primary_source)
-            )
-        if stable_target_id:
-            query = query.where(Identity.merged_id == str(stable_target_id))
-        cursor = self.engine.execute(query)
-        return cast(Optional[Identity], cursor.fetchone())
+        return fetch_identity(**kwargs)  # type: ignore

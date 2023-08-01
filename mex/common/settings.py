@@ -10,6 +10,7 @@ from pydantic import Extra, Field, SecretStr
 from pydantic.env_settings import DotenvType, env_file_sentinel
 from pydantic.typing import StrPath
 
+from mex.common.identity.types import IdentityProvider
 from mex.common.sinks import Sink
 from mex.common.transform import MExEncoder
 from mex.common.types import AssetsPath, WorkPath
@@ -108,6 +109,11 @@ class BaseSettings(PydanticBaseSettings):
             "Defaults to the current working directory."
         ),
         env="MEX_WORK_DIR",
+    )
+    identity_provider: IdentityProvider = Field(
+        IdentityProvider.DUMMY,
+        description="Provider to assign stableTargetIds to new model instances.",
+        env="MEX_IDENTITY_PROVIDER",
     )
     backend_api_url: AnyUrl = Field(
         "http://localhost:8080/",
