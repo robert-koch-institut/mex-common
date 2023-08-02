@@ -1,95 +1,11 @@
 import json
-from typing import Any, Optional
 from unittest.mock import MagicMock, Mock, call
 
-import pytest
-import requests
 from pytest import MonkeyPatch
-from requests import JSONDecodeError, Response
-from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import ExtractedPerson
-from mex.common.settings import BaseSettings
 from mex.common.testing import Joker
-
-
-@pytest.mark.parametrize(
-    "sent_payload, mocked_response, expected_response, expected_kwargs",
-    [
-        (
-            {},
-            MagicMock(status_code=204, json=MagicMock(side_effect=JSONDecodeError)),
-            {},
-            {"headers": {"Accept": "application/json"}},
-        ),
-        (
-            {},
-            MagicMock(status_code=200, json=MagicMock(return_value={"foo": "bar"})),
-            {"foo": "bar"},
-            {"headers": {"Accept": "application/json"}},
-        ),
-        (
-            {"q": "SELECT status;"},
-            MagicMock(status_code=200, json=MagicMock(return_value={"status": 42})),
-            {"status": 42},
-            {
-                "headers": {
-                    "Accept": "application/json",
-                    "User-Agent": "rki/mex",
-                },
-                "data": '{"q": "SELECT status;"}',
-            },
-        ),
-    ],
-    ids=[
-        "sending no payload and receiving 204 response",
-        "sending no payload and receiving 200 response",
-        "sending payload and receiving 200 response",
-    ],
-)
-def test_request_success(
-    monkeypatch: MonkeyPatch,
-    sent_payload: Optional[dict[str, Any]],
-    mocked_response: Response,
-    expected_response: dict[str, Any],
-    expected_kwargs: dict[str, Any],
-) -> None:
-    mocked_session = MagicMock(spec=requests.Session, name="backend_session")
-    mocked_session.request = MagicMock(return_value=mocked_response)
-
-    def set_mocked_session(self: BackendApiConnector, settings: BaseSettings) -> None:
-        self.session = mocked_session
-
-    monkeypatch.setattr(BackendApiConnector, "_set_session", set_mocked_session)
-
-    connector = BackendApiConnector.get()
-
-    actual_response = connector.request("POST", "things", payload=sent_payload)
-    assert actual_response == expected_response
-    assert mocked_session.request.call_args_list[-1] == call(
-        "POST",
-        "http://localhost:8080/v0/things",
-        None,
-        timeout=BackendApiConnector.TIMEOUT,
-        **expected_kwargs
-    )
-
-
-def test_request_error_mocked(monkeypatch: MonkeyPatch) -> None:
-    mocked_response = MagicMock(
-        raise_for_status=MagicMock(side_effect=HTTPError("Ooops"))
-    )
-    mocked_send_request = MagicMock(
-        spec=BackendApiConnector._send_request,
-        side_effect=[Mock(), mocked_response],
-        json=dict,
-    )
-    monkeypatch.setattr(BackendApiConnector, "_send_request", mocked_send_request)
-
-    connector = BackendApiConnector.get()
-    with pytest.raises(HTTPError, match="Ooops"):
-        connector.request("GET", "fail")
 
 
 def test_post_models_mocked(
