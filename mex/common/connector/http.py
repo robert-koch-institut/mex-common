@@ -13,7 +13,7 @@ from mex.common.transform import MExEncoder
 
 
 class HTTPConnector(BaseConnector):
-    """Create a new HTTP connection."""
+    """Base class for requests-based HTTP connectors."""
 
     TIMEOUT = 10
 
