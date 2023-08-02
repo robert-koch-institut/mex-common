@@ -1,12 +1,15 @@
 from typing import List, Optional
 
+from sqlalchemy import create_engine
 from sqlalchemy.dialects.sqlite import insert
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
-from mex.common.db.connector import MexDBConnector
-from mex.common.exceptions import EmptySearchResultError
+from mex.common.connector import BaseConnector
+from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.primary_source.models import (
     AlternativeTitle,
+    Base,
     Contact,
     Description,
     Documentation,
@@ -15,10 +18,29 @@ from mex.common.primary_source.models import (
     Title,
     UnitInCharge,
 )
+from mex.common.settings import BaseSettings
 
 
-class MExDBPrimarySourceConnector(MexDBConnector):
+class MExDBPrimarySourceConnector(BaseConnector):
     """Handle database operations for mex primary sources."""
+
+    def __init__(self, settings: BaseSettings) -> None:
+        """Create a new mex database connection.
+
+        Args:
+            settings: Configured settings instance
+        """
+        self.engine = create_engine(f"sqlite+pysqlite:///{settings.sqlite_path}")
+        if not self._is_service_available():
+            raise MExError(f"MEx database not available: {settings.sqlite_path}")
+        Base.metadata.create_all(self.engine)
+
+    def _is_service_available(self) -> bool:
+        try:
+            response = self.engine.execute("SELECT 1;")
+            return bool(response.scalar_one())
+        except SQLAlchemyError:
+            return False
 
     def upsert(
         self,
@@ -32,12 +54,12 @@ class MExDBPrimarySourceConnector(MexDBConnector):
         units_in_charge: list[str],
         version: Optional[str],
     ) -> None:
-        """Insert/update database enteries for mex primary source and all dependent relations.
+        """Insert/update database entries for mex primary source and all dependent relations.
 
         Args:
             identifier: Identifier of the primary source
             alternative_titles: Alternative titles of the primary source
-            contacts: Contacts assosiated with the primary source
+            contacts: Contacts associated with the primary source
             descriptions: Description of the primary source
             documentations: Documentations of the primary source
             located_ats: Located at info of the primary source
@@ -139,8 +161,11 @@ class MExDBPrimarySourceConnector(MexDBConnector):
 
         if not primary_source:
             raise EmptySearchResultError(
-                f"No primary_source found with identifier in primary source: '{identifier_in_primary_source}'. "
-                "Did you execute 'seed-mex-db'?"
+                f"No primary_source found with identifier in primary source: "
+                f"'{identifier_in_primary_source}'. Did you execute 'seed-mex-db'?"
             )
 
         return primary_source
+
+    def close(self) -> None:
+        """Do nothing because no clean up is needed."""

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import NoneStr
 from sqlalchemy import Column, ForeignKey, Integer, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from mex.common.models import BaseModel
@@ -13,7 +13,7 @@ if TYPE_CHECKING:  # pragma: no cover
         """Type hint for declarative ORM base class."""
 
 else:
-    from mex.common.db.models import Base
+    Base = declarative_base()
 
 
 class SeedPrimarySource(BaseModel):
