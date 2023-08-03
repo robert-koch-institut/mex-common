@@ -12,7 +12,10 @@ from mex.common.primary_source.transform import (
 )
 from mex.common.settings import BaseSettings
 from mex.common.testing import insert_test_primary_sources_into_db
-from mex.common.wikidata.connector import WikidataConnector
+from mex.common.wikidata.connector import (
+    WikidataAPIConnector,
+    WikidataQueryServiceConnector,
+)
 
 TESTDATA_DIR = Path(__file__).parent / "test_data"
 
@@ -34,14 +37,27 @@ def wikidata_primary_source() -> ExtractedPrimarySource:
 
 
 @pytest.fixture
-def mocked_session(monkeypatch: MonkeyPatch) -> MagicMock:
-    """Mock and return WikidataConnector with a MagicMock session."""
+def mocked_session_wikidata_query_service(monkeypatch: MonkeyPatch) -> MagicMock:
+    """Mock and return WikidataQueryServiceConnector with a MagicMock session."""
     mocked_session = MagicMock(spec=requests.Session)
 
-    def mocked_init(self: WikidataConnector, settings: BaseSettings) -> None:
+    def mocked_init(
+        self: WikidataQueryServiceConnector, settings: BaseSettings
+    ) -> None:
         self.session = mocked_session
-        self.api_url = settings.wiki_api_url
-        self.query_service_url = settings.wiki_query_service_url
 
-    monkeypatch.setattr(WikidataConnector, "__init__", mocked_init)
+    monkeypatch.setattr(WikidataQueryServiceConnector, "__init__", mocked_init)
+
+    return mocked_session
+
+
+@pytest.fixture
+def mocked_session_wikidata_api(monkeypatch: MonkeyPatch) -> MagicMock:
+    """Mock and return WikidataAPIConnector with a MagicMock session."""
+    mocked_session = MagicMock(spec=requests.Session)
+
+    def mocked_init(self: WikidataAPIConnector, settings: BaseSettings) -> None:
+        self.session = mocked_session
+
+    monkeypatch.setattr(WikidataAPIConnector, "__init__", mocked_init)
     return mocked_session

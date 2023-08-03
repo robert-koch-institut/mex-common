@@ -3,7 +3,10 @@ from typing import Generator
 import requests
 
 from mex.common.exceptions import MExError
-from mex.common.wikidata.connector import WikidataConnector
+from mex.common.wikidata.connector import (
+    WikidataAPIConnector,
+    WikidataQueryServiceConnector,
+)
 from mex.common.wikidata.models.organization import WikidataOrganization
 
 
@@ -18,7 +21,7 @@ def search_organization_by_label(
     Returns:
         Generator for WikidataOrganization items
     """
-    connector = WikidataConnector.get()
+    connector = WikidataQueryServiceConnector.get()
     query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
         "WHERE{"
@@ -63,7 +66,7 @@ def get_organization_details(item_id: str) -> WikidataOrganization:
     Returns:
         WikidataOrganization object
     """
-    connector = WikidataConnector.get()
+    connector = WikidataAPIConnector.get()
 
     item = connector.get_wikidata_item_details_by_id(item_id)
 

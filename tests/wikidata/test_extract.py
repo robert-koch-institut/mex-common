@@ -4,7 +4,10 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
-from mex.common.wikidata.connector import WikidataConnector
+from mex.common.wikidata.connector import (
+    WikidataAPIConnector,
+    WikidataQueryServiceConnector,
+)
 from mex.common.wikidata.extract import (
     get_organization_details,
     search_organization_by_label,
@@ -23,7 +26,7 @@ def test_search_organization_by_label() -> None:
     assert search_results[0].identifier == expected
 
 
-@pytest.mark.usefixtures("mocked_session")
+@pytest.mark.usefixtures("mocked_session_wikidata_query_service")
 def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> None:
     """Test(mock) organization search in wikidata exceptions."""
     expected_query_response = [
@@ -39,7 +42,7 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
         return expected_query_response
 
     monkeypatch.setattr(
-        WikidataConnector,
+        WikidataQueryServiceConnector,
         "get_data_by_query",
         lambda self, _: mocked_query_response(),
     )
@@ -48,7 +51,9 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
         _ = list(search_organization_by_label(item_label="BMW"))
 
 
-@pytest.mark.usefixtures("mocked_session")
+@pytest.mark.usefixtures(
+    "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
+)
 def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
     """Test(mock) organization search in wikidata."""
     expected_item_details_response = {
@@ -164,7 +169,7 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
         return expected_query_response
 
     monkeypatch.setattr(
-        WikidataConnector,
+        WikidataQueryServiceConnector,
         "get_data_by_query",
         lambda self, _: mocked_query_response(),
     )
@@ -175,7 +180,7 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
             return data[0]
 
     monkeypatch.setattr(
-        WikidataConnector,
+        WikidataAPIConnector,
         "get_wikidata_item_details_by_id",
         lambda self, _: mocked_item_details_response(),
     )
@@ -279,12 +284,15 @@ def test_get_organization_details() -> None:
             ],
         },
     }
+
     organization_details = get_organization_details(item_id="Q679041")
 
     assert organization_details.dict(exclude_none=True) == expected
 
 
-@pytest.mark.usefixtures("mocked_session")
+@pytest.mark.usefixtures(
+    "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
+)
 def test_get_organization_details_mocked(monkeypatch: MonkeyPatch) -> None:
     """Test(mock) organization details fetching from wikidata."""
     expected = {
@@ -393,7 +401,7 @@ def test_get_organization_details_mocked(monkeypatch: MonkeyPatch) -> None:
             return data[0]
 
     monkeypatch.setattr(
-        WikidataConnector,
+        WikidataAPIConnector,
         "get_wikidata_item_details_by_id",
         lambda self, _: mocked_item_details_response(),
     )

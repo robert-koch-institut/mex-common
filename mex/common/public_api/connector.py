@@ -1,16 +1,14 @@
 import json
 from base64 import b64decode
 from datetime import datetime, timedelta
-from typing import Any, Generator, Literal, TypeVar, cast
-from urllib.parse import urljoin
+from typing import Generator, TypeVar, cast
 from uuid import UUID
 
 import backoff
 import pandas as pd
-from requests import Response, Session
-from requests.exceptions import HTTPError, RequestException
+from requests.exceptions import HTTPError
 
-from mex.common.connector import BaseConnector
+from mex.common.connector import HTTPConnector
 from mex.common.logging import echo
 from mex.common.models import MExModel
 from mex.common.public_api.models import (
@@ -28,7 +26,6 @@ from mex.common.public_api.transform import (
     transform_public_api_item_to_mex_model,
 )
 from mex.common.settings import BaseSettings
-from mex.common.transform import MExEncoder
 from mex.common.types import Identifier
 
 ModelT = TypeVar("ModelT", bound=MExModel)
@@ -37,7 +34,7 @@ PublicApiItemT = TypeVar(
 )
 
 
-class PublicApiConnector(BaseConnector):  # pragma: no cover
+class PublicApiConnector(HTTPConnector):  # pragma: no cover
     """Connector class to handle authentication and interaction with the public API."""
 
     TIMEOUT = 10
@@ -49,25 +46,16 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
         Args:
             settings: Configured settings instance
         """
-        self.session = Session()
-        self.session.headers["Accept"] = "application/json"
-        self.session.headers["User-Agent"] = "rki/mex"
-        self.session.verify = settings.public_api_verify_session  # type: ignore
-        self.url = settings.public_api_url
         self.token_provider = settings.public_api_token_provider
         self.token_payload = settings.public_api_token_payload
-        self.authenticate()
-        self._check_availability_and_authentication()
+        super().__init__(settings)
+        self.session.headers["User-Agent"] = "rki/mex"
 
-    def _check_availability_and_authentication(self) -> None:
-        # probe URLs not exposed, use search endpoint instead
-        self.request(
-            "POST",
-            "query/search",
-            PublicApiSearchRequest(limit=0),
-        )
+    def _set_url(self, settings: BaseSettings) -> None:
+        """Set url of the host."""
+        self.url = settings.public_api_url
 
-    def authenticate(self) -> None:
+    def _set_authentication(self, settings: BaseSettings) -> None:
         """Generate JWT using secret payload and attach it to session."""
         response = self.session.post(
             self.token_provider,
@@ -82,72 +70,6 @@ class PublicApiConnector(BaseConnector):  # pragma: no cover
             f"authenticated with public api (expires {expires_at})", fg="bright_magenta"
         )
         self.session.headers["Authorization"] = f"Bearer {auth_response.access_token}"
-
-    def request(
-        self,
-        method: Literal["POST", "GET", "PUT", "DELETE"],
-        endpoint: str,
-        payload: Any = None,
-        **kwargs: Any,
-    ) -> dict[str, Any]:
-        """Prepare and send a request with authentication, error handling and payload.
-
-        Args:
-            method: HTTP method to use
-            endpoint: Path to API endpoint to be prefixed with host and version prefix
-            payload: Data to be serialized as JSON using the `MExEncoder`
-            kwargs: Further keyword arguments passed to `requests`
-
-        Raises:
-            RequestException: Error from `requests` that can't be solved with a retry
-            HTTPError: Re-raised HTTP error with (truncated) response body
-            JSONDecodeError: If body of response cannot be parsed correctly
-
-        Returns:
-            Parsed JSON body of the response
-        """
-        # Prepare request
-        url = urljoin(self.url, f"{self.API_VERSION}/{endpoint}")
-        kwargs.setdefault("timeout", self.TIMEOUT)
-        kwargs.setdefault("headers", {})
-        if payload:
-            kwargs["data"] = json.dumps(payload, cls=MExEncoder)
-            kwargs["headers"].setdefault("Content-Type", "application/json")
-
-        # Send request
-        response = self._send_request(method, url, **kwargs)
-
-        try:
-            response.raise_for_status()
-        except HTTPError as error:
-            # Re-raise any errors that persisted the retrying but add the response body
-            raise HTTPError(
-                " ".join((*error.args, response.text[:4096])), response=response
-            ) from error
-
-        if response.status_code == 204:
-            return {}
-        return cast(dict[str, Any], response.json())
-
-    @backoff.on_predicate(
-        backoff.constant,
-        lambda response: cast(Response, response).status_code == 401,
-        on_backoff=lambda s: cast(PublicApiConnector, s["args"][0]).authenticate(),
-        max_tries=2,  # needs to be at least 2 so the 2nd try will be re-authenticated
-    )
-    @backoff.on_predicate(
-        backoff.fibo,
-        lambda response: cast(Response, response).status_code >= 500,
-        max_tries=4,
-    )
-    @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)
-    def _send_request(self, method: str, url: str, **kwargs: Any) -> Response:
-        """Send the response with advanced retrying ruleset."""
-        return self.session.request(method, url, **kwargs)
-
-    def close(self) -> None:
-        """Close the connector's underlying requests session."""
-        self.session.close()
 
     def echo_job_logs(self, job_id: str) -> None:
         """Echo the logs for the job with the given ID to the console.

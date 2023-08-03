@@ -3,30 +3,20 @@ from unittest.mock import MagicMock, Mock
 import pytest
 import requests
 
-from mex.common.exceptions import MExError
-from mex.common.wikidata.connector import WikidataConnector
-
-
-def test_initialization_mocked_server_error(
-    mocked_session: MagicMock,
-) -> None:
-    """Test if server is intialized and availability throws an error."""
-    connector = WikidataConnector.get()
-    mocked_session.get.return_value = Mock(
-        spec=requests.Response, ok=0, status_code=500, text="Internal Server Error"
-    )
-    with pytest.raises(MExError, match="Internal Server Error"):
-        connector._check_availability()
+from mex.common.wikidata.connector import (
+    WikidataAPIConnector,
+    WikidataQueryServiceConnector,
+)
 
 
 def test_initialization_mocked_server(
-    mocked_session: MagicMock,
+    mocked_session_wikidata_query_service: MagicMock,
 ) -> None:
     """Test if server is intialized and available."""
-    mocked_session.get.return_value = Mock(
+    mocked_session_wikidata_query_service.request.return_value = Mock(
         spec=requests.Response, ok=1, status_code=200
     )
-    connector = WikidataConnector.get()
+    connector = WikidataQueryServiceConnector.get()
     assert connector._check_availability() == None
 
 
@@ -66,14 +56,16 @@ def test_get_data_by_query() -> None:
         'SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }'
         "}"
     )
-    connector = WikidataConnector.get()
+    connector = WikidataQueryServiceConnector.get()
 
     response = connector.get_data_by_query(query_string)
 
     assert response == expected
 
 
-def test_get_data_by_query_mocked(mocked_session: MagicMock) -> None:
+def test_get_data_by_query_mocked(
+    mocked_session_wikidata_query_service: MagicMock,
+) -> None:
     """Test(mock) if items can be searched providing a label."""
     expected = [
         {
@@ -87,14 +79,15 @@ def test_get_data_by_query_mocked(mocked_session: MagicMock) -> None:
         },
     ]
 
-    mocked_session.get = MagicMock(
+    mocked_session_wikidata_query_service.request = MagicMock(
         return_value=Mock(
             spec=requests.Response,
             json=MagicMock(return_value={"results": {"bindings": expected}}),
+            status_code=200,
         )
     )
 
-    connector = WikidataConnector.get()
+    connector = WikidataQueryServiceConnector.get()
 
     response = connector.get_data_by_query("SELECT foo;")
 
@@ -104,7 +97,7 @@ def test_get_data_by_query_mocked(mocked_session: MagicMock) -> None:
 @pytest.mark.integration
 def test_get_wikidata_item_details_by_id() -> None:
     """Test if items details can be fetched by its ID."""
-    connector = WikidataConnector.get()
+    connector = WikidataAPIConnector.get()
     response = connector.get_wikidata_item_details_by_id("Q26678")
 
     assert list(response.keys()) == [
@@ -126,7 +119,7 @@ def test_get_wikidata_item_details_by_id() -> None:
 
 
 def test_get_wikidata_items_details_by_id_mocked(
-    mocked_session: MagicMock,
+    mocked_session_wikidata_api: MagicMock,
 ) -> None:
     """Test(mock) if items details can be fetched by its ID."""
     expected = {
@@ -154,14 +147,15 @@ def test_get_wikidata_items_details_by_id_mocked(
         "success": 1,
     }
 
-    mocked_session.get = MagicMock(
+    mocked_session_wikidata_api.request = MagicMock(
         return_value=Mock(
             spec=requests.Response,
             json=MagicMock(return_value={"entities": {"Q26678": expected}}),
+            status_code=200,
         )
     )
 
-    connector = WikidataConnector.get()
+    connector = WikidataAPIConnector.get()
 
     response = connector.get_wikidata_item_details_by_id("Q26678")
 

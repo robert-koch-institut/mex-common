@@ -16,9 +16,9 @@ from mex.common.types import Identifier, Link, Text, Timestamp
 
 def test_authenticate_mocked(mocked_api_session: MagicMock) -> None:
     settings = BaseSettings.get()
-    connector = PublicApiConnector.get()
+
     mocked_api_session.post = mocked_post = MagicMock(
-        return_value=Mock(spec=requests.Response)
+        return_value=Mock(spec=requests.Response),
     )
     mocked_api_session.headers = {}
     mocked_post.return_value.json = MagicMock(
@@ -26,10 +26,10 @@ def test_authenticate_mocked(mocked_api_session: MagicMock) -> None:
             "access_token": "expected-jwt",
             "expires_in": 300,
             "token_type": "Bearer",
-        }
+        },
     )
 
-    connector.authenticate()
+    connector = PublicApiConnector.get()
 
     mocked_post.assert_called_once_with(
         settings.public_api_token_provider,
@@ -41,7 +41,7 @@ def test_authenticate_mocked(mocked_api_session: MagicMock) -> None:
 
 
 def test_post_models_mocked(
-    extracted_person: ExtractedPerson, mocked_api_session: MagicMock
+    extracted_person: ExtractedPerson, mocked_api_session_authenticated: MagicMock
 ) -> None:
     expected_payload = {
         "items": [
@@ -117,14 +117,17 @@ def test_post_models_mocked(
             }
         ]
     }
+
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 201
     mocked_response.json = MagicMock(return_value={"jobId": "000332211bbb"})
-    mocked_api_session.request = MagicMock(return_value=mocked_response)
+    mocked_api_session_authenticated.request = MagicMock(return_value=mocked_response)
 
     connector = PublicApiConnector.get()
     connector.post_models([extracted_person], wait_for_done=False)
-    payload = json.loads(mocked_api_session.request.call_args.kwargs["data"])
+    payload = json.loads(
+        mocked_api_session_authenticated.request.call_args.kwargs["data"]
+    )
 
     assert payload == expected_payload
 
@@ -133,11 +136,12 @@ def test_post_models_mocked(
 def test_search_model_that_does_not_exist() -> None:
     random_id = Identifier.generate()
     connector = PublicApiConnector.get()
+
     result = connector.search_model(ExtractedActivity, random_id)
     assert result is None
 
 
-def test_search_model_mocked(mocked_api_session: MagicMock) -> None:
+def test_search_model_mocked(mocked_api_session_authenticated: MagicMock) -> None:
     item_id = UUID("00000000-0000-4000-8000-111111110999")
 
     activity = ExtractedActivity(
@@ -258,7 +262,7 @@ def test_search_model_mocked(mocked_api_session: MagicMock) -> None:
             ],
         }
     )
-    mocked_api_session.request = MagicMock(return_value=mocked_response)
+    mocked_api_session_authenticated.request = MagicMock(return_value=mocked_response)
 
     connector = PublicApiConnector.get()
     model = connector.search_model(ExtractedActivity, item_id)
@@ -268,7 +272,7 @@ def test_search_model_mocked(mocked_api_session: MagicMock) -> None:
 
 
 def test_get_all_items_mocked(
-    mocked_api_session: MagicMock,
+    mocked_api_session_authenticated: MagicMock,
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
 ) -> None:
     response_data = {
@@ -299,7 +303,7 @@ def test_get_all_items_mocked(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=response_data)
-    mocked_api_session.request = MagicMock(return_value=mocked_response)
+    mocked_api_session_authenticated.request = MagicMock(return_value=mocked_response)
     connector = PublicApiConnector.get()
     items = connector.get_all_items()
     assert items == mex_metadata_items_response
