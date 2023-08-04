@@ -57,6 +57,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
 
     def _set_authentication(self, settings: BaseSettings) -> None:
         """Generate JWT using secret payload and attach it to session."""
+        self.session.verify = settings.public_api_verify_session  # type: ignore
         response = self.session.post(
             self.token_provider,
             data=b64decode(self.token_payload.get_secret_value()),
