@@ -72,7 +72,6 @@ class HTTPConnector(BaseConnector):
             Parsed JSON body of the response
         """
         # Prepare request
-        self.url.removeprefix
         if endpoint:
             url = urljoin(self.url + "/", endpoint)
         else:
