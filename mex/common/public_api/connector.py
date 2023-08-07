@@ -72,6 +72,17 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
         )
         self.session.headers["Authorization"] = f"Bearer {auth_response.access_token}"
 
+    def _check_availability(self) -> None:
+        """Send POST request to the search endpoint to verify the host is available.
+
+        The probe URLs are not exposed -> use search endpoint instead
+        """
+        self.request(
+            "POST",
+            "query/search",
+            PublicApiSearchRequest(limit=0),
+        )
+
     def echo_job_logs(self, job_id: str) -> None:
         """Echo the logs for the job with the given ID to the console.
 
