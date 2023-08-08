@@ -20,6 +20,7 @@ pandas = "^1.5.3"
 pydantic = { version = "^1.10.9", extras = ["dotenv", "email"] }
 requests = "^2.31.0"
 sqlalchemy ="^1.4.47"
+dagster = "1.4.3"
 
 [tool.poetry.group.dev.dependencies]
 autoflake = "^2.2.0"

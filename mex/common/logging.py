@@ -1,39 +1,13 @@
-import logging
-import logging.config
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Generator, Optional, TypeVar, Union
 
 import click
+from dagster import get_dagster_logger
 
 YieldT = TypeVar("YieldT")
 
-LOGGING_CONFIG: dict[str, Any] = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "default": {
-            "format": "%(message)s",
-        }
-    },
-    "handlers": {
-        "default": {
-            "level": "INFO",
-            "formatter": "default",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout",
-        },
-    },
-    "loggers": {
-        "mex": {
-            "handlers": ["default"],
-            "level": "INFO",
-            "propagate": True,
-        }
-    },
-}
-logging.config.dictConfig(LOGGING_CONFIG)
-logger = logging.getLogger("mex")
+logger = get_dagster_logger()
 
 
 def watch(
