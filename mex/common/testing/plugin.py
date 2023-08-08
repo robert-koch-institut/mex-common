@@ -71,17 +71,16 @@ def isolate_connector_context() -> Generator[None, None, None]:
     reset_connector_context()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def is_integration_test(request: FixtureRequest) -> bool:
     """Check the markers of a test to see if this is an integration test."""
     return any(m.name == "integration" for m in request.keywords.get("pytestmark", ()))
 
 
-@pytest.fixture(autouse=True)
-def skip_integration_test_in_ci(is_integration_test: bool) -> None:
-    """Automatically skip all tests marked as integration when the CI env var is set."""
-    if is_integration_test and os.environ.get("CI") == "true":  # pragma: no cover
-        pytest.skip("Skip integration test in CI")
+@pytest.fixture
+def in_continuous_integration() -> bool:
+    """Check the environment variable `CI` to determine whether we are in CI."""
+    return os.environ.get("CI") == "true"
 
 
 @pytest.fixture(autouse=True)
