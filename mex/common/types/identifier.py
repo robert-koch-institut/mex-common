@@ -1,6 +1,6 @@
 import re
 import string
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any
 from uuid import UUID, uuid4
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -14,8 +14,6 @@ UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
 class Identifier(str):
     """Common identifier class."""
-
-    REFERENCE: ClassVar[str | None] = None
 
     @classmethod
     def generate(cls, seed: int | None = None) -> "Identifier":
