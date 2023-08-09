@@ -8,7 +8,7 @@ from mex.common.types import Identifier
 
 
 class DummyID(Identifier):
-    REFERENCE = "#/components/Dummy#/id"
+    pass
 
 
 class DummyModel(BaseModel):
@@ -46,7 +46,9 @@ def test_identifier_modifies_schema() -> None:
         "pattern": r"^[a-zA-Z0-9]{14,22}$",
     }
     assert DummyModel.schema()["properties"]["dummy"] == {
-        "$ref": "#/components/Dummy#/id"
+        "title": "DummyID",
+        "type": "string",
+        "pattern": r"^[a-zA-Z0-9]{14,22}$",
     }
 
 
