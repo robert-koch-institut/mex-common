@@ -39,7 +39,7 @@ class Identifier(str):
 
     @classmethod
     def validate(cls, value: Any) -> "Identifier":
-        """Validate a string, uuid or identfier."""
+        """Validate a string, uuid or identifier."""
         if isinstance(value, (str, UUID, Identifier)):
             value = str(value)
             if re.match(MEX_ID_PATTERN, value):
@@ -51,16 +51,12 @@ class Identifier(str):
 
     @classmethod
     def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        """Modify the schema to add the ID regex or reference a specific ID field."""
-        field_schema.clear()
-        if cls.REFERENCE:
-            field_schema["$ref"] = cls.REFERENCE
-        else:
-            field_schema.update(
-                title="Identifier",
-                type="string",
-                pattern=MEX_ID_PATTERN,
-            )
+        """Modify the schema to add the ID regex and correct title."""
+        field_schema.update(
+            title=cls.__name__,
+            type="string",
+            pattern=MEX_ID_PATTERN,
+        )
 
     def __repr__(self) -> str:
         """Overwrite the default representation."""
@@ -70,64 +66,42 @@ class Identifier(str):
 class AccessPlatformID(Identifier):
     """Identifier for merged access platforms."""
 
-    REFERENCE = "#/components/schemas/AccessPlatformID"
-
 
 class ActivityID(Identifier):
     """Identifier for merged activities."""
-
-    REFERENCE = "#/components/schemas/ActivityID"
 
 
 class ContactPointID(Identifier):
     """Identifier for merged contact points."""
 
-    REFERENCE = "#/components/schemas/ContactPointID"
-
 
 class DistributionID(Identifier):
     """Identifier for merged distributions."""
-
-    REFERENCE = "#/components/schemas/DistributionID"
 
 
 class OrganizationID(Identifier):
     """Identifier for merged organizations."""
 
-    REFERENCE = "#/components/schemas/OrganizationID"
-
 
 class OrganizationalUnitID(Identifier):
     """Identifier for merged organizational units."""
-
-    REFERENCE = "#/components/schemas/OrganizationalUnitID"
 
 
 class PersonID(Identifier):
     """Identifier for merged persons."""
 
-    REFERENCE = "#/components/schemas/PersonID"
-
 
 class PrimarySourceID(Identifier):
     """Identifier for merged primary sources."""
-
-    REFERENCE = "#/components/schemas/PrimarySourceID"
 
 
 class ResourceID(Identifier):
     """Identifier for merged resources."""
 
-    REFERENCE = "#/components/schemas/ResourceID"
-
 
 class VariableID(Identifier):
     """Identifier for merged variables."""
 
-    REFERENCE = "#/components/schemas/VariableID"
-
 
 class VariableGroupID(Identifier):
     """Identifier for merged variable groups."""
-
-    REFERENCE = "#/components/schemas/VariableGroupID"
