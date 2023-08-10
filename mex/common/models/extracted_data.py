@@ -69,7 +69,7 @@ class ExtractedData(BaseExtractedData):
             raise ValueError("Missing value for `identifierInPrimarySource`.")
 
         if had_primary_source := values.get("hadPrimarySource"):
-            had_primary_source = Identifier(had_primary_source)
+            had_primary_source = PrimarySourceID(had_primary_source)
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 

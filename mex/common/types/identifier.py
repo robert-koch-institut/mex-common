@@ -1,6 +1,6 @@
 import re
 import string
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeVar
 from uuid import UUID, uuid4
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -11,12 +11,14 @@ ALPHABET = string.ascii_letters + string.digits
 MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
 UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
+IdentifierT = TypeVar("IdentifierT", bound="Identifier")
+
 
 class Identifier(str):
     """Common identifier class."""
 
     @classmethod
-    def generate(cls, seed: int | None = None) -> "Identifier":
+    def generate(cls: type[IdentifierT], seed: int | None = None) -> IdentifierT:
         """Generate a new identifier from a seed or random uuid version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""

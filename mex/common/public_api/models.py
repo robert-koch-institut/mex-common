@@ -66,7 +66,7 @@ class PublicApiItem(PublicApiBaseModel):
     """Public API item representing an entity or extracted data model."""
 
     entityType: str = Field(..., include=True)
-    itemId: UUID | None
+    itemId: UUID | None = None
     businessId: str
     values: list[PublicApiField] = Field(..., include=True)
 

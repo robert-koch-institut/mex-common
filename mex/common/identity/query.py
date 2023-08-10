@@ -3,11 +3,11 @@ from mex.common.identity.dummy import DummyIdentityProvider
 from mex.common.identity.models import Identity
 from mex.common.identity.types import IdentityProvider
 from mex.common.settings import BaseSettings
-from mex.common.types import Identifier
+from mex.common.types import Identifier, PrimarySourceID
 
 
 def upsert_identity(
-    had_primary_source: Identifier,
+    had_primary_source: PrimarySourceID,
     identifier_in_primary_source: str,
     stable_target_id: Identifier,
     entity_type: str,
@@ -27,7 +27,7 @@ def upsert_identity(
 
 def fetch_identity(
     *,
-    had_primary_source: Identifier | None = None,
+    had_primary_source: PrimarySourceID | None = None,
     identifier_in_primary_source: str | None = None,
     stable_target_id: Identifier | None = None,
 ) -> Identity | None:

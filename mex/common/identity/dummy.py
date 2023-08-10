@@ -4,7 +4,7 @@ from mex.common.connector import BaseConnector
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
 from mex.common.settings import BaseSettings
-from mex.common.types import Identifier
+from mex.common.types import Identifier, PrimarySourceID
 
 
 class DummyIdentityProvider(BaseProvider, BaseConnector):
@@ -16,7 +16,7 @@ class DummyIdentityProvider(BaseProvider, BaseConnector):
 
     def upsert(
         self,
-        had_primary_source: Identifier,
+        had_primary_source: PrimarySourceID,
         identifier_in_primary_source: str,
         stable_target_id: Identifier,
         entity_type: str,
