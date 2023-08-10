@@ -1,4 +1,4 @@
-from pydantic import UUID4, NoneStr
+from pydantic import UUID4
 
 from mex.common.models import BaseModel
 from mex.common.types import Email
@@ -7,7 +7,7 @@ from mex.common.types import Email
 class LDAPActor(BaseModel):
     """Model class for generic LDAP accounts."""
 
-    sAMAccountName: NoneStr = None
+    sAMAccountName: str | None = None
     objectGUID: UUID4
     mail: list[Email] = []
 
