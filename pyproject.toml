@@ -23,11 +23,14 @@ sqlalchemy ="^1.4.49"
 
 [tool.poetry.group.dev.dependencies]
 autoflake = "^2.2.0"
+bandit = "^1.7.5"
 black = "^23.7.0"
 ipdb = "^0.13.13"
 isort = "^5.12.0"
 mypy = "^1.4.1"
 mypy-extensions = "^1.0.0"
+pre-commit-hooks = "^4.4.0"
+pydocstyle = { version= "^6.3.0", extras = ["toml"] }
 pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
 sphinx = "^6.2.1"

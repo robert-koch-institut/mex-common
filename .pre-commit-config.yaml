@@ -1,56 +1,58 @@
 fail_fast: false
-default_language_version:
-  python: python3.11
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-  - repo: https://github.com/myint/autoflake
-    rev: v2.2.0
-    hooks:
-      - id: autoflake
-        args: [--in-place, --remove-all-unused-imports]
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
-    hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
-    hooks:
-      - id: bandit
-        args: [--silent, --ini=.bandit]
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: pretty-format-json
-        args: [--autofix]
-      - id: end-of-file-fixer
-      - id: debug-statements
-        exclude: "cli\\.py$"
-  - repo: https://github.com/PyCQA/pydocstyle
-    rev: 6.3.0
-    hooks:
-      - id: pydocstyle
-        pass_filenames: true
-        additional_dependencies: [".[toml]"]
-        exclude: "test_"
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.5.1
+  - repo: local
     hooks:
       - id: poetry-check
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
-    hooks:
+        name: poetry-check
+        language: system
+        entry: poetry check
+        pass_filenames: false
+      - id: pretty-format-json
+        name: pretty-format-json
+        language: system
+        entry: poetry run pretty-format-json
+        types: [json]
+      - id: end-of-file-fixer
+        name: end-of-file-fixer
+        language: system
+        entry: poetry run end-of-file-fixer
+      - id: debug-statements
+        name: debug-statements
+        language: system
+        entry: poetry run debug-statements
+        exclude: "cli\\.py$"
+        types: [python]
+      - id: autoflake
+        name: autoflake
+        language: system
+        entry: poetry run autoflake
+        args: [--in-place, --remove-all-unused-imports]
+        types: [python]
+      - id: isort
+        name: isort
+        language: system
+        entry: poetry run isort
+        types: [python]
+      - id: black
+        name: black
+        language: system
+        entry: poetry run black
+        types: [python]
       - id: mypy
         name: mypy
-        files: ^mex/
-        additional_dependencies:
-          - "backoff>=2.2.1,<3"
-          - "click>=8.1.6,<9"
-          - "pydantic[dotenv,email]>=1.10.11,<2"
-          - "pytest>=7.4.0,<8"
-          - "sqlalchemy[mypy]>=1.4.49,<2"
-          - "types-pytz>=2023.3.0.0,<2024"
-          - "types-requests>=2.31.0.2,<3"
-          - "types-setuptools>=68.0.0.3,<69"
+        language: system
+        entry: poetry run mypy
+        types: [python]
+        exclude: "test_"
+      - id: pydocstyle
+        name: pydocstyle
+        language: system
+        entry: poetry run mypy
+        exclude: "test_"
+        types: [python]
+      - id: bandit
+        name: bandit
+        language: system
+        entry: poetry run bandit
+        types: [python]
+        args: [--silent, --ini=.bandit]
