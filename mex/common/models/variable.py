@@ -29,7 +29,7 @@ class BaseVariable(BaseModel):
     )
     dataType: DataType | None = Field(
         None,
-        examples=["https://mex.rki.de/concept/data-type-1"],
+        examples=["https://mex.rki.de/item/data-type-1"],
     )
     description: list[Text] = []
     label: list[Text] = Field(

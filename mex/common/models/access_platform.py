@@ -35,12 +35,12 @@ class BaseAccessPlatform(BaseModel):
     description: list[Text] = []
     endpointDescription: Link | None = None
     endpointType: APIType | None = Field(
-        None, examples=["https://mex.rki.de/concept/api-type-1"]
+        None, examples=["https://mex.rki.de/item/api-type-1"]
     )
     endpointURL: Link | None = None
     landingPage: list[Link] = []
     technicalAccessibility: TechnicalAccessibility = Field(
-        ..., examples=["https://mex.rki.de/concept/technical-accessibility-1"]
+        ..., examples=["https://mex.rki.de/item/technical-accessibility-1"]
     )
     title: list[Text] = []
     unitInCharge: list[OrganizationalUnitID] = []

@@ -33,7 +33,7 @@ class BaseActivity(BaseModel):
     stableTargetId: ActivityID
     abstract: list[Text] = []
     activityType: list[ActivityType] = Field(
-        [], examples=["https://mex.rki.de/concept/activity-type-1"]
+        [], examples=["https://mex.rki.de/item/activity-type-1"]
     )
     alternativeTitle: list[Text] = []
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = Field(
@@ -63,7 +63,7 @@ class BaseActivity(BaseModel):
         examples=["2023-01-16", "2023", "2023-02"],
     )
     succeeds: list[ActivityID] = []
-    theme: list[Theme] = Field([], examples=["https://mex.rki.de/concept/theme-1"])
+    theme: list[Theme] = Field([], examples=["https://mex.rki.de/item/theme-1"])
     title: list[Text] = Field(..., min_items=1)
     website: list[Link] = []
 
