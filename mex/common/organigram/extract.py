@@ -5,7 +5,7 @@ from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.settings import BaseSettings
-from mex.common.types import Identifier, Text
+from mex.common.types import OrganizationalUnitID, Text
 
 
 @watch
@@ -42,7 +42,7 @@ def get_synonyms(
 
 def get_unit_merged_ids_by_synonyms(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, Identifier]:
+) -> dict[str, OrganizationalUnitID]:
     """Return a mapping from unit alt_label and label to their merged IDs.
 
     There will be multiple entries per unit mapping to the same merged ID.
@@ -62,7 +62,7 @@ def get_unit_merged_ids_by_synonyms(
 
 def get_unit_merged_ids_by_emails(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, Identifier]:
+) -> dict[str, OrganizationalUnitID]:
     """Return a mapping from unit emails to their merged IDs.
 
     There may be multiple emails per unit mapping to the same merged ID.

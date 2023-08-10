@@ -1,14 +1,11 @@
 import pytest
 
 from mex.common.models import ExtractedOrganizationalUnit
-from mex.common.organigram.models import (
-    OrganigramName,
-    OrganigramUnit,
-    OrganigramWebsite,
-)
+from mex.common.organigram.models import OrganigramName, OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
+from mex.common.types import Link
 
 
 @pytest.fixture
@@ -38,7 +35,7 @@ def parent_unit() -> OrganigramUnit:
         identifier="parent-unit",
         name=OrganigramName(de="Abteilung", en="Department"),
         email=["pu@example.com", "PARENT@example.com"],
-        website=OrganigramWebsite(
+        website=Link(
             language="en",
             title="Example | Parent Department",
             url="https://www.example.com/departments/parent.html",

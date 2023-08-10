@@ -49,14 +49,21 @@ class VocabularyLoader(EnumMeta):
     ) -> "VocabularyLoader":
         """Create a new enum class by loading the configured vocabulary JSON."""
         if vocabulary_name := dct.get("__vocabulary__"):
-            dct["__concepts__"] = []
-            with open(VOCABULARY_DIR / f"{vocabulary_name}.json") as handle:
-                raw_vocabularies = json.load(handle)
-            for raw_vocabulary in raw_vocabularies:
-                concept = Concept.parse_obj(raw_vocabulary)
-                dct["__concepts__"].append(concept)
+            dct["__concepts__"] = cls.parse_file(
+                VOCABULARY_DIR / f"{vocabulary_name}.json"
+            )
+            for concept in dct["__concepts__"]:
                 dct[split_to_caps(concept.prefLabel.en)] = str(concept.identifier)
         return super().__new__(cls, name, bases, dct)
+
+    @classmethod
+    def parse_file(cls, path: Path) -> list[Concept]:
+        """Parse vocabulary file and return concepts as list."""
+        with open(path) as handle:
+            raw_vocabularies = json.load(handle)
+        return [
+            Concept.parse_obj(raw_vocabulary) for raw_vocabulary in raw_vocabularies
+        ]
 
 
 class VocabularyEnum(Enum, metaclass=VocabularyLoader):

@@ -37,7 +37,7 @@ def transform_organigram_units_to_organizational_units(
                 Text(value=unit.name.de, language=TextLanguage.DE),
                 Text(value=unit.name.en, language=TextLanguage.EN),
             ],
-            shortName=[Text(value=name) for name in unit.shortName],
+            shortName=[Text(value=unit.shortName)],
             website=[unit.website] if unit.website else [],
         )
         extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit
