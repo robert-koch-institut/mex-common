@@ -68,7 +68,7 @@ class BaseModel(PydanticBaseModel):
 
     @classmethod
     @cache
-    def _get_listyness_cache(cls) -> list[str]:
+    def _get_list_field_names(cls) -> list[str]:
         """Build a cached list of fields that look like lists."""
         list_fields = []
         for field in cls.__fields__.values():
@@ -109,7 +109,7 @@ class BaseModel(PydanticBaseModel):
     @classmethod
     def _fix_value_listyness_for_field(cls, field: ModelField, value: Any) -> Any:
         """Check actual and desired shape of a value and fix it if necesary."""
-        should_be_list = field.name in cls._get_listyness_cache()
+        should_be_list = field.name in cls._get_list_field_names()
         is_list = isinstance(value, list)
         if not is_list and should_be_list:
             return cls._convert_non_list_to_list(field, value)
