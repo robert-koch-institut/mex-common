@@ -8,7 +8,7 @@ from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.testing import insert_test_primary_sources_into_db
-from mex.common.types import Identifier
+from mex.common.types import OrganizationalUnitID
 
 
 @pytest.fixture()
@@ -18,7 +18,7 @@ def seed_test_primary_source() -> None:
 
 
 @pytest.fixture()
-def unit_merged_ids_by_synonym() -> dict[str, Identifier]:
+def unit_merged_ids_by_synonym() -> dict[str, OrganizationalUnitID]:
     """Extract and return all organigram units."""
     organigram_units = extract_oranigram_units()
     mex_organizational_units = transform_organigram_units_to_organizational_units(

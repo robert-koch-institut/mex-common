@@ -27,7 +27,6 @@ from mex.common.types.timestamp import (
 from mex.common.types.vocabulary import (
     AccessRestriction,
     Theme,
-    Vocabulary,
     VocabularyEnum,
     VocabularyLoader,
     split_to_caps,
@@ -62,7 +61,6 @@ __all__ = (
     "UTC",
     "VariableGroupID",
     "VariableID",
-    "Vocabulary",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",

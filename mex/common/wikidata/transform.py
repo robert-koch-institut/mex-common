@@ -27,10 +27,11 @@ def transform_wikidata_organizations_to_extracted_organizations(
         labels = get_clean_labels(organization.labels)
         if not labels:
             continue
-        yield ExtractedOrganization(
+        yield ExtractedOrganization(  # type: ignore[call-arg]
             wikidataId=f"https://www.wikidata.org/entity/{organization.identifier}",
             officialName=labels,
             shortName=get_clean_short_names(organization.claims.short_name),
+            geprisId=[],
             isniId=[
                 f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
                     " ", ""
@@ -50,7 +51,7 @@ def transform_wikidata_organizations_to_extracted_organizations(
                 for claim in organization.claims.ror_id
             ],
             identifierInPrimarySource=organization.identifier,
-            hadPrimarySource=extracted_primary_source_wikidata.identifier,
+            hadPrimarySource=extracted_primary_source_wikidata.stableTargetId,
             alternativeName=get_alternative_names(
                 organization.claims.native_label, organization.aliases
             ),

@@ -1,6 +1,5 @@
-from pydantic import AnyUrl
-
 from mex.common.models import BaseModel
+from mex.common.types import Link
 
 
 class OrganigramName(BaseModel):
@@ -8,14 +7,6 @@ class OrganigramName(BaseModel):
 
     de: str
     en: str
-
-
-class OrganigramWebsite(BaseModel):
-    """Organigram unit website."""
-
-    language: str
-    title: str
-    url: AnyUrl
 
 
 class OrganigramUnit(BaseModel):
@@ -27,4 +18,4 @@ class OrganigramUnit(BaseModel):
     name: OrganigramName
     alternativeName: list[str] = []
     parentUnit: None | str
-    website: None | OrganigramWebsite
+    website: None | Link

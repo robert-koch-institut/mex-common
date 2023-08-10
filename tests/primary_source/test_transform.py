@@ -5,12 +5,12 @@ from mex.common.primary_source.transform import (
     transform_mex_db_primary_source_to_extracted_primary_source,
 )
 from mex.common.testing import Joker
-from mex.common.types import Identifier, LinkLanguage, TextLanguage
+from mex.common.types import LinkLanguage, OrganizationalUnitID, TextLanguage
 
 
 @pytest.mark.usefixtures("seed_test_primary_source")
 def test_transform_mex_db_primary_source_to_extracted_primary_source(
-    unit_merged_ids_by_synonym: dict[str, Identifier]
+    unit_merged_ids_by_synonym: dict[str, OrganizationalUnitID]
 ) -> None:
     mex_db_primary_source = extract_mex_db_primary_source_by_id("test-primary-source")
     extracted_primary_source = (

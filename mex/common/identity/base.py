@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from enum import Enum
 
 from mex.common.identity.models import Identity
-from mex.common.types import Identifier
+from mex.common.types import Identifier, PrimarySourceID
 
 
 class IdentityProvider(Enum):
@@ -18,7 +18,7 @@ class BaseProvider(metaclass=ABCMeta):
     @abstractmethod
     def upsert(
         self,
-        had_primary_source: Identifier,
+        had_primary_source: PrimarySourceID,
         identifier_in_primary_source: str,
         stable_target_id: Identifier,
         entity_type: str,

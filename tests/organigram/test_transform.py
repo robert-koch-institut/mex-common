@@ -1,11 +1,9 @@
-from pydantic import AnyUrl
-
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.testing import Joker
-from mex.common.types import Text, TextLanguage
+from mex.common.types import LinkLanguage, Text, TextLanguage
 
 
 def test_transform_organigram_units_to_organizational_units(
@@ -51,9 +49,9 @@ def test_transform_organigram_units_to_organizational_units(
         "unitOf": [],
         "website": [
             {
-                "url": AnyUrl(
-                    "https://www.example.com/departments/parent.html", scheme="https"
-                )
+                "language": LinkLanguage.EN,
+                "title": "Example | Parent Department",
+                "url": "https://www.example.com/departments/parent.html",
             }
         ],
     }

@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from pydantic import Extra, Field, NoneStr, root_validator
+from pydantic import Extra, Field, root_validator
 
 from mex.common.models.base import BaseModel
 
@@ -8,8 +8,8 @@ from mex.common.models.base import BaseModel
 class Value(BaseModel):
     """Model class for Values (for claims)."""
 
-    text: NoneStr
-    language: NoneStr
+    text: str | None = None
+    language: str | None = None
 
 
 class DataValue(BaseModel):
@@ -20,14 +20,14 @@ class DataValue(BaseModel):
     @root_validator(pre=True)
     def transform_strings_to_dict(
         cls, values: dict[str, Union[str, dict[str, str]]]
-    ) -> Union[dict[str, dict[str, NoneStr]], dict[str, Union[str, dict[str, str]]]]:
+    ) -> Union[dict[str, dict[str, str | None]], dict[str, Union[str, dict[str, str]]]]:
         """Transform string and null value to a dict for parsing.
 
         Args:
             values (Any): values that needs to be parsed
 
         Returns:
-            dict[str, dict[str, NoneStr]]: resulting dict
+            resulting dict
         """
         value = values.get("value")
         if value is None or isinstance(value, str):

@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-from pydantic import NoneStr
 from sqlalchemy import Column, ForeignKey, Integer, Text
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.orm.decl_api import DeclarativeMeta
@@ -27,7 +26,7 @@ class SeedPrimarySource(BaseModel):
     located_at: list[str]
     title: list[str] = []
     unit_in_charge: list[str]
-    version: NoneStr = None
+    version: str | None = None
 
 
 class MExDBPrimarySource(Base):

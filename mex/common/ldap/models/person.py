@@ -1,4 +1,4 @@
-from pydantic import Field, NoneStr
+from pydantic import Field
 
 from mex.common.ldap.models.actor import LDAPActor
 from mex.common.models import BaseModel
@@ -7,10 +7,10 @@ from mex.common.models import BaseModel
 class LDAPPerson(LDAPActor):
     """Model class for LDAP persons."""
 
-    company: NoneStr = Field(None)
-    department: NoneStr = Field(None)
-    departmentNumber: NoneStr = Field(None)
-    displayName: NoneStr = Field(None)
+    company: str | None = Field(None)
+    department: str | None = Field(None)
+    departmentNumber: str | None = Field(None)
+    displayName: str | None = Field(None)
     employeeID: str = Field(...)
     givenName: list[str] = Field(..., min_items=1)
     ou: list[str] = Field([])

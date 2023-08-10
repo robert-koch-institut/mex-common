@@ -1,3 +1,4 @@
+import json
 import re
 from enum import Enum, EnumMeta
 from functools import cache
@@ -34,12 +35,6 @@ class Concept(BaseModel):
     definition: Optional[BilingualText]
 
 
-class Vocabulary(BaseModel):
-    """Collection of concepts that can be parsed from a JSON file."""
-
-    __root__: list[Concept]
-
-
 @cache
 def split_to_caps(string: str) -> str:
     """Convert the given string from `Split case` into `CAPS_CASE`."""
@@ -54,13 +49,21 @@ class VocabularyLoader(EnumMeta):
     ) -> "VocabularyLoader":
         """Create a new enum class by loading the configured vocabulary JSON."""
         if vocabulary_name := dct.get("__vocabulary__"):
-            vocabulary = Vocabulary.parse_file(
+            dct["__concepts__"] = cls.parse_file(
                 VOCABULARY_DIR / f"{vocabulary_name}.json"
             )
-            dct["__concepts__"] = vocabulary.__root__
-            for concept in vocabulary.__root__:
+            for concept in dct["__concepts__"]:
                 dct[split_to_caps(concept.prefLabel.en)] = str(concept.identifier)
         return super().__new__(cls, name, bases, dct)
+
+    @classmethod
+    def parse_file(cls, path: Path) -> list[Concept]:
+        """Parse vocabulary file and return concepts as list."""
+        with open(path) as handle:
+            raw_vocabularies = json.load(handle)
+        return [
+            Concept.parse_obj(raw_vocabulary) for raw_vocabulary in raw_vocabularies
+        ]
 
 
 class VocabularyEnum(Enum, metaclass=VocabularyLoader):

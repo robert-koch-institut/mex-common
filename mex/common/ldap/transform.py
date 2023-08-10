@@ -105,17 +105,17 @@ def transform_ldap_person_to_mex_person(
             f"'{ldap_person.department}' or departmentNumber "
             f"'{ldap_person.departmentNumber}'"
         )
-    return ExtractedPerson(
+    return ExtractedPerson(  # type: ignore[call-arg]
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
-        affiliation=None,  # TODO resolve organization for person.company/RKI
+        affiliation=[],  # TODO resolve organization for person.company/RKI
         email=ldap_person.mail,
-        familyName=ldap_person.sn,
-        fullName=ldap_person.displayName,
+        familyName=[ldap_person.sn],
+        fullName=[ldap_person.displayName] if ldap_person.displayName else [],
         givenName=ldap_person.givenName,
-        isniId=None,
+        isniId=[],
         memberOf=member_of,
-        orcidId=None,
+        orcidId=[],
     )
 
 
@@ -132,7 +132,7 @@ def transform_ldap_actor_to_mex_contact_point(
     Returns:
         Extracted contact point
     """
-    return ExtractedContactPoint(
+    return ExtractedContactPoint(  # type: ignore[call-arg]
         identifierInPrimarySource=str(ldap_actor.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
         email=ldap_actor.mail,

@@ -3,15 +3,15 @@ from typing import Optional
 
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.models import MExDBPrimarySource
-from mex.common.types import Identifier, Link, Text
+from mex.common.types import Link, OrganizationalUnitID, PrimarySourceID, Text
 
-MEX_PRIMARY_SOURCE_ID = Identifier.generate(seed=0)
+MEX_PRIMARY_SOURCE_ID = PrimarySourceID.generate(seed=0)
 
 
 def transform_mex_db_primary_source_to_extracted_primary_source(
     mex_db_primary_source: MExDBPrimarySource,
     mex_db_mex_db_primary_source: Optional[ExtractedPrimarySource] = None,
-    unit_merged_ids_by_synonym: dict[str, Identifier] = {},
+    unit_merged_ids_by_synonym: dict[str, OrganizationalUnitID] = {},
 ) -> ExtractedPrimarySource:
     """Transform a concrete primary source coming from MEx DB into a primary source.
 
@@ -62,7 +62,7 @@ def transform_mex_db_primary_source_to_extracted_primary_source(
         for located_at in mex_db_primary_source.located_ats
     ]
 
-    return ExtractedPrimarySource(
+    return ExtractedPrimarySource(  # type: ignore[call-arg]
         identifierInPrimarySource=mex_db_primary_source.identifier,
         alternativeTitle=alternative_titles,
         description=descriptions,

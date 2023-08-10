@@ -2,7 +2,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common.types import Vocabulary, VocabularyEnum, split_to_caps
+from mex.common.types import VocabularyEnum, VocabularyLoader, split_to_caps
 from tests.types.conftest import TESTDATA_DIR
 
 
@@ -19,8 +19,10 @@ def test_split_to_caps(string: str, expected: str) -> None:
 
 @pytest.fixture
 def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
-    dummy_vocabulary = Vocabulary.parse_file(TESTDATA_DIR / "dummy-vocabulary.json")
-    monkeypatch.setattr(Vocabulary, "parse_file", lambda *_: dummy_vocabulary)
+    dummy_vocabulary = VocabularyLoader.parse_file(
+        TESTDATA_DIR / "dummy-vocabulary.json"
+    )
+    monkeypatch.setattr(VocabularyLoader, "parse_file", lambda *_: dummy_vocabulary)
 
 
 @pytest.mark.usefixtures("use_dummy_vocabulary")
