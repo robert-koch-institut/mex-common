@@ -5,9 +5,8 @@ from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
 from pydantic import AnyUrl, ConfigDict, Field, SecretStr
-from pydantic.env_settings import DotenvType, env_file_sentinel
-from pydantic.typing import StrPath
 from pydantic_settings import BaseSettings as PydanticBaseSettings
+from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType
 
 from mex.common.identity.types import IdentityProvider
 from mex.common.sinks import Sink
@@ -25,9 +24,9 @@ class BaseSettings(PydanticBaseSettings):
 
     model_config = ConfigDict(
         populate_by_name=True,
-        env_prefix="mex_",
-        env_file=".env",
-        env_file_encoding="utf-8",
+        _env_prefix="mex_",
+        _env_file=".env",
+        _env_file_encoding="utf-8",
         extra="ignore",
         validate_default=True,
         validate_assignment=True,
@@ -35,10 +34,10 @@ class BaseSettings(PydanticBaseSettings):
 
     def __init__(
         self,
-        _env_file: Optional[DotenvType] = env_file_sentinel,
+        _env_file: Optional[DotenvType] = ENV_FILE_SENTINEL,
         _env_file_encoding: Optional[str] = None,
         _env_nested_delimiter: Optional[str] = None,
-        _secrets_dir: Optional[StrPath] = None,
+        _secrets_dir: str | Path | None = None,
         **values: Any,
     ) -> None:
         """Construct a new settings instance.
@@ -48,7 +47,7 @@ class BaseSettings(PydanticBaseSettings):
         Because of this dependency from one setting source to another, sadly
         we cannot use `Config.customise_sources`.
         """
-        settings_wo_assets_env_file = self._build_values(
+        settings_wo_assets_env_file = self._settings_build_values(
             values,
             _env_file=_env_file,
             _env_file_encoding=_env_file_encoding,

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -88,9 +90,11 @@ class BaseResource(BaseModel):
         examples=["https://mex.rki.de/item/license-1"],
     )
     loincId: list[str] = []
-    meshId: list[str] = Field(
-        [], pattern=r"^https://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$"
-    )
+    meshId: list[
+        Annotated[
+            str, Field(pattern=r"^https://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$")
+        ]
+    ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
     modified: list[Timestamp] = []

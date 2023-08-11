@@ -3,13 +3,12 @@ from datetime import date, datetime, tzinfo
 from enum import Enum
 from functools import total_ordering
 from itertools import zip_longest
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union, cast, overload
+from typing import Any, Literal, Optional, Type, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
+from pydantic import GetCoreSchemaHandler
+from pydantic_core import core_schema
 from pytz import timezone
-
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.typing import CallableGenerator
 
 
 class TimestampPrecision(Enum):
@@ -136,17 +135,23 @@ class Timestamp:
         self.precision = precision
 
     @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        """Yield the validator function for timestamps."""
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        """Mutate the field schema for timestamps."""
-        field_schema.update(
-            pattern=TIMESTAMP_REGEX,
-            examples=["2011", "2019-03", "2014-08-24", "2022-09-30T20:48:35Z"],
-            type="string",
+    def __get_pydantic_core_schema__(
+        cls, source: Type[Any], handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        timestamp_schema = {
+            # "title": cls.__name__,
+            "type": "str",
+            "pattern": TIMESTAMP_REGEX,
+            # "examples": ["2011", "2019-03", "2014-08-24", "2022-09-30T20:48:35Z"],
+        }
+        return core_schema.no_info_after_validator_function(
+            cls.validate,
+            timestamp_schema,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                str,
+                info_arg=False,
+                return_schema=core_schema.str_schema(),
+            ),
         )
 
     @classmethod

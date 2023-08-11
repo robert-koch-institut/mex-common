@@ -1,11 +1,10 @@
 import re
 import string
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, Type, TypeVar
 from uuid import UUID, uuid4
 
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.typing import CallableGenerator
-
+from pydantic import GetCoreSchemaHandler
+from pydantic_core import core_schema
 
 ALPHABET = string.ascii_letters + string.digits
 MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
@@ -33,12 +32,7 @@ class Identifier(str):
         return cls(output[::-1])
 
     @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        """Get all validators for this class."""
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, value: Any) -> "Identifier":
+    def validate(cls: type[IdentifierT], value: Any) -> IdentifierT:
         """Validate a string, uuid or identifier."""
         if isinstance(value, (str, UUID, Identifier)):
             value = str(value)
@@ -50,12 +44,22 @@ class Identifier(str):
         raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @classmethod
-    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        """Modify the schema to add the ID regex and correct title."""
-        field_schema.update(
-            title=cls.__name__,
-            type="string",
-            pattern=MEX_ID_PATTERN,
+    def __get_pydantic_core_schema__(
+        cls, source: Type[Any], handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        identifier_schema = {
+            # "title": cls.__name__,
+            "type": "str",
+            "pattern": MEX_ID_PATTERN,
+        }
+        return core_schema.no_info_after_validator_function(
+            cls.validate,
+            identifier_schema,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                str,
+                info_arg=False,
+                return_schema=core_schema.str_schema(),
+            ),
         )
 
     def __repr__(self) -> str:

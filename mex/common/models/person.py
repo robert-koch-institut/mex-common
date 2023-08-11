@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -26,16 +28,18 @@ class BasePerson(BaseModel):
         [],
         examples=["Wangari", "Marie Salomea", "May-Britt"],
     )
-    isniId: list[str] = Field(
+    isniId: list[
+        Annotated[str, Field(pattern=r"^https://isni\.org/isni/[X0-9]{16}$")]
+    ] = Field(
         [],
         examples=["https://isni.org/isni/0000000109403744"],
-        pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
     )
     memberOf: list[OrganizationalUnitID] = []
-    orcidId: list[str] = Field(
+    orcidId: list[
+        Annotated[str, Field(pattern=r"^https://orcid\.org/[-X0-9]{9,21}$")]
+    ] = Field(
         [],
         examples=["https://orcid.org/0000-0002-9079-593X"],
-        pattern=r"^https://orcid\.org/[-X0-9]{9,21}$",
     )
 
 

@@ -1,14 +1,20 @@
-from typing import Any
+from typing import Any, Type
 
 from pydantic.networks import EmailStr, pretty_email_regex
+from pydantic_core import core_schema
 
 
 class Email(EmailStr):
     """Email address of a person, organization or other entity."""
 
     @classmethod
-    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        """Mutate the field schema for email strings."""
-        field_schema.update(
-            type="string", format="email", pattern=pretty_email_regex.pattern
+    def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
+        return core_schema.general_after_validator_function(
+            cls._validate,
+            {
+                # "title": cls.__name__,
+                "type": "str",
+                # "format": "email",
+                "pattern": pretty_email_regex.pattern,
+            },
         )

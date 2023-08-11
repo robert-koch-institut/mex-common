@@ -1,11 +1,11 @@
 from abc import ABCMeta, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Type, TypeVar, Union
+
+from pydantic_core import core_schema
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.typing import CallableGenerator
-
     from mex.common.settings import BaseSettings
 
 ResolvedPathT = TypeVar("ResolvedPathT", bound="ResolvedPath")
@@ -35,9 +35,10 @@ class ResolvedPath(PathLike[str], metaclass=ABCMeta):
         """Return the base path that relative paths will follow."""
 
     @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        """Get all validators for this class."""
-        yield cls.validate
+    def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
+        return core_schema.no_info_after_validator_function(
+            cls.validate, core_schema.str_schema()
+        )
 
     @classmethod
     def validate(cls: type[ResolvedPathT], value: Any) -> "ResolvedPathT":

@@ -8,7 +8,9 @@ from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ConfigDict, Field, model_validator
-from pydantic.fields import ModelField
+
+# from pydantic.fields import ModelField
+ModelField = object
 
 from mex.common.types import Identifier
 
