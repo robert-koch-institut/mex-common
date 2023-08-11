@@ -12,7 +12,7 @@ class LDAPPerson(LDAPActor):
     departmentNumber: str | None = Field(None)
     displayName: str | None = Field(None)
     employeeID: str = Field(...)
-    givenName: list[str] = Field(..., min_items=1)
+    givenName: list[str] = Field(..., min_length=1)
     ou: list[str] = Field([])
     sn: str = Field(...)
 

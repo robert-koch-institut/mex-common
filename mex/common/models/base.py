@@ -7,7 +7,7 @@ from functools import cache
 from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra, Field, root_validator
+from pydantic import ConfigDict, Field, model_validator
 from pydantic.fields import ModelField
 
 from mex.common.types import Identifier
@@ -48,15 +48,16 @@ class FlatValueMap(ChainMap[str, Any]):
 class BaseModel(PydanticBaseModel):
     """Common base class for all MEx model classes."""
 
-    class Config:
-        anystr_strip_whitespace = True
-        allow_population_by_field_name = True
-        extra = Extra.ignore
-        max_anystr_length = 10**5
-        min_anystr_length = 1
-        use_enum_values = True
-        validate_all = True
-        validate_assignment = True
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
+        populate_by_name=True,
+        extra="ignore",
+        str_max_length=10**5,
+        str_min_length=1,
+        use_enum_values=True,
+        validate_default=True,
+        validate_assignment=True,
+    )
 
     @classmethod
     @cache
@@ -118,7 +119,8 @@ class BaseModel(PydanticBaseModel):
         # already desired shape
         return value
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def fix_listyness(cls, values: ModelValuesT) -> ModelValuesT:
         """Adjust the listyness of to-be-parsed values to match the desired shape.
 
@@ -155,8 +157,7 @@ class BaseModel(PydanticBaseModel):
 class MExModel(BaseModel):
     """Abstract base model for extracted data and MEx entity classes."""
 
-    class Config:
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
     if TYPE_CHECKING:
         stableTargetId: Any

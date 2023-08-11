@@ -3,7 +3,7 @@ from typing import Any
 
 from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
 from langdetect.lang_detect_exception import LangDetectException
-from pydantic import BaseModel, Field, root_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.utils import GetterDict
 
 DETECTOR_FACTORY = DetectorFactory()
@@ -37,14 +37,15 @@ class Text(BaseModel):
         Text(value="foo") == Text.parse_obj("foo")
     """
 
-    class Config:
-        orm_mode = True
-        getter_dict = TextGetter
+    # TODO[pydantic]: The following keys were removed: `getter_dict`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(from_attributes=True, getter_dict=TextGetter)
 
     value: str = Field(..., min_length=1)
     language: TextLanguage | None = None
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def detect_language(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Detect the language of the text if not explicitly given."""
         language = values.get("language")

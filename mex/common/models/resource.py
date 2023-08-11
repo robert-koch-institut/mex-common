@@ -68,7 +68,7 @@ class BaseResource(BaseModel):
         [], examples=["https://mex.rki.de/item/anonymization-pseudonymization-1"]
     )
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = Field(
-        ..., min_items=1
+        ..., min_length=1
     )
     contributingUnit: list[OrganizationalUnitID] = []
     contributor: list[PersonID] = []
@@ -89,7 +89,7 @@ class BaseResource(BaseModel):
     )
     loincId: list[str] = []
     meshId: list[str] = Field(
-        [], regex=r"^https://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$"
+        [], pattern=r"^https://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$"
     )
     method: list[Text] = []
     methodDescription: list[Text] = []
@@ -110,10 +110,10 @@ class BaseResource(BaseModel):
     )
     temporal: list[Timestamp | str] = []
     theme: list[Theme] = Field(
-        ..., min_items=1, examples=["https://mex.rki.de/item/theme-1"]
+        ..., min_length=1, examples=["https://mex.rki.de/item/theme-1"]
     )
-    title: list[Text] = Field(..., min_items=1)
-    unitInCharge: list[OrganizationalUnitID] = Field(..., min_items=1)
+    title: list[Text] = Field(..., min_length=1)
+    unitInCharge: list[OrganizationalUnitID] = Field(..., min_length=1)
     wasGeneratedBy: ActivityID | None = None
 
 

@@ -2,7 +2,7 @@ import re
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.utils import GetterDict
 
 # https://daringfireball.net/projects/markdown/syntax#backslash
@@ -55,15 +55,15 @@ class Link(BaseModel):
         Link(url="https://foo", title="Title") == Link.parse_obj("[Title](https://foo)")
     """
 
-    class Config:
-        orm_mode = True
-        getter_dict = LinkGetter
+    # TODO[pydantic]: The following keys were removed: `getter_dict`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(from_attributes=True, getter_dict=LinkGetter)
 
     language: LinkLanguage | None = None
     title: str | None = None
     url: str = Field(
         ...,
-        regex=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+        pattern=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
         min_length=1,
         format="uri",
         examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],

@@ -35,9 +35,9 @@ class BaseVariable(BaseModel):
     label: list[Text] = Field(
         ...,
         examples=[{"language": "de", "value": "Mehrere Treppenabsätze steigen"}],
-        min_items=1,
+        min_length=1,
     )
-    usedIn: list[ResourceID] = Field(..., min_items=1)
+    usedIn: list[ResourceID] = Field(..., min_length=1)
     valueSet: list[str] = Field(
         [],
         examples=[

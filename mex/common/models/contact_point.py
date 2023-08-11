@@ -13,7 +13,7 @@ class BaseContactPoint(BaseModel):
     email: list[Email] = Field(
         ...,
         examples=["info@rki.de"],
-        min_items=1,
+        min_length=1,
     )
 
 

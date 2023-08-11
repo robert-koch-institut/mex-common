@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import Field, root_validator
+from pydantic import Field, model_validator
 
 from mex.common.models.base import MExModel
 from mex.common.types import Identifier, PrimarySourceID
@@ -34,7 +34,8 @@ class BaseExtractedData(MExModel):
 class ExtractedData(BaseExtractedData):
     """Base model class for extracted data instances that ensures identities."""
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Ensure identifier and provenance attributes are set for this instance.
 

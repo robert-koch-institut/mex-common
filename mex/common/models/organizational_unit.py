@@ -15,7 +15,7 @@ class BaseOrganizationalUnit(BaseModel):
         [],
         examples=["info@rki.de"],
     )
-    name: list[Text] = Field(..., min_items=1)
+    name: list[Text] = Field(..., min_length=1)
     parentUnit: OrganizationalUnitID | None = None
     shortName: list[Text] = []
     unitOf: list[OrganizationID] = []

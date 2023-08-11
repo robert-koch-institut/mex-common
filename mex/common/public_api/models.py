@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any, Literal
 from uuid import UUID
 
-from pydantic import Extra, Field, validator
+from pydantic import ConfigDict, Field, field_validator
 
 from mex.common.models import BaseModel
 from mex.common.types import (
@@ -23,9 +23,7 @@ PublicApiFieldValueTypesOrList = (
 class PublicApiBaseModel(BaseModel):
     """Common Public API base class."""
 
-    class Config:
-        extra = Extra.ignore
-        min_anystr_length = 0
+    model_config = ConfigDict(extra="ignore", str_min_length=0)
 
 
 class PublicApiAxisConstraint(PublicApiBaseModel):
@@ -54,7 +52,8 @@ class PublicApiField(PublicApiBaseModel):
     fieldValue: PublicApiFieldValueTypesOrList = Field(..., include=True)
     language: LinkLanguage | TextLanguage | None = Field(None, include=True)
 
-    @validator("language", pre=True)
+    @field_validator("language", mode="before")
+    @classmethod
     def fix_language(cls, value: Any) -> Any:
         """Only try to parse languages when the string is non-empty."""
         if isinstance(value, str) and value.strip() == "":

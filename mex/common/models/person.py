@@ -29,13 +29,13 @@ class BasePerson(BaseModel):
     isniId: list[str] = Field(
         [],
         examples=["https://isni.org/isni/0000000109403744"],
-        regex=r"^https://isni\.org/isni/[X0-9]{16}$",
+        pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
     )
     memberOf: list[OrganizationalUnitID] = []
     orcidId: list[str] = Field(
         [],
         examples=["https://orcid.org/0000-0002-9079-593X"],
-        regex=r"^https://orcid\.org/[-X0-9]{9,21}$",
+        pattern=r"^https://orcid\.org/[-X0-9]{9,21}$",
     )
 
 

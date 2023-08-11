@@ -31,8 +31,8 @@ class Concept(BaseModel):
     identifier: AnyUrl
     inScheme: AnyUrl
     prefLabel: BilingualText
-    altLabel: Optional[BilingualText]
-    definition: Optional[BilingualText]
+    altLabel: Optional[BilingualText] = None
+    definition: Optional[BilingualText] = None
 
 
 @cache

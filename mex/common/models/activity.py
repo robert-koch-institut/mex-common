@@ -39,7 +39,7 @@ class BaseActivity(BaseModel):
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = Field(
         ...,
         examples=[Identifier.generate(seed=42)],
-        min_items=1,
+        min_length=1,
     )
     documentation: list[Link] = []
     end: list[Timestamp] = Field(
@@ -55,7 +55,7 @@ class BaseActivity(BaseModel):
     publication: list[Link] = []
     responsibleUnit: list[OrganizationalUnitID] = Field(
         ...,
-        min_items=1,
+        min_length=1,
     )
     shortName: list[Text] = []
     start: list[Timestamp] = Field(
@@ -64,7 +64,7 @@ class BaseActivity(BaseModel):
     )
     succeeds: list[ActivityID] = []
     theme: list[Theme] = Field([], examples=["https://mex.rki.de/concept/theme-1"])
-    title: list[Text] = Field(..., min_items=1)
+    title: list[Text] = Field(..., min_length=1)
     website: list[Link] = []
 
 
