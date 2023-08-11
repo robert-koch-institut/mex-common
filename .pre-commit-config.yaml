@@ -12,6 +12,11 @@ repos:
         language: system
         entry: poetry run pretty-format-json
         types: [json]
+      - id: check-yaml
+        name: check-yaml
+        entry: poetry run check-yaml
+        language: system
+        types: [yaml]
       - id: end-of-file-fixer
         name: end-of-file-fixer
         language: system
@@ -19,7 +24,7 @@ repos:
       - id: debug-statements
         name: debug-statements
         language: system
-        entry: poetry run debug-statements
+        entry: poetry run debug-statement-hook
         exclude: "cli\\.py$"
         types: [python]
       - id: autoflake
@@ -44,12 +49,7 @@ repos:
         entry: poetry run mypy
         types: [python]
         exclude: "test_"
-      - id: pydocstyle
-        name: pydocstyle
-        language: system
-        entry: poetry run mypy
-        exclude: "test_"
-        types: [python]
+
       - id: bandit
         name: bandit
         language: system

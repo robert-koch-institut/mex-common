@@ -1,10 +1,18 @@
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
-from langdetect.lang_detect_exception import LangDetectException
 from pydantic import BaseModel, Field, root_validator
 from pydantic.utils import GetterDict
+
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.types.stubs import (
+        PROFILES_DIRECTORY,
+        DetectorFactory,
+        LangDetectException,
+    )
+else:
+    from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
+    from langdetect.lang_detect_exception import LangDetectException
 
 DETECTOR_FACTORY = DetectorFactory()
 DETECTOR_FACTORY.load_profile(PROFILES_DIRECTORY)

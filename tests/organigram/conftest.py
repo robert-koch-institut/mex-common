@@ -5,7 +5,7 @@ from mex.common.organigram.models import OrganigramName, OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import Link
+from mex.common.types import Link, LinkLanguage
 
 
 @pytest.fixture
@@ -17,6 +17,7 @@ def child_unit() -> OrganigramUnit:
         identifier="child-unit",
         name=OrganigramName(de="CHLD Unterabteilung", en="C1: Sub Unit"),
         parentUnit="parent-unit",
+        website=None,
     )
 
 
@@ -35,8 +36,9 @@ def parent_unit() -> OrganigramUnit:
         identifier="parent-unit",
         name=OrganigramName(de="Abteilung", en="Department"),
         email=["pu@example.com", "PARENT@example.com"],
+        parentUnit=None,
         website=Link(
-            language="en",
+            language=LinkLanguage.EN,
             title="Example | Parent Department",
             url="https://www.example.com/departments/parent.html",
         ),

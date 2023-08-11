@@ -6,15 +6,19 @@ to the `conftest.py` in your root test folder.
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Generator, Protocol
+from typing import TYPE_CHECKING, Generator, Protocol
 
 import pytest
-from langdetect import DetectorFactory
 from pydantic import AnyUrl
 from pytest import FixtureRequest, MonkeyPatch
 
 from mex.common.connector import reset_connector_context
 from mex.common.settings import BaseSettings, SettingsContext, SettingsType
+
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.types.stubs import DetectorFactory
+else:
+    from langdetect import DetectorFactory
 
 
 class SettingLoader(Protocol):

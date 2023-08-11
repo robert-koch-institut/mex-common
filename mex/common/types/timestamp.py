@@ -5,11 +5,14 @@ from functools import total_ordering
 from itertools import zip_longest
 from typing import TYPE_CHECKING, Any, Literal, Optional, Union, cast, overload
 
-from pandas._libs.tslibs import parsing
 from pytz import timezone
 
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic.typing import CallableGenerator
+
+    from mex.common.types.stubs import parsing
+else:
+    from pandas._libs.tslibs import parsing
 
 
 class TimestampPrecision(Enum):
