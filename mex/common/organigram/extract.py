@@ -9,7 +9,7 @@ from mex.common.types import OrganizationalUnitID, Text
 
 
 @watch
-def extract_oranigram_units() -> Generator[OrganigramUnit, None, None]:
+def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
     """Extract organizational units from the organigram JSON file.
 
     Settings:

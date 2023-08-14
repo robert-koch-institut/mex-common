@@ -1,3 +1,4 @@
+from mex.common.models import ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
@@ -7,10 +8,12 @@ from mex.common.types import LinkLanguage, Text, TextLanguage
 
 
 def test_transform_organigram_units_to_organizational_units(
-    child_unit: OrganigramUnit, parent_unit: OrganigramUnit
+    child_unit: OrganigramUnit,
+    parent_unit: OrganigramUnit,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_units = transform_organigram_units_to_organizational_units(
-        [child_unit, parent_unit]
+        [child_unit, parent_unit], extracted_primary_sources["organigram"]
     )
 
     # look up by ids, because order is not guaranteed
@@ -33,7 +36,7 @@ def test_transform_organigram_units_to_organizational_units(
     # check serialized as expected
     assert parent_extracted_unit.dict(exclude_none=True) == {
         "identifier": Joker(),
-        "hadPrimarySource": "bFQoRhcVH5DHUq",
+        "hadPrimarySource": extracted_primary_sources["organigram"].stableTargetId,
         "identifierInPrimarySource": "parent-unit",
         "stableTargetId": Joker(),
         "alternativeName": [

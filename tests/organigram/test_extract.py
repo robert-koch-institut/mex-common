@@ -1,16 +1,16 @@
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.extract import (
-    extract_oranigram_units,
+    extract_organigram_units,
     get_unit_merged_ids_by_emails,
     get_unit_merged_ids_by_synonyms,
 )
 from mex.common.organigram.models import OrganigramUnit
 
 
-def test_extract_oranigram_units(
+def test_extract_organigram_units(
     child_unit: OrganigramUnit, parent_unit: OrganigramUnit
 ) -> None:
-    units = list(extract_oranigram_units())
+    units = list(extract_organigram_units())
     assert units == [child_unit, parent_unit]
 
 

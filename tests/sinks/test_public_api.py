@@ -52,7 +52,7 @@ def test_purge_from_public_api_mocked(
 def test_public_api_post_and_purge_roundtrip() -> None:
     extracted_person = ExtractedPerson(
         identifierInPrimarySource=str(uuid4()),
-        hadPrimarySource=Identifier.generate(seed=0),
+        hadPrimarySource=Identifier.generate(),
         fullName="Roundtrip Test",
     )
     results: list[Any] = list(post_to_public_api([extracted_person]))

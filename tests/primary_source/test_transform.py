@@ -1,60 +1,22 @@
-import pytest
-
-from mex.common.primary_source.extract import extract_mex_db_primary_source_by_id
+from mex.common.models.extracted_data import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
-    transform_mex_db_primary_source_to_extracted_primary_source,
+    transform_seed_primary_source_to_extracted_primary_sources,
 )
 from mex.common.testing import Joker
-from mex.common.types import LinkLanguage, OrganizationalUnitID, TextLanguage
+from mex.common.types import TextLanguage
 
 
-@pytest.mark.usefixtures("seed_test_primary_source")
-def test_transform_mex_db_primary_source_to_extracted_primary_source(
-    unit_merged_ids_by_synonym: dict[str, OrganizationalUnitID]
-) -> None:
-    mex_db_primary_source = extract_mex_db_primary_source_by_id("test-primary-source")
-    extracted_primary_source = (
-        transform_mex_db_primary_source_to_extracted_primary_source(
-            mex_db_primary_source=mex_db_primary_source,
-            unit_merged_ids_by_synonym=unit_merged_ids_by_synonym,
+def test_transform_mex_db_primary_source_to_extracted_primary_source() -> None:
+    extracted_primary_source = next(
+        transform_seed_primary_source_to_extracted_primary_sources(
+            extract_seed_primary_sources()
         )
     )
-
-    assert extracted_primary_source.dict(exclude_none=True) == {
+    assert extracted_primary_source.dict(exclude_none=True, exclude_defaults=True) == {
+        "hadPrimarySource": MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         "identifier": Joker(),
-        "hadPrimarySource": "bFQoRhcVH5DHUq",
-        "identifierInPrimarySource": "test-primary-source",
-        "stableTargetId": Joker(),
-        "alternativeTitle": [{"value": "PM"}],
-        "contact": [],
-        "description": [
-            {"value": "Probenmaterial Description", "language": TextLanguage.DE}
-        ],
-        "documentation": [
-            {
-                "language": LinkLanguage.DE,
-                "title": "Probenmaterial Docs",
-                "url": "https://probenmaterial.test/docs",
-            },
-            {
-                "language": LinkLanguage.EN,
-                "title": "Probenmaterial Docs Eng",
-                "url": "https://probenmaterial.test/docs_en",
-            },
-        ],
-        "locatedAt": [
-            {
-                "language": LinkLanguage.DE,
-                "title": "Probenmaterial",
-                "url": "https://probenmaterial.test",
-            },
-            {
-                "language": LinkLanguage.EN,
-                "title": "Test Material",
-                "url": "https://probenmaterial.test/en",
-            },
-        ],
-        "title": [{"value": "Probenmaterial", "language": TextLanguage.DE}],
-        "unitInCharge": [Joker()],
-        "version": "1.29",
+        "identifierInPrimarySource": "mex",
+        "stableTargetId": MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+        "title": [{"language": TextLanguage.EN, "value": "Metadata Exchange"}],
     }

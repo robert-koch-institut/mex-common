@@ -50,7 +50,6 @@ repos:
           - "click>=8.1.6,<9"
           - "pydantic[dotenv,email]>=1.10.11,<2"
           - "pytest>=7.4.0,<8"
-          - "sqlalchemy[mypy]>=1.4.49,<2"
           - "types-pytz>=2023.3.0.0,<2024"
           - "types-requests>=2.31.0.2,<3"
           - "types-setuptools>=68.0.0.3,<69"
