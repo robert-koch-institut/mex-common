@@ -10,7 +10,7 @@ from mex.common.primary_source.models import SeedPrimarySource
 
 
 @watch
-def transform_seed_primary_source_to_extracted_primary_sources(
+def transform_seed_primary_sources_to_extracted_primary_sources(
     primary_sources: Iterable[SeedPrimarySource],
 ) -> Generator[ExtractedPrimarySource, None, None]:
     """Transform seed primary sources into ExtractedPrimarySources.

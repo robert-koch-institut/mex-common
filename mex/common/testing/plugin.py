@@ -17,7 +17,7 @@ from mex.common.connector import reset_connector_context
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
-    transform_seed_primary_source_to_extracted_primary_sources,
+    transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.settings import BaseSettings, SettingsContext, SettingsType
 
@@ -105,6 +105,8 @@ def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
     seed_primary_sources = extract_seed_primary_sources()
     extracted_primary_sources = (
-        transform_seed_primary_source_to_extracted_primary_sources(seed_primary_sources)
+        transform_seed_primary_sources_to_extracted_primary_sources(
+            seed_primary_sources
+        )
     )
     return {p.identifierInPrimarySource: p for p in extracted_primary_sources}
