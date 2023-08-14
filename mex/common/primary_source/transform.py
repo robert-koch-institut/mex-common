@@ -1,10 +1,10 @@
 from typing import Generator, Iterable
 
 from mex.common.logging import watch
-from mex.common.models import ExtractedPrimarySource
-from mex.common.models.extracted_data import (
+from mex.common.models import (
     MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    ExtractedPrimarySource,
 )
 from mex.common.primary_source.models import SeedPrimarySource
 

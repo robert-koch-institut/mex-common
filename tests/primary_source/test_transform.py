@@ -1,4 +1,4 @@
-from mex.common.models.extracted_data import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
