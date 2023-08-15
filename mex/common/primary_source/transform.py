@@ -34,3 +34,21 @@ def transform_seed_primary_sources_to_extracted_primary_sources(
             hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
             **set_stable_target_id  # type: ignore[arg-type]
         )
+
+
+def get_primary_sources_by_name(
+    extracted_primary_sources: Iterable[ExtractedPrimarySource], *names: str
+) -> tuple[ExtractedPrimarySource, ...]:
+    """Pick the extracted primary sources with the given name and return as a tuple.
+
+    Args:
+        extracted_primary_sources: Iterable of extracted primary sources
+        names: Names (`identifierInPrimarySource`) to pick
+
+    Returns:
+        Tuple of picked primary sources of the same length as `names`
+    """
+    primary_sources_by_name = {
+        p.identifierInPrimarySource: p for p in extracted_primary_sources
+    }
+    return tuple(primary_sources_by_name[n] for n in names)
