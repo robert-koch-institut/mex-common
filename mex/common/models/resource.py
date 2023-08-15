@@ -45,6 +45,12 @@ class Frequency(VocabularyEnum):
     __vocabulary__ = "frequency"
 
 
+class Language(VocabularyEnum):
+    """Language type."""
+
+    __vocabulary__ = "language"
+
+
 class License(VocabularyEnum):
     """License type."""
 
@@ -82,7 +88,9 @@ class BaseResource(BaseModel):
     instrumentToolOrApparatus: list[Text] = []
     isPartOf: list[ResourceID] = []
     keyword: list[Text] = []
-    language: list[str] = Field([], enum=["de", "en"])
+    language: list[Language] = Field(
+        [], examples=["https://mex.rki.de/item/language-1"]
+    )
     license: list[License] = Field(
         [],
         examples=["https://mex.rki.de/item/license-1"],
