@@ -97,7 +97,7 @@ class BaseResource(BaseModel):
     )
     loincId: list[str] = []
     meshId: list[str] = Field(
-        [], regex=r"^https://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$"
+        [], regex=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$"
     )
     method: list[Text] = []
     methodDescription: list[Text] = []
