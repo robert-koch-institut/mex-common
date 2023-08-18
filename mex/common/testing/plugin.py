@@ -6,7 +6,7 @@ to the `conftest.py` in your root test folder.
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Generator, Protocol
+from typing import Generator
 
 import pytest
 from langdetect import DetectorFactory
@@ -19,17 +19,7 @@ from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
-from mex.common.settings import BaseSettings, SettingsContext, SettingsType
-
-
-class SettingLoader(Protocol):
-    """Protocol for settings loader function."""
-
-    def __call__(
-        self, settings_cls: type[SettingsType]
-    ) -> Generator[SettingsType, None, None]:
-        """Load the settings of the given class configured for testing."""
-        ...
+from mex.common.settings import BaseSettings, SettingsContext
 
 
 @pytest.fixture(autouse=True)
@@ -100,7 +90,8 @@ def faker_session_locale() -> list[str]:
     return ["de_DE", "en_US"]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
+@pytest.mark.usefixtures("settings")
 def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
     seed_primary_sources = extract_seed_primary_sources()
