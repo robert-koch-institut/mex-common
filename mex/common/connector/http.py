@@ -105,6 +105,11 @@ class HTTPConnector(BaseConnector):
         lambda response: cast(Response, response).status_code >= 500,
         max_tries=4,
     )
+    @backoff.on_predicate(
+        backoff.fibo,
+        lambda response: cast(Response, response).status_code == 429,
+        max_tries=10,
+    )
     @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)
     def _send_request(
         self, method: str, url: str, params: dict[str, str] | None, **kwargs: Any
