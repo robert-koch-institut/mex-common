@@ -9,8 +9,9 @@ class Email(EmailStr):
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
+        """Get pydanctic core schema."""
         return core_schema.general_after_validator_function(
-            cls._validate,
+            cls._validate,  # type: ignore[attr-defined]
             {
                 # "title": cls.__name__,
                 "type": "str",
