@@ -47,10 +47,13 @@ class Text(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def validate_strings(cls, value: Any) -> dict[str, Any]:
+        """Convert string input to dictionary."""
         if isinstance(value, str):
             return {"value": value}
-        else:
+        elif isinstance(value, dict):
             return value
+        else:
+            raise ValueError(f"Allowed input types are dict and str, got {type(value)}")
 
     def __str__(self) -> str:
         """Return the text value."""
