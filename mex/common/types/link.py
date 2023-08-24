@@ -2,8 +2,7 @@ import re
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
-from pydantic.utils import GetterDict
+from pydantic import BaseModel, Field, model_validator
 
 # https://daringfireball.net/projects/markdown/syntax#backslash
 MARKDOWN_SPECIAL_CHARS = r"\`*_{}[]()#+-.!"
@@ -30,22 +29,6 @@ class LinkLanguage(Enum):
     EN = "en"
 
 
-class LinkGetter(GetterDict):
-    """Helper class to get values from a markdown Link."""
-
-    def get(self, key: Any, default: Any = None) -> Any:
-        """Get the value for the given key."""
-        if match := re.match(r"\[(?P<title>.*)\]\((?P<url>.*)\)", self._obj):
-            values = {
-                key: markdown_unescape(value)
-                for key, value in match.groupdict().items()
-            }
-        else:
-            values = {"url": self._obj}
-
-        return values.get(key, default)
-
-
 class Link(BaseModel):
     """Type class for Link objects.
 
@@ -54,10 +37,6 @@ class Link(BaseModel):
     Example:
         Link(url="https://foo", title="Title") == Link.parse_obj("[Title](https://foo)")
     """
-
-    # TODO[pydantic]: The following keys were removed: `getter_dict`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(from_attributes=True, getter_dict=LinkGetter)
 
     language: LinkLanguage | None = None
     title: str | None = None
@@ -68,6 +47,27 @@ class Link(BaseModel):
         format="uri",
         examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def convert_markdown_to_link(cls, values: Any) -> dict[str, Any]:
+        """Convert string input to dictionary."""
+        if isinstance(values, dict):
+            return values
+        elif isinstance(values, str):
+            if match := re.match(r"\[(?P<title>.*)\]\((?P<url>.*)\)", values):
+                url_dict = {
+                    key: markdown_unescape(value)
+                    for key, value in match.groupdict().items()
+                }
+            else:
+                url_dict = {"url": values}
+
+            return url_dict
+        else:
+            raise ValueError(
+                f"Allowed input types are dict and str, got {type(values)}"
+            )
 
     def __str__(self) -> str:
         """Render the link as markdown if a title is set, otherwise as plain url."""
