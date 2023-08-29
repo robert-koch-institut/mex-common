@@ -17,7 +17,12 @@ from mex.common.models.distribution import (
     ExtractedDistribution,
     MergedDistribution,
 )
-from mex.common.models.extracted_data import BaseExtractedData, ExtractedData
+from mex.common.models.extracted_data import (
+    MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    BaseExtractedData,
+    ExtractedData,
+)
 from mex.common.models.merged_item import MergedItem
 from mex.common.models.organization import (
     BaseOrganization,
@@ -82,6 +87,8 @@ __all__ = (
     "MergedResource",
     "MergedVariable",
     "MergedVariableGroup",
+    "MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE",
+    "MEX_PRIMARY_SOURCE_STABLE_TARGET_ID",
     "MExModel",
 )
 

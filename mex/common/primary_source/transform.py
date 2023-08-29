@@ -1,81 +1,54 @@
-import json
-from typing import Optional
+from typing import Generator, Iterable
 
-from mex.common.models import ExtractedPrimarySource
-from mex.common.primary_source.models import MExDBPrimarySource
-from mex.common.types import Link, OrganizationalUnitID, PrimarySourceID, Text
+from mex.common.logging import watch
+from mex.common.models import (
+    MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    ExtractedPrimarySource,
+)
+from mex.common.primary_source.models import SeedPrimarySource
 
-MEX_PRIMARY_SOURCE_ID = PrimarySourceID.generate(seed=0)
 
-
-def transform_mex_db_primary_source_to_extracted_primary_source(
-    mex_db_primary_source: MExDBPrimarySource,
-    mex_db_mex_db_primary_source: Optional[ExtractedPrimarySource] = None,
-    unit_merged_ids_by_synonym: dict[str, OrganizationalUnitID] = {},
-) -> ExtractedPrimarySource:
-    """Transform a concrete primary source coming from MEx DB into a primary source.
+@watch
+def transform_seed_primary_sources_to_extracted_primary_sources(
+    primary_sources: Iterable[SeedPrimarySource],
+) -> Generator[ExtractedPrimarySource, None, None]:
+    """Transform seed primary sources into ExtractedPrimarySources.
 
     Args:
-        mex_db_primary_source: concrete MEx DB primary_source to transform
-        mex_db_mex_db_primary_source: MEx DB primary source for the MEx DB primary_source itself
-            (can be left empty if we are extracting the MEx DB primary source from itself.)
-        unit_merged_ids_by_synonym: Dict of Organigram Units merged ids
+        primary_sources: Iterable of primary sources coming from raw-data file
 
     Returns:
-        Primary source transformed from `mex_db_primary_source`
+        Generator for ExtractedPrimarySource
     """
-    alternative_titles = [
-        Text(
-            value=json.loads(title.alternative_title).get("value"),
-            language=json.loads(title.alternative_title).get("language"),
+    for primary_source in primary_sources:
+        if primary_source.identifier == MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE:
+            set_stable_target_id = dict(
+                stableTargetId=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+            )
+        else:
+            set_stable_target_id = dict()
+        yield ExtractedPrimarySource(
+            identifierInPrimarySource=primary_source.identifier,
+            title=primary_source.title,
+            hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            **set_stable_target_id  # type: ignore[arg-type]
         )
-        for title in mex_db_primary_source.alternative_titles
-    ]
-    titles = [
-        Text(
-            value=json.loads(title.title).get("value"),
-            language=json.loads(title.title).get("language"),
-        )
-        for title in mex_db_primary_source.titles
-    ]
-    descriptions = [
-        Text(
-            value=json.loads(desc.description).get("value"),
-            language=json.loads(desc.description).get("language"),
-        )
-        for desc in mex_db_primary_source.descriptions
-    ]
-    documentations = [
-        Link(
-            language=json.loads(docs.documentation).get("language"),
-            title=json.loads(docs.documentation).get("title"),
-            url=json.loads(docs.documentation).get("url"),
-        )
-        for docs in mex_db_primary_source.documentations
-    ]
-    located_ats = [
-        Link(
-            language=json.loads(located_at.located_at).get("language"),
-            title=json.loads(located_at.located_at).get("title"),
-            url=json.loads(located_at.located_at).get("url"),
-        )
-        for located_at in mex_db_primary_source.located_ats
-    ]
 
-    return ExtractedPrimarySource(  # type: ignore[call-arg]
-        identifierInPrimarySource=mex_db_primary_source.identifier,
-        alternativeTitle=alternative_titles,
-        description=descriptions,
-        documentation=documentations,
-        locatedAt=located_ats,
-        title=titles,
-        unitInCharge=[
-            unit_id
-            for unit in mex_db_primary_source.units_in_charge
-            if (unit_id := unit_merged_ids_by_synonym.get(unit.unit_in_charge))
-        ],
-        version=mex_db_primary_source.version,
-        hadPrimarySource=mex_db_mex_db_primary_source.stableTargetId
-        if mex_db_mex_db_primary_source
-        else MEX_PRIMARY_SOURCE_ID,
-    )
+
+def get_primary_sources_by_name(
+    extracted_primary_sources: Iterable[ExtractedPrimarySource], *names: str
+) -> tuple[ExtractedPrimarySource, ...]:
+    """Pick the extracted primary sources with the given name and return as a tuple.
+
+    Args:
+        extracted_primary_sources: Iterable of extracted primary sources
+        names: Names (`identifierInPrimarySource`) to pick
+
+    Returns:
+        Tuple of picked primary sources of the same length as `names`
+    """
+    primary_sources_by_name = {
+        p.identifierInPrimarySource: p for p in extracted_primary_sources
+    }
+    return tuple(primary_sources_by_name[n] for n in names)

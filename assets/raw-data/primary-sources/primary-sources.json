@@ -1,0 +1,38 @@
+[
+  {
+    "identifier": "mex",
+    "title": [
+      {
+        "language": "en",
+        "value": "Metadata Exchange"
+      }
+    ]
+  },
+  {
+    "identifier": "organigram",
+    "title": [
+      {
+        "language": "en",
+        "value": "Organizational Units"
+      }
+    ]
+  },
+  {
+    "identifier": "ldap",
+    "title": [
+      {
+        "language": "en",
+        "value": "Active Directory"
+      }
+    ]
+  },
+  {
+    "identifier": "wikidata",
+    "title": [
+      {
+        "language": "en",
+        "value": "Wikidata APIs"
+      }
+    ]
+  }
+]

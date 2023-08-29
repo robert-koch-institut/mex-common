@@ -212,5 +212,5 @@ def analyse_person_string(string: str) -> list[PersonName]:
     if len(split) == 2:
         return [PersonName(surname=split[1], given_name=split[0], full_name=full_name)]
 
-    # found noone
+    # found no one
     return []

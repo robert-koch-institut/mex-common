@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 from mex.common.backend_api.models import BulkInsertResponse
 from mex.common.connector import HTTPConnector
 from mex.common.models import MExModel
-from mex.common.models.base import MExModel
 from mex.common.settings import BaseSettings
 from mex.common.types import Identifier
 

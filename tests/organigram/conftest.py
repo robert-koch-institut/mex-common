@@ -1,11 +1,11 @@
 import pytest
 
-from mex.common.models import ExtractedOrganizationalUnit
+from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramName, OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import Link
+from mex.common.types import Link, LinkLanguage
 
 
 @pytest.fixture
@@ -17,13 +17,21 @@ def child_unit() -> OrganigramUnit:
         identifier="child-unit",
         name=OrganigramName(de="CHLD Unterabteilung", en="C1: Sub Unit"),
         parentUnit="parent-unit",
+        website=None,
     )
 
 
 @pytest.fixture
-def extracted_child_unit(child_unit: OrganigramUnit) -> ExtractedOrganizationalUnit:
+def extracted_child_unit(
+    child_unit: OrganigramUnit,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> ExtractedOrganizationalUnit:
     """Return the child unit transformed to an ExtractedOrganizationalUnit."""
-    return next(transform_organigram_units_to_organizational_units([child_unit]))
+    return next(
+        transform_organigram_units_to_organizational_units(
+            [child_unit], extracted_primary_sources["organigram"]
+        )
+    )
 
 
 @pytest.fixture
@@ -36,14 +44,22 @@ def parent_unit() -> OrganigramUnit:
         name=OrganigramName(de="Abteilung", en="Department"),
         email=["pu@example.com", "PARENT@example.com"],
         website=Link(
-            language="en",
+            language=LinkLanguage.EN,
             title="Example | Parent Department",
             url="https://www.example.com/departments/parent.html",
         ),
+        parentUnit=None,
     )
 
 
 @pytest.fixture
-def extracted_parent_unit(parent_unit: OrganigramUnit) -> ExtractedOrganizationalUnit:
+def extracted_parent_unit(
+    parent_unit: OrganigramUnit,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> ExtractedOrganizationalUnit:
     """Return the parent unit transformed to an ExtractedOrganizationalUnit."""
-    return next(transform_organigram_units_to_organizational_units([parent_unit]))
+    return next(
+        transform_organigram_units_to_organizational_units(
+            [parent_unit], extracted_primary_sources["organigram"]
+        )
+    )
