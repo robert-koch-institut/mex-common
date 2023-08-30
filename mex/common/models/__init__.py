@@ -97,8 +97,6 @@ BASE_MODEL_CLASSES: Final[list[type[BaseModel]]] = [
     BaseActivity,
     BaseContactPoint,
     BaseDistribution,
-    BaseExtractedData,
-    BaseModel,
     BaseOrganization,
     BaseOrganizationalUnit,
     BasePerson,
