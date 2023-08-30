@@ -4,8 +4,9 @@ from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
-from pydantic import AnyUrl, ConfigDict, Field, SecretStr
+from pydantic import AnyUrl, Field, SecretStr
 from pydantic_settings import BaseSettings as PydanticBaseSettings
+from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType
 
 from mex.common.identity.types import IdentityProvider
@@ -22,11 +23,11 @@ SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
 class BaseSettings(PydanticBaseSettings):
     """Common settings definition class."""
 
-    model_config = ConfigDict(
+    model_config = SettingsConfigDict(
         populate_by_name=True,
-        _env_prefix="mex_",
-        _env_file=".env",
-        _env_file_encoding="utf-8",
+        env_prefix="mex_",
+        env_file=".env",
+        env_file_encoding="utf-8",
         extra="ignore",
         validate_default=True,
         validate_assignment=True,
@@ -73,7 +74,7 @@ class BaseSettings(PydanticBaseSettings):
         """
         settings = SettingsContext.get()
         if settings is None:
-            settings = cls.parse_obj({})
+            settings = cls.model_validate({})
             SettingsContext.set(settings)
         if isinstance(settings, cls):
             return settings
@@ -190,7 +191,7 @@ class BaseSettings(PydanticBaseSettings):
 
     def text(self) -> str:
         """Dump the current settings into a readable table."""
-        dict_ = self.dict()
+        dict_ = self.model_dump()
         indent = max(len(key) for key in dict_)
         return "\n".join(
             [
@@ -204,11 +205,11 @@ class BaseSettings(PydanticBaseSettings):
         """Dump the current settings as a mapping of environment variables."""
 
         def get_env_name(key: str) -> str:
-            return str(sorted(self.__fields__[key].field_info.extra["env_names"])[0])
+            return str(self.model_fields[key].validation_alias)
 
         return {
             get_env_name(key).upper(): json.dumps(value, cls=MExEncoder).strip('"')
-            for key, value in self.dict().items()
+            for key, value in self.model_dump().items()
             if value not in (None, [], {})
         }
 
