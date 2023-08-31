@@ -41,9 +41,21 @@ def test_flat_value_map(mapping: dict[str, Any], expected: str) -> None:
         ({"optional_str": []}, {"optional_str": None}),
         ({"optional_str": [None]}, {"optional_str": None}),
         ({"optional_str": ["value"]}, {"optional_str": "value"}),
-        ({"required_str": []}, "none is not an allowed value"),
-        ({"required_str": [None]}, "none is not an allowed value"),
-        ({"required_str": ["value", "value"]}, "got multiple values for required_str"),
+        (
+            {"required_str": []},
+            "Input should be a valid string [type=string_type, input_value=None, "
+            "input_type=NoneType]",
+        ),
+        (
+            {"required_str": [None]},
+            "Input should be a valid string [type=string_type, input_value=None, "
+            "input_type=NoneType]",
+        ),
+        (
+            {"required_str": ["value", "value"]},
+            "got multiple values for required_str [type=value_error, "
+            "input_value={'required_str': ['value', 'value']}, input_type=dict]",
+        ),
         ({"optional_list": None}, {"optional_list": None}),
         ({"optional_list": "value"}, {"optional_list": ["value"]}),
         ({"required_list": None}, {"required_list": []}),
@@ -60,11 +72,11 @@ def test_base_model_listyness_fix(
         required_list: list[str] = []
 
     try:
-        model = ListynessFixModel.parse_obj(data)
+        model = ListynessFixModel.model_validate(data)
     except Exception as error:
         assert str(expected) in str(error)
     else:
-        assert model.dict(exclude_unset=True) == expected
+        assert model.model_dump(exclude_unset=True) == expected
 
 
 class DummyModel(BaseModel):
