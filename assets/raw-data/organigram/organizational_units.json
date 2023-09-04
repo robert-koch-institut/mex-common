@@ -1,33 +1,63 @@
 [
   {
     "alternativeName": [
-      "CHLD",
-      "C1 Sub-Unit",
-      "C1 Unterabteilung"
+      {
+        "value": "CHLD"
+      },
+      {
+        "value": "C1 Sub-Unit"
+      },
+      {
+        "value": "C1 Unterabteilung"
+      }
     ],
     "identifier": "child-unit",
-    "name": {
-      "de": "CHLD Unterabteilung",
-      "en": "C1: Sub Unit"
-    },
+    "name": [
+      {
+        "language": "de",
+        "value": "CHLD Unterabteilung"
+      },
+      {
+        "language": "en",
+        "value": "C1: Sub Unit"
+      }
+    ],
     "parentUnit": "parent-unit",
-    "shortName": "C1"
+    "shortName": [
+      {
+        "value": "C1"
+      }
+    ]
   },
   {
     "alternativeName": [
-      "PRNT Abteilung",
-      "PARENT Dept."
+      {
+        "value": "PRNT Abteilung"
+      },
+      {
+        "value": "PARENT Dept."
+      }
     ],
     "email": [
       "pu@example.com",
       "PARENT@example.com"
     ],
     "identifier": "parent-unit",
-    "name": {
-      "de": "Abteilung",
-      "en": "Department"
-    },
-    "shortName": "PRNT",
+    "name": [
+      {
+        "language": "de",
+        "value": "Abteilung"
+      },
+      {
+        "language": "en",
+        "value": "Department"
+      }
+    ],
+    "shortName": [
+      {
+        "value": "PRNT"
+      }
+    ],
     "website": [
       {
         "language": "en",
