@@ -3,7 +3,7 @@ from typing import Generator, Iterable
 from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramUnit
-from mex.common.types import Email, OrganizationalUnitID, Text, TextLanguage
+from mex.common.types import Email, OrganizationalUnitID
 
 
 @watch
@@ -26,13 +26,10 @@ def transform_organigram_units_to_organizational_units(
         extracted_unit = ExtractedOrganizationalUnit(  # type: ignore[call-arg]
             identifierInPrimarySource=unit.identifier,
             hadPrimarySource=primary_source.stableTargetId,
-            alternativeName=[Text(value=name) for name in unit.alternativeName],
+            alternativeName=unit.alternativeName if unit.alternativeName else [],
             email=[Email(email) for email in unit.email],
-            name=[
-                Text(value=unit.name.de, language=TextLanguage.DE),
-                Text(value=unit.name.en, language=TextLanguage.EN),
-            ],
-            shortName=[Text(value=unit.shortName)],
+            name=unit.name,
+            shortName=unit.shortName,
             website=[unit.website] if unit.website else [],
         )
         extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit
