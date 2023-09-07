@@ -2,18 +2,16 @@ import json
 import pdb
 import sys
 from bdb import BdbQuit
-from enum import Enum
 from functools import partial
 from textwrap import dedent
 from traceback import format_exc
-from typing import Callable, Union, get_origin
+from typing import Callable
 
 import click
 from click import Command, Option
 from click.core import ParameterSource
 from click.exceptions import Abort, Exit
-from pydantic import SecretStr
-from pydantic.fields import ModelField
+from pydantic.fields import FieldInfo
 
 from mex.common.connector import reset_connector_context
 from mex.common.logging import echo
@@ -31,7 +29,7 @@ Acceptable configuration sources sorted by priority:
 """
 
 
-def field_to_parameters(field: ModelField) -> list[str]:
+def field_to_parameters(name: str, field: FieldInfo) -> list[str]:
     """Convert a field of a pydantic settings class into parameter declarations.
 
     The field's name and alias are considered. Underscores are replaced with dashes
@@ -39,21 +37,24 @@ def field_to_parameters(field: ModelField) -> list[str]:
     parameters have just one.
 
     Args:
+        name: name of the Field
         field: Field of a Settings definition class
 
     Returns:
         List of parameter declaring strings
     """
-    names = [n.replace("_", "-") for n in sorted({field.name, field.alias}) if n]
+    names = [name] + ([field.alias] if field.alias else [])
+    names = [n.replace("_", "-") for n in names]
     dashes = ["--" if len(n) > 1 else "-" for n in names]
     return [f"{d}{n}" for d, n in zip(dashes, names)]
 
 
-def field_to_option(field: ModelField) -> Option:
+def field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
     """Convert a field of a pydantic settings class into a click option.
 
     Args:
-        field: Field of a Settings definition class
+        name: name of the Field
+        settings_cls: Base settings class or a subclass of it
 
     Returns:
         Option: click Option with appropriate attributes
@@ -63,22 +64,19 @@ def field_to_option(field: ModelField) -> Option:
     # complex fields or type unions are always interpreted as strings
     # and add support for SecretStr fields with correct default values
     # https://pydantic-docs.helpmanual.io/usage/types/#secret-types
-    if (
-        field.is_complex()
-        or get_origin(field.type_) is Union
-        or issubclass(field.type_, (str, SecretStr, Enum))
-    ):
+    field = settings_cls.model_fields[name]
+    if field.annotation in (int, bool, float):
+        field_type = field.annotation
+        default = field.default
+    else:
         field_type = str
         default = json.dumps(field.default, cls=MExEncoder).strip('"')
-    else:
-        field_type = field.type_
-        default = field.default
     return Option(
-        field_to_parameters(field),
+        field_to_parameters(name, field),
         default=default,
-        envvar=list(field.field_info.extra["env_names"])[0].upper(),
-        help=field.field_info.description,
-        is_flag=field.type_ is bool and field.default is False,
+        envvar=settings_cls.get_env_name(name),
+        help=field.description,
+        is_flag=field.annotation is bool and field.default is False,
         show_default=True,
         show_envvar=True,
         type=field_type,
@@ -111,7 +109,7 @@ def callback(
     context.call_on_close(reset_connector_context)
 
     # load settings from parameters and store in ContextVar.
-    settings = settings_cls.parse_obj(
+    settings = settings_cls.model_validate(
         {
             key: value
             for key, value in cli_settings.items()
@@ -181,11 +179,14 @@ def entrypoint(
         return Command(
             func.__name__,
             help=HELP_TEMPLATE.format(
-                doc=func.__doc__, env_file=settings_cls.__config__.env_file
+                doc=func.__doc__, env_file=settings_cls.model_config.get("env_file")
             ),
             callback=partial(callback, func, settings_cls),
             params=[
-                *[field_to_option(field) for field in settings_cls.__fields__.values()],
+                *[
+                    field_to_option(name, settings_cls)
+                    for name in settings_cls.model_fields
+                ],
                 *meta_parameters,
             ],
         )

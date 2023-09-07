@@ -7,7 +7,7 @@ from typing import Any, Optional, TypeVar, Union
 from pydantic import AnyUrl, Field, SecretStr
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
-from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType
+from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
 from mex.common.identity.types import IdentityProvider
 from mex.common.sinks import Sink
@@ -201,14 +201,23 @@ class BaseSettings(PydanticBaseSettings):
             ]
         )
 
+    @classmethod
+    def get_env_name(cls, name: str) -> str:
+        """Get the name of the environment variable for field with given name."""
+        field = cls.model_fields[name]
+        env_settings = EnvSettingsSource(
+            cls,
+            case_sensitive=cls.model_config.get("case_sensitive", False),
+            env_prefix=cls.model_config.get("env_prefix", ""),
+        )
+        env_info = env_settings._extract_field_info(field, name)
+        env_name = env_info[0][1].upper()
+        return env_name
+
     def env(self) -> dict[str, str]:
         """Dump the current settings as a mapping of environment variables."""
-
-        def get_env_name(key: str) -> str:
-            return str(self.model_fields[key].validation_alias)
-
         return {
-            get_env_name(key).upper(): json.dumps(value, cls=MExEncoder).strip('"')
+            self.get_env_name(key): json.dumps(value, cls=MExEncoder).strip('"')
             for key, value in self.model_dump().items()
             if value not in (None, [], {})
         }
