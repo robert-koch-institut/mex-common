@@ -8,7 +8,6 @@ from uuid import UUID
 import backoff
 import pandas as pd
 import requests
-from pydantic import SecretStr
 from requests.exceptions import HTTPError
 
 from mex.common.connector import HTTPConnector
@@ -42,9 +41,6 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
 
     TIMEOUT = 10
     API_VERSION = "v0"
-
-    token_provider: str
-    token_payload: SecretStr
 
     def _set_session(self, settings: BaseSettings) -> None:
         """Create and set request session."""
