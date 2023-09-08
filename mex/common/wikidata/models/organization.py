@@ -24,7 +24,7 @@ class DataValue(BaseModel):
         """Transform string and null value to a dict for parsing.
 
         Args:
-            values (Any): values that needs to be parsed
+            values: values that needs to be parsed
 
         Returns:
             resulting dict

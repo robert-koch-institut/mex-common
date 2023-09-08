@@ -64,8 +64,8 @@ def get_alternative_names(
     """Get alternative names of an organization in DE and EN.
 
     Args:
-        native_labels (list[Claim]): List of all native labels
-        all_aliases (Aliases): All aliases of the organization
+        native_labels: List of all native labels
+        all_aliases: All aliases of the organization
 
     Returns:
         combined list of native labels and aliases in DE and EN

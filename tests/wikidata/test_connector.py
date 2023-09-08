@@ -12,7 +12,7 @@ from mex.common.wikidata.connector import (
 def test_initialization_mocked_server(
     mocked_session_wikidata_query_service: MagicMock,
 ) -> None:
-    """Test if server is intialized and available."""
+    """Test if server is initialized and available."""
     mocked_session_wikidata_query_service.request.return_value = Mock(
         spec=requests.Response, ok=1, status_code=200
     )
@@ -28,7 +28,7 @@ def test_get_data_by_query() -> None:
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
             "itemDescription": {
                 "type": "literal",
-                "value": "German automotive manufacturer, and " "conglomerate",
+                "value": "German automobile manufacturer, and " "conglomerate",
                 "xml:lang": "en",
             },
             "itemLabel": {"type": "literal", "value": "BMW", "xml:lang": "en"},
@@ -72,7 +72,7 @@ def test_get_data_by_query_mocked(
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
             "itemDescription": {
                 "type": "literal",
-                "value": "German automotive manufacturer, and " "conglomerate",
+                "value": "German automobile manufacturer, and " "conglomerate",
                 "xml:lang": "en",
             },
             "itemLabel": {"type": "literal", "value": "BMW", "xml:lang": "en"},
@@ -135,7 +135,7 @@ def test_get_wikidata_items_details_by_id_mocked(
                 "descriptions": {
                     "en": {
                         "language": "en",
-                        "value": "German automotive manufacturer, and conglomerate",
+                        "value": "German automobile manufacturer, and conglomerate",
                     },
                     "de": {
                         "language": "de",

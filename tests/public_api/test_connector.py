@@ -5,6 +5,7 @@ from uuid import UUID
 
 import pytest
 import requests
+from requests import HTTPError
 
 from mex.common.models import ExtractedActivity, ExtractedPerson
 from mex.common.models.activity import ActivityType
@@ -137,7 +138,14 @@ def test_search_model_that_does_not_exist() -> None:
     random_id = Identifier.generate()
     connector = PublicApiConnector.get()
 
-    result = connector.search_model(ExtractedActivity, random_id)
+    try:
+        result = connector.search_model(ExtractedActivity, random_id)
+    except HTTPError as error:
+        if error.response.json().get("message") == "could not create Solr query":
+            pytest.skip("integration test failed due to misconfiguration")
+        else:
+            raise error
+
     assert result is None
 
 
