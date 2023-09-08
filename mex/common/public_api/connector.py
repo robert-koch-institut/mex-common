@@ -2,10 +2,13 @@ import json
 from base64 import b64decode
 from datetime import datetime, timedelta
 from typing import Generator, TypeVar, cast
+from urllib.parse import urljoin
 from uuid import UUID
 
 import backoff
 import pandas as pd
+import requests
+from pydantic import SecretStr
 from requests.exceptions import HTTPError
 
 from mex.common.connector import HTTPConnector
@@ -40,26 +43,31 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     TIMEOUT = 10
     API_VERSION = "v0"
 
-    def __init__(self, settings: BaseSettings) -> None:
-        """Create a new Pulic API connection.
+    token_provider: str
+    token_payload: SecretStr
 
-        Args:
-            settings: Configured settings instance
-        """
-        self.token_provider = settings.public_api_token_provider
-        self.token_payload = settings.public_api_token_payload
-        super().__init__(settings)
-        self.session.headers["User-Agent"] = "rki/mex"
+    def _set_session(self, settings: BaseSettings) -> None:
+        """Create and set request session."""
+        self.session = requests.Session()
+        self.session.verify = settings.public_api_verify_session  # type: ignore
 
     def _set_url(self, settings: BaseSettings) -> None:
-        """Set url of the host."""
-        self.url = settings.public_api_url
+        """Set url of the host with api version."""
+        self.url = urljoin(settings.public_api_url, self.API_VERSION)
+
+    def _check_availability(self) -> None:
+        """Send an empty search request to verify the host is available."""
+        self.request(
+            "POST",
+            "/query/search",
+            PublicApiSearchRequest(limit=0),
+        )
 
     def _set_authentication(self, settings: BaseSettings) -> None:
         """Generate JWT using secret payload and attach it to session."""
         response = self.session.post(
-            self.token_provider,
-            data=b64decode(self.token_payload.get_secret_value()),
+            settings.public_api_token_provider,
+            data=b64decode(settings.public_api_token_payload.get_secret_value()),
             timeout=self.TIMEOUT,
             headers={"Accept": "*/*", "Authorization": None},
         )

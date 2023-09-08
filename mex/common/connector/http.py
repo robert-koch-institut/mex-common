@@ -1,7 +1,6 @@
 import json
 from abc import abstractmethod
 from typing import Any, Literal, cast
-from urllib.parse import urljoin
 
 import backoff
 import requests
@@ -72,9 +71,8 @@ class HTTPConnector(BaseConnector):
             Parsed JSON body of the response
         """
         # Prepare request
-        self.url.removeprefix
         if endpoint:
-            url = urljoin(self.url + "/", endpoint)
+            url = f"{self.url.rstrip('/')}/{endpoint.lstrip('/')}"
         else:
             url = self.url
         kwargs.setdefault("timeout", self.TIMEOUT)

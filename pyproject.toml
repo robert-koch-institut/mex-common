@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mex-common"
-version = "0.13.2"
+version = "0.13.3"
 description = "RKI MEx common library."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
@@ -12,32 +12,31 @@ packages = [{ include = "mex" }]
 python = "^3.11"
 backoff = "^2.2.1"
 click = "^8.1.7"
-fabric = "^3.1.0"
 langdetect = "^1.0.9"
 ldap3 = "^2.9.1"
 numpy = "^1.25.2"
-pandas = "^2.0.3"
+pandas = "^2.1.0"
 pydantic = { version = "^1.10.12", extras = ["dotenv", "email"] }
 requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
-autoflake = "^2.2.0"
+autoflake = "^2.2.1"
 black = "^23.7.0"
 ipdb = "^0.13.13"
 isort = "^5.12.0"
 mypy = "^1.5.1"
 mypy-extensions = "^1.0.0"
-pytest = "^7.4.0"
+pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 sphinx = "^6.2.1"
 sphinx-book-theme = "^1.0.1"
-types-pytz = "^2023.3.0.0"
+types-pytz = "^2023.3.0.1"
 types-requests = "^2.31.0.2"
-types-setuptools = "^68.1.0.0"
+types-setuptools = "^68.2.0.0"
 
 [tool.ipdb]
 context = 5
 
 [build-system]
-requires = ["poetry-core>=1.6.1"]
+requires = ["poetry-core>=1.7.0"]
 build-backend = "poetry.core.masonry.api"

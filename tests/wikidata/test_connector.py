@@ -12,7 +12,7 @@ from mex.common.wikidata.connector import (
 def test_initialization_mocked_server(
     mocked_session_wikidata_query_service: MagicMock,
 ) -> None:
-    """Test if server is intialized and available."""
+    """Test if server is initialized and available."""
     mocked_session_wikidata_query_service.request.return_value = Mock(
         spec=requests.Response, ok=1, status_code=200
     )
