@@ -143,6 +143,8 @@ def test_search_model_that_does_not_exist() -> None:
     except HTTPError as error:
         if error.response.json().get("message") == "could not create Solr query":
             pytest.skip("integration test failed due to misconfiguration")
+        else:
+            raise error
 
     assert result is None
 

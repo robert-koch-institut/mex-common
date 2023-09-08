@@ -65,3 +65,5 @@ def test_public_api_post_and_purge_roundtrip(
     except HTTPError as error:
         if error.response.json().get("message") == "could not create Solr query":
             pytest.skip("integration test failed due to misconfiguration")
+        else:
+            raise error
