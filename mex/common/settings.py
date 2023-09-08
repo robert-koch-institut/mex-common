@@ -87,7 +87,7 @@ class BaseSettings(PydanticBaseSettings):
         False, alias="pdb", description="Enable debug mode.", env="MEX_DEBUG"
     )
     sink: list[Sink] = Field(
-        [Sink.NDJSON, Sink.NDJSON],
+        [Sink.NDJSON],
         description=(
             "Where to send data that is extracted or ingested. Defaults to writing "
             "ndjson files, but can be set to backend or public APIs or to graph db."
