@@ -61,7 +61,7 @@ def parse_csv(
                 row.replace(to_replace=np.nan, value=None, inplace=True)
                 row.replace(regex=r"^\s*$", value=None, inplace=True)
                 try:
-                    model = into.model_validate(row)
+                    model = into.model_validate(row.to_dict())
                     echo(f"[parse csv] {into.__name__} {index} OK")
                     yield model
                 except ValidationError as error:
