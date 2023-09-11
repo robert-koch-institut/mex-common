@@ -1,7 +1,7 @@
 import json
 
 from pydantic import Field
-from pydantic.schema import schema
+from pydantic.json_schema import models_json_schema
 
 from mex.common.cli import entrypoint
 from mex.common.logging import echo
@@ -35,9 +35,10 @@ def dump_schema() -> None:
         schema_title: Title to use for the schema
     """
     settings = SchemaScriptsSettings.get()
-    mex_schema = schema(
-        models=EXTRACTED_MODEL_CLASSES,
+    _, mex_schema = models_json_schema(
+        models=[(m, "validation") for m in EXTRACTED_MODEL_CLASSES],
         title=settings.schema_title,
+        ref_template="#/definitions/{model}",
     )
 
     with open(settings.json_file, "w", encoding="utf-8") as fh:

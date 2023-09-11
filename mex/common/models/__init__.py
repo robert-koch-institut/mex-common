@@ -67,6 +67,7 @@ __all__ = (
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
+    "EXTRACTED_MODEL_CLASSES",
     "EXTRACTED_MODEL_CLASSES_BY_NAME",
     "ExtractedOrganization",
     "ExtractedOrganizationalUnit",

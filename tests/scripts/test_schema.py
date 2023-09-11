@@ -25,5 +25,5 @@ def test_dump_schema_script() -> None:
         schema = json.load(fh)
 
     assert schema["title"] == settings.schema_title
-    assert TechnicalAccessibility.__name__ in schema["definitions"]
-    assert ExtractedResource.__name__ in schema["definitions"]
+    assert TechnicalAccessibility.__name__ in schema["$defs"]
+    assert ExtractedResource.__name__ in schema["$defs"]
