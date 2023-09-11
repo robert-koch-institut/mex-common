@@ -19,7 +19,7 @@ class LDAPPerson(LDAPActor):
     @classmethod
     def get_ldap_fields(cls) -> tuple[str, ...]:
         """Return the fields that should be fetched from LDAP."""
-        return tuple(sorted(cls.__fields__))
+        return tuple(sorted(cls.model_fields))
 
 
 class LDAPPersonWithQuery(BaseModel):
