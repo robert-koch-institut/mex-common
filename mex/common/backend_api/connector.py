@@ -19,7 +19,7 @@ class BackendApiConnector(HTTPConnector):
 
     def _set_url(self, settings: BaseSettings) -> None:
         """Set the backend api url with the version path."""
-        self.url = urljoin(settings.backend_api_url, self.API_VERSION)
+        self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
 
     def post_models(self, models: list[MExModel]) -> list[Identifier]:
         """Post models to Backend API in a bulk insertion request.

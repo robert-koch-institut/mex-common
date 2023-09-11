@@ -138,6 +138,7 @@ class Timestamp:
     def __get_pydantic_core_schema__(
         cls, source: Type[Any], handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
+        """Mutate the field schema for timestamps."""
         timestamp_schema = {
             # "title": cls.__name__,
             "type": "str",

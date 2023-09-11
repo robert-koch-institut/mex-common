@@ -30,12 +30,14 @@ class ResolvedPath(PathLike[str], metaclass=ABCMeta):
         """Return the file system path representation."""
         return self.resolve().__fspath__()
 
+    @classmethod
     @abstractmethod
     def __get_base_path__(cls, settings: "BaseSettings") -> Path:  # pragma: no cover
         """Return the base path that relative paths will follow."""
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
+        """Set schema to str schema."""
         return core_schema.no_info_after_validator_function(
             cls.validate, core_schema.str_schema()
         )
