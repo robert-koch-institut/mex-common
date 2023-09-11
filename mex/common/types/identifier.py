@@ -47,6 +47,7 @@ class Identifier(str):
     def __get_pydantic_core_schema__(
         cls, source: Type[Any], handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
+        """Modify the schema to add the ID regex."""
         identifier_schema = {
             # "title": cls.__name__,
             "type": "str",

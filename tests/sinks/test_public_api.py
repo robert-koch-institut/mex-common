@@ -4,11 +4,11 @@ from uuid import UUID, uuid4
 
 import pytest
 from pytest import MonkeyPatch
+from requests import HTTPError
 
-from mex.common.models import ExtractedPerson
+from mex.common.models import ExtractedPerson, ExtractedPrimarySource
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.sinks.public_api import post_to_public_api, purge_models_from_public_api
-from mex.common.types import Identifier
 
 
 def test_post_to_public_api_mocked(
@@ -49,13 +49,21 @@ def test_purge_from_public_api_mocked(
 
 
 @pytest.mark.integration
-def test_public_api_post_and_purge_roundtrip() -> None:
+def test_public_api_post_and_purge_roundtrip(
+    extracted_primary_sources: dict[str, ExtractedPrimarySource]
+) -> None:
     extracted_person = ExtractedPerson(
         identifierInPrimarySource=str(uuid4()),
-        hadPrimarySource=Identifier.generate(seed=0),
-        fullName="Roundtrip Test",
+        hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
+        fullName=["Roundtrip Test"],
     )
-    results: list[Any] = list(post_to_public_api([extracted_person]))
-    assert len(results) == 1
-    results = list(purge_models_from_public_api([extracted_person]))
-    assert len(results) == 1
+    try:
+        results: list[Any] = list(post_to_public_api([extracted_person]))
+        assert len(results) == 1
+        results = list(purge_models_from_public_api([extracted_person]))
+        assert len(results) == 1
+    except HTTPError as error:
+        if error.response.json().get("message") == "could not create Solr query":
+            pytest.skip("integration test failed due to misconfiguration")
+        else:
+            raise error

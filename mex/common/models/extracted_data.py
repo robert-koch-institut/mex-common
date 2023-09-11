@@ -5,6 +5,9 @@ from pydantic import Field, model_validator
 from mex.common.models.base import MExModel
 from mex.common.types import Identifier, PrimarySourceID
 
+MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
+MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
+
 
 class BaseExtractedData(MExModel):
     """Base model class definition for all extracted data instances."""
@@ -40,20 +43,22 @@ class ExtractedData(BaseExtractedData):
         """Ensure identifier and provenance attributes are set for this instance.
 
         A lookup is performed to determine whether this extracted data instance already
-        has an identifier
-        or merged ID. If not, new ones are generated and the association remembered.
+        has an `identifier` or `stableTargetId`.
+        If not, new ones are generated and the association remembered.
 
         If the `identifier` field has been set manually, e.g. passed to the constructor,
-        we check that it is already present in the database and is assigned to the same
-        extracted data instance: it must be the same combination of
+        we check that it is already present in the identity provider and is assigned to
+        the same extracted data instance: it must be the same combination of
         `identifier`, `hadPrimarySource` and `identifierInPrimarySource`.
-        If the identity is not found or the `fragment_id` differs, an error is thrown.
+        If the identity is not found or the `identifier` differs, an error is thrown.
+        An exception is made for the MEx primary source which serves as the root node
+        for all relations: it may the `stableTargetId` manually.
 
         Args:
             values: Raw values to validate
 
         Raises:
-            ValueError: If `identifier` was supplied but does not match the database
+            ValueError: If `identifier` was supplied but does not match the id provider
             ValueError: If `identifierInPrimarySource` was missing
             ValueError: If `hadPrimarySource` was missing
 
@@ -82,19 +87,20 @@ class ExtractedData(BaseExtractedData):
         # validate extracted data ID
         if identifier := values.get("identifier"):
             if identity is None:
-                raise ValueError("Identifier not found in connected identity map.")
-            if identity.fragment_id != str(identifier):
+                raise ValueError("Identifier not found by identity provider.")
+            if identity.identifier != str(identifier):
                 raise ValueError("Identifier cannot be set manually to new value.")
 
         # validate stable target ID
         if stable_target_id := values.get("stableTargetId"):
-            if identity is None:
-                raise ValueError(
-                    "Stable target ID not found in connected identity map."
-                )
+            if (
+                identity is None
+                and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+            ):
+                raise ValueError("Stable target ID not found by identity provider.")
             stable_target_id = Identifier(stable_target_id)
         elif identity:
-            stable_target_id = Identifier(identity.merged_id)
+            stable_target_id = Identifier(identity.stableTargetId)
         else:
             stable_target_id = Identifier.generate()
 
@@ -107,6 +113,6 @@ class ExtractedData(BaseExtractedData):
         )
 
         # update instance values
-        values["identifier"] = Identifier(identity.fragment_id)
-        values["stableTargetId"] = Identifier(identity.merged_id)
+        values["identifier"] = Identifier(identity.identifier)
+        values["stableTargetId"] = Identifier(identity.stableTargetId)
         return values

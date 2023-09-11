@@ -6,7 +6,7 @@ to the `conftest.py` in your root test folder.
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Generator, Protocol
+from typing import Generator
 
 import pytest
 from langdetect import DetectorFactory
@@ -14,17 +14,12 @@ from pydantic import AnyUrl
 from pytest import FixtureRequest, MonkeyPatch
 
 from mex.common.connector import reset_connector_context
-from mex.common.settings import BaseSettings, SettingsContext, SettingsType
-
-
-class SettingLoader(Protocol):
-    """Protocol for settings loader function."""
-
-    def __call__(
-        self, settings_cls: type[SettingsType]
-    ) -> Generator[SettingsType, None, None]:
-        """Load the settings of the given class configured for testing."""
-        ...
+from mex.common.models import ExtractedPrimarySource
+from mex.common.primary_source.extract import extract_seed_primary_sources
+from mex.common.primary_source.transform import (
+    transform_seed_primary_sources_to_extracted_primary_sources,
+)
+from mex.common.settings import BaseSettings, SettingsContext
 
 
 @pytest.fixture(autouse=True)
@@ -71,17 +66,16 @@ def isolate_connector_context() -> Generator[None, None, None]:
     reset_connector_context()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def is_integration_test(request: FixtureRequest) -> bool:
     """Check the markers of a test to see if this is an integration test."""
     return any(m.name == "integration" for m in request.keywords.get("pytestmark", ()))
 
 
-@pytest.fixture(autouse=True)
-def skip_integration_test_in_ci(is_integration_test: bool) -> None:
-    """Automatically skip all tests marked as integration when the CI env var is set."""
-    if is_integration_test and os.environ.get("CI") == "true":  # pragma: no cover
-        pytest.skip("Skip integration test in CI")
+@pytest.fixture
+def in_continuous_integration() -> bool:
+    """Check the environment variable `CI` to determine whether we are in CI."""
+    return os.environ.get("CI") == "true"
 
 
 @pytest.fixture(autouse=True)
@@ -94,3 +88,16 @@ def isolate_langdetect() -> None:
 def faker_session_locale() -> list[str]:
     """Configure the default locales used for localizing fake data."""
     return ["de_DE", "en_US"]
+
+
+@pytest.fixture
+@pytest.mark.usefixtures("settings")
+def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
+    """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
+    seed_primary_sources = extract_seed_primary_sources()
+    extracted_primary_sources = (
+        transform_seed_primary_sources_to_extracted_primary_sources(
+            seed_primary_sources
+        )
+    )
+    return {p.identifierInPrimarySource: p for p in extracted_primary_sources}

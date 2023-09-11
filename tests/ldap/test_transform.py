@@ -17,17 +17,17 @@ from mex.common.testing import Joker
 
 @pytest.fixture
 def extracted_unit(
-    extracted_primary_source: ExtractedPrimarySource,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedOrganizationalUnit:
     return ExtractedOrganizationalUnit(
         name=["MF"],
-        hadPrimarySource=extracted_primary_source.stableTargetId,
+        hadPrimarySource=extracted_primary_sources["ldap"].stableTargetId,
         identifierInPrimarySource="mf",
     )
 
 
 def test_transform_ldap_actors_to_mex_contact_points(
-    extracted_primary_source: ExtractedPrimarySource,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     ldap_actor = LDAPActor(
         mail=["mail@example3.com"],
@@ -36,13 +36,13 @@ def test_transform_ldap_actors_to_mex_contact_points(
     )
 
     extracted_contact_points = transform_ldap_actors_to_mex_contact_points(
-        [ldap_actor], extracted_primary_source
+        [ldap_actor], extracted_primary_sources["ldap"]
     )
     extracted_contact_point = list(extracted_contact_points)[0]
 
     expected = {
         "email": ["mail@example3.com"],
-        "hadPrimarySource": extracted_primary_source.stableTargetId,
+        "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
         "identifier": Joker(),
         "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
         "stableTargetId": Joker(),
@@ -56,7 +56,7 @@ def test_transform_ldap_actors_to_mex_contact_points(
 
 def test_transform_ldap_persons_to_mex_persons(
     extracted_unit: ExtractedOrganizationalUnit,
-    extracted_primary_source: ExtractedPrimarySource,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     ldap_person = LDAPPerson(
         company="RKI",
@@ -73,7 +73,7 @@ def test_transform_ldap_persons_to_mex_persons(
     )
 
     extracted_persons = transform_ldap_persons_to_mex_persons(
-        [ldap_person], extracted_primary_source, [extracted_unit]
+        [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
     )
     extracted_person = list(extracted_persons)[0]
 
@@ -82,7 +82,7 @@ def test_transform_ldap_persons_to_mex_persons(
         "familyName": ["Sample"],
         "fullName": ["Sample, Sam, Dr."],
         "givenName": ["Sam"],
-        "hadPrimarySource": extracted_primary_source.stableTargetId,
+        "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
         "identifier": Joker(),
         "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
         "memberOf": [extracted_unit.stableTargetId],
@@ -93,7 +93,7 @@ def test_transform_ldap_persons_to_mex_persons(
 
 
 def test_transform_ldap_persons_to_mex_persons_with_unknown_department_raises_error(
-    extracted_primary_source: ExtractedPrimarySource,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_unit: ExtractedOrganizationalUnit,
 ) -> None:
     ldap_person = LDAPPerson(
@@ -111,7 +111,7 @@ def test_transform_ldap_persons_to_mex_persons_with_unknown_department_raises_er
     )
 
     extracted_persons = transform_ldap_persons_to_mex_persons(
-        [ldap_person], extracted_primary_source, [extracted_unit]
+        [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
     )
     with pytest.raises(MExError) as error:
         _ = list(extracted_persons)

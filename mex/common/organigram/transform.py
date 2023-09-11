@@ -1,25 +1,20 @@
 from typing import Generator, Iterable
 
 from mex.common.logging import watch
-from mex.common.models import ExtractedOrganizationalUnit
+from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramUnit
-from mex.common.types import (
-    Email,
-    OrganizationalUnitID,
-    PrimarySourceID,
-    Text,
-    TextLanguage,
-)
+from mex.common.types import Email, OrganizationalUnitID
 
 
 @watch
 def transform_organigram_units_to_organizational_units(
-    units: Iterable[OrganigramUnit],
+    units: Iterable[OrganigramUnit], primary_source: ExtractedPrimarySource
 ) -> Generator[ExtractedOrganizationalUnit, None, None]:
-    """Transform organigram units into ExtractedOrganizationalUnit .
+    """Transform organigram units into ExtractedOrganizationalUnits.
 
     Args:
         units: Iterable of organigram units coming from the JSON file
+        primary_source: Primary source for organigram
 
     Returns:
         Generator for ExtractedOrganizationalUnit
@@ -30,14 +25,11 @@ def transform_organigram_units_to_organizational_units(
     for unit in units:
         extracted_unit = ExtractedOrganizationalUnit(  # type: ignore[call-arg]
             identifierInPrimarySource=unit.identifier,
-            hadPrimarySource=PrimarySourceID.generate(seed=0),  # TODO stopgap mx-603
-            alternativeName=[Text(value=name) for name in unit.alternativeName],
+            hadPrimarySource=primary_source.stableTargetId,
+            alternativeName=unit.alternativeName if unit.alternativeName else [],
             email=[Email(email) for email in unit.email],
-            name=[
-                Text(value=unit.name.de, language=TextLanguage.DE),
-                Text(value=unit.name.en, language=TextLanguage.EN),
-            ],
-            shortName=[Text(value=unit.shortName)],
+            name=unit.name,
+            shortName=unit.shortName,
             website=[unit.website] if unit.website else [],
         )
         extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit

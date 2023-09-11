@@ -12,7 +12,7 @@ from mex.common.wikidata.models.organization import (
 
 def transform_wikidata_organizations_to_extracted_organizations(
     wikidata_organizations: Iterable[WikidataOrganization],
-    extracted_primary_source_wikidata: ExtractedPrimarySource,
+    wikidata_primary_source: ExtractedPrimarySource,
 ) -> Generator[ExtractedOrganization, None, None]:
     """Transform wikidata organizations into ExtractedOrganizations.
 
@@ -51,7 +51,7 @@ def transform_wikidata_organizations_to_extracted_organizations(
                 for claim in organization.claims.ror_id
             ],
             identifierInPrimarySource=organization.identifier,
-            hadPrimarySource=extracted_primary_source_wikidata.stableTargetId,
+            hadPrimarySource=wikidata_primary_source.stableTargetId,
             alternativeName=get_alternative_names(
                 organization.claims.native_label, organization.aliases
             ),
@@ -64,8 +64,8 @@ def get_alternative_names(
     """Get alternative names of an organization in DE and EN.
 
     Args:
-        native_labels (list[Claim]): List of all native labels
-        all_aliases (Aliases): All aliases of the organization
+        native_labels: List of all native labels
+        all_aliases: All aliases of the organization
 
     Returns:
         combined list of native labels and aliases in DE and EN

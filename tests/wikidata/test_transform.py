@@ -20,7 +20,7 @@ from tests.wikidata.conftest import TESTDATA_DIR
 
 
 def test_transform_wikidata_organization_to_organization(
-    wikidata_primary_source: ExtractedPrimarySource,
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     """Test wikidata organization transformation to extracted organization."""
     expected = {
@@ -56,31 +56,31 @@ def test_transform_wikidata_organization_to_organization(
             WikidataOrganization.parse_obj(item) for item in json.load(f)
         ]
 
-    exctracted_organizations = list(
+    extracted_organizations = list(
         transform_wikidata_organizations_to_extracted_organizations(
-            wikidata_organizations, wikidata_primary_source
+            wikidata_organizations, extracted_primary_sources["wikidata"]
         )
     )
 
-    assert len(exctracted_organizations) == 1
+    assert len(extracted_organizations) == 1
 
     assert sorted(
-        exctracted_organizations[0].dict()["alternativeName"], key=itemgetter("value")
+        extracted_organizations[0].dict()["alternativeName"], key=itemgetter("value")
     ) == sorted(expected["alternativeName"], key=itemgetter("value"))
 
     assert (
-        exctracted_organizations[0].dict()["identifierInPrimarySource"]
+        extracted_organizations[0].dict()["identifierInPrimarySource"]
         == expected["identifierInPrimarySource"]
     )
-    assert exctracted_organizations[0].dict()["rorId"] == expected["rorId"]
-    assert exctracted_organizations[0].dict()["wikidataId"] == expected["wikidataId"]
-    assert exctracted_organizations[0].dict()["gndId"] == expected["gndId"]
-    assert exctracted_organizations[0].dict()["isniId"] == expected["isniId"]
-    assert exctracted_organizations[0].dict()["viafId"] == expected["viafId"]
+    assert extracted_organizations[0].dict()["rorId"] == expected["rorId"]
+    assert extracted_organizations[0].dict()["wikidataId"] == expected["wikidataId"]
+    assert extracted_organizations[0].dict()["gndId"] == expected["gndId"]
+    assert extracted_organizations[0].dict()["isniId"] == expected["isniId"]
+    assert extracted_organizations[0].dict()["viafId"] == expected["viafId"]
 
 
 def test_get_alternative_names() -> None:
-    """Test if all the altarnative names are being transformed."""
+    """Test if all the alternative names are being transformed."""
     raw_aliases = Aliases.parse_obj(
         {
             "de": [

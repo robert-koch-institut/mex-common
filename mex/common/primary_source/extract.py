@@ -1,37 +1,22 @@
-from mex.common.primary_source.connector import MExDBPrimarySourceConnector
-from mex.common.primary_source.models import MExDBPrimarySource, SeedPrimarySource
+import json
+from typing import Generator
+
+from mex.common.logging import watch
+from mex.common.primary_source.models import SeedPrimarySource
+from mex.common.settings import BaseSettings
 
 
-def insert_primary_source_into_db(primary_source: SeedPrimarySource) -> None:
-    """Insert single primary source data into database.
+@watch
+def extract_seed_primary_sources() -> Generator[SeedPrimarySource, None, None]:
+    """Extract seed primary sources from the raw-data JSON file.
 
-    Args:
-        primary_source: primary source data model
-    """
-    connector = MExDBPrimarySourceConnector.get()
-    connector.upsert(
-        identifier=primary_source.identifier,
-        alternative_titles=primary_source.alternative_title,
-        contacts=primary_source.contact,
-        descriptions=primary_source.description,
-        documentations=primary_source.documentation,
-        located_ats=primary_source.located_at,
-        titles=primary_source.title,
-        units_in_charge=primary_source.unit_in_charge,
-        version=primary_source.version,
-    )
-
-
-def extract_mex_db_primary_source_by_id(
-    identifier_in_primary_source: str,
-) -> MExDBPrimarySource:
-    """Extract a primary_source from mex-database by human-readable id.
-
-    Args:
-        identifier_in_primary_source: Human readable id of the primary source .e.g: rdmo, ff-projects
+    Settings:
+        primary_sources_path: Resolved path to the primary sources file
 
     Returns:
-        MExDBPrimarySource: MExDBPrimarySource ORM object
+        Generator for seed primary sources
     """
-    connector = MExDBPrimarySourceConnector.get()
-    return connector.fetch_one_primary_source(identifier_in_primary_source)
+    settings = BaseSettings.get()
+    with open(settings.primary_sources_path, "r") as fh:
+        for raw in json.load(fh):
+            yield SeedPrimarySource.parse_obj(raw)

@@ -15,7 +15,7 @@ class WikidataQueryServiceConnector(HTTPConnector):
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the host is available."""
-        self.request("GET", self.url, params={"format": "json"})
+        self.request("GET", params={"format": "json"})
 
     @cache
     def get_data_by_query(self, query: str) -> list[dict[str, dict[str, str]]]:

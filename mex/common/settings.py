@@ -12,7 +12,7 @@ from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettings
 from mex.common.identity.types import IdentityProvider
 from mex.common.sinks import Sink
 from mex.common.transform import MExEncoder
-from mex.common.types import AssetsPath, WorkPath
+from mex.common.types import AssetsPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
 SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
@@ -90,7 +90,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_DEBUG",
     )
     sink: list[Sink] = Field(
-        [Sink.NDJSON, Sink.NDJSON],
+        [Sink.NDJSON],
         description=(
             "Where to send data that is extracted or ingested. Defaults to writing "
             "ndjson files, but can be set to backend or public APIs or to graph db."
@@ -132,14 +132,6 @@ class BaseSettings(PydanticBaseSettings):
         ),
         validation_alias="MEX_VERIFY_SESSION",
     )
-    sqlite_path: WorkPath = Field(
-        "mex.db",
-        alias="db",
-        description=(
-            "Path to the MEx sqlite database, absolute or relative to `work_dir`."
-        ),
-        validation_alias="MEX_SQLITE_PATH",
-    )
     public_api_url: AnyUrl = Field(
         "http://localhost:53000/",
         description="MEx public API url.",
@@ -172,6 +164,14 @@ class BaseSettings(PydanticBaseSettings):
             "absolute path or relative to `assets_dir`."
         ),
         validation_alias="MEX_ORGANIGRAM_PATH",
+    )
+    primary_sources_path: AssetsPath = Field(
+        "raw-data/primary-sources/primary-sources.json",
+        description=(
+            "Path to the JSON file describing the primary sources, "
+            "absolute path or relative to `assets_dir`."
+        ),
+        validation_alias="MEX_PRIMARY_SOURCES_PATH",
     )
     ldap_url: SecretStr = Field(
         SecretStr("ldap://user:pw@ldap:636"),

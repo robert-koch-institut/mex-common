@@ -1,7 +1,6 @@
 import json
 from abc import abstractmethod
 from typing import Any, Literal, cast
-from urllib.parse import urljoin
 
 import backoff
 import requests
@@ -73,7 +72,7 @@ class HTTPConnector(BaseConnector):
         """
         # Prepare request
         if endpoint:
-            url = urljoin(self.url + "/", endpoint)
+            url = f"{self.url.rstrip('/')}/{endpoint.lstrip('/')}"
         else:
             url = self.url
         kwargs.setdefault("timeout", self.TIMEOUT)
@@ -103,6 +102,11 @@ class HTTPConnector(BaseConnector):
         backoff.fibo,
         lambda response: cast(Response, response).status_code >= 500,
         max_tries=4,
+    )
+    @backoff.on_predicate(
+        backoff.fibo,
+        lambda response: cast(Response, response).status_code == 429,
+        max_tries=10,
     )
     @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)
     def _send_request(
