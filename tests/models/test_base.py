@@ -85,7 +85,7 @@ class DummyModel(BaseModel):
 
 def test_checksum() -> None:
     model_1 = DummyModel()
-    assert model_1.checksum() == "9a3cba5e4d465e234420e2ffd04135dc"
+    assert model_1.checksum() == "6a48475b6851bc444c39abec23f8520e"
 
     model_2 = DummyModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
@@ -93,4 +93,4 @@ def test_checksum() -> None:
 
 def test_model_str() -> None:
     model = DummyModel(foo="bar")
-    assert str(model) == "DummyModel: cd6a532d2c8c8a90f378f7af53db351b"
+    assert str(model) == "DummyModel: 68008f92758ef95dd4de3319183c3fef"
