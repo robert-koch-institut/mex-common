@@ -30,7 +30,6 @@ def write_ndjson(models: Iterable[MExModel]) -> Generator[Identifier, None, None
             entity_type = model.get_entity_type()
             try:
                 handle = file_handles[entity_type]
-                file_name = Path(handle.name)
             except KeyError:
                 file_name = Path(settings.work_dir, f"{entity_type}.ndjson")
                 writer = open(file_name, "a+", encoding="utf-8")

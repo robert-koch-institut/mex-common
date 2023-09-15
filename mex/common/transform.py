@@ -19,7 +19,7 @@ class MExEncoder(json.JSONEncoder):
     def default(self, obj: Any) -> Any:
         """Implement custom serialization rules."""
         if isinstance(obj, PydanticModel):
-            return obj.dict()
+            return obj.model_dump()
         if isinstance(obj, AnyUrl):
             return str(obj)
         if isinstance(obj, SecretStr):
