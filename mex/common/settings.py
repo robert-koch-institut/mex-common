@@ -55,7 +55,7 @@ class BaseSettings(PydanticBaseSettings):
             _env_nested_delimiter=_env_nested_delimiter,
             _secrets_dir=_secrets_dir,
         )
-        if assets_dir := settings_wo_assets_env_file.get("assets_dir"):
+        if assets_dir := settings_wo_assets_env_file.get("MEX_ASSETS_DIR"):
             _env_file = Path(assets_dir, ".env")
         super().__init__(
             _env_file=_env_file,

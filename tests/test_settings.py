@@ -49,7 +49,7 @@ class FooSettings(BaseSettings):
     foo: str = "foo"
 
 
-def test_stetings_getting_caches_singleton() -> None:
+def test_settings_getting_caches_singleton() -> None:
     # clear cache
     SettingsContext.set(None)  # clear cache
 
@@ -61,6 +61,12 @@ def test_stetings_getting_caches_singleton() -> None:
     # repeated get
     settings_fetched_again = FooSettings.get()
     assert settings_fetched_again is settings
+
+
+@pytest.mark.integration
+def test_parse_env_file() -> None:
+    settings = BaseSettings.get()
+    assert settings.model_fields_set != {"work_dir", "assets_dir"}
 
 
 def test_settings_getting_wrong_class_raises_error() -> None:
