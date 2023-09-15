@@ -46,9 +46,12 @@ def test_identifier_modifies_schema() -> None:
         "pattern": r"^[a-zA-Z0-9]{14,22}$",
     }
     assert DummyModel.model_json_schema()["properties"]["dummy"] == {
-        "title": "DummyID",
-        "type": "string",
-        "pattern": r"^[a-zA-Z0-9]{14,22}$",
+        "anyOf": [
+            {"pattern": "^[a-zA-Z0-9]{14,22}$", "title": "DummyID", "type": "string"},
+            {"type": "null"},
+        ],
+        "default": None,
+        "title": "Dummy",
     }
 
 

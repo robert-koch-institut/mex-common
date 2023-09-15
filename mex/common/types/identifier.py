@@ -50,7 +50,6 @@ class Identifier(str):
     ) -> core_schema.CoreSchema:
         """Modify the schema to add the ID regex."""
         identifier_schema = {
-            # "title": cls.__name__,
             "type": "str",
             "pattern": MEX_ID_PATTERN,
         }
