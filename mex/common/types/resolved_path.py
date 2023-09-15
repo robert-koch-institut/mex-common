@@ -38,16 +38,14 @@ class ResolvedPath(PathLike[str], metaclass=ABCMeta):
     @classmethod
     def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
         """Set schema to str schema."""
-        return core_schema.no_info_after_validator_function(
-            cls.validate, core_schema.str_schema()
-        )
+        return core_schema.no_info_plain_validator_function(cls.validate)
 
     @classmethod
     def validate(cls: type[ResolvedPathT], value: Any) -> "ResolvedPathT":
         """Convert a string value to a Text instance."""
         if isinstance(value, (str, Path, ResolvedPath)):
             return cls(value)
-        raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
+        raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     def resolve(self) -> Path:
         """Lazily resolve the underlying path to an absolute path.
