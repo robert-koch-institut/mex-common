@@ -103,7 +103,7 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
                 elif language_label := label.dict().get(language.value):
                     searchable_labels.append(normalize(language_label))
             if search_term in searchable_labels:
-                return cls(concept.identifier)
+                return cls(str(concept.identifier))
         return None
 
 
