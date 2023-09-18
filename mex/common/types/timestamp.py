@@ -6,8 +6,9 @@ from itertools import zip_longest
 from typing import Any, Literal, Optional, Type, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
-from pydantic import GetCoreSchemaHandler
-from pydantic_core import core_schema
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema, core_schema
 from pytz import timezone
 
 
@@ -139,21 +140,26 @@ class Timestamp:
         cls, source: Type[Any], handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Mutate the field schema for timestamps."""
-        timestamp_schema = {
-            # "title": cls.__name__,
-            "type": "str",
-            "pattern": TIMESTAMP_REGEX,
-            # "examples": ["2011", "2019-03", "2014-08-24", "2022-09-30T20:48:35Z"],
-        }
-        return core_schema.no_info_after_validator_function(
+        return core_schema.no_info_plain_validator_function(
             cls.validate,
-            timestamp_schema,
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                str,
-                info_arg=False,
-                return_schema=core_schema.str_schema(),
-            ),
         )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        """Modify the schema to add the class name as title and examples."""
+        json_schema = handler(core_schema_)
+        json_schema["title"] = cls.__name__
+        json_schema["type"] = "string"
+        json_schema["pattern"] = TIMESTAMP_REGEX
+        json_schema["examples"] = [
+            "2011",
+            "2019-03",
+            "2014-08-24",
+            "2022-09-30T20:48:35Z",
+        ]
+        return json_schema
 
     @classmethod
     def validate(cls, value: Any) -> "Timestamp":
