@@ -86,7 +86,7 @@ class PublicApiAuthResponse(PublicApiBaseModel):
     """Response body that is expected for auth requests."""
 
     access_token: str
-    refresh_token: str | None
+    refresh_token: str | None = None
     token_type: str
     expires_in: int
 
@@ -95,7 +95,7 @@ class PublicApiItemWithoutValues(PublicApiBaseModel):
     """Public API item representing an entity or extracted data model."""
 
     entityType: str = Field(..., include=True)
-    itemId: UUID | None
+    itemId: UUID | None = None
     businessId: str
 
     @property
