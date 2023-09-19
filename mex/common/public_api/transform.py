@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import get_args
 
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES_BY_NAME,
@@ -14,7 +15,7 @@ from mex.common.types import Link, LinkLanguage, Text, TextLanguage
 
 
 def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
-    """Convert a ExtractedData instance into a Public API item.
+    """Convert an ExtractedData instance into a Public API item.
 
     Args:
         model: Instance of a subclass of ExtractedData
@@ -26,14 +27,18 @@ def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
     model_dict = model.model_dump(exclude_none=True)
     for field_name in sorted(model_dict):
         field = model.model_fields[field_name]
-        if field.annotation in (Text, Link):
+        is_text_or_link = any(
+            type_ in (Text, Link)
+            for type_ in [field.annotation, *get_args(field.annotation)]
+        )
+        if is_text_or_link:
             model_values = getattr(model, field_name)
         else:
             model_values = model_dict[field_name]
         if not isinstance(model_values, list):
             model_values = [model_values]
         for value in model_values:
-            if field.annotation in (Text, Link):
+            if is_text_or_link:
                 language = value.language
                 value = str(value)
             else:

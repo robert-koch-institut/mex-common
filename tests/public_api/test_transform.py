@@ -134,7 +134,7 @@ def test_transform_mex_model_to_public_api_item(
 
     dummy_item = transform_mex_model_to_public_api_item(dummy_model)
 
-    assert dummy_item.dict(exclude_none=True) == raw_api_item
+    assert dummy_item.model_dump(exclude_none=True) == raw_api_item
 
 
 def test_transform_public_api_item_to_mex_model(

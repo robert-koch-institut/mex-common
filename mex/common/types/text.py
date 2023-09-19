@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
@@ -10,7 +10,7 @@ DETECTOR_FACTORY.load_profile(PROFILES_DIRECTORY)
 DETECTOR_FACTORY.seed = 0
 
 
-class TextLanguage(Enum):
+class TextLanguage(StrEnum):
     """Possible language tags for `Text` values."""
 
     DE = "de"

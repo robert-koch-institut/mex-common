@@ -66,7 +66,7 @@ class PublicApiItem(PublicApiBaseModel):
 
     entityType: str = Field(..., include=True)
     itemId: UUID | None = None
-    businessId: str
+    businessId: str = Field(..., exclude=True)
     values: list[PublicApiField] = Field(..., include=True)
 
     @property

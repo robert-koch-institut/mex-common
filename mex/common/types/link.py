@@ -1,5 +1,5 @@
 import re
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
@@ -22,7 +22,7 @@ def markdown_unescape(string: str) -> str:
     return string
 
 
-class LinkLanguage(Enum):
+class LinkLanguage(StrEnum):
     """Possible language tags for `Link` values."""
 
     DE = "de"
