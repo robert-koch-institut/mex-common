@@ -75,24 +75,19 @@ def transform_public_api_item_to_mex_model(
     dct_to_parse: dict[str, list[PublicApiFieldValueTypes]] = defaultdict(list)
     for value in api_item.values:
         field_name = value.fieldName
+        annotation = cls.model_fields[field_name].annotation
+        is_link = any(type_ is Link for type_ in [annotation, *get_args(annotation)])
+        is_text = any(type_ is Text for type_ in [annotation, *get_args(annotation)])
         if isinstance(value.fieldValue, list):
             values = value.fieldValue
         else:
             values = [value.fieldValue]
         for v in values:
-            if (
-                value.language
-                and isinstance(v, str)
-                and cls.model_fields[field_name].annotation == Text
-            ):
+            if value.language and isinstance(v, str) and is_text:
                 dct_to_parse[field_name].append(
                     Text(value=v, language=TextLanguage(value.language))
                 )
-            elif (
-                value.language
-                and isinstance(v, str)
-                and cls.model_fields[field_name].annotation == Link
-            ):
+            elif value.language and isinstance(v, str) and is_link:
                 link = Link.model_validate(v)
                 link.language = LinkLanguage(value.language)
                 dct_to_parse[field_name].append(link)

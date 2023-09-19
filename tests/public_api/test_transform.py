@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 from pytest import MonkeyPatch
@@ -23,7 +23,7 @@ from mex.common.types import (
 
 class DummyModel(MExModel):
     stableTargetId: Identifier
-    optional: Optional[str]
+    optional: str | None = None
     oneString: str
     manyStrings: list[str]
     oneText: Text
@@ -150,7 +150,7 @@ def test_transform_public_api_item_to_mex_model(
     dummy_model = transform_public_api_item_to_mex_model(dummy_item)
 
     assert dummy_model
-    assert dummy_model.dict(exclude_none=True) == raw_mex_model
+    assert dummy_model.model_dump(exclude_none=True) == raw_mex_model
 
 
 def test_transform_public_api_item_to_mex_model_unknown() -> None:
