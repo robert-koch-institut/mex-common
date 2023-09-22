@@ -70,12 +70,28 @@ class ExtractedData(BaseExtractedData):
 
         # validate ID in primary source and primary source ID
         if identifier_in_primary_source := values.get("identifierInPrimarySource"):
-            identifier_in_primary_source = str(identifier_in_primary_source)
+            if isinstance(identifier_in_primary_source, list):
+                if len(identifier_in_primary_source) == 1:
+                    identifier_in_primary_source = str(identifier_in_primary_source[0])
+                else:
+                    raise ValueError(
+                        f"Expected one value for identifierInPrimarySource, got {len(identifier_in_primary_source)}"
+                    )
+            else:
+                identifier_in_primary_source = str(identifier_in_primary_source)
         else:
             raise ValueError("Missing value for `identifierInPrimarySource`.")
 
         if had_primary_source := values.get("hadPrimarySource"):
-            had_primary_source = PrimarySourceID(had_primary_source)
+            if isinstance(had_primary_source, list):
+                if len(had_primary_source) == 1:
+                    had_primary_source = PrimarySourceID(had_primary_source[0])
+                else:
+                    raise ValueError(
+                        f"Expected one value for hadPrimarySource, got {len(had_primary_source)}"
+                    )
+            else:
+                had_primary_source = PrimarySourceID(had_primary_source)
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 
@@ -88,11 +104,25 @@ class ExtractedData(BaseExtractedData):
         if identifier := values.get("identifier"):
             if identity is None:
                 raise ValueError("Identifier not found by identity provider.")
+            if isinstance(identifier, list):
+                if len(identifier) == 1:
+                    identifier = identifier[0]
+                else:
+                    raise ValueError(
+                        f"Expected one value for Identifier, got {len(identifier)}"
+                    )
             if identity.identifier != str(identifier):
                 raise ValueError("Identifier cannot be set manually to new value.")
 
         # validate stable target ID
         if stable_target_id := values.get("stableTargetId"):
+            if isinstance(stable_target_id, list):
+                if len(stable_target_id) == 1:
+                    stable_target_id = stable_target_id[0]
+                else:
+                    raise ValueError(
+                        f"Expected one value for stableTargetId, got {len(stable_target_id)}"
+                    )
             if (
                 identity is None
                 and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
