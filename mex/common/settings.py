@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
 from pydantic import AnyUrl, Field, SecretStr
+from pydantic_core import Url
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
@@ -119,7 +120,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_IDENTITY_PROVIDER",
     )
     backend_api_url: AnyUrl = Field(
-        "http://localhost:8080/",
+        Url("http://localhost:8080/"),
         description="MEx backend API url.",
         validation_alias="MEX_BACKEND_API_URL",
     )
@@ -133,12 +134,12 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_VERIFY_SESSION",
     )
     public_api_url: AnyUrl = Field(
-        "http://localhost:53000/",
+        Url("http://localhost:53000/"),
         description="MEx public API url.",
         validation_alias="MEX_PUBLIC_API_URL",
     )
     public_api_token_provider: AnyUrl = Field(
-        "http://localhost:53000/api/v0/oauth/token",
+        Url("http://localhost:53000/api/v0/oauth/token"),
         description="URL of the JSON Web Token provider for the public API.",
         validation_alias="MEX_PUBLIC_API_TOKEN_PROVIDER",
     )
@@ -158,7 +159,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_PUBLIC_API_VERIFY_SESSION",
     )
     organigram_path: AssetsPath = Field(
-        "raw-data/organigram/organizational_units.json",
+        AssetsPath("raw-data/organigram/organizational_units.json"),
         description=(
             "Path to the JSON file describing the organizational units, "
             "absolute path or relative to `assets_dir`."
@@ -166,7 +167,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_ORGANIGRAM_PATH",
     )
     primary_sources_path: AssetsPath = Field(
-        "raw-data/primary-sources/primary-sources.json",
+        AssetsPath("raw-data/primary-sources/primary-sources.json"),
         description=(
             "Path to the JSON file describing the primary sources, "
             "absolute path or relative to `assets_dir`."
@@ -179,12 +180,12 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_LDAP_URL",
     )
     wiki_api_url: AnyUrl = Field(
-        "https://wikidata/",
+        Url("https://wikidata/"),
         description="URL of Wikidata API",
         validation_alias="MEX_WIKI_API_URL",
     )
     wiki_query_service_url: AnyUrl = Field(
-        "https://wikidata/",
+        Url("https://wikidata/"),
         description="URL of Wikidata query service",
         validation_alias="MEX_WIKI_QUERY_SERVICE_URL",
     )

@@ -15,7 +15,7 @@ class SchemaScriptsSettings(BaseSettings):
     """Settings for schema-related scripts."""
 
     json_file: WorkPath = Field(
-        "schema.json",
+        WorkPath("schema.json"),
         description=(
             "Path to json schema file to write, absolute or relative to `work_dir`."
         ),
