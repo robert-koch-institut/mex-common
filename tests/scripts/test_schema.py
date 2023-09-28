@@ -3,7 +3,7 @@ import json
 import pytest
 from click.testing import CliRunner
 
-from mex.common.models import ExtractedResource
+from mex.common.models import EXTRACTED_MODEL_CLASSES, ExtractedResource
 from mex.common.models.access_platform import TechnicalAccessibility
 from mex.common.scripts.schema import SchemaScriptsSettings, dump_schema
 
@@ -27,3 +27,4 @@ def test_dump_schema_script() -> None:
     assert schema["title"] == settings.schema_title
     assert TechnicalAccessibility.__name__ in schema["$defs"]
     assert ExtractedResource.__name__ in schema["$defs"]
+    assert all(m.__name__ in schema["$defs"] for m in EXTRACTED_MODEL_CLASSES)
