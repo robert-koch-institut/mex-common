@@ -44,5 +44,5 @@ class BackendApiConnector(HTTPConnector):
                 )
             },
         )
-        insert_response = BulkInsertResponse.parse_obj(response)
+        insert_response = BulkInsertResponse.model_validate(response)
         return insert_response.identifiers

@@ -92,4 +92,4 @@ def test_entity_merged_id() -> None:
         identifier_in_primary_source=thing.identifierInPrimarySource,
     )
     assert identity is not None
-    assert str(thing.stableTargetId) == identity.merged_id
+    assert str(thing.stableTargetId) == identity.stableTargetId

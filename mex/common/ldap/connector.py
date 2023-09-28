@@ -75,7 +75,7 @@ class LDAPConnector(BaseConnector):
         )
         for entry in entries:
             if attributes := entry.get("attributes"):
-                yield model_cls.parse_obj(attributes)
+                yield model_cls.model_validate(attributes)
 
     @cache
     def _paged_ldap_search(

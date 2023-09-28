@@ -22,7 +22,7 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     persons = list(connector.get_persons(surname="Sample", given_name="Kim"))
 
     assert len(persons) == 1
-    assert persons[0].dict(exclude_none=True) == {
+    assert persons[0].model_dump(exclude_none=True) == {
         "company": "RKI",
         "department": "XY",
         "departmentNumber": "XY2",
@@ -83,7 +83,7 @@ def test_get_units_mocked(ldap_mocker: LDAPMocker) -> None:
     units = list(connector.get_units(sAMAccountName="XY"))
 
     assert len(units) == 1
-    assert units[0].dict(exclude_none=True) == {
+    assert units[0].model_dump(exclude_none=True) == {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
         "sAMAccountName": "XY",
@@ -96,7 +96,7 @@ def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     functional_accounts = list(connector.get_functional_accounts(sAMAccountName="XY"))
 
     assert len(functional_accounts) == 1
-    assert functional_accounts[0].dict(exclude_none=True) == {
+    assert functional_accounts[0].model_dump(exclude_none=True) == {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
@@ -138,7 +138,7 @@ def test_get_person_mocked(ldap_mocker: LDAPMocker) -> None:
         "sAMAccountName": "SampleS",
         "sn": "Sample",
     }
-    assert person.dict(exclude_none=True) == expected
+    assert person.model_dump(exclude_none=True) == expected
 
 
 @pytest.mark.parametrize(
@@ -168,7 +168,7 @@ def test_get_unit_mocked(ldap_mocker: LDAPMocker) -> None:
         "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
         "sAMAccountName": "XY",
     }
-    assert unit.dict(exclude_none=True) == expected
+    assert unit.model_dump(exclude_none=True) == expected
 
 
 @pytest.mark.parametrize(
@@ -203,4 +203,4 @@ def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
         "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
     }
-    assert unit.dict(exclude_none=True) == expected
+    assert unit.model_dump(exclude_none=True) == expected

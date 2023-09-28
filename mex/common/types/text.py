@@ -23,7 +23,7 @@ class Text(BaseModel):
     Texts can be parsed from nested JSON objects or from raw strings.
 
     Example:
-        Text(value="foo") == Text.parse_obj("foo")
+        Text(value="foo") == Text.model_validate("foo")
     """
 
     value: str = Field(..., min_length=1)

@@ -35,7 +35,7 @@ class Link(BaseModel):
     Links can be parsed from nested JSON objects or from markdown strings.
 
     Example:
-        Link(url="https://foo", title="Title") == Link.parse_obj("[Title](https://foo)")
+        Link(url="https://foo", title="Title") == Link.model_validate("[Title](https://foo)")
     """
 
     language: LinkLanguage | None = None

@@ -20,7 +20,7 @@ def test_extract_mex_person_items_mocked(
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
     monkeypatch: MonkeyPatch,
 ) -> None:
-    mex_metadata_items_response_with_next = mex_metadata_items_response.copy()
+    mex_metadata_items_response_with_next = mex_metadata_items_response.model_copy()
     mex_metadata_items_response_with_next.next = UUID(
         "3fcce11e80e920b410efd0c919001a31"
     )

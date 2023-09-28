@@ -36,7 +36,7 @@ false,"bad row",,,
 
     parsed_models = list(parse_csv(buffer, DummyModel, chunksize=1))
     assert len(parsed_models) == 1
-    assert parsed_models[0].dict() == {  # good row
+    assert parsed_models[0].model_dump() == {  # good row
         "bool_": True,
         "date_": date(2000, 1, 1),
         "float_": 2.718,

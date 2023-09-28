@@ -53,7 +53,7 @@ def test_transform_wikidata_organization_to_organization(
 
     with open(TESTDATA_DIR / "items_details.json", "r", encoding="utf-8") as f:
         wikidata_organizations = [
-            WikidataOrganization.parse_obj(item) for item in json.load(f)
+            WikidataOrganization.model_validate(item) for item in json.load(f)
         ]
 
     extracted_organizations = list(
@@ -64,24 +64,26 @@ def test_transform_wikidata_organization_to_organization(
 
     assert len(extracted_organizations) == 1
 
+    extracted_organization_dict = extracted_organizations[0].model_dump()
     assert sorted(
-        extracted_organizations[0].dict()["alternativeName"], key=itemgetter("value")
+        extracted_organization_dict["alternativeName"],
+        key=itemgetter("value"),
     ) == sorted(expected["alternativeName"], key=itemgetter("value"))
 
     assert (
-        extracted_organizations[0].dict()["identifierInPrimarySource"]
+        extracted_organization_dict["identifierInPrimarySource"]
         == expected["identifierInPrimarySource"]
     )
-    assert extracted_organizations[0].dict()["rorId"] == expected["rorId"]
-    assert extracted_organizations[0].dict()["wikidataId"] == expected["wikidataId"]
-    assert extracted_organizations[0].dict()["gndId"] == expected["gndId"]
-    assert extracted_organizations[0].dict()["isniId"] == expected["isniId"]
-    assert extracted_organizations[0].dict()["viafId"] == expected["viafId"]
+    assert extracted_organization_dict["rorId"] == expected["rorId"]
+    assert extracted_organization_dict["wikidataId"] == expected["wikidataId"]
+    assert extracted_organization_dict["gndId"] == expected["gndId"]
+    assert extracted_organization_dict["isniId"] == expected["isniId"]
+    assert extracted_organization_dict["viafId"] == expected["viafId"]
 
 
 def test_get_alternative_names() -> None:
     """Test if all the alternative names are being transformed."""
-    raw_aliases = Aliases.parse_obj(
+    raw_aliases = Aliases.model_validate(
         {
             "de": [
                 {"language": "de", "value": "alias_de_1"},
@@ -98,7 +100,7 @@ def test_get_alternative_names() -> None:
     )
 
     raw_native_labels = [
-        Claim.parse_obj(
+        Claim.model_validate(
             {
                 "mainsnak": {
                     "datavalue": {
@@ -163,10 +165,10 @@ def test_get_clean_short_names() -> None:
     ]
 
     for short_name in short_names:
-        Claim.parse_obj(short_name)
+        Claim.model_validate(short_name)
 
     clean_short_names = get_clean_short_names(
-        [Claim.parse_obj(acronym) for acronym in short_names]
+        [Claim.model_validate(acronym) for acronym in short_names]
     )
 
     assert sorted(clean_short_names, key=attrgetter("value")) == sorted(
@@ -185,6 +187,6 @@ def test_get_clean_labels() -> None:
         "en": {"language": "en", "value": "Test Label 1 EN"},
     }
 
-    clean_labels = get_clean_labels(Labels.parse_obj(raw_labels))
+    clean_labels = get_clean_labels(Labels.model_validate(raw_labels))
 
     assert clean_labels == expected

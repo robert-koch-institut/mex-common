@@ -13,7 +13,9 @@ def test_transform_mex_db_primary_source_to_extracted_primary_source() -> None:
             extract_seed_primary_sources()
         )
     )
-    assert extracted_primary_source.dict(exclude_none=True, exclude_defaults=True) == {
+    assert extracted_primary_source.model_dump(
+        exclude_none=True, exclude_defaults=True
+    ) == {
         "hadPrimarySource": MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         "identifier": Joker(),
         "identifierInPrimarySource": "mex",

@@ -45,7 +45,7 @@ def mocked_api_session_authenticated(mocked_api_session: MagicMock) -> MagicMock
 @pytest.fixture
 def mex_metadata_items_response() -> PublicApiMetadataItemsResponse:
     """Return a dummy PublicApiMetadataItemsResponse for testing purposes."""
-    return PublicApiMetadataItemsResponse.parse_obj(
+    return PublicApiMetadataItemsResponse.model_validate(
         {
             "items": [
                 {

@@ -62,7 +62,8 @@ class VocabularyLoader(EnumMeta):
         with open(path) as handle:
             raw_vocabularies = json.load(handle)
         return [
-            Concept.parse_obj(raw_vocabulary) for raw_vocabulary in raw_vocabularies
+            Concept.model_validate(raw_vocabulary)
+            for raw_vocabulary in raw_vocabularies
         ]
 
 
