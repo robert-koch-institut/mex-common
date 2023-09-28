@@ -37,7 +37,7 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
 
 
 def parse_csv(
-    path_or_buffer: Union[str, Path, "ReadCsvBuffer"],
+    path_or_buffer: Union[str, Path, "ReadCsvBuffer[Any]"],
     into: type[ModelT],
     chunksize: int = 10,
     **kwargs: Any,
