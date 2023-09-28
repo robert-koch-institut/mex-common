@@ -137,11 +137,27 @@ class Timestamp:
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, source: Type[Any], handler: GetCoreSchemaHandler
+        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Mutate the field schema for timestamps."""
-        return core_schema.no_info_plain_validator_function(
-            cls.validate,
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=TIMESTAMP_REGEX),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
+        )
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(Timestamp),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
         )
 
     @classmethod
@@ -151,8 +167,6 @@ class Timestamp:
         """Modify the schema to add the class name as title and examples."""
         json_schema = handler(core_schema_)
         json_schema["title"] = cls.__name__
-        json_schema["type"] = "string"
-        json_schema["pattern"] = TIMESTAMP_REGEX
         json_schema["examples"] = [
             "2011",
             "2019-03",
