@@ -48,9 +48,9 @@ class PublicApiSearchRequest(PublicApiBaseModel):
 class PublicApiField(PublicApiBaseModel):
     """A single field of an item as represented in the Public API format."""
 
-    fieldName: str = Field(..., include=True)
-    fieldValue: PublicApiFieldValueTypesOrList = Field(..., include=True)
-    language: LinkLanguage | TextLanguage | None = Field(None, include=True)
+    fieldName: str
+    fieldValue: PublicApiFieldValueTypesOrList
+    language: LinkLanguage | TextLanguage | None = None
 
     @field_validator("language", mode="before")
     @classmethod
@@ -64,10 +64,10 @@ class PublicApiField(PublicApiBaseModel):
 class PublicApiItem(PublicApiBaseModel):
     """Public API item representing an entity or extracted data model."""
 
-    entityType: str = Field(..., include=True)
+    entityType: str
     itemId: UUID | None = Field(None, exclude=True)
     businessId: str = Field(..., exclude=True)
-    values: list[PublicApiField] = Field(..., include=True)
+    values: list[PublicApiField]
 
     @property
     def stableTargetId(self) -> Identifier:
@@ -94,9 +94,9 @@ class PublicApiAuthResponse(PublicApiBaseModel):
 class PublicApiItemWithoutValues(PublicApiBaseModel):
     """Public API item representing an entity or extracted data model."""
 
-    entityType: str = Field(..., include=True)
-    itemId: UUID | None = None
-    businessId: str
+    entityType: str
+    itemId: UUID | None = Field(None, exclude=True)
+    businessId: str = Field(..., exclude=True)
 
     @property
     def stableTargetId(self) -> Identifier:
