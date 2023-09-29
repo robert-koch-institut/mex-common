@@ -44,8 +44,8 @@ class Link(BaseModel):
         ...,
         pattern=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
         min_length=1,
-        format="uri",
         examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
+        json_schema_extra={"format": "uri"},
     )
 
     @model_validator(mode="before")
