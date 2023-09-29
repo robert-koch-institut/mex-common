@@ -135,7 +135,7 @@ class MyEnum(Enum):
                 "EnumListSettings",
                 __base__=BaseSettings,
                 enum_list=(
-                    list(MyEnum),
+                    list[MyEnum],
                     Field(
                         [MyEnum.FOO, MyEnum.BAR], description="Multiple values allowed"
                     ),
