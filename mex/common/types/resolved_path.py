@@ -36,9 +36,26 @@ class ResolvedPath(PathLike[str], metaclass=ABCMeta):
         """Return the base path that relative paths will follow."""
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(cls, _source: Type[Any]) -> core_schema.CoreSchema:
         """Set schema to str schema."""
-        return core_schema.no_info_plain_validator_function(cls.validate)
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
+        )
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(ResolvedPath),
+            ]
+        )
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
+        )
 
     @classmethod
     def validate(cls: type[ResolvedPathT], value: Any) -> "ResolvedPathT":
