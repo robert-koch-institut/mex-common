@@ -94,6 +94,7 @@ class BaseModel(PydanticBaseModel):
     ) -> Optional[list[Any]]:
         """Convert a non-list value to a list value by wrapping it in a list."""
         if value is None:
+            # test if None is an allowed value
             validator = TypeAdapter(field.annotation)
             try:
                 validator.validate_python(value)
