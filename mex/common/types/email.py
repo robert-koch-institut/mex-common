@@ -11,12 +11,9 @@ class Email(str):
     """Email address of a person, organization or other entity."""
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source: Type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(cls, _source: Type[Any]) -> core_schema.CoreSchema:
         """Get pydanctic core schema."""
-        return {
-            "type": "str",
-            "pattern": EMAIL_PATTERN,
-        }
+        return core_schema.str_schema(pattern=EMAIL_PATTERN)
 
     @classmethod
     def __get_pydantic_json_schema__(
