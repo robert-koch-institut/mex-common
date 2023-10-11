@@ -97,7 +97,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     def wait_for_job(self, job_id: str) -> str:
         """Poll the status for this `job_id` until it is no longer 'RUNNING'."""
         response = self.request("GET", f"jobs/{job_id}")
-        return response.get("status", "NONE")
+        return str(response.get("status", "NONE"))
 
     def get_job_items(self, job_id: str) -> Generator[Identifier, None, None]:
         """Get the identifiers of the items created, updated or deleted during a job.
@@ -217,8 +217,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             ) or error.response.status_code == 404:
                 return None
             # Re-raise any unexpected errors
-            else:
-                raise error
+            raise error
         else:
             return PublicApiItem.parse_obj(response)
 

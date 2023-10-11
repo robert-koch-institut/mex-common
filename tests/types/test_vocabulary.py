@@ -7,7 +7,7 @@ from tests.types.conftest import TESTDATA_DIR
 
 
 @pytest.mark.parametrize(
-    "string, expected",
+    ("string", "expected"),
     [
         ("", ""),
         ("Foo(Bar) 99 - Batz", "FOO_BAR_BATZ"),
@@ -17,7 +17,7 @@ def test_split_to_caps(string: str, expected: str) -> None:
     assert split_to_caps(string) == expected
 
 
-@pytest.fixture
+@pytest.fixture()
 def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
     dummy_vocabulary = VocabularyLoader.parse_file(
         TESTDATA_DIR / "dummy-vocabulary.json"

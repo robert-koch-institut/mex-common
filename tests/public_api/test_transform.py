@@ -39,7 +39,7 @@ class DummyModel(MExModel):
         return cls.__name__
 
 
-@pytest.fixture
+@pytest.fixture()
 def raw_mex_model() -> dict[str, Any]:
     return {
         "identifier": Identifier("0000000000046f"),
@@ -68,7 +68,7 @@ def raw_mex_model() -> dict[str, Any]:
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def raw_api_item() -> dict[str, Any]:
     return {
         "entityType": "DummyModel",

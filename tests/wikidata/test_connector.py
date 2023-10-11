@@ -17,10 +17,10 @@ def test_initialization_mocked_server(
         spec=requests.Response, ok=1, status_code=200
     )
     connector = WikidataQueryServiceConnector.get()
-    assert connector._check_availability() == None
+    assert connector._check_availability() is None
 
 
-@pytest.mark.integration
+@pytest.mark.integration()
 def test_get_data_by_query() -> None:
     """Test if items can be searched providing a label."""
     expected = [
@@ -94,7 +94,7 @@ def test_get_data_by_query_mocked(
     assert response == expected
 
 
-@pytest.mark.integration
+@pytest.mark.integration()
 def test_get_wikidata_item_details_by_id() -> None:
     """Test if items details can be fetched by its ID."""
     connector = WikidataAPIConnector.get()

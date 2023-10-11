@@ -14,7 +14,7 @@ from mex.common.wikidata.connector import (
 TESTDATA_DIR = Path(__file__).parent / "test_data"
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_session_wikidata_query_service(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock and return WikidataQueryServiceConnector with a MagicMock session."""
     mocked_session = MagicMock(spec=requests.Session)
@@ -28,7 +28,7 @@ def mocked_session_wikidata_query_service(monkeypatch: MonkeyPatch) -> MagicMock
     return mocked_session
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_session_wikidata_api(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock and return WikidataAPIConnector with a MagicMock session."""
     mocked_session = MagicMock(spec=requests.Session)

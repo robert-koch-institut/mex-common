@@ -43,7 +43,7 @@ def search_organization_by_label(
             ) from exc
         except requests.exceptions.RetryError as exc:
             raise MExError(
-                f"RetryError: Max retries exceeded while processing results for {item_label}"
+                f"RetryError: Max retries exceeded processing results for {item_label}"
             ) from exc
         except KeyError as exc:
             raise MExError(

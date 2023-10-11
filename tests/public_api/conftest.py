@@ -9,7 +9,7 @@ from mex.common.public_api.models import PublicApiMetadataItemsResponse
 from mex.common.settings import BaseSettings
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_api_session(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock the PublicApiConnector with a MagicMock session and return that."""
     mocked_session = MagicMock(spec=requests.Session, name="public_api_session")
@@ -25,7 +25,7 @@ def mocked_api_session(monkeypatch: MonkeyPatch) -> MagicMock:
     return mocked_session
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_api_session_authenticated(mocked_api_session: MagicMock) -> MagicMock:
     """Get the authenticated MagicMock session."""
     mocked_api_session.post = mocked_post = MagicMock(
@@ -42,7 +42,7 @@ def mocked_api_session_authenticated(mocked_api_session: MagicMock) -> MagicMock
     return mocked_api_session
 
 
-@pytest.fixture
+@pytest.fixture()
 def mex_metadata_items_response() -> PublicApiMetadataItemsResponse:
     """Return a dummy PublicApiMetadataItemsResponse for testing purposes."""
     return PublicApiMetadataItemsResponse.parse_obj(

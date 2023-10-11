@@ -40,7 +40,7 @@ class FlatValueMap(ChainMap[str, Any]):
 
         try:
             value = super().__getitem__(key)
-        except:
+        except:  # noqa: E722
             value = None
         return transform(value)
 
@@ -145,7 +145,7 @@ class BaseModel(PydanticBaseModel):
 
     def checksum(self) -> str:
         """Calculate md5 checksum for this model."""
-        return hashlib.md5(pickle.dumps(self)).hexdigest()  # nosec
+        return hashlib.md5(pickle.dumps(self)).hexdigest()  # noqa: S324
 
     def __str__(self) -> str:
         """Format this model as a string for logging."""

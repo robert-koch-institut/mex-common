@@ -44,7 +44,7 @@ def parse_csv(
     Args:
         path_or_buffer: Location of CSV file or read buffer with CSV content
         into: Type of model to parse
-        chunkssize: Buffer size for chunked reading
+        chunksize: Buffer size for chunked reading
         kwargs: Additional keywords arguments for pandas
 
     Returns:

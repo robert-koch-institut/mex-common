@@ -2,7 +2,7 @@ from mex.common.testing import Joker
 
 
 def test_joker_eq() -> None:
-    assert Joker() == None
+    assert Joker() is None
     assert Joker() == 1
     assert {"foo": Joker()} == {"foo": ["bar", Joker()]}
 
