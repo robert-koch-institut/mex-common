@@ -2,9 +2,9 @@ from abc import ABCMeta, abstractmethod
 from contextlib import ExitStack
 from contextvars import ContextVar
 from types import TracebackType
-from typing import Optional, TypeVar, cast, final
+from typing import Optional, TypeVar, cast, final, get_type_hints
 
-from mex.common.settings import BaseSettings, SettingsContext
+from mex.common.settings import BaseSettings
 
 ConnectorType = TypeVar("ConnectorType", bound="BaseConnector")
 ConnectorContextType = dict[type["BaseConnector"], "BaseConnector"]
@@ -38,8 +38,14 @@ class BaseConnector(metaclass=ABCMeta):
         try:
             connector = cast(ConnectorType, context[cls])
         except KeyError:
-            settings = cast(BaseSettings, SettingsContext.get())
+            # infer settings class from constructor typing
+            signature = get_type_hints(cls.__init__)
+            settings_cls = signature["settings"]
+            # retrieve settings instance from context
+            settings = settings_cls.get()
+            # create new connector with settings
             connector = cls(settings)
+            # store connector instance in context
             context[cls] = connector
         return connector
 

@@ -19,12 +19,10 @@ def mocked_session_wikidata_query_service(monkeypatch: MonkeyPatch) -> MagicMock
     """Mock and return WikidataQueryServiceConnector with a MagicMock session."""
     mocked_session = MagicMock(spec=requests.Session)
 
-    def mocked_init(
-        self: WikidataQueryServiceConnector, settings: BaseSettings
-    ) -> None:
+    def __init__(self: WikidataQueryServiceConnector, settings: BaseSettings) -> None:
         self.session = mocked_session
 
-    monkeypatch.setattr(WikidataQueryServiceConnector, "__init__", mocked_init)
+    monkeypatch.setattr(WikidataQueryServiceConnector, "__init__", __init__)
     return mocked_session
 
 
@@ -33,8 +31,8 @@ def mocked_session_wikidata_api(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock and return WikidataAPIConnector with a MagicMock session."""
     mocked_session = MagicMock(spec=requests.Session)
 
-    def mocked_init(self: WikidataAPIConnector, settings: BaseSettings) -> None:
+    def __init__(self: WikidataAPIConnector, settings: BaseSettings) -> None:
         self.session = mocked_session
 
-    monkeypatch.setattr(WikidataAPIConnector, "__init__", mocked_init)
+    monkeypatch.setattr(WikidataAPIConnector, "__init__", __init__)
     return mocked_session
