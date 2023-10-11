@@ -25,7 +25,7 @@ class DummyConnector(HTTPConnector):
         self.closed = True
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_dummy_session(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock the DummyConnector with a MagicMock session and return that."""
     mocked_session = MagicMock(spec=requests.Session, name="dummy_session")

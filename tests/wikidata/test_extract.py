@@ -15,7 +15,7 @@ from mex.common.wikidata.extract import (
 from tests.wikidata.conftest import TESTDATA_DIR
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_search_organization_by_label() -> None:
     """Test organization search in wikidata."""
     expected = "Q26678"
@@ -191,7 +191,7 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
     assert search_results[0].dict() == expected_item_details_response
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_get_organization_details() -> None:
     """Test organization details fetching from wikidata."""
     expected = {

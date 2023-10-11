@@ -10,7 +10,7 @@ from mex.common.public_api.extract import extract_mex_person_items
 from mex.common.public_api.models import PublicApiMetadataItemsResponse
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_extract_mex_person_items() -> None:
     mex_persons = list(extract_mex_person_items())
     assert all(p.entityType in ["Person", "ExtractedPerson"] for p in mex_persons)
@@ -38,7 +38,7 @@ def test_extract_mex_person_items_mocked(
     assert mex_persons == mex_metadata_items_response.items[2:4] * 2
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_extract_mex_person_items_limit_reached(
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
     monkeypatch: MonkeyPatch,
