@@ -26,12 +26,9 @@ class LDAPConnector(BaseConnector):
     SEARCH_BASE = "DC=rki,DC=local"
     PAGE_SIZE = 25
 
-    def __init__(self, settings: BaseSettings) -> None:
-        """Create a new LDAP connection.
-
-        Args:
-            settings: Configured settings instance
-        """
+    def __init__(self) -> None:
+        """Create a new LDAP connection."""
+        settings = BaseSettings.get()
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
         port = int(url.port or self.DEFAULT_PORT)

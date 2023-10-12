@@ -39,16 +39,17 @@ PublicApiItemT = TypeVar(
 class PublicApiConnector(HTTPConnector):  # pragma: no cover
     """Connector class to handle authentication and interaction with the public API."""
 
-    TIMEOUT = 10
     API_VERSION = "v0"
 
-    def _set_session(self, settings: BaseSettings) -> None:
+    def _set_session(self) -> None:
         """Create and set request session."""
+        settings = BaseSettings.get()
         self.session = requests.Session()
         self.session.verify = settings.public_api_verify_session  # type: ignore
 
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set url of the host with api version."""
+        settings = BaseSettings.get()
         self.url = urljoin(settings.public_api_url, self.API_VERSION)
 
     def _check_availability(self) -> None:
@@ -59,8 +60,9 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             PublicApiSearchRequest(limit=0),
         )
 
-    def _set_authentication(self, settings: BaseSettings) -> None:
+    def _set_authentication(self) -> None:
         """Generate JWT using secret payload and attach it to session."""
+        settings = BaseSettings.get()
         response = self.session.post(
             settings.public_api_token_provider,
             data=b64decode(settings.public_api_token_payload.get_secret_value()),
@@ -97,7 +99,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     def wait_for_job(self, job_id: str) -> str:
         """Poll the status for this `job_id` until it is no longer 'RUNNING'."""
         response = self.request("GET", f"jobs/{job_id}")
-        return response.get("status", "NONE")
+        return str(response.get("status", "NONE"))
 
     def get_job_items(self, job_id: str) -> Generator[Identifier, None, None]:
         """Get the identifiers of the items created, updated or deleted during a job.

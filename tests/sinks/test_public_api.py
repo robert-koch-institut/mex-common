@@ -8,14 +8,13 @@ from requests import HTTPError
 
 from mex.common.models import ExtractedPerson, ExtractedPrimarySource
 from mex.common.public_api.connector import PublicApiConnector
-from mex.common.settings import BaseSettings
 from mex.common.sinks.public_api import post_to_public_api, purge_models_from_public_api
 
 
 def test_post_to_public_api_mocked(
     extracted_person: ExtractedPerson, monkeypatch: MonkeyPatch
 ) -> None:
-    def __init__(self: PublicApiConnector, settings: BaseSettings) -> None:
+    def __init__(self: PublicApiConnector) -> None:
         self.session = MagicMock()
 
     monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
@@ -32,7 +31,7 @@ def test_post_to_public_api_mocked(
 def test_purge_from_public_api_mocked(
     extracted_person: ExtractedPerson, monkeypatch: MonkeyPatch
 ) -> None:
-    def __init__(self: PublicApiConnector, settings: BaseSettings) -> None:
+    def __init__(self: PublicApiConnector) -> None:
         self.session = MagicMock()
 
     monkeypatch.setattr(PublicApiConnector, "__init__", __init__)

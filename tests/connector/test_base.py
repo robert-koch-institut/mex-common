@@ -19,7 +19,8 @@ def settings() -> DummySettings:
 
 
 class DummyConnector(BaseConnector):
-    def __init__(self, settings: DummySettings) -> None:
+    def __init__(self) -> None:
+        settings = DummySettings.get()
         self.config = settings.configuration
         self.closed = False
 

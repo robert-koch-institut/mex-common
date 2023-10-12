@@ -8,7 +8,6 @@ from mex.common.exceptions import MExError
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.public_api.extract import extract_mex_person_items
 from mex.common.public_api.models import PublicApiMetadataItemsResponse
-from mex.common.settings import BaseSettings
 
 
 @pytest.mark.integration
@@ -21,7 +20,7 @@ def test_extract_mex_person_items_mocked(
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
     monkeypatch: MonkeyPatch,
 ) -> None:
-    def __init__(self: PublicApiConnector, settings: BaseSettings) -> None:
+    def __init__(self: PublicApiConnector) -> None:
         self.session = MagicMock()
 
     monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
@@ -44,7 +43,7 @@ def test_extract_mex_person_items_limit_reached(
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
     monkeypatch: MonkeyPatch,
 ) -> None:
-    def __init__(self: PublicApiConnector, settings: BaseSettings) -> None:
+    def __init__(self: PublicApiConnector) -> None:
         self.session = MagicMock()
 
     monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
