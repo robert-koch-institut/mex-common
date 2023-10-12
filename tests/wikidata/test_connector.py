@@ -17,7 +17,7 @@ def test_initialization_mocked_server(
         spec=requests.Response, ok=1, status_code=200
     )
     connector = WikidataQueryServiceConnector.get()
-    assert connector._check_availability() == None
+    assert connector._check_availability() is None
 
 
 @pytest.mark.integration

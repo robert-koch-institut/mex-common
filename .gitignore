@@ -97,6 +97,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# ruff
+.ruff_cache
+
 # PyCharm
 .idea/
 .idea_modules/

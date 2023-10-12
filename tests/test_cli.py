@@ -23,7 +23,7 @@ class MyEnum(Enum):
 
 
 @pytest.mark.parametrize(
-    "field, info_dict",
+    ("field", "info_dict"),
     [
         (
             ModelField(

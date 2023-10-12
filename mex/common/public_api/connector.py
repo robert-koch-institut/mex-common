@@ -219,8 +219,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             ) or error.response.status_code == 404:
                 return None
             # Re-raise any unexpected errors
-            else:
-                raise error
+            raise error
         else:
             return PublicApiItem.parse_obj(response)
 

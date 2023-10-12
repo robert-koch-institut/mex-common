@@ -63,7 +63,18 @@ class WikidataAPIConnector(HTTPConnector):
             "action": "wbgetentities",
             "format": "json",
             "ids": item_id,
-            "props": "info|aliases|labels|descriptions|datatype|claims|sitelinks|sitelinks/urls",
+            "props": "|".join(
+                [
+                    "info",
+                    "aliases",
+                    "labels",
+                    "descriptions",
+                    "datatype",
+                    "claims",
+                    "sitelinks",
+                    "sitelinks/urls",
+                ]
+            ),
             "formatversion": "2",
         }
 

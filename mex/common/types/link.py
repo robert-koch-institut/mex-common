@@ -75,5 +75,4 @@ class Link(BaseModel):
             title = markdown_escape(title)
             url = markdown_escape(self.url)
             return f"[{title}]({url})"
-        else:
-            return self.url
+        return self.url

@@ -80,7 +80,7 @@ def test_connector_reset_context() -> None:
 
 
 @pytest.mark.parametrize(
-    "sent_payload, mocked_response, expected_response, expected_kwargs",
+    ("sent_payload", "mocked_response", "expected_response", "expected_kwargs"),
     [
         (
             {},

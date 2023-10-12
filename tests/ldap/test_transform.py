@@ -38,7 +38,7 @@ def test_transform_ldap_actors_to_mex_contact_points(
     extracted_contact_points = transform_ldap_actors_to_mex_contact_points(
         [ldap_actor], extracted_primary_sources["ldap"]
     )
-    extracted_contact_point = list(extracted_contact_points)[0]
+    extracted_contact_point = next(iter(extracted_contact_points))
 
     expected = {
         "email": ["mail@example3.com"],
@@ -75,7 +75,7 @@ def test_transform_ldap_persons_to_mex_persons(
     extracted_persons = transform_ldap_persons_to_mex_persons(
         [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
     )
-    extracted_person = list(extracted_persons)[0]
+    extracted_person = next(iter(extracted_persons))
 
     expected = {
         "email": ["mail@example2.com"],
@@ -122,7 +122,7 @@ def test_transform_ldap_persons_to_mex_persons_with_unknown_department_raises_er
 
 
 @pytest.mark.parametrize(
-    "string, expected",
+    ("string", "expected"),
     [
         ("", []),
         ("-", []),

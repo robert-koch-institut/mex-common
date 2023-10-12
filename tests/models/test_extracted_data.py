@@ -33,7 +33,7 @@ def test_extracted_data_requires_identifier_in_primary_source() -> None:
         )
 
 
-def test_extracted_data_requires_hadPrimarySource() -> None:
+def test_extracted_data_requires_had_primary_source() -> None:
     with pytest.raises(ValidationError, match="hadPrimarySource"):
         ExtractedThing(
             identifierInPrimarySource="0",

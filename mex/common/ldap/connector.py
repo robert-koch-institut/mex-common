@@ -86,7 +86,7 @@ class LDAPConnector(BaseConnector):
         return list(entries)
 
     def get_functional_accounts(
-        self, mail: str = "*", sAMAccountName: str = "*", **filters: str
+        self, mail: str = "*", sAMAccountName: str = "*", **filters: str  # noqa: N803
     ) -> Generator[LDAPActor, None, None]:
         """Get LDAP functional accounts that match provided filters.
 
@@ -142,7 +142,7 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_units(
-        self, sAMAccountName: str = "*", mail: str = "*", **filters: str
+        self, sAMAccountName: str = "*", mail: str = "*", **filters: str  # noqa: N803
     ) -> Generator[LDAPUnit, None, None]:
         """Get LDAP units that match the provided filters.
 
@@ -163,7 +163,7 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_functional_account(
-        self, objectGUID: str = "*", **filters: str
+        self, objectGUID: str = "*", **filters: str  # noqa: N803
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
@@ -185,16 +185,18 @@ class LDAPConnector(BaseConnector):
         )
         if not functional_accounts:
             raise EmptySearchResultError(
-                f"Cannot find AD functional account for filters 'objectGUID: {objectGUID}, {filters}'"
+                "Cannot find AD functional account for filters "
+                f"'objectGUID: {objectGUID}, {filters}'"
             )
         if len(functional_accounts) > 1:
             raise FoundMoreThanOneError(
-                f"Found multiple AD functional accounts for filters 'objectGUID: {objectGUID}, {filters}'"
+                "Found multiple AD functional accounts for filters "
+                f"'objectGUID: {objectGUID}, {filters}'"
             )
         return functional_accounts[0]
 
     def get_person(
-        self, objectGUID: str = "*", employeeID: str = "*", **filters: str
+        self, objectGUID: str = "*", employeeID: str = "*", **filters: str  # noqa: N803
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 

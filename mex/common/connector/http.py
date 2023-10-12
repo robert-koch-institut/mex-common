@@ -57,6 +57,7 @@ class HTTPConnector(BaseConnector):
             method: HTTP method to use
             endpoint: Path to API endpoint to be prefixed with host and version
             payload: Data to be serialized as JSON using the `MExEncoder`
+            params: Dictionary to be sent in the query string of the request
             kwargs: Further keyword arguments passed to `requests`
 
         Raises:
