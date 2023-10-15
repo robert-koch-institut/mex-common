@@ -1,4 +1,18 @@
-Use the ldap extractor to extract persons from ldap. You can query e.g. by the account name, surname, given name, or email.
+Helper extractor to extract data from ldap. 
+
+Common use cases are e.g. extracting employee accounts or functional accounts of your
+organization.
+
+Possible queries are for example the account name, surname, given name, or email. 
+
+For configuring the ldap connection, set the settings parameter `ldap_url` (see settings 
+docs (TODO: link to settings docs) for how to do this) to an url in the format 
+`ldap://user:pw@ldap:636`, where
+
+- `user` is the username and
+- `pw` is the password for authenticating against ldap
+- `ldap` is the url of the ldap server
+- `636` is the port of the ldap server
 
 A working minimal example:
 
@@ -50,6 +64,11 @@ mex_organizational_units = transform_organigram_units_to_organizational_units(
 mex_organizational_unit_gens = tee(mex_organizational_units, 2)
 load(mex_organizational_unit_gens[0])
 
+units_by_identifier_in_primary_source = {
+    unit.identifierInPrimarySource: unit
+    for unit in mex_organizational_unit_gens[1]
+}
+
 # extracting a person from ldap
 
 ldap = LDAPConnector.get()
@@ -64,7 +83,7 @@ else:
 mex_person = transform_ldap_person_to_mex_person(
     ldap_person, 
     extracted_primary_source_ldap,
-    mex_organizational_unit_gens[3],
+    units_by_identifier_in_primary_source,
 )
 
 # and finally load it into mex
