@@ -90,3 +90,6 @@ mex_person = transform_ldap_person_to_mex_person(
 
 load(mex_person)
 ```
+
+The `mex_person.stableTargetId` attribute can be used in any entity that requires a 
+`PersonID`.
