@@ -4,9 +4,8 @@ from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
-from pydantic import AnyUrl
+from pydantic import AnyUrl, Extra, Field, SecretStr
 from pydantic import BaseSettings as PydanticBaseSettings
-from pydantic import Extra, Field, SecretStr
 from pydantic.env_settings import DotenvType, env_file_sentinel
 from pydantic.typing import StrPath
 
@@ -191,8 +190,8 @@ class BaseSettings(PydanticBaseSettings):
         return "\n".join(
             [
                 f"{key.ljust(indent)} "
-                f"{', '.join(str(v) for v in value) if isinstance(value, list) else value}"
-                for key, value in dict_.items()
+                f"{', '.join(str(v) for v in val) if isinstance(val, list) else val}"
+                for key, val in dict_.items()
             ]
         )
 

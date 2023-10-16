@@ -47,7 +47,7 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
         lambda self, _: mocked_query_response(),
     )
 
-    with pytest.raises(MExError) as exc:
+    with pytest.raises(MExError):
         _ = list(search_organization_by_label(item_label="BMW"))
 
 

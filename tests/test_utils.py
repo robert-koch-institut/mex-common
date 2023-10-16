@@ -8,7 +8,7 @@ from mex.common.utils import any_contains_any, contains_any, grouper, jitter_sle
 
 
 @pytest.mark.parametrize(
-    "base, tokens, expected",
+    ("base", "tokens", "expected"),
     [
         ("foo", (), False),
         ("i have foo in it", ("foo", "bar", "batz"), True),
@@ -22,7 +22,7 @@ def test_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> None:
 
 
 @pytest.mark.parametrize(
-    "base, tokens, expected",
+    ("base", "tokens", "expected"),
     [
         (["foo", None], (), False),
         (["i have foo in it", "i dont"], ("foo", "bar", "batz"), True),

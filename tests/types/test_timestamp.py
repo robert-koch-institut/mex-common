@@ -7,7 +7,7 @@ from mex.common.types import CET, UTC, Timestamp
 
 
 @pytest.mark.parametrize(
-    "args, kwargs, message",
+    ("args", "kwargs", "message"),
     [
         (
             (datetime.now(),),
@@ -30,7 +30,7 @@ def test_timestamp_parsing_errors(
 
 
 @pytest.mark.parametrize(
-    "value, message",
+    ("value", "message"),
     [(object(), "Cannot parse <class 'object'> as Timestamp")],
 )
 def test_timestamp_validation_errors(value: Any, message: str) -> None:
@@ -39,7 +39,7 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "args, kwargs, expected",
+    ("args", "kwargs", "expected"),
     [
         ((), {}, "1970"),
         ((2014,), {}, "2014"),

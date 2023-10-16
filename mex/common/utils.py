@@ -49,4 +49,4 @@ def jitter_sleep(min_seconds: float, jitter_seconds: float) -> None:
         min_seconds: The minimum time to sleep
         jitter_seconds: The variable sleep time added to the minimum
     """
-    sleep(min_seconds + random() * jitter_seconds)  # nosec
+    sleep(min_seconds + random() * jitter_seconds)  # noqa: S311
