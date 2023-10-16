@@ -72,12 +72,19 @@ class BaseSettings(PydanticBaseSettings):
             Settings: An instance of Settings or a subclass thereof
         """
         settings = SettingsContext.get()
-        if settings is None:
-            settings = cls.parse_obj({})
-            SettingsContext.set(settings)
         if isinstance(settings, cls):
             return settings
-        raise RuntimeError(f"Requested {cls} but already loaded {type(settings)}")
+        if settings is None:
+            base = {}
+        elif issubclass(cls, type(settings)):
+            base = settings.dict(exclude_unset=True)
+        else:
+            raise RuntimeError(
+                f"Requested {cls.__name__} but already loaded {type(settings).__name__}"
+            )
+        settings = cls.parse_obj(base)
+        SettingsContext.set(settings)
+        return settings
 
     # Note: We need to hardcode the environment variable names for base settings here,
     # otherwise their prefix will get overwritten with those of a specific subclass.
