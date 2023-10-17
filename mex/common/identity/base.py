@@ -16,14 +16,12 @@ class BaseProvider(metaclass=ABCMeta):
     """Base class to define the interface of identity providers."""
 
     @abstractmethod
-    def upsert(
+    def assign(
         self,
         had_primary_source: PrimarySourceID,
         identifier_in_primary_source: str,
-        stable_target_id: Identifier,
-        entity_type: str,
     ) -> Identity:  # pragma: no cover
-        """Insert a new identity or update an existing one."""
+        """Find an Identity or assign a new one."""
         ...
 
     @abstractmethod

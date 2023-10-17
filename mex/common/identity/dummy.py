@@ -14,20 +14,14 @@ class DummyIdentityProvider(BaseProvider, BaseConnector):
         """Initialize a dummy identity database as a list of identity instances."""
         self.dummy_identity_db: list[Identity] = []
 
-    def upsert(
-        self,
-        had_primary_source: PrimarySourceID,
-        identifier_in_primary_source: str,
-        stable_target_id: Identifier,
-        entity_type: str,
+    def assign(
+        self, had_primary_source: PrimarySourceID, identifier_in_primary_source: str
     ) -> Identity:
-        """Insert a new identity or update an existing one.
+        """Find an Identity or assign a new one.
 
         Args:
             had_primary_source: Stable target ID of primary source
             identifier_in_primary_source: Identifier in the primary source
-            stable_target_id: Stable target ID of the entity
-            entity_type: Type of the entity
 
         Returns:
             Newly created or updated Identity instance
@@ -36,14 +30,11 @@ class DummyIdentityProvider(BaseProvider, BaseConnector):
             had_primary_source=had_primary_source,
             identifier_in_primary_source=identifier_in_primary_source,
         )
-        if identity:
-            identity.stableTargetId = stable_target_id
-        else:
+        if not identity:
             identity = Identity(
                 hadPrimarySource=had_primary_source,
                 identifierInPrimarySource=identifier_in_primary_source,
-                stableTargetId=stable_target_id,
-                entityType=entity_type,
+                stableTargetId=Identifier.generate(),
                 identifier=Identifier.generate(),
             )
             self.dummy_identity_db.append(identity)

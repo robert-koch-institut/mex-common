@@ -65,7 +65,7 @@ class ExtractedData(BaseExtractedData):
             Values with identifier and provenance attributes
         """
         # break import cycle, sigh
-        from mex.common.identity.query import fetch_identity, upsert_identity
+        from mex.common.identity.query import assign_identity
 
         # validate ID in primary source and primary source ID
         if identifier_in_primary_source := values.get("identifierInPrimarySource"):
@@ -78,40 +78,32 @@ class ExtractedData(BaseExtractedData):
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 
-        identity = fetch_identity(
+        identity = assign_identity(
             had_primary_source=had_primary_source,
             identifier_in_primary_source=identifier_in_primary_source,
         )
 
-        # validate extracted data ID
-        if identifier := values.get("identifier"):
-            if identity is None:
-                raise ValueError("Identifier not found by identity provider.")
-            if identity.identifier != str(identifier):
-                raise ValueError("Identifier cannot be set manually to new value.")
+        # In case an identity was already found and the identifier provided to the
+        # constructor do not match we raise an error because it should not be
+        # allowed to change the identifier of an existing item.
+        if (identifier := values.get("identifier")) and identity.identifier != str(
+            identifier
+        ):
+            raise ValueError("Identifier cannot be set manually to new value.")
 
-        # validate stable target ID
-        if stable_target_id := values.get("stableTargetId"):
-            if (
-                identity is None
-                and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-            ):
-                raise ValueError("Stable target ID not found by identity provider.")
-            stable_target_id = Identifier(stable_target_id)
-        elif identity:
-            stable_target_id = Identifier(identity.stableTargetId)
-        else:
-            stable_target_id = Identifier.generate()
-
-        # update identity map
-        identity = upsert_identity(
-            had_primary_source,
-            identifier_in_primary_source,
-            stable_target_id,
-            cls.get_entity_type(),
-        )
+        # In case an identity was found, we allow assigning a new stable target ID
+        # for the purpose of merging two items, except for the MEx
+        # primary source itself.
+        if (
+            (stable_target_id := values.get("stableTargetId"))
+            and identity.stableTargetId != str(stable_target_id)
+            and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+        ):
+            raise ValueError(
+                "Cannot change the stable target ID of MEx primary source."
+            )
 
         # update instance values
-        values["identifier"] = Identifier(identity.identifier)
-        values["stableTargetId"] = Identifier(identity.stableTargetId)
+        values["identifier"] = identity.identifier
+        values["stableTargetId"] = identity.stableTargetId
         return values

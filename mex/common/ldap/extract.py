@@ -34,7 +34,7 @@ def get_merged_ids_by_attribute(
             identifier_in_primary_source=str(person.objectGUID),
         ):
             merged_ids_by_attribute[str(getattr(person, attribute))].append(
-                Identifier(identity.merged_id)
+                Identifier(identity.stableTargetId)
             )
     return cast(dict[Hashable, list[Identifier]], merged_ids_by_attribute)
 
@@ -98,6 +98,6 @@ def get_merged_ids_by_query_string(
             identifier_in_primary_source=str(person_with_query.person.objectGUID),
         ):
             merged_ids_by_attribute[person_with_query.query].append(
-                Identifier(identity.merged_id)
+                Identifier(identity.stableTargetId)
             )
     return cast(dict[Hashable, list[Identifier]], merged_ids_by_attribute)

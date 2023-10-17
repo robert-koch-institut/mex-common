@@ -6,23 +6,16 @@ from mex.common.settings import BaseSettings
 from mex.common.types import Identifier, PrimarySourceID
 
 
-def upsert_identity(
+def assign_identity(
     had_primary_source: PrimarySourceID,
     identifier_in_primary_source: str,
-    stable_target_id: Identifier,
-    entity_type: str,
 ) -> Identity:
-    """Insert a new identity or update an existing one."""
+    """Find an Identity or assign a new one."""
     settings = BaseSettings.get()
     if settings.identity_provider == IdentityProvider.DUMMY:
         provider = DummyIdentityProvider.get()
-        return provider.upsert(
-            had_primary_source,
-            identifier_in_primary_source,
-            stable_target_id,
-            entity_type,
-        )
-    raise MExError(f"Cannot upsert identity to {settings.identity_provider}")
+        return provider.assign(had_primary_source, identifier_in_primary_source)
+    raise MExError(f"Cannot assign identity to {settings.identity_provider}")
 
 
 def fetch_identity(
