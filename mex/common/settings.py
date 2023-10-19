@@ -124,11 +124,6 @@ class BaseSettings(PydanticBaseSettings):
         description="Backend API key with write access to call POST/PUT endpoints",
         env="BACKEND_API_WRITE_KEY",
     )
-    backend_api_read_key: SecretStr = Field(
-        SecretStr("dummy_read_key"),
-        description="Backend API key with read access to call GET endpoints",
-        env="BACKEND_API_READ_KEY",
-    )
     verify_session: Union[bool, AssetsPath] = Field(
         True,
         description=(
