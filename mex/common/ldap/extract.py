@@ -23,7 +23,7 @@ def get_merged_ids_by_attribute(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPerson[attribute]` to corresponding `Identity.merged_id`
+        Mapping from `LDAPPerson[attribute]` to corresponding `Identity.stableTargetId`
     """
     if attribute not in LDAPPerson.__fields__:
         raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
@@ -52,7 +52,7 @@ def get_merged_ids_by_employee_ids(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPerson.employeeID` to corresponding `Identity.merged_id`
+        Mapping from `LDAPPerson.employeeID` to corresponding `Identity.stableTargetId`
     """
     return get_merged_ids_by_attribute("employeeID", persons, primary_source)
 
@@ -70,7 +70,7 @@ def get_merged_ids_by_email(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPerson.mail` to corresponding `Identity.merged_id`
+        Mapping from `LDAPPerson.mail` to corresponding `Identity.stableTargetId`
     """
     return get_merged_ids_by_attribute("mail", persons, primary_source)
 
@@ -89,7 +89,8 @@ def get_merged_ids_by_query_string(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPersonWithQuery.query` to corresponding `Identity.merged_id`
+        Mapping from `LDAPPersonWithQuery.query` to corresponding
+        `Identity.stableTargetId`
     """
     merged_ids_by_attribute = defaultdict(list)
     for person_with_query in persons_with_query:

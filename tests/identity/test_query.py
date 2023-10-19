@@ -61,9 +61,9 @@ def test_fetch_identity() -> None:
     identity = assign_identity(system_a_id, "thing-1", entity_1, "type-x")
 
     result = fetch_identity(
-        had_primary_source=identity.platform_id,
-        identifier_in_primary_source=identity.original_id,
-        stable_target_id=identity.merged_id,
+        had_primary_source=identity.hadPrimarySource,
+        identifier_in_primary_source=identity.identifierInPrimarySource,
+        stable_target_id=identity.stableTargetId,
     )
     assert result == identity
 

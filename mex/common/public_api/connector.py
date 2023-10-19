@@ -39,7 +39,6 @@ PublicApiItemT = TypeVar(
 class PublicApiConnector(HTTPConnector):  # pragma: no cover
     """Connector class to handle authentication and interaction with the public API."""
 
-    TIMEOUT = 10
     API_VERSION = "v0"
 
     def _set_session(self, settings: BaseSettings) -> None:
@@ -209,14 +208,10 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
         try:
             response = self.request("GET", f"metadata/items/{identifier}")
         except HTTPError as error:
-            # if no rows in result set (error code 2)
-            if (
-                # bw-compat to rki-mex-metadata before rev 2486424
-                error.response.status_code == 500
-                and error.response.json().get("code") == 2
-            ) or error.response.status_code == 404:
+            # no rows in result set, return None
+            if error.response and error.response.status_code == 404:
                 return None
-            # Re-raise any unexpected errors
+            # re-raise any unexpected errors
             raise error
         else:
             return PublicApiItem.parse_obj(response)
