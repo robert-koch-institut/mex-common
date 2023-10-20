@@ -8,8 +8,8 @@ Possible queries are for example the account name, surname, given name, or email
 
 # Configuration
 
-For configuring the ldap connection, set the settings parameter `ldap_url` (see settings 
-docs (TODO: link to settings docs) for how to do this) to an LDAP url (see 
+For configuring the ldap connection, set the settings parameter `ldap_url` 
+(see `mex.common.settings` for further info) to an LDAP url (see 
 [LDAP URL definition](https://datatracker.ietf.org/doc/html/rfc2255#section-3) for 
 further information).
 
