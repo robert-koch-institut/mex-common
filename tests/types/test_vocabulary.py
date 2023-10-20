@@ -7,7 +7,7 @@ from tests.types.conftest import TESTDATA_DIR
 
 
 @pytest.mark.parametrize(
-    "string, expected",
+    ("string", "expected"),
     [
         ("", ""),
         ("Foo(Bar) 99 - Batz", "FOO_BAR_BATZ"),

@@ -71,7 +71,7 @@ class PublicApiItem(PublicApiBaseModel):
     values: list[PublicApiField] = Field(..., include=True)
 
     @property
-    def stableTargetId(self) -> Identifier:
+    def stableTargetId(self) -> Identifier:  # noqa: N802
         """Return the stableTargetId of this item."""
         return Identifier(self.businessId.removesuffix("#"))
 
@@ -100,7 +100,7 @@ class PublicApiItemWithoutValues(PublicApiBaseModel):
     businessId: str
 
     @property
-    def stableTargetId(self) -> Identifier:
+    def stableTargetId(self) -> Identifier:  # noqa: N802
         """Return the stableTargetId of this item."""
         return Identifier(self.businessId.removesuffix("#"))
 

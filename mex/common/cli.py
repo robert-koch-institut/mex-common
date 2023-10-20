@@ -1,5 +1,5 @@
 import json
-import pdb
+import pdb  # noqa: T100
 import sys
 from bdb import BdbQuit
 from enum import Enum
@@ -76,7 +76,7 @@ def field_to_option(field: ModelField) -> Option:
     return Option(
         field_to_parameters(field),
         default=default,
-        envvar=list(field.field_info.extra["env_names"])[0].upper(),
+        envvar=next(iter(field.field_info.extra["env_names"])).upper(),
         help=field.field_info.description,
         is_flag=field.type_ is bool and field.default is False,
         show_default=True,

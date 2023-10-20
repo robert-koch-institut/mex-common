@@ -40,7 +40,7 @@ def transform_organigram_units_to_organizational_units(
 
     for extracted_unit in extracted_unit_by_id_in_primary_source.values():
         identifier_in_primary_source = extracted_unit.identifierInPrimarySource
-        if parent_identifier_in_primary_source := parent_id_in_primary_source_by_id_in_primary_source.get(
+        if parent_identifier_in_primary_source := parent_id_in_primary_source_by_id_in_primary_source.get(  # noqa: E501
             identifier_in_primary_source
         ):
             if parent_unit := extracted_unit_by_id_in_primary_source.get(
