@@ -153,17 +153,31 @@ class BaseModel(PydanticBaseModel):
 
 
 class MExModel(BaseModel):
-    """Abstract base model for extracted data and MEx entity classes."""
+    """Abstract base model for extracted data and merged item classes.
+
+    This class only defines an `identifier` and gives a type hint for `stableTargetId`.
+    """
 
     class Config:
         extra = Extra.forbid
 
     if TYPE_CHECKING:
+        # Sometimes multiple primary sources describe the same activity, resource, etc.
+        # and a complete metadata item can only be created by merging these fragments.
+        # The stable target ID is part of all models in `mex.common.models` to allow
+        # MEx to identify which extracted items describe the same thing and should be
+        # merged to create a complete metadata item.
+        # Because we anticipate that items have to be merged, the `stableTargetID` is
+        # also used as the foreign key for all fields containing references.
         stableTargetId: Any
 
     identifier: Identifier = Field(
         ...,
-        description="The identifier of this instance.",
+        description=(
+            "A globally unique identifier for this item. Regardless of the entity-type "
+            "or whether this item was extracted, merged, etc. identifiers will be "
+            "assigned just once."
+        ),
         examples=[Identifier.generate(seed=42)],
     )
 
