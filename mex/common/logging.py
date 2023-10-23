@@ -2,7 +2,7 @@ import logging
 import logging.config
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Generator, TypeVar
+from typing import Any, Callable, Generator, Optional, TypeVar, Union
 
 import click
 
@@ -59,12 +59,12 @@ def watch(
     return wrapper
 
 
-def get_ts(ts: datetime | None = None) -> str:
+def get_ts(ts: Optional[datetime] = None) -> str:
     """Get a styled timestamp tag for prefixing log messages."""
     return click.style(f"[{ts or datetime.now()}]", fg="bright_yellow")
 
 
-def echo(text: str | bytes, ts: datetime | None = None, **styles: Any) -> None:
+def echo(text: Union[str, bytes], ts: Optional[datetime] = None, **styles: Any) -> None:
     """Echo the given text with the given styles and the current timestamp prefix.
 
     Args:
@@ -72,4 +72,5 @@ def echo(text: str | bytes, ts: datetime | None = None, **styles: Any) -> None:
         ts: Timestamp to print as prefix, defaults to `now()`
         styles: Keyword parameters to be passed to `click.style`
     """
+    # TODO: Use logger directly in other code; this function is just bw-compat!
     logger.info(f"{get_ts(ts)} {click.style(text, **styles)}")

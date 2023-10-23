@@ -2,7 +2,7 @@ import json
 from base64 import b64encode
 from contextvars import ContextVar
 from pathlib import Path
-from typing import Any, TypeVar, Union
+from typing import Any, Optional, TypeVar
 
 from pydantic import AnyUrl, Extra, Field, SecretStr
 from pydantic import BaseSettings as PydanticBaseSettings
@@ -15,7 +15,7 @@ from mex.common.transform import MExEncoder
 from mex.common.types import AssetsPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
-SettingsContext: ContextVar[Union["BaseSettings", None]] = ContextVar(
+SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
     "SettingsContext", default=None
 )
 
