@@ -7,16 +7,16 @@ from click.testing import CliRunner
 from pydantic import HttpUrl
 from pydantic.fields import FieldInfo, ModelField
 
-from mex.common.cli import entrypoint, field_to_option
+from mex.common.cli import _field_to_option, entrypoint
 from mex.common.settings import BaseSettings
 
 
 class MyStr(str):
-    """Dummy string subclass for field_to_option test."""
+    """Dummy string subclass for _field_to_option test."""
 
 
 class MyEnum(Enum):
-    """Dummy enum class for field_to_option test."""
+    """Dummy enum class for _field_to_option test."""
 
     FOO = 1
     BAR = 2
@@ -201,8 +201,8 @@ class MyEnum(Enum):
         "union field",
     ],
 )
-def test_field_to_option(field: ModelField, info_dict: dict[str, Any]) -> None:
-    option = field_to_option(field)
+def test__field_to_option(field: ModelField, info_dict: dict[str, Any]) -> None:
+    option = _field_to_option(field)
     assert option.to_info_dict() == info_dict
 
 
