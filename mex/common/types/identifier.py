@@ -15,11 +15,11 @@ IdentifierT = TypeVar("IdentifierT", bound="Identifier")
 
 
 class Identifier(str):
-    """Common identifier class."""
+    """Common identifier class based on UUID version 4."""
 
     @classmethod
     def generate(cls: type[IdentifierT], seed: int | None = None) -> IdentifierT:
-        """Generate a new identifier from a seed or random uuid version 4."""
+        """Generate a new identifier from a seed or random UUID version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
         alpha_len = len(ALPHABET)
@@ -39,7 +39,7 @@ class Identifier(str):
 
     @classmethod
     def validate(cls, value: Any) -> "Identifier":
-        """Validate a string, uuid or identifier."""
+        """Validate a string, UUID or Identifier."""
         if isinstance(value, (str, UUID, Identifier)):
             value = str(value)
             if re.match(MEX_ID_PATTERN, value):
@@ -61,6 +61,15 @@ class Identifier(str):
     def __repr__(self) -> str:
         """Overwrite the default representation."""
         return f"{self.__class__.__name__}({super().__str__().__repr__()})"
+
+
+# We have technically-identical subclasses of identifier types (one per entity type).
+# This allows us to annotate which entity types are allowed on reference fields.
+# For example `contact: PersonID | OrganizationID` tells us that a contact for an item
+# has to be either a person or an organization.
+# We cannot validate this using pydantic, because all identifiers have the same
+# format. But it helps for documentation purposes and allows us to generate a more
+# precise JSON schema / swagger definition.
 
 
 class AccessPlatformID(Identifier):
