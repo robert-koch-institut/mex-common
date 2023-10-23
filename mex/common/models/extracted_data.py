@@ -77,26 +77,30 @@ class ExtractedData(BaseExtractedData):
         - identifierInPrimarySource
         - hadPrimarySource
         - identifier
-        - stableTargetID
+        - stableTargetId
 
-        Every time we create a new instance of an extracted item, we validate that these
-        identifiers are set correctly.
+        Every time we create a new instance of an extracted item, we automatically
+        validate that these identifiers are set correctly.
 
         We check that `identifierInPrimarySource` and `hadPrimarySource` are provided,
         because otherwise we cannot reliably determine the origin of this item.
+        These two identifiers are the only two that need to be set during extraction.
 
         Next we query the configured `IdentityProvider` to determine whether this item
-        already has an `identifier` and `stableTargetId`.
-        If not, we let the identity provider generate new identifiers.
+        already has an `identifier` and `stableTargetId`. If not, we let the identity
+        provider generate new identifiers.
 
         If an `identifier` has been passed to the constructor, we check that it matches
         with what we got from the identity provider, because we don't allow any system
         to change the association from `identifierInPrimarySource` and
-        `hadPrimarySource` to `identifier`.
+        `hadPrimarySource` to the `identifier`.
+        A use case for passing a matching `identifier` to the constructor would be
+        parsing an already extracted item from an NDJSON file or an API endpoint.
 
-        If a `stableTargetID` has been passed to the constructor, we use that as the
+        If a `stableTargetId` has been passed to the constructor, we use that as the
         new value, because changes to the stable target ID are generally allowed.
-        For example, when matching to extracted items that describe the same thing.
+        A use case for changing the `stableTargetId` will be the matching of
+        multiple extracted items (see `MExModel.stableTargetId` for details).
 
         Args:
             values: Raw values to validate
