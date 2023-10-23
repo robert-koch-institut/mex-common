@@ -2,7 +2,7 @@ import json
 from base64 import b64encode
 from contextvars import ContextVar
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional, TypeVar, Union
 
 from pydantic import AnyUrl, Extra, Field, SecretStr
 from pydantic import BaseSettings as PydanticBaseSettings
@@ -135,7 +135,7 @@ class BaseSettings(PydanticBaseSettings):
         description="MEx backend API url.",
         env="MEX_BACKEND_API_URL",
     )
-    verify_session: bool | AssetsPath = Field(
+    verify_session: Union[bool, AssetsPath] = Field(
         True,
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
@@ -161,7 +161,7 @@ class BaseSettings(PydanticBaseSettings):
         ),
         env="MEX_PUBLIC_API_TOKEN_PAYLOAD",
     )
-    public_api_verify_session: bool | AssetsPath = Field(
+    public_api_verify_session: Union[bool, AssetsPath] = Field(
         True,
         description=(
             "Public API-specific session verification setting, "

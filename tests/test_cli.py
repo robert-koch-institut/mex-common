@@ -1,3 +1,4 @@
+import logging
 import re
 from enum import Enum
 from typing import Any, Union
@@ -6,6 +7,7 @@ import pytest
 from click.testing import CliRunner
 from pydantic import HttpUrl
 from pydantic.fields import FieldInfo, ModelField
+from pytest import LogCaptureFixture
 
 from mex.common.cli import _field_to_option, entrypoint
 from mex.common.settings import BaseSettings
@@ -224,18 +226,20 @@ def test_faulty_entrypoint_exits_non_zero() -> None:
     assert result.exit_code == 1, result.stdout
 
 
-def test_entrypoint_logs_docs_and_settings() -> None:
+def test_entrypoint_logs_docs_and_settings(caplog: LogCaptureFixture) -> None:
     class ChattySettings(BaseSettings):
         custom_setting: str = "default"
 
     @entrypoint(ChattySettings)
     def chatty_entrypoint() -> None:
-        """Hi, I am Pointy McEntryface."""
+        """Hi, I am Pointy McEntryFace."""
         return
 
-    result = CliRunner().invoke(chatty_entrypoint, args=["--custom-setting=override"])
+    with caplog.at_level(logging.INFO, logger="mex"):
+        result = CliRunner().invoke(
+            chatty_entrypoint, args=["--custom-setting=override"]
+        )
     assert result.exit_code == 0, result.stdout
 
-    stdout = result.stdout_bytes.decode("utf-8")
-    assert "Pointy McEntryface" in stdout
-    assert re.search(r"custom_setting\s+override", stdout)
+    assert "Pointy McEntryFace" in caplog.text
+    assert re.search(r"custom_setting\s+override", caplog.text)
