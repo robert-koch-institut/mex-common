@@ -203,7 +203,7 @@ class MyEnum(Enum):
         "union field",
     ],
 )
-def test__field_to_option(field: ModelField, info_dict: dict[str, Any]) -> None:
+def test_field_to_option(field: ModelField, info_dict: dict[str, Any]) -> None:
     option = _field_to_option(field)
     assert option.to_info_dict() == info_dict
 
