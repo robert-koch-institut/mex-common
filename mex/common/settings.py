@@ -176,15 +176,27 @@ class BaseSettings(PydanticBaseSettings):
     )
     ldap_url: SecretStr = Field(
         SecretStr("ldap://user:pw@ldap:636"),
-        description="LDAP server for person queries with authentication credentials.",
+        description="LDAP server for person queries with authentication credentials. "
+        "Must follow format `ldap://user:pw@host:port`, where "
+        "`user` is the username, and "
+        "`pw` is the password for authenticating against ldap, "
+        "`host` is the url of the ldap server, and "
+        "`port` is the port of the ldap server.",
         env="MEX_LDAP_URL",
     )
     wiki_api_url: AnyUrl = Field(
-        "https://wikidata/", description="URL of Wikidata API", env="MEX_WIKI_API_URL"
+        "https://wikidata/",
+        description="URL of Wikidata API, this URL is used to send "
+        "wikidata organizatizion ID to get all the info about the organization, "
+        "which includes basic info, aliases, labels, descriptions, claims, and "
+        "sitelinks",
+        env="MEX_WIKI_API_URL",
     )
     wiki_query_service_url: AnyUrl = Field(
         "https://wikidata/",
-        description="URL of Wikidata query service",
+        description="URL of Wikidata query service, this URL is to send organization "
+        "name in plain text to wikidata and receive search results with wikidata "
+        "organization ID",
         env="MEX_WIKI_QUERY_SERVICE_URL",
     )
 
