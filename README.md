@@ -9,21 +9,17 @@ Common library for MEx python projects.
 
 ## project
 
-With the Metadata Exchange (MEx) project, the [RKI](https://www.rki.de) is developing a
-transparency platform for finding metadata on the institute's research activities and
-data.
+The Metadata Exchange (MEx) project is committed to improve the retrieval of RKI research data and projects. How? By focusing on metadata: instead of providing the actual research data directly, the MEx metadata catalog captures descriptive information about research data and activities. On this basis, we want to make the data FAIR* so that it can be shared with others.
 
-MEx makes metadata findable, accessible, and shareable on a daily basis,
-as well as available for further research. MEx enables users to get an overview of what
-research data is available, understand its context, and know what needs to be considered
-for subsequent use.
+Via MEx, metadata will be made findable, accessible and shareable, as well as available for further research. The goal is to get an overview of what research data is available, understand its context, and know what needs to be considered for subsequent use.
 
-The platform is currently in internal use but will also be made publicly available
-and thus be available to external researchers as well as the interested (professional)
-public.
+After an internal launch, the metadata will also be made publicly available and thus be available to external researchers as well as the interested (professional) public to find research data from the RKI.
 
-For further details, please consult the
+
+For further details, please consult our
 [project page](https://www.rki.de/DE/Content/Forsch/MEx/MEx_node.html).
+
+*FAIR is referencing the so-called [FAIR data principles](https://www.go-fair.org/fair-principles/) – guidelines to make data Findable, Accessible, Interoperable and Reusable.
 
 ## package
 
