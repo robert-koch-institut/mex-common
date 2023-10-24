@@ -1,6 +1,10 @@
 Helper extractor to search and extract organizations from Wikidata.
 
-Common use cases:
+Wikidata Extractor require a call to wikidata to search the organization label which can take longer than usual as wikidata needs to search through an extensive database. Thats why the default Timeout for search request is 80 seconds.
+
+In addition to extended timeout, wikidata sometimes start to block requests if too many requests are being sent, to avoid this there is a backoff system in place which might make the extraction process even slower.
+
+## Common use cases:
 
 - extract info about an organization from wikidata using organization name
 
