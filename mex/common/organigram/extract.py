@@ -24,7 +24,7 @@ def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
             yield OrganigramUnit.parse_obj(raw)
 
 
-def get_synonyms(
+def _get_synonyms(
     extracted_unit: ExtractedOrganizationalUnit,
 ) -> Generator[str, None, None]:
     """Generate synonyms for a unit using its name fields.
@@ -61,7 +61,7 @@ def get_unit_merged_ids_by_synonyms(
     return {
         synonym: extracted_unit.stableTargetId
         for extracted_unit in extracted_units
-        for synonym in get_synonyms(extracted_unit)
+        for synonym in _get_synonyms(extracted_unit)
     }
 
 

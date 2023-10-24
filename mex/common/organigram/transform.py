@@ -12,6 +12,8 @@ def transform_organigram_units_to_organizational_units(
 ) -> Generator[ExtractedOrganizationalUnit, None, None]:
     """Transform organigram units into ExtractedOrganizationalUnits.
 
+    Beware that the order of the output is not necessarily the order of the input.
+
     Args:
         units: Iterable of organigram units coming from the JSON file
         primary_source: Primary source for organigram
