@@ -40,19 +40,19 @@ class LDAPConnector(BaseConnector):
             auto_bind=AUTO_BIND_NO_TLS,
             read_only=True,
         )
-        self.connection = connection.__enter__()
+        self._connection = connection.__enter__()
         if not self._is_service_available():
             raise MExError(f"LDAP service not available at url: {host}:{port}")
 
     def _is_service_available(self) -> bool:
         try:
-            return self.connection.server.check_availability() is True
+            return self._connection.server.check_availability() is True
         except LDAPExceptionError:
             return False
 
     def close(self) -> None:
         """Close the connector's underlying LDAP connection."""
-        self.connection.__exit__(None, None, None)
+        self._connection.__exit__(None, None, None)
 
     def _fetch(
         self, model_cls: type[ModelT], /, **filters: str
@@ -78,7 +78,7 @@ class LDAPConnector(BaseConnector):
     def _paged_ldap_search(
         self, fields: tuple[str], search_filter: str, search_base: str
     ) -> list[dict[str, str]]:
-        entries = self.connection.extend.standard.paged_search(
+        entries = self._connection.extend.standard.paged_search(
             search_base=search_base,
             search_filter=f"(&{search_filter})",
             attributes=fields,

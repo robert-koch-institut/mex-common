@@ -178,7 +178,12 @@ class BaseSettings(PydanticBaseSettings):
     )
     ldap_url: SecretStr = Field(
         SecretStr("ldap://user:pw@ldap:636"),
-        description="LDAP server for person queries with authentication credentials.",
+        description="LDAP server for person queries with authentication credentials. "
+        "Must follow format `ldap://user:pw@host:port`, where "
+        "`user` is the username, and "
+        "`pw` is the password for authenticating against ldap, "
+        "`host` is the url of the ldap server, and "
+        "`port` is the port of the ldap server.",
         env="MEX_LDAP_URL",
     )
     wiki_api_url: AnyUrl = Field(
