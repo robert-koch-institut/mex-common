@@ -196,11 +196,18 @@ class BaseSettings(PydanticBaseSettings):
         env="MEX_LDAP_URL",
     )
     wiki_api_url: AnyUrl = Field(
-        "https://wikidata/", description="URL of Wikidata API", env="MEX_WIKI_API_URL"
+        "https://wikidata/",
+        description="URL of Wikidata API, this URL is used to send "
+        "wikidata organizatizion ID to get all the info about the organization, "
+        "which includes basic info, aliases, labels, descriptions, claims, and "
+        "sitelinks",
+        env="MEX_WIKI_API_URL",
     )
     wiki_query_service_url: AnyUrl = Field(
         "https://wikidata/",
-        description="URL of Wikidata query service",
+        description="URL of Wikidata query service, this URL is to send organization "
+        "name in plain text to wikidata and receive search results with wikidata "
+        "organization ID",
         env="MEX_WIKI_QUERY_SERVICE_URL",
     )
 

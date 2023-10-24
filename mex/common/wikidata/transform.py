@@ -24,13 +24,13 @@ def transform_wikidata_organizations_to_extracted_organizations(
         Generator of ExtractedOrganizations
     """
     for organization in wikidata_organizations:
-        labels = get_clean_labels(organization.labels)
+        labels = _get_clean_labels(organization.labels)
         if not labels:
             continue
         yield ExtractedOrganization(  # type: ignore[call-arg]
             wikidataId=f"https://www.wikidata.org/entity/{organization.identifier}",
             officialName=labels,
-            shortName=get_clean_short_names(organization.claims.short_name),
+            shortName=_get_clean_short_names(organization.claims.short_name),
             geprisId=[],
             isniId=[
                 f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
@@ -52,13 +52,13 @@ def transform_wikidata_organizations_to_extracted_organizations(
             ],
             identifierInPrimarySource=organization.identifier,
             hadPrimarySource=wikidata_primary_source.stableTargetId,
-            alternativeName=get_alternative_names(
+            alternativeName=_get_alternative_names(
                 organization.claims.native_label, organization.aliases
             ),
         )
 
 
-def get_alternative_names(
+def _get_alternative_names(
     native_labels: list[Claim], all_aliases: Aliases
 ) -> list[Text]:
     """Get alternative names of an organization in DE and EN.
@@ -89,7 +89,7 @@ def get_alternative_names(
     return list(set(alternative_names))
 
 
-def get_clean_short_names(short_names: list[Claim]) -> list[Text]:
+def _get_clean_short_names(short_names: list[Claim]) -> list[Text]:
     """Get clean short names only in EN and DE and ignore the rest.
 
     Args:
@@ -113,7 +113,7 @@ def get_clean_short_names(short_names: list[Claim]) -> list[Text]:
     return list(set(clean_short_name))
 
 
-def get_clean_labels(labels: Labels) -> list[Text]:
+def _get_clean_labels(labels: Labels) -> list[Text]:
     """Check if DE label is available and return a list of EN and DE labels.
 
     Args:
