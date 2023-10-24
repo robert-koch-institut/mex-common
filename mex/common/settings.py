@@ -21,7 +21,20 @@ SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
 
 
 class BaseSettings(PydanticBaseSettings):
-    """Common settings definition class."""
+    """Common settings definition class.
+
+    Settings are accessed through a singleton instance of a pydantic settings class.
+    The singleton instance can be loaded lazily by calling `BaseSettings.get()`.
+
+    The base settings should only contain options, that are used by common code.
+    To add more configuration options for a specific subsystem, create a new subclass
+    and define the required fields there. To load a singleton for that subclass,
+    simply call `SubsystemSettings.get()`.
+
+    All configuration options should have a speaking name and a clear description.
+    The defaults should be set to a value that works with unit tests and must not
+    contain any secrets or live URLs that would break unit test isolation.
+    """
 
     class Config:
         allow_population_by_field_name = True
@@ -34,10 +47,10 @@ class BaseSettings(PydanticBaseSettings):
 
     def __init__(
         self,
-        _env_file: Optional[DotenvType] = env_file_sentinel,
-        _env_file_encoding: Optional[str] = None,
-        _env_nested_delimiter: Optional[str] = None,
-        _secrets_dir: Optional[StrPath] = None,
+        _env_file: DotenvType | None = env_file_sentinel,
+        _env_file_encoding: str | None = None,
+        _env_nested_delimiter: str | None = None,
+        _secrets_dir: StrPath | None = None,
         **values: Any,
     ) -> None:
         """Construct a new settings instance.
@@ -83,7 +96,10 @@ class BaseSettings(PydanticBaseSettings):
     # otherwise their prefix will get overwritten with those of a specific subclass.
 
     debug: bool = Field(
-        False, alias="pdb", description="Enable debug mode.", env="MEX_DEBUG"
+        False,
+        alias="pdb",
+        description="Jump into post-mortem debugging after any uncaught exception.",
+        env="MEX_DEBUG",
     )
     sink: list[Sink] = Field(
         [Sink.NDJSON],
