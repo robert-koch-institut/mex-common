@@ -72,5 +72,4 @@ def echo(text: Union[str, bytes], ts: Optional[datetime] = None, **styles: Any) 
         ts: Timestamp to print as prefix, defaults to `now()`
         styles: Keyword parameters to be passed to `click.style`
     """
-    # TODO: Use logger directly in other code; this function is just bw-compat!
     logger.info(f"{get_ts(ts)} {click.style(text, **styles)}")
