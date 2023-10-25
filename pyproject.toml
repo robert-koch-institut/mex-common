@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mex-common"
-version = "0.13.4"
+version = "0.13.5"
 description = "RKI MEx common library."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
@@ -15,7 +15,7 @@ click = "^8.1.7"
 langdetect = "^1.0.9"
 ldap3 = "^2.9.1"
 numpy = "^1.25.2"
-pandas = "^2.1.0"
+pandas = "^2.0.3"
 pydantic = { version = "^1.10.12", extras = ["dotenv", "email"] }
 requests = "^2.31.0"
 
@@ -30,7 +30,7 @@ ruff = "^0.0.292"
 sphinx = "^6.2.1"
 sphinx-book-theme = "^1.0.1"
 types-pytz = "^2023.3.1.1"
-types-requests = "^2.31.0.8"
+types-requests = "^2.31.0.2"
 types-setuptools = "^68.2.0.0"
 
 [tool.ipdb]
@@ -52,19 +52,19 @@ ignore = [
     "RUF012", # Allow mutable class attributes (pydantic compat)
 ]
 select = [
-    "C90",  # McCabe complexity checker
-    "D",    # Python docstring style checker
-    "E",    # Python code style errors
-    "ERA",  # Commented-out code detector
-    "F",    # Pyflakes passive python checker
-    "I",    # Isort import utility
-    "N",    # Pep8 naming conventions
-    "RET",  # Flake8 return statement checker
-    "RUF",  # Ruff-specific rules
-    "S",    # Bandit automated security testing
-    "T10",  # Flake8 debug statement checker
-    "T20",  # Flake8 print statement checker
-    "W",    # Python code style warnings
+    "C90", # McCabe complexity checker
+    "D",   # Python docstring style checker
+    "E",   # Python code style errors
+    "ERA", # Commented-out code detector
+    "F",   # Pyflakes passive python checker
+    "I",   # Isort import utility
+    "N",   # Pep8 naming conventions
+    "RET", # Flake8 return statement checker
+    "RUF", # Ruff-specific rules
+    "S",   # Bandit automated security testing
+    "T10", # Flake8 debug statement checker
+    "T20", # Flake8 print statement checker
+    "W",   # Python code style warnings
 ]
 show-fixes = true
 target-version = "py311"

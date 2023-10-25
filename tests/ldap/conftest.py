@@ -6,7 +6,6 @@ from ldap3 import Connection
 from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.settings import BaseSettings
 
 PagedSearchResults = list[list[dict[str, Any]]]
 LDAPMocker = Callable[[PagedSearchResults], None]
@@ -56,9 +55,9 @@ def ldap_mocker(monkeypatch: MonkeyPatch) -> LDAPMocker:
     """Patch the LDAP connector to return `SAMPLE_PERSON_ATTRS` from its connection."""
 
     def mocker(results: PagedSearchResults) -> None:
-        def __init__(self: LDAPConnector, settings: BaseSettings) -> None:
-            self.connection = MagicMock(spec=Connection, extend=Mock())
-            self.connection.extend.standard.paged_search = MagicMock(
+        def __init__(self: LDAPConnector) -> None:
+            self._connection = MagicMock(spec=Connection, extend=Mock())
+            self._connection.extend.standard.paged_search = MagicMock(
                 side_effect=[
                     [dict(attributes=e) for e in entries] for entries in results
                 ]

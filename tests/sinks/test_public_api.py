@@ -14,12 +14,12 @@ from mex.common.sinks.public_api import post_to_public_api, purge_models_from_pu
 def test_post_to_public_api_mocked(
     extracted_person: ExtractedPerson, monkeypatch: MonkeyPatch
 ) -> None:
+    def __init__(self: PublicApiConnector) -> None:
+        self.session = MagicMock()
+
+    monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
+
     response = [UUID("00000000-0000-4000-8000-000000339191")]
-    monkeypatch.setattr(
-        PublicApiConnector,
-        "__init__",
-        lambda self, settings: setattr(self, "session", MagicMock()),
-    )
     post_models = Mock(return_value=response)
     monkeypatch.setattr(PublicApiConnector, "post_models", post_models)
 
@@ -31,12 +31,12 @@ def test_post_to_public_api_mocked(
 def test_purge_from_public_api_mocked(
     extracted_person: ExtractedPerson, monkeypatch: MonkeyPatch
 ) -> None:
+    def __init__(self: PublicApiConnector) -> None:
+        self.session = MagicMock()
+
+    monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
+
     api_id = UUID("00000000-0000-4000-8000-000000339191")
-    monkeypatch.setattr(
-        PublicApiConnector,
-        "__init__",
-        lambda self, settings: setattr(self, "session", MagicMock()),
-    )
     delete_model = Mock(return_value=api_id)
     monkeypatch.setattr(PublicApiConnector, "delete_model", delete_model)
 

@@ -16,7 +16,7 @@ from pydantic import SecretStr
 from pydantic.fields import ModelField
 
 from mex.common.connector import reset_connector_context
-from mex.common.logging import echo
+from mex.common.logging import echo, logger
 from mex.common.settings import SettingsContext, SettingsType
 from mex.common.transform import MExEncoder
 
@@ -31,7 +31,7 @@ Acceptable configuration sources sorted by priority:
 """
 
 
-def field_to_parameters(field: ModelField) -> list[str]:
+def _field_to_parameters(field: ModelField) -> list[str]:
     """Convert a field of a pydantic settings class into parameter declarations.
 
     The field's name and alias are considered. Underscores are replaced with dashes
@@ -49,7 +49,7 @@ def field_to_parameters(field: ModelField) -> list[str]:
     return [f"{d}{n}" for d, n in zip(dashes, names)]
 
 
-def field_to_option(field: ModelField) -> Option:
+def _field_to_option(field: ModelField) -> Option:
     """Convert a field of a pydantic settings class into a click option.
 
     Args:
@@ -74,7 +74,7 @@ def field_to_option(field: ModelField) -> Option:
         field_type = field.type_
         default = field.default
     return Option(
-        field_to_parameters(field),
+        _field_to_parameters(field),
         default=default,
         envvar=next(iter(field.field_info.extra["env_names"])).upper(),
         help=field.field_info.description,
@@ -85,7 +85,7 @@ def field_to_option(field: ModelField) -> Option:
     )
 
 
-def callback(
+def _callback(
     func: Callable[[], None],
     settings_cls: type[SettingsType],
     **cli_settings: str,
@@ -122,21 +122,21 @@ def callback(
 
     # print .env-style settings if echo-settings flag is set, then exit.
     if cli_settings.get("echo_settings"):
-        click.secho(settings.env_text())
+        logger.info(click.style(settings.env_text()))
         context.exit(0)
 
     # otherwise print loaded settings in pretty way and continue
-    click.secho(dedent(f"    {func.__doc__}"), fg="green")
-    click.secho(f"{settings.text()}\n", fg="bright_cyan")
+    logger.info(click.style(dedent(f"    {func.__doc__}"), fg="green"))
+    logger.info(click.style(f"{settings.text()}\n", fg="bright_cyan"))
 
-    # now try to exectute the decorated function.
+    # now try to execute the decorated function.
     try:
         func()
     except (Abort, BdbQuit, Exit, KeyboardInterrupt):  # pragma: no cover
         context.exit(130)
     except Exception as error:
-        # an error occured, let's print the traceback
-        click.secho(format_exc(), fg="red")
+        # an error occurred, let's print the traceback
+        logger.error(click.style(format_exc(), fg="red"))
         if settings.debug:  # pragma: no cover
             # if we are in debug mode, jump into interactive debugging.
             pdb.post_mortem(sys.exc_info()[2])
@@ -183,9 +183,12 @@ def entrypoint(
             help=HELP_TEMPLATE.format(
                 doc=func.__doc__, env_file=settings_cls.__config__.env_file
             ),
-            callback=partial(callback, func, settings_cls),
+            callback=partial(_callback, func, settings_cls),
             params=[
-                *[field_to_option(field) for field in settings_cls.__fields__.values()],
+                *[
+                    _field_to_option(field)
+                    for field in settings_cls.__fields__.values()
+                ],
                 *meta_parameters,
             ],
         )

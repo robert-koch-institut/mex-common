@@ -7,7 +7,7 @@ from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
 
 
-def get_merged_ids_by_attribute(
+def _get_merged_ids_by_attribute(
     attribute: str,
     persons: Iterable[LDAPPerson],
     primary_source: ExtractedPrimarySource,
@@ -54,7 +54,7 @@ def get_merged_ids_by_employee_ids(
     Returns:
         Mapping from `LDAPPerson.employeeID` to corresponding `Identity.stableTargetId`
     """
-    return get_merged_ids_by_attribute("employeeID", persons, primary_source)
+    return _get_merged_ids_by_attribute("employeeID", persons, primary_source)
 
 
 def get_merged_ids_by_email(
@@ -72,7 +72,7 @@ def get_merged_ids_by_email(
     Returns:
         Mapping from `LDAPPerson.mail` to corresponding `Identity.stableTargetId`
     """
-    return get_merged_ids_by_attribute("mail", persons, primary_source)
+    return _get_merged_ids_by_attribute("mail", persons, primary_source)
 
 
 def get_merged_ids_by_query_string(

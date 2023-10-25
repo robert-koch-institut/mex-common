@@ -3,14 +3,13 @@ from typing import Iterable
 from mex.common.connector import BaseConnector
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
-from mex.common.settings import BaseSettings
 from mex.common.types import Identifier, PrimarySourceID
 
 
 class DummyIdentityProvider(BaseProvider, BaseConnector):
     """Connector class to handle read/write to the identity database."""
 
-    def __init__(self, settings: BaseSettings) -> None:
+    def __init__(self) -> None:
         """Initialize a dummy identity database as a list of identity instances."""
         self.dummy_identity_db: list[Identity] = []
 

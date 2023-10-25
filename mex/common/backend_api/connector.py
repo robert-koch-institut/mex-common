@@ -17,8 +17,9 @@ class BackendApiConnector(HTTPConnector):
         """Send a GET request to verify the API is available."""
         self.request("GET", "_system/check")
 
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set the backend api url with the version path."""
+        settings = BaseSettings.get()
         self.url = urljoin(settings.backend_api_url, self.API_VERSION)
 
     def post_models(self, models: list[MExModel]) -> list[Identifier]:
@@ -33,16 +34,18 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             Identifiers of posted models
         """
+        settings = BaseSettings.get()
         response = self.request(
-            "POST",
-            "ingest",
-            {
+            method="POST",
+            endpoint="ingest",
+            payload={
                 entity_type: list(entities)
                 for entity_type, entities in groupby(
                     sorted(models, key=lambda e: e.get_entity_type()),
                     lambda e: e.get_entity_type(),
                 )
             },
+            headers={"X-API-Key": settings.backend_api_write_key},
         )
         insert_response = BulkInsertResponse.parse_obj(response)
         return insert_response.identifiers

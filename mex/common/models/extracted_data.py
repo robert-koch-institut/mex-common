@@ -10,13 +10,39 @@ MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
 
 
 class BaseExtractedData(MExModel):
-    """Base model class definition for all extracted data instances."""
+    """Base model class definition for all extracted data instances.
+
+    This class adds two important attributes for metadata provenance: `hadPrimarySource`
+    and `identifierInPrimarySource`, which are used to uniquely identify an
+    item in its original primary source. The attribute `stableTargetId` has to be set
+    by each concrete subclass, like `ExtractedPerson`, because it needs to have the
+    correct type, e.g. `PersonID`.
+    """
 
     hadPrimarySource: PrimarySourceID = Field(
-        ..., examples=[Identifier.generate(seed=42)]
+        ...,
+        description=(
+            "The stableTargetID of the primary source, that this item was extracted "
+            "from. This field is mandatory for all extracted items to aid with data "
+            "provenance. Extracted primary sources also have this field and are all "
+            "extracted from a primary source called MEx, which is its own primary "
+            "source and has the static stableTargetID: "
+            f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+        ),
+        examples=[PrimarySourceID.generate(seed=42)],
     )
     identifierInPrimarySource: str = Field(
-        ..., examples=["123456", "item-501", "D7/x4/zz.final3"], min_length=1
+        ...,
+        description=(
+            "This is the identifier the original item had in its source system. "
+            "It is only unique amongst items coming from the same system, because "
+            "identifier formats are likely to overlap between systems. "
+            "The value for `identifierInPrimarySource` is therefore only unique in "
+            "composition with `hadPrimarySource`. MEx uses this composite key "
+            "to assign a stable and globally unique `identifier` to each item."
+        ),
+        examples=["123456", "item-501", "D7/x4/zz.final3"],
+        min_length=1,
     )
 
     @classmethod
@@ -35,23 +61,46 @@ class BaseExtractedData(MExModel):
 
 
 class ExtractedData(BaseExtractedData):
-    """Base model class for extracted data instances that ensures identities."""
+    """Base model class for extracted data items that ensures identities.
+
+    This base class does not add any attributes. It only adds the functionality
+    to automatically set identifiers for provenance. See below, for description.
+    """
 
     @root_validator(pre=True)
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Ensure identifier and provenance attributes are set for this instance.
 
-        A lookup is performed to determine whether this extracted data instance already
-        has an `identifier` or `stableTargetId`.
-        If not, new ones are generated and the association remembered.
+        All extracted data classes have four important identifiers that are defined
+        by `MExModel` and `BaseExtractedData`:
 
-        If the `identifier` field has been set manually, e.g. passed to the constructor,
-        we check that it is already present in the identity provider and is assigned to
-        the same extracted data instance: it must be the same combination of
-        `identifier`, `hadPrimarySource` and `identifierInPrimarySource`.
-        If the identity is not found or the `identifier` differs, an error is thrown.
-        An exception is made for the MEx primary source which serves as the root node
-        for all relations: it may the `stableTargetId` manually.
+        - identifierInPrimarySource
+        - hadPrimarySource
+        - identifier
+        - stableTargetId
+
+        Every time we create a new instance of an extracted item, we automatically
+        validate that these identifiers are set correctly.
+
+        We check that `identifierInPrimarySource` and `hadPrimarySource` are provided,
+        because otherwise we cannot reliably determine the origin of this item.
+        These two identifiers are the only two that need to be set during extraction.
+
+        Next we query the configured `IdentityProvider` to determine whether this item
+        already has an `identifier` and `stableTargetId`. If not, we let the identity
+        provider generate new identifiers.
+
+        If an `identifier` has been passed to the constructor, we check that it matches
+        with what we got from the identity provider, because we don't allow any system
+        to change the association from `identifierInPrimarySource` and
+        `hadPrimarySource` to the `identifier`.
+        A use case for passing a matching `identifier` to the constructor would be
+        parsing an already extracted item from an NDJSON file or an API endpoint.
+
+        If a `stableTargetId` has been passed to the constructor, we use that as the
+        new value, because changes to the stable target ID are generally allowed.
+        A use case for changing the `stableTargetId` will be the matching of
+        multiple extracted items (see `MExModel.stableTargetId` for details).
 
         Args:
             values: Raw values to validate

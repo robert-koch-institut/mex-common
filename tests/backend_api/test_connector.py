@@ -1,6 +1,7 @@
 import json
 from unittest.mock import MagicMock, Mock, call
 
+from pydantic import SecretStr
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -24,8 +25,12 @@ def test_post_models_mocked(
         "POST",
         "http://localhost:8080/v0/ingest",
         None,
+        headers={
+            "X-API-Key": SecretStr("dummy_write_key"),
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
         timeout=10,
-        headers={"Accept": "application/json", "User-Agent": "rki/mex"},
         data=Joker(),
     )
 
