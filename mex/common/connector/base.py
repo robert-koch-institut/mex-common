@@ -4,8 +4,6 @@ from contextvars import ContextVar
 from types import TracebackType
 from typing import Optional, TypeVar, cast, final
 
-from mex.common.settings import BaseSettings, SettingsContext
-
 ConnectorType = TypeVar("ConnectorType", bound="BaseConnector")
 ConnectorContextType = dict[type["BaseConnector"], "BaseConnector"]
 ConnectorContext = ContextVar(
@@ -28,9 +26,6 @@ class BaseConnector(metaclass=ABCMeta):
     def get(cls: type[ConnectorType]) -> ConnectorType:
         """Create or retrieve a connector singleton from the context variable.
 
-        Settings:
-            Any settings that might be used by the connector
-
         Returns:
             Instance of the connector
         """
@@ -38,13 +33,11 @@ class BaseConnector(metaclass=ABCMeta):
         try:
             connector = cast(ConnectorType, context[cls])
         except KeyError:
-            settings = cast(BaseSettings, SettingsContext.get())
-            connector = cls(settings)
-            context[cls] = connector
+            context[cls] = connector = cls()
         return connector
 
     @abstractmethod
-    def __init__(self, settings: BaseSettings) -> None:  # pragma: no cover
+    def __init__(self) -> None:  # pragma: no cover
         """Create a new connector instance."""
 
     @final

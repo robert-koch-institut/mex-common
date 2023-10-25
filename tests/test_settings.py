@@ -49,7 +49,13 @@ class FooSettings(BaseSettings):
     foo: str = "foo"
 
 
-def test_stetings_getting_caches_singleton() -> None:
+class BarSettings(BaseSettings):
+    """Second dummy settings subclass for testing."""
+
+    bar: str = "bar"
+
+
+def test_settings_getting_caches_singleton() -> None:
     # clear cache
     SettingsContext.set(None)  # clear cache
 
@@ -64,8 +70,10 @@ def test_stetings_getting_caches_singleton() -> None:
 
 
 def test_settings_getting_wrong_class_raises_error() -> None:
-    # initial type is determined by `settings` fixture
-    assert isinstance(SettingsContext.get(), BaseSettings)
+    # first get foo settings
+    FooSettings.get()
+    assert isinstance(SettingsContext.get(), FooSettings)
 
+    # then try to get another, non-related settings class
     with pytest.raises(RuntimeError, match="already loaded"):
-        FooSettings.get()
+        BarSettings.get()

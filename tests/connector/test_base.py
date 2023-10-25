@@ -3,11 +3,10 @@ from mex.common.connector import (
     ConnectorContext,
     reset_connector_context,
 )
-from mex.common.settings import BaseSettings
 
 
 class DummyConnector(BaseConnector):
-    def __init__(self, settings: BaseSettings) -> None:
+    def __init__(self) -> None:
         self.closed = False
 
     def close(self) -> None:

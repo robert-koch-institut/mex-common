@@ -17,8 +17,9 @@ class BackendApiConnector(HTTPConnector):
         """Send a GET request to verify the API is available."""
         self.request("GET", "_system/check")
 
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set the backend api url with the version path."""
+        settings = BaseSettings.get()
         self.url = urljoin(settings.backend_api_url, self.API_VERSION)
 
     def post_models(self, models: list[MExModel]) -> list[Identifier]:
