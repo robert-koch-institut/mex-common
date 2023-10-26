@@ -17,6 +17,11 @@ class BackendApiConnector(HTTPConnector):
         """Send a GET request to verify the API is available."""
         self.request("GET", "_system/check")
 
+    def _set_authentication(self) -> None:
+        """Set the backend API key to all session headers."""
+        settings = BaseSettings.get()
+        self.session.headers["X-API-Key"] = settings.backend_api_key.get_secret_value()
+
     def _set_url(self) -> None:
         """Set the backend api url with the version path."""
         settings = BaseSettings.get()
@@ -34,7 +39,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             Identifiers of posted models
         """
-        settings = BaseSettings.get()
         response = self.request(
             method="POST",
             endpoint="ingest",
@@ -45,7 +49,6 @@ class BackendApiConnector(HTTPConnector):
                     lambda e: e.get_entity_type(),
                 )
             },
-            headers={"X-API-Key": settings.backend_api_write_key},
         )
         insert_response = BulkInsertResponse.parse_obj(response)
         return insert_response.identifiers

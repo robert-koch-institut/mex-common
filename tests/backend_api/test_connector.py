@@ -1,7 +1,6 @@
 import json
 from unittest.mock import MagicMock, Mock, call
 
-from pydantic import SecretStr
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -21,12 +20,12 @@ def test_post_models_mocked(
     connector = BackendApiConnector.get()
     connector.post_models([extracted_person])
 
+    assert connector.session.headers["X-API-Key"] == "dummy_write_key"
     assert mocked_send_request.call_args_list[-1] == call(
         "POST",
         "http://localhost:8080/v0/ingest",
         None,
         headers={
-            "X-API-Key": SecretStr("dummy_write_key"),
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
