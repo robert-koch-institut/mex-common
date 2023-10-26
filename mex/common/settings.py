@@ -142,10 +142,10 @@ class BaseSettings(PydanticBaseSettings):
         description="MEx backend API url.",
         env="MEX_BACKEND_API_URL",
     )
-    backend_api_write_key: SecretStr = Field(
+    backend_api_key: SecretStr = Field(
         SecretStr("dummy_write_key"),
         description="Backend API key with write access to call POST/PUT endpoints",
-        env="BACKEND_API_WRITE_KEY",
+        env="MEX_BACKEND_API_KEY",
     )
     verify_session: Union[bool, AssetsPath] = Field(
         True,
