@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Hashable, Iterable, cast
 
-from mex.common.identity.query import fetch_identity
+from mex.common.identity import get_provider
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
@@ -28,13 +28,14 @@ def _get_merged_ids_by_attribute(
     if attribute not in LDAPPerson.__fields__:
         raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
     merged_ids_by_attribute = defaultdict(list)
+    provider = get_provider()
     for person in persons:
-        if identity := fetch_identity(
+        if identities := provider.fetch(
             had_primary_source=primary_source.stableTargetId,
             identifier_in_primary_source=str(person.objectGUID),
         ):
             merged_ids_by_attribute[str(getattr(person, attribute))].append(
-                Identifier(identity.stableTargetId)
+                Identifier(identities[0].stableTargetId)
             )
     return cast(dict[Hashable, list[Identifier]], merged_ids_by_attribute)
 
@@ -93,12 +94,13 @@ def get_merged_ids_by_query_string(
         `Identity.stableTargetId`
     """
     merged_ids_by_attribute = defaultdict(list)
+    provider = get_provider()
     for person_with_query in persons_with_query:
-        if identity := fetch_identity(
+        if identities := provider.fetch(
             had_primary_source=primary_source.stableTargetId,
             identifier_in_primary_source=str(person_with_query.person.objectGUID),
         ):
             merged_ids_by_attribute[person_with_query.query].append(
-                Identifier(identity.stableTargetId)
+                Identifier(identities[0].stableTargetId)
             )
     return cast(dict[Hashable, list[Identifier]], merged_ids_by_attribute)

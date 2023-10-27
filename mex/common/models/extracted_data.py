@@ -3,7 +3,7 @@ from typing import Any
 from pydantic import Field, root_validator
 
 from mex.common.models.base import MExModel
-from mex.common.types import Identifier, PrimarySourceID
+from mex.common.types import PrimarySourceID
 
 MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
 MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
@@ -114,7 +114,7 @@ class ExtractedData(BaseExtractedData):
             Values with identifier and provenance attributes
         """
         # break import cycle, sigh
-        from mex.common.identity.query import assign_identity
+        from mex.common.identity import get_provider
 
         # validate ID in primary source and primary source ID
         if identifier_in_primary_source := values.get("identifierInPrimarySource"):
@@ -127,10 +127,8 @@ class ExtractedData(BaseExtractedData):
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 
-        identity = assign_identity(
-            had_primary_source=had_primary_source,
-            identifier_in_primary_source=identifier_in_primary_source,
-        )
+        provider = get_provider()
+        identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
         # In case an identity was already found and the identifier provided to the
         # constructor do not match we raise an error because it should not be
@@ -148,9 +146,7 @@ class ExtractedData(BaseExtractedData):
             and identity.stableTargetId != str(stable_target_id)
             and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
         ):
-            raise ValueError(
-                "Cannot change the stable target ID of MEx primary source."
-            )
+            raise ValueError("Cannot change `stableTargetId` of MEx primary source.")
 
         # update instance values
         values["identifier"] = identity.identifier

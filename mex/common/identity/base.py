@@ -1,18 +1,11 @@
-from abc import ABCMeta, abstractmethod
-from enum import Enum
+from abc import abstractmethod
 
+from mex.common.connector import BaseConnector
 from mex.common.identity.models import Identity
 from mex.common.types import Identifier, PrimarySourceID
 
 
-class IdentityProvider(Enum):
-    """Choice of available identity providers."""
-
-    BACKEND = "backend"
-    DUMMY = "dummy"
-
-
-class BaseProvider(metaclass=ABCMeta):
+class BaseProvider(BaseConnector):
     """Base class to define the interface of identity providers."""
 
     @abstractmethod
@@ -31,6 +24,6 @@ class BaseProvider(metaclass=ABCMeta):
         had_primary_source: Identifier | None = None,
         identifier_in_primary_source: str | None = None,
         stable_target_id: Identifier | None = None,
-    ) -> Identity | None:  # pragma: no cover
-        """Find an Identity instance from the database if it can be found."""
+    ) -> list[Identity]:  # pragma: no cover
+        """Find Identity instances matching the given filters."""
         ...

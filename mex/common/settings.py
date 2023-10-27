@@ -9,7 +9,7 @@ from pydantic import BaseSettings as PydanticBaseSettings
 from pydantic.env_settings import DotenvType, env_file_sentinel
 from pydantic.typing import StrPath
 
-from mex.common.identity.types import IdentityProvider
+from mex.common.identity import IdentityProvider
 from mex.common.sinks import Sink
 from mex.common.transform import MExEncoder
 from mex.common.types import AssetsPath
