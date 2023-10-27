@@ -1,10 +1,10 @@
-from mex.common.identity.dummy import DummyIdentityProvider
+from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.testing import Joker
 from mex.common.types import PrimarySourceID
 
 
 def test_assign() -> None:
-    provider = DummyIdentityProvider.get()
+    provider = MemoryIdentityProvider.get()
     had_primary_source = PrimarySourceID("00000000000000")
     identifier_in_primary_source = "thing-1"
 
@@ -28,7 +28,7 @@ def test_assign() -> None:
 
 
 def test_fetch_empty() -> None:
-    provider = DummyIdentityProvider.get()
+    provider = MemoryIdentityProvider.get()
     had_primary_source = PrimarySourceID("00000000000000")
     identifier_in_primary_source = "thing-1"
 
@@ -42,7 +42,7 @@ def test_fetch_empty() -> None:
 
 
 def test_fetch_found() -> None:
-    provider = DummyIdentityProvider.get()
+    provider = MemoryIdentityProvider.get()
     had_primary_source = PrimarySourceID("00000000000000")
     identifier_in_primary_source = "thing-1"
 

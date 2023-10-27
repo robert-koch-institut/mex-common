@@ -14,7 +14,7 @@ class BaseProvider(BaseConnector):
         had_primary_source: PrimarySourceID,
         identifier_in_primary_source: str,
     ) -> Identity:  # pragma: no cover
-        """Find an Identity or assign a new one."""
+        """Find an Identity in a database or assign a new one."""
         ...
 
     @abstractmethod

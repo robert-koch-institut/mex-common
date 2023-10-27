@@ -133,7 +133,7 @@ class BaseSettings(PydanticBaseSettings):
         env="MEX_WORK_DIR",
     )
     identity_provider: IdentityProvider = Field(
-        IdentityProvider.DUMMY,
+        IdentityProvider.MEMORY,
         description="Provider to assign stableTargetIds to new model instances.",
         env="MEX_IDENTITY_PROVIDER",
     )

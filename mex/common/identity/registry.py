@@ -1,7 +1,7 @@
 from typing import Final, Hashable
 
 from mex.common.identity.base import BaseProvider
-from mex.common.identity.dummy import DummyIdentityProvider
+from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.identity.types import IdentityProvider
 
 _PROVIDER_REGISTRY: Final[dict[Hashable, type[BaseProvider]]] = {}
@@ -46,4 +46,4 @@ def get_provider() -> BaseProvider:
 
 
 # register the default providers shipped with mex-common
-register_provider(IdentityProvider.DUMMY, DummyIdentityProvider)
+register_provider(IdentityProvider.MEMORY, MemoryIdentityProvider)

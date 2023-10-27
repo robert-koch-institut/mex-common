@@ -7,12 +7,12 @@ from mex.common.models import (
 from mex.common.types import Identifier, PrimarySourceID
 
 
-class DummyIdentityProvider(BaseProvider):
+class MemoryIdentityProvider(BaseProvider):
     """Connector class to handle read/write to the identity database."""
 
     def __init__(self) -> None:
-        """Initialize a dummy database with the identity of MEx itself."""
-        self._dummy_db: list[Identity] = [
+        """Initialize an in-memory database with the identity of MEx itself."""
+        self._database: list[Identity] = [
             Identity(
                 identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
                 hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -24,7 +24,7 @@ class DummyIdentityProvider(BaseProvider):
     def assign(
         self, had_primary_source: PrimarySourceID, identifier_in_primary_source: str
     ) -> Identity:
-        """Find an Identity or assign a new one.
+        """Find an Identity in the in-memory database or assign a new one.
 
         Args:
             had_primary_source: Stable target ID of primary source
@@ -46,7 +46,7 @@ class DummyIdentityProvider(BaseProvider):
             stableTargetId=Identifier.generate(),
             identifier=Identifier.generate(),
         )
-        self._dummy_db.append(identity)
+        self._database.append(identity)
         return identity
 
     def fetch(
@@ -56,7 +56,7 @@ class DummyIdentityProvider(BaseProvider):
         identifier_in_primary_source: str | None = None,
         stable_target_id: Identifier | None = None,
     ) -> list[Identity]:
-        """Find Identity instances in the dummy database.
+        """Find Identity instances in the in-memory database.
 
         Args:
             had_primary_source: Stable target ID of primary source
@@ -66,7 +66,7 @@ class DummyIdentityProvider(BaseProvider):
         Returns:
             List of Identity instances
         """
-        identities = iter(self._dummy_db)
+        identities = iter(self._database)
 
         if had_primary_source:
             identities = filter(
@@ -85,5 +85,5 @@ class DummyIdentityProvider(BaseProvider):
         return list(identities)
 
     def close(self) -> None:
-        """Trash the dummy identity database."""
-        self._dummy_db.clear()
+        """Trash the in-memory identity database."""
+        self._database.clear()
