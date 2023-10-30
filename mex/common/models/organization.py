@@ -21,58 +21,48 @@ class BaseOrganization(BaseModel):
             str,
             Field(
                 pattern=r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$",
+                examples=["https://gepris.dfg.de/gepris/institution/10179"],
             ),
         ]
-    ] = Field(
-        [],
-        examples=["https://gepris.dfg.de/gepris/institution/10179"],
-    )
+    ] = []
     gndId: list[
         Annotated[
             str,
             Field(
                 pattern=r"^https://d\-nb\.info/gnd/[-X0-9]{3,10}$",
+                examples=["https://d-nb.info/gnd/17690-4"],
             ),
         ]
-    ] = Field(
-        [],
-        examples=["https://d-nb.info/gnd/17690-4"],
-    )
+    ] = []
     isniId: list[
         Annotated[
             str,
             Field(
                 pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
+                examples=["https://isni.org/isni/0000000109403744"],
             ),
         ]
-    ] = Field(
-        [],
-        examples=["https://isni.org/isni/0000000109403744"],
-    )
+    ] = []
     officialName: list[Text] = Field(..., min_length=1)
     rorId: list[
         Annotated[
             str,
             Field(
                 pattern=r"^https://ror\.org/[a-z0-9]{9}$",
+                examples=["https://ror.org/01k5qnb77"],
             ),
         ]
-    ] = Field(
-        [],
-        examples=["https://ror.org/01k5qnb77"],
-    )
+    ] = []
     shortName: list[Text] = []
     viafId: list[
         Annotated[
             str,
             Field(
                 pattern=r"^https://viaf\.org/viaf/[0-9]{2,22}$",
+                examples=["https://viaf.org/viaf/123556639"],
             ),
         ]
-    ] = Field(
-        [],
-        examples=["https://viaf.org/viaf/123556639"],
-    )
+    ] = []
     wikidataId: str | None = Field(
         None,
         examples=["http://www.wikidata.org/entity/Q679041"],
