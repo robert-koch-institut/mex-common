@@ -69,7 +69,9 @@ class ExtractedData(BaseExtractedData):
 
     @model_validator(mode="before")
     @classmethod
-    def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:
+    def set_identifiers(  # noqa: C901 # TODO in https://jira.rki.local/browse/MX-1435
+        cls, values: dict[str, Any]
+    ) -> dict[str, Any]:
         """Ensure identifier and provenance attributes are set for this instance.
 
         All extracted data classes have four important identifiers that are defined
@@ -124,7 +126,8 @@ class ExtractedData(BaseExtractedData):
                     identifier_in_primary_source = str(identifier_in_primary_source[0])
                 else:
                     raise ValueError(
-                        f"Expected one value for identifierInPrimarySource, got {len(identifier_in_primary_source)}"
+                        f"Expected one value for identifierInPrimarySource, "
+                        f"got {len(identifier_in_primary_source)}"
                     )
             else:
                 identifier_in_primary_source = str(identifier_in_primary_source)
@@ -137,7 +140,8 @@ class ExtractedData(BaseExtractedData):
                     had_primary_source = PrimarySourceID(had_primary_source[0])
                 else:
                     raise ValueError(
-                        f"Expected one value for hadPrimarySource, got {len(had_primary_source)}"
+                        f"Expected one value for hadPrimarySource, "
+                        f"got {len(had_primary_source)}"
                     )
             else:
                 had_primary_source = PrimarySourceID(had_primary_source)
@@ -170,7 +174,8 @@ class ExtractedData(BaseExtractedData):
                     stable_target_id = stable_target_id[0]
                 else:
                     raise ValueError(
-                        f"Expected one value for stableTargetId, got {len(stable_target_id)}"
+                        f"Expected one value for stableTargetId, "
+                        f"got {len(stable_target_id)}"
                     )
             if (
                 identity is None
