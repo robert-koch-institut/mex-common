@@ -50,10 +50,9 @@ class Text(BaseModel):
         """Convert string input to dictionary."""
         if isinstance(value, str):
             return {"value": value}
-        elif isinstance(value, dict):
+        if isinstance(value, dict):
             return value
-        else:
-            raise ValueError(f"Allowed input types are dict and str, got {type(value)}")
+        raise ValueError(f"Allowed input types are dict and str, got {type(value)}")
 
     def __str__(self) -> str:
         """Return the text value."""
