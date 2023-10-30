@@ -6,7 +6,7 @@ Helper extractor to get metadata primary sources. It represents the original sou
 
 ## Configuration
 
-To configure primary_source extractor, set `primary_sources_path` in settings to point to `primary-sources.json` file.
+To configure primary_source extractor, set `primary_sources_path` in settings to point to `primary-sources.json` in `mex-assets` repository. A sample primary sources file is also included in `mex-extractors` at `assets/raw-data/primary-sources/primary-sources.json` for testing purposes.
 
 # Usage
 
