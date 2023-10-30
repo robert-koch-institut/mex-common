@@ -6,9 +6,8 @@ from pathlib import PurePath
 from typing import Any
 from uuid import UUID
 
-from pydantic import AnyUrl
+from pydantic import AnyUrl, SecretStr
 from pydantic import BaseModel as PydanticModel
-from pydantic import SecretStr
 
 from mex.common.types import ResolvedPath, Timestamp
 
