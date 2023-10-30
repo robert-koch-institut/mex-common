@@ -7,6 +7,7 @@ import os
 from enum import Enum
 from pathlib import Path
 from typing import Any, Generator
+from unittest.mock import MagicMock
 
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
@@ -25,7 +26,8 @@ class NoOpPytest:
 
     FixtureRequest = Any
     MonkeyPatch = Any
-    fixture = lambda **_: lambda f: f  # noqa: E731
+    fixture = MagicMock()
+    mark = MagicMock()
 
 
 try:
@@ -80,13 +82,13 @@ def isolate_connector_context() -> Generator[None, None, None]:
     reset_connector_context()
 
 
-@pytest.fixture
+@pytest.fixture()
 def is_integration_test(request: pytest.FixtureRequest) -> bool:
     """Check the markers of a test to see if this is an integration test."""
     return any(m.name == "integration" for m in request.keywords.get("pytestmark", ()))
 
 
-@pytest.fixture
+@pytest.fixture()
 def in_continuous_integration() -> bool:
     """Check the environment variable `CI` to determine whether we are in CI."""
     return os.environ.get("CI") == "true"
@@ -104,7 +106,7 @@ def faker_session_locale() -> list[str]:
     return ["de_DE", "en_US"]
 
 
-@pytest.fixture
+@pytest.fixture()
 @pytest.mark.usefixtures("settings")
 def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
