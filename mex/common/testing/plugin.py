@@ -6,12 +6,10 @@ to the `conftest.py` in your root test folder.
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Generator
+from typing import Any, Generator
 
-import pytest
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
-from pytest import FixtureRequest, MonkeyPatch
 
 from mex.common.connector import reset_connector_context
 from mex.common.models import ExtractedPrimarySource
@@ -22,8 +20,22 @@ from mex.common.primary_source.transform import (
 from mex.common.settings import BaseSettings, SettingsContext
 
 
+class NoOpPytest:
+    """No-op pytest drop-in for when dev dependencies are not installed."""
+
+    FixtureRequest = Any
+    MonkeyPatch = Any
+    fixture = lambda **_: lambda f: f  # noqa: E731
+
+
+try:
+    import pytest
+except ImportError:
+    pytest = NoOpPytest  # type: ignore[assignment]
+
+
 @pytest.fixture(autouse=True)
-def patch_reprs(monkeypatch: MonkeyPatch) -> None:
+def patch_reprs(monkeypatch: pytest.MonkeyPatch) -> None:
     """Allow for easier copying of expected output by patching __repr__ methods."""
     monkeypatch.setattr(
         Enum, "__repr__", lambda self: f"{self.__class__.__name__}.{self.name}"
@@ -34,14 +46,16 @@ def patch_reprs(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.fixture(autouse=True)
-def isolate_assets_dir(is_integration_test: bool, monkeypatch: MonkeyPatch) -> None:
+def isolate_assets_dir(
+    is_integration_test: bool, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Disable the `MEX_ASSETS_DIR` environment variable for unit testing."""
     if not is_integration_test:  # pragma: no cover
         monkeypatch.delenv("MEX_ASSETS_DIR", raising=False)
 
 
 @pytest.fixture(autouse=True)
-def isolate_work_dir(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+def isolate_work_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Set the `MEX_WORK_DIR` environment variable to a temp path for all tests."""
     monkeypatch.setenv("MEX_WORK_DIR", str(tmp_path))
 
@@ -67,7 +81,7 @@ def isolate_connector_context() -> Generator[None, None, None]:
 
 
 @pytest.fixture
-def is_integration_test(request: FixtureRequest) -> bool:
+def is_integration_test(request: pytest.FixtureRequest) -> bool:
     """Check the markers of a test to see if this is an integration test."""
     return any(m.name == "integration" for m in request.keywords.get("pytestmark", ()))
 
