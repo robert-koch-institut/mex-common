@@ -18,27 +18,24 @@ class HTTPConnector(BaseConnector):
 
     url: str = ""
 
-    def __init__(self, settings: BaseSettings) -> None:
-        """Create a new http connection.
-
-        Args:
-            settings: Configured settings instance
-        """
-        self._set_session(settings)
-        self._set_url(settings)
-        self._set_authentication(settings)
+    def __init__(self) -> None:
+        """Create a new http connection."""
+        self._set_session()
+        self._set_url()
+        self._set_authentication()
         self._check_availability()
 
-    def _set_session(self, settings: BaseSettings) -> None:
+    def _set_session(self) -> None:
         """Create and set request session."""
+        settings = BaseSettings.get()
         self.session = requests.Session()
         self.session.verify = settings.verify_session  # type: ignore
 
-    def _set_authentication(self, settings: BaseSettings) -> None:
+    def _set_authentication(self) -> None:
         """Authenticate to the host."""
 
     @abstractmethod
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set url of the host."""
 
     def _check_availability(self) -> None:
@@ -60,6 +57,7 @@ class HTTPConnector(BaseConnector):
             method: HTTP method to use
             endpoint: Path to API endpoint to be prefixed with host and version
             payload: Data to be serialized as JSON using the `MExEncoder`
+            params: Dictionary to be sent in the query string of the request
             kwargs: Further keyword arguments passed to `requests`
 
         Raises:
@@ -112,7 +110,7 @@ class HTTPConnector(BaseConnector):
     def _send_request(
         self, method: str, url: str, params: dict[str, str] | None, **kwargs: Any
     ) -> Response:
-        """Send the response with advanced retrying ruleset."""
+        """Send the response with advanced retrying rules."""
         return self.session.request(method, url, params, **kwargs)
 
     def close(self) -> None:

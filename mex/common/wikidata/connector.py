@@ -9,8 +9,9 @@ class WikidataQueryServiceConnector(HTTPConnector):
 
     TIMEOUT = 80
 
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set url of the host."""
+        settings = BaseSettings.get()
         self.url = str(settings.wiki_query_service_url)
 
     def _check_availability(self) -> None:
@@ -37,8 +38,9 @@ class WikidataQueryServiceConnector(HTTPConnector):
 class WikidataAPIConnector(HTTPConnector):
     """Connector class to handle requesting the Wikidata API."""
 
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set url of the host."""
+        settings = BaseSettings.get()
         self.url = str(settings.wiki_api_url)
 
     def _check_availability(self) -> None:
@@ -61,7 +63,18 @@ class WikidataAPIConnector(HTTPConnector):
             "action": "wbgetentities",
             "format": "json",
             "ids": item_id,
-            "props": "info|aliases|labels|descriptions|datatype|claims|sitelinks|sitelinks/urls",
+            "props": "|".join(
+                [
+                    "info",
+                    "aliases",
+                    "labels",
+                    "descriptions",
+                    "datatype",
+                    "claims",
+                    "sitelinks",
+                    "sitelinks/urls",
+                ]
+            ),
             "formatversion": "2",
         }
 

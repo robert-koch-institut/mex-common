@@ -21,23 +21,72 @@ pydantic-settings = "^2.0.2"
 requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
-autoflake = "^2.2.1"
-black = "^23.7.0"
+black = "^23.10.1"
 ipdb = "^0.13.13"
-isort = "^5.12.0"
-mypy = "^1.5.1"
+mypy = "^1.6.1"
 mypy-extensions = "^1.0.0"
 pandas-stubs = "^2.0.3.230814"
 pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
+ruff = "^0.1.2"
 sphinx = "^6.2.1"
 sphinx-book-theme = "^1.0.1"
-types-pytz = "^2023.3.0.1"
+types-pytz = "^2023.3.1.1"
 types-requests = "^2.31.0.2"
 types-setuptools = "^68.2.0.0"
 
 [tool.ipdb]
 context = 5
+
+[tool.ruff]
+fix = true
+ignore = [
+    "D100",   # Allow missing module docstring for brevity
+    "D104",   # Allow missing package docstring for brevity
+    "D106",   # Allow missing nested class docstring (eg pydantic Config)
+    "D203",   # Disallow blank line before class docstring (inverse of D211)
+    "D213",   # Disallow multi-line docstring starting at second line (inverse of D212)
+    "D406",   # Allow section name ending with newline (google style compat)
+    "D407",   # Allow missing dashed underline after section (google style compat)
+    "D413",   # Allow missing blank line after last section (google style compat)
+    "N805",   # Allow first argument of a method to be non-self (pydantic compat)
+    "N815",   # Allow mixedCase variables in class scope (model compat)
+    "RUF012", # Allow mutable class attributes (pydantic compat)
+]
+select = [
+    "C90", # McCabe complexity checker
+    "D",   # Python docstring style checker
+    "E",   # Python code style errors
+    "ERA", # Commented-out code detector
+    "F",   # Pyflakes passive python checker
+    "I",   # Isort import utility
+    "N",   # Pep8 naming conventions
+    "RET", # Flake8 return statement checker
+    "RUF", # Ruff-specific rules
+    "S",   # Bandit automated security testing
+    "T10", # Flake8 debug statement checker
+    "T20", # Flake8 print statement checker
+    "W",   # Python code style warnings
+]
+show-fixes = true
+target-version = "py311"
+
+[tool.ruff.per-file-ignores]
+"tests/**" = [
+    "D101", # Allow missing docstring in public class for tests
+    "D102", # Allow missing docstring in public method for tests
+    "D103", # Allow missing docstring in public function for tests
+    "D107", # Allow missing docstring in `__init__` for tests
+    "E501", # Allow line too long in tests
+    "N807", # Allow mocking `__init__` for tests
+    "S101", # Allow use of `assert` in tests
+]
+
+[tool.ruff.isort]
+known-first-party = ["mex", "tests"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
 
 [build-system]
 requires = ["poetry-core>=1.7.0"]

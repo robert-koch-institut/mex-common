@@ -43,7 +43,7 @@ def search_organization_by_label(
             ) from exc
         except requests.exceptions.RetryError as exc:
             raise MExError(
-                f"RetryError: Max retries exceeded while processing results for {item_label}"
+                f"RetryError: Max retries exceeded processing results for {item_label}"
             ) from exc
         except KeyError as exc:
             raise MExError(
@@ -54,10 +54,10 @@ def search_organization_by_label(
                 f"IndexError: Error processing results for {item_label}"
             ) from exc
 
-        yield get_organization_details(wd_item_id)
+        yield _get_organization_details(wd_item_id)
 
 
-def get_organization_details(item_id: str) -> WikidataOrganization:
+def _get_organization_details(item_id: str) -> WikidataOrganization:
     """Get a wikidata item details by its ID.
 
     Args:

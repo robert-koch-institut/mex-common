@@ -24,7 +24,7 @@ class DummyEnum(Enum):
 
 
 @pytest.mark.parametrize(
-    "raw, expected",
+    ("raw", "expected"),
     [
         (DummyModel(strField="bar"), '{"integer": 42, "string_field": "bar"}'),
         (SecretStr("str"), '"str"'),
@@ -54,7 +54,7 @@ def test_mex_json_encoder_unserializable() -> None:
 
 
 @pytest.mark.parametrize(
-    "string, expected",
+    ("string", "expected"),
     [
         ("", ""),
         ("word", "word"),
@@ -74,7 +74,7 @@ def test_snake_to_dromedary(string: str, expected: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "string, expected",
+    ("string", "expected"),
     [
         ("", ""),
         ("word", "word"),

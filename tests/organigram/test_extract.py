@@ -31,10 +31,12 @@ def test_get_unit_merged_ids_by_synonyms(
         "C1: Sub Unit": child_id,
         "CHLD": child_id,
         "CHLD Unterabteilung": child_id,
+        "child-unit": child_id,
         "Department": parent_id,
         "PARENT Dept.": parent_id,
         "PRNT": parent_id,
         "PRNT Abteilung": parent_id,
+        "parent-unit": parent_id,
     }
 
 

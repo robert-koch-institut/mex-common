@@ -16,7 +16,7 @@ class Animal(Enum):
 
 
 @pytest.mark.parametrize(
-    "mapping, expected",
+    ("mapping", "expected"),
     [
         ({}, "N/A"),
         ({"key": None}, "N/A"),
@@ -36,7 +36,7 @@ def test_flat_value_map(mapping: dict[str, Any], expected: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "data, expected",
+    ("data", "expected"),
     [
         ({"optional_str": []}, {"optional_str": None}),
         ({"optional_str": [None]}, {"optional_str": None}),

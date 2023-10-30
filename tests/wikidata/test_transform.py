@@ -11,9 +11,9 @@ from mex.common.wikidata.models.organization import (
     WikidataOrganization,
 )
 from mex.common.wikidata.transform import (
-    get_alternative_names,
-    get_clean_labels,
-    get_clean_short_names,
+    _get_alternative_names,
+    _get_clean_labels,
+    _get_clean_short_names,
     transform_wikidata_organizations_to_extracted_organizations,
 )
 from tests.wikidata.conftest import TESTDATA_DIR
@@ -121,7 +121,7 @@ def test_get_alternative_names() -> None:
         Text(value="test_native_name", language=TextLanguage.DE),
     ]
 
-    alternative_names = get_alternative_names(raw_native_labels, raw_aliases)
+    alternative_names = _get_alternative_names(raw_native_labels, raw_aliases)
 
     assert sorted(alternative_names, key=attrgetter("value")) == sorted(
         expected, key=attrgetter("value")
@@ -167,7 +167,7 @@ def test_get_clean_short_names() -> None:
     for short_name in short_names:
         Claim.model_validate(short_name)
 
-    clean_short_names = get_clean_short_names(
+    clean_short_names = _get_clean_short_names(
         [Claim.model_validate(acronym) for acronym in short_names]
     )
 
@@ -187,6 +187,6 @@ def test_get_clean_labels() -> None:
         "en": {"language": "en", "value": "Test Label 1 EN"},
     }
 
-    clean_labels = get_clean_labels(Labels.model_validate(raw_labels))
+    clean_labels = _get_clean_labels(Labels.model_validate(raw_labels))
 
     assert clean_labels == expected

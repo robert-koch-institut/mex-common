@@ -20,12 +20,16 @@ def test_post_models_mocked(
     connector = BackendApiConnector.get()
     connector.post_models([extracted_person])
 
+    assert connector.session.headers["X-API-Key"] == "dummy_write_key"
     assert mocked_send_request.call_args_list[-1] == call(
         "POST",
         "http://localhost:8080/v0/ingest",
         None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
         timeout=10,
-        headers={"Accept": "application/json", "User-Agent": "rki/mex"},
         data=Joker(),
     )
 

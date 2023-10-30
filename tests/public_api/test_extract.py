@@ -20,6 +20,11 @@ def test_extract_mex_person_items_mocked(
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
     monkeypatch: MonkeyPatch,
 ) -> None:
+    def __init__(self: PublicApiConnector) -> None:
+        self.session = MagicMock()
+
+    monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
+
     mex_metadata_items_response_with_next = mex_metadata_items_response.model_copy()
     mex_metadata_items_response_with_next.next = UUID(
         "3fcce11e80e920b410efd0c919001a31"
@@ -28,11 +33,6 @@ def test_extract_mex_person_items_mocked(
         side_effect=[mex_metadata_items_response_with_next, mex_metadata_items_response]
     )
     monkeypatch.setattr(PublicApiConnector, "get_all_items", get_all_items)
-    monkeypatch.setattr(
-        PublicApiConnector,
-        "__init__",
-        lambda self, _: setattr(self, "session", MagicMock()),
-    )
 
     mex_persons = list(extract_mex_person_items())
     assert mex_persons == mex_metadata_items_response.items[2:4] * 2
@@ -43,14 +43,14 @@ def test_extract_mex_person_items_limit_reached(
     mex_metadata_items_response: PublicApiMetadataItemsResponse,
     monkeypatch: MonkeyPatch,
 ) -> None:
+    def __init__(self: PublicApiConnector) -> None:
+        self.session = MagicMock()
+
+    monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
+
     mex_metadata_items_response.next = UUID("3fcce11e80e920b410efd0c919001a31")
     get_all_items = MagicMock(side_effect=[mex_metadata_items_response] * 101)
     monkeypatch.setattr(PublicApiConnector, "get_all_items", get_all_items)
-    monkeypatch.setattr(
-        PublicApiConnector,
-        "__init__",
-        lambda self, _: setattr(self, "session", MagicMock()),
-    )
 
     with pytest.raises(MExError):
         list(extract_mex_person_items())

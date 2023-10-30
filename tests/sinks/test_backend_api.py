@@ -11,12 +11,12 @@ from mex.common.sinks.backend_api import post_to_backend_api
 def test_post_to_backend_api_mocked(
     extracted_person: ExtractedPerson, monkeypatch: MonkeyPatch
 ) -> None:
+    def __init__(self: BackendApiConnector) -> None:
+        self.session = MagicMock()
+
+    monkeypatch.setattr(BackendApiConnector, "__init__", __init__)
+
     response = [UUID("00000000-0000-4000-8000-000000339191")]
-    monkeypatch.setattr(
-        BackendApiConnector,
-        "__init__",
-        lambda self, settings: setattr(self, "session", MagicMock()),
-    )
     post_models = Mock(return_value=response)
     monkeypatch.setattr(BackendApiConnector, "post_models", post_models)
 

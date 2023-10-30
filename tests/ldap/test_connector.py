@@ -38,7 +38,7 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
 
 
 @pytest.mark.parametrize(
-    "kwargs, pattern",
+    ("kwargs", "pattern"),
     [
         ({"surname": "müller"}, r".{37,}"),  # needs more than one guid to pass
         ({"surname": "nobody-has-this-name"}, r""),  # only empty list passes
@@ -58,7 +58,7 @@ def test_get_persons_ldap(kwargs: dict[str, str], pattern: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "kwargs, pattern",
+    ("kwargs", "pattern"),
     [
         ({"mail": "mex@rki.de"}, r".{36}"),  # exactly one guid
         ({"mail": "non-existent@function.xyz"}, r"^$"),  # empty result
@@ -104,7 +104,7 @@ def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
 
 
 @pytest.mark.parametrize(
-    "search_results, error_text",
+    ("search_results", "error_text"),
     [
         ([[]], "Cannot find AD person"),
         ([[SAMPLE_PERSON_ATTRS, SAMPLE_PERSON_ATTRS]], "Found multiple AD persons"),
@@ -142,7 +142,7 @@ def test_get_person_mocked(ldap_mocker: LDAPMocker) -> None:
 
 
 @pytest.mark.parametrize(
-    "search_results, error_text",
+    ("search_results", "error_text"),
     [
         ([[]], "Cannot find AD unit"),
         ([[XY_DEPARTMENT_ATTRS, XY2_DEPARTMENT_ATTRS]], "Found multiple AD units"),
@@ -172,7 +172,7 @@ def test_get_unit_mocked(ldap_mocker: LDAPMocker) -> None:
 
 
 @pytest.mark.parametrize(
-    "search_results, error_text",
+    ("search_results", "error_text"),
     [
         ([[]], "Cannot find AD functional account"),
         (

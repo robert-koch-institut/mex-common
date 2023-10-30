@@ -26,12 +26,9 @@ class LDAPConnector(BaseConnector):
     SEARCH_BASE = "DC=rki,DC=local"
     PAGE_SIZE = 25
 
-    def __init__(self, settings: BaseSettings) -> None:
-        """Create a new LDAP connection.
-
-        Args:
-            settings: Configured settings instance
-        """
+    def __init__(self) -> None:
+        """Create a new LDAP connection."""
+        settings = BaseSettings.get()
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
         port = int(url.port or self.DEFAULT_PORT)
@@ -43,19 +40,19 @@ class LDAPConnector(BaseConnector):
             auto_bind=AUTO_BIND_NO_TLS,
             read_only=True,
         )
-        self.connection = connection.__enter__()
+        self._connection = connection.__enter__()
         if not self._is_service_available():
             raise MExError(f"LDAP service not available at url: {host}:{port}")
 
     def _is_service_available(self) -> bool:
         try:
-            return self.connection.server.check_availability() is True
+            return self._connection.server.check_availability() is True
         except LDAPExceptionError:
             return False
 
     def close(self) -> None:
         """Close the connector's underlying LDAP connection."""
-        self.connection.__exit__(None, None, None)
+        self._connection.__exit__(None, None, None)
 
     def _fetch(
         self, model_cls: type[ModelT], /, **filters: str
@@ -81,7 +78,7 @@ class LDAPConnector(BaseConnector):
     def _paged_ldap_search(
         self, fields: tuple[str], search_filter: str, search_base: str
     ) -> list[dict[str, str]]:
-        entries = self.connection.extend.standard.paged_search(
+        entries = self._connection.extend.standard.paged_search(
             search_base=search_base,
             search_filter=f"(&{search_filter})",
             attributes=fields,
@@ -89,7 +86,7 @@ class LDAPConnector(BaseConnector):
         return list(entries)
 
     def get_functional_accounts(
-        self, mail: str = "*", sAMAccountName: str = "*", **filters: str
+        self, mail: str = "*", sAMAccountName: str = "*", **filters: str  # noqa: N803
     ) -> Generator[LDAPActor, None, None]:
         """Get LDAP functional accounts that match provided filters.
 
@@ -145,7 +142,7 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_units(
-        self, sAMAccountName: str = "*", mail: str = "*", **filters: str
+        self, sAMAccountName: str = "*", mail: str = "*", **filters: str  # noqa: N803
     ) -> Generator[LDAPUnit, None, None]:
         """Get LDAP units that match the provided filters.
 
@@ -166,7 +163,7 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_functional_account(
-        self, objectGUID: str = "*", **filters: str
+        self, objectGUID: str = "*", **filters: str  # noqa: N803
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
@@ -188,16 +185,18 @@ class LDAPConnector(BaseConnector):
         )
         if not functional_accounts:
             raise EmptySearchResultError(
-                f"Cannot find AD functional account for filters 'objectGUID: {objectGUID}, {filters}'"
+                "Cannot find AD functional account for filters "
+                f"'objectGUID: {objectGUID}, {filters}'"
             )
         if len(functional_accounts) > 1:
             raise FoundMoreThanOneError(
-                f"Found multiple AD functional accounts for filters 'objectGUID: {objectGUID}, {filters}'"
+                "Found multiple AD functional accounts for filters "
+                f"'objectGUID: {objectGUID}, {filters}'"
             )
         return functional_accounts[0]
 
     def get_person(
-        self, objectGUID: str = "*", employeeID: str = "*", **filters: str
+        self, objectGUID: str = "*", employeeID: str = "*", **filters: str  # noqa: N803
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 

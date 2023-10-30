@@ -40,7 +40,7 @@ class FlatValueMap(ChainMap[str, Any]):
 
         try:
             value = super().__getitem__(key)
-        except:
+        except:  # noqa: E722
             value = None
         return transform(value)
 
@@ -164,7 +164,7 @@ class BaseModel(PydanticBaseModel):
 
     def checksum(self) -> str:
         """Calculate md5 checksum for this model."""
-        return hashlib.md5(pickle.dumps(self)).hexdigest()  # nosec
+        return hashlib.md5(pickle.dumps(self)).hexdigest()  # noqa: S324
 
     def __str__(self) -> str:
         """Format this model as a string for logging."""
@@ -172,16 +172,34 @@ class BaseModel(PydanticBaseModel):
 
 
 class MExModel(BaseModel):
-    """Abstract base model for extracted data and MEx entity classes."""
+    """Abstract base model for extracted data and merged item classes.
+
+    This class only defines an `identifier` and gives a type hint for `stableTargetId`.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     if TYPE_CHECKING:
+        # Sometimes multiple primary sources describe the same activity, resource, etc.
+        # and a complete metadata item can only be created by merging these fragments.
+        # The `stableTargetID` is part of all models in `mex.common.models` to allow
+        # MEx to identify which extracted items describe the same thing and should be
+        # merged to create a complete metadata item.
+        # The name might be a bit misleading (also due to historical reasons), but the
+        # "stability" is only guaranteed for one "real world" or "digital world" thing
+        # having the same ID in MEx over time. But not as a guarantee, that the same
+        # metadata sources contribute to the complete metadata item.
+        # Because we anticipate that items have to be merged, the `stableTargetID` is
+        # also used as the foreign key for all fields containing references.
         stableTargetId: Any
 
     identifier: Identifier = Field(
         ...,
-        description="The identifier of this instance.",
+        description=(
+            "A globally unique identifier for this item. Regardless of the entity-type "
+            "or whether this item was extracted, merged, etc. identifiers will be "
+            "assigned just once."
+        ),
         examples=[Identifier.generate(seed=42)],
     )
 

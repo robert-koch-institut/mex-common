@@ -6,7 +6,6 @@ from pytest import MonkeyPatch
 
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.public_api.models import PublicApiMetadataItemsResponse
-from mex.common.settings import BaseSettings
 
 
 @pytest.fixture
@@ -17,7 +16,7 @@ def mocked_api_session(monkeypatch: MonkeyPatch) -> MagicMock:
         return_value=Mock(spec=requests.Response, status_code=200)
     )
 
-    def set_mocked_session(self: PublicApiConnector, settings: BaseSettings) -> None:
+    def set_mocked_session(self: PublicApiConnector) -> None:
         self.session = mocked_session
 
     monkeypatch.setattr(PublicApiConnector, "_set_session", set_mocked_session)

@@ -71,7 +71,7 @@ class Timestamp:
         self,
         *args: Union[str, date, datetime, "Timestamp"],
         tzinfo: Literal[None] = None,
-    ) -> None:  # noqa: D107
+    ) -> None:
         ...  # pragma: no cover
 
     @overload
@@ -79,7 +79,7 @@ class Timestamp:
         self,
         *args: int,
         tzinfo: Optional[tzinfo] = None,
-    ) -> None:  # noqa: D107
+    ) -> None:
         ...  # pragma: no cover
 
     def __init__(

@@ -39,16 +39,17 @@ PublicApiItemT = TypeVar(
 class PublicApiConnector(HTTPConnector):  # pragma: no cover
     """Connector class to handle authentication and interaction with the public API."""
 
-    TIMEOUT: int = 10
     API_VERSION: str = "v0"
 
-    def _set_session(self, settings: BaseSettings) -> None:
+    def _set_session(self) -> None:
         """Create and set request session."""
+        settings = BaseSettings.get()
         self.session = requests.Session()
         self.session.verify = settings.public_api_verify_session  # type: ignore
 
-    def _set_url(self, settings: BaseSettings) -> None:
+    def _set_url(self) -> None:
         """Set url of the host with api version."""
+        settings = BaseSettings.get()
         self.url = urljoin(str(settings.public_api_url), self.API_VERSION)
 
     def _check_availability(self) -> None:
@@ -59,8 +60,9 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             PublicApiSearchRequest(limit=0),
         )
 
-    def _set_authentication(self, settings: BaseSettings) -> None:
+    def _set_authentication(self) -> None:
         """Generate JWT using secret payload and attach it to session."""
+        settings = BaseSettings.get()
         response = self.session.post(
             str(settings.public_api_token_provider),
             data=b64decode(settings.public_api_token_payload.get_secret_value()),
@@ -97,7 +99,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     def wait_for_job(self, job_id: str) -> str:
         """Poll the status for this `job_id` until it is no longer 'RUNNING'."""
         response = self.request("GET", f"jobs/{job_id}")
-        return response.get("status", "NONE")
+        return str(response.get("status", "NONE"))
 
     def get_job_items(self, job_id: str) -> Generator[Identifier, None, None]:
         """Get the identifiers of the items created, updated or deleted during a job.
@@ -209,16 +211,11 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
         try:
             response = self.request("GET", f"metadata/items/{identifier}")
         except HTTPError as error:
-            # if no rows in result set (error code 2)
-            if (
-                # bw-compat to rki-mex-metadata before rev 2486424
-                error.response.status_code == 500
-                and error.response.json().get("code") == 2
-            ) or error.response.status_code == 404:
+            # no rows in result set, return None
+            if error.response and error.response.status_code == 404:
                 return None
-            # Re-raise any unexpected errors
-            else:
-                raise error
+            # re-raise any unexpected errors
+            raise error
         else:
             return PublicApiItem.model_validate(response)
 

@@ -5,7 +5,7 @@ from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.settings import BaseSettings
-from mex.common.types import OrganizationalUnitID, Text
+from mex.common.types import OrganizationalUnitID
 
 
 @watch
@@ -24,9 +24,9 @@ def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
             yield OrganigramUnit.model_validate(raw)
 
 
-def get_synonyms(
+def _get_synonyms(
     extracted_unit: ExtractedOrganizationalUnit,
-) -> Generator[Text, None, None]:
+) -> Generator[str, None, None]:
     """Generate synonyms for a unit using its name fields.
 
     Args:
@@ -35,9 +35,14 @@ def get_synonyms(
     Returns:
         Generator with (possibly duplicate) synonyms
     """
-    yield from extracted_unit.name
-    yield from extracted_unit.shortName
-    yield from extracted_unit.alternativeName
+    yield extracted_unit.identifierInPrimarySource
+    for names in [
+        extracted_unit.name,
+        extracted_unit.shortName,
+        extracted_unit.alternativeName,
+    ]:
+        for name in names:
+            yield name.value
 
 
 def get_unit_merged_ids_by_synonyms(
@@ -54,9 +59,9 @@ def get_unit_merged_ids_by_synonyms(
         Mapping from unit synonyms to stableTargetIds
     """
     return {
-        synonym.value: extracted_unit.stableTargetId
+        synonym: extracted_unit.stableTargetId
         for extracted_unit in extracted_units
-        for synonym in get_synonyms(extracted_unit)
+        for synonym in _get_synonyms(extracted_unit)
     }
 
 

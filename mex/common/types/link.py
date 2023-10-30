@@ -54,7 +54,7 @@ class Link(BaseModel):
         """Convert string input to dictionary."""
         if isinstance(values, dict):
             return values
-        elif isinstance(values, str):
+        if isinstance(values, str):
             if match := re.match(r"\[(?P<title>.*)\]\((?P<url>.*)\)", values):
                 url_dict = {
                     key: markdown_unescape(value)
@@ -64,10 +64,7 @@ class Link(BaseModel):
                 url_dict = {"url": values}
 
             return url_dict
-        else:
-            raise ValueError(
-                f"Allowed input types are dict and str, got {type(values)}"
-            )
+        raise ValueError(f"Allowed input types are dict and str, got {type(values)}")
 
     def __str__(self) -> str:
         """Render the link as markdown if a title is set, otherwise as plain url."""
@@ -75,5 +72,4 @@ class Link(BaseModel):
             title = markdown_escape(title)
             url = markdown_escape(self.url)
             return f"[{title}]({url})"
-        else:
-            return self.url
+        return self.url

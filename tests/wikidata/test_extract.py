@@ -9,7 +9,7 @@ from mex.common.wikidata.connector import (
     WikidataQueryServiceConnector,
 )
 from mex.common.wikidata.extract import (
-    get_organization_details,
+    _get_organization_details,
     search_organization_by_label,
 )
 from tests.wikidata.conftest import TESTDATA_DIR
@@ -47,7 +47,7 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
         lambda self, _: mocked_query_response(),
     )
 
-    with pytest.raises(MExError) as exc:
+    with pytest.raises(MExError):
         _ = list(search_organization_by_label(item_label="BMW"))
 
 
@@ -285,7 +285,7 @@ def test_get_organization_details() -> None:
         },
     }
 
-    organization_details = get_organization_details(item_id="Q679041")
+    organization_details = _get_organization_details(item_id="Q679041")
 
     assert organization_details.model_dump(exclude_none=True) == expected
 
@@ -406,6 +406,6 @@ def test_get_organization_details_mocked(monkeypatch: MonkeyPatch) -> None:
         lambda self, _: mocked_item_details_response(),
     )
 
-    organization_details = get_organization_details(item_id="Q26678")
+    organization_details = _get_organization_details(item_id="Q26678")
 
     assert organization_details.model_dump() == expected

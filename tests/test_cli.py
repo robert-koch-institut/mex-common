@@ -1,3 +1,4 @@
+import logging
 import re
 from enum import Enum
 from typing import Any, Union
@@ -6,24 +7,25 @@ import pytest
 from click.testing import CliRunner
 from pydantic import HttpUrl, create_model
 from pydantic.fields import Field
+from pytest import LogCaptureFixture
 
-from mex.common.cli import entrypoint, field_to_option
+from mex.common.cli import _field_to_option, entrypoint
 from mex.common.settings import BaseSettings, SettingsType
 
 
 class MyStr(str):
-    """Dummy string subclass for field_to_option test."""
+    """Dummy string subclass for _field_to_option test."""
 
 
 class MyEnum(Enum):
-    """Dummy enum class for field_to_option test."""
+    """Dummy enum class for _field_to_option test."""
 
     FOO = 1
     BAR = 2
 
 
 @pytest.mark.parametrize(
-    "name, settings_cls, info_dict",
+    ("name", "settings_cls", "info_dict"),
     [
         (
             "required_field",
@@ -202,7 +204,7 @@ class MyEnum(Enum):
 def test_field_to_option(
     name: str, settings_cls: type[SettingsType], info_dict: dict[str, Any]
 ) -> None:
-    option = field_to_option(name, settings_cls)
+    option = _field_to_option(name, settings_cls)
     assert option.to_info_dict() == info_dict
 
 
@@ -224,18 +226,20 @@ def test_faulty_entrypoint_exits_non_zero() -> None:
     assert result.exit_code == 1, result.stdout
 
 
-def test_entrypoint_logs_docs_and_settings() -> None:
+def test_entrypoint_logs_docs_and_settings(caplog: LogCaptureFixture) -> None:
     class ChattySettings(BaseSettings):
         custom_setting: str = "default"
 
     @entrypoint(ChattySettings)
     def chatty_entrypoint() -> None:
-        """Hi, I am Pointy McEntryface."""
+        """Hi, I am Pointy McEntryFace."""
         return
 
-    result = CliRunner().invoke(chatty_entrypoint, args=["--custom-setting=override"])
+    with caplog.at_level(logging.INFO, logger="mex"):
+        result = CliRunner().invoke(
+            chatty_entrypoint, args=["--custom-setting=override"]
+        )
     assert result.exit_code == 0, result.stdout
 
-    stdout = result.stdout_bytes.decode("utf-8")
-    assert "Pointy McEntryface" in stdout
-    assert re.search(r"custom_setting\s+override", stdout)
+    assert "Pointy McEntryFace" in caplog.text
+    assert re.search(r"custom_setting\s+override", caplog.text)

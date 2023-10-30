@@ -49,6 +49,12 @@ class FooSettings(BaseSettings):
     foo: str = "foo"
 
 
+class BarSettings(BaseSettings):
+    """Second dummy settings subclass for testing."""
+
+    bar: str = "bar"
+
+
 def test_settings_getting_caches_singleton() -> None:
     # clear cache
     SettingsContext.set(None)  # clear cache
@@ -66,12 +72,16 @@ def test_settings_getting_caches_singleton() -> None:
 @pytest.mark.integration
 def test_parse_env_file() -> None:
     settings = BaseSettings.get()
+    # "work_dir" and "assets_dir" are always set, assert that more than these two are
+    # set. This indicates an .env file was found and at least one setting was parsed.
     assert settings.model_fields_set != {"work_dir", "assets_dir"}
 
 
 def test_settings_getting_wrong_class_raises_error() -> None:
-    # initial type is determined by `settings` fixture
-    assert isinstance(SettingsContext.get(), BaseSettings)
+    # first get foo settings
+    FooSettings.get()
+    assert isinstance(SettingsContext.get(), FooSettings)
 
+    # then try to get another, non-related settings class
     with pytest.raises(RuntimeError, match="already loaded"):
-        FooSettings.get()
+        BarSettings.get()
