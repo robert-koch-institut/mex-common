@@ -5,13 +5,14 @@ from bdb import BdbQuit
 from functools import partial
 from textwrap import dedent
 from traceback import format_exc
-from typing import Callable
+from typing import Any, Callable
 
 import click
 from click import Command, Option
 from click.core import ParameterSource
 from click.exceptions import Abort, Exit
 from pydantic.fields import FieldInfo
+from pydantic_core import PydanticUndefined
 
 from mex.common.connector import reset_connector_context
 from mex.common.logging import echo, logger
@@ -65,12 +66,18 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
     # and add support for SecretStr fields with correct default values
     # https://pydantic-docs.helpmanual.io/usage/types/#secret-types
     field = settings_cls.model_fields[name]
+
+    field_type: Any = str
     if field.annotation in (int, bool, float):
         field_type = field.annotation
+
+    if field.default == PydanticUndefined:
+        default = None
+    elif field.annotation in (int, bool, float):
         default = field.default
     else:
-        field_type = str
         default = json.dumps(field.default, cls=MExEncoder).strip('"')
+
     return Option(
         _field_to_parameters(name, field),
         default=default,
@@ -80,6 +87,7 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
         show_default=True,
         show_envvar=True,
         type=field_type,
+        required=field.default == PydanticUndefined,
     )
 
 
