@@ -1,8 +1,6 @@
 import hashlib
 import pickle  # nosec
 from abc import abstractmethod
-from collections import ChainMap
-from enum import Enum
 from functools import cache
 from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
@@ -13,36 +11,6 @@ from pydantic.fields import ModelField
 from mex.common.types import Identifier
 
 ModelValuesT = TypeVar("ModelValuesT", bound=dict[str, Any])
-UNSET = object()
-
-
-class FlatValueMap(ChainMap[str, Any]):
-    """View to mappings that flattens lists, enums and replaces Nones with `N/A`."""
-
-    def __getitem__(self, key: str) -> str:
-        """Look up `key` in the underlying mappings and return a string representation.
-
-        Args:
-            key: Mapping key to look up
-
-        Returns:
-            str: Joined list, enum value, stringified value, or default `N/A`
-        """
-
-        def transform(value: Any) -> str:
-            if value is None:
-                return "N/A"
-            if isinstance(value, (list, tuple, set)):
-                return ", ".join(transform(v) for v in value)
-            if isinstance(value, Enum):
-                return str(value.value)
-            return str(value)
-
-        try:
-            value = super().__getitem__(key)
-        except:  # noqa: E722
-            value = None
-        return transform(value)
 
 
 class BaseModel(PydanticBaseModel):

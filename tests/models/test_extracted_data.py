@@ -1,12 +1,16 @@
 from enum import Enum
-from uuid import uuid4
 
 import pytest
 from pydantic import ValidationError
 
-from mex.common.identity.query import fetch_identity
-from mex.common.models import BaseModel, ExtractedData
-from mex.common.types import Identifier
+from mex.common.identity import get_provider
+from mex.common.models import (
+    MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    BaseModel,
+    ExtractedData,
+)
+from mex.common.types import Identifier, PrimarySourceID
 
 
 class Animal(Enum):
@@ -29,7 +33,7 @@ class ExtractedThing(BaseThing, ExtractedData):
 def test_extracted_data_requires_identifier_in_primary_source() -> None:
     with pytest.raises(ValidationError, match="identifierInPrimarySource"):
         ExtractedThing(
-            hadPrimarySource=Identifier.generate(seed=1),
+            hadPrimarySource=PrimarySourceID.generate(seed=1),
         )
 
 
@@ -40,56 +44,50 @@ def test_extracted_data_requires_had_primary_source() -> None:
         )
 
 
-def test_extracted_data_does_not_allow_custom_identifiers() -> None:
-    with pytest.raises(ValidationError, match="Identifier not found"):
+def test_extracted_data_does_not_allow_setting_identifier() -> None:
+    with pytest.raises(ValidationError, match="Identifier cannot be set manually"):
         ExtractedThing(
-            identifier=uuid4(),
-            hadPrimarySource=Identifier.generate(seed=1),
+            identifier=Identifier.generate(seed=0),
+            hadPrimarySource=PrimarySourceID.generate(seed=1),
             identifierInPrimarySource="0",
         )
 
 
-def test_extracted_data_does_not_allow_altered_identities() -> None:
-    extracted_data = ExtractedThing(
-        hadPrimarySource=Identifier.generate(seed=1),
-        identifierInPrimarySource="this",
+def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
+    thing_1 = ExtractedThing(
+        hadPrimarySource=PrimarySourceID.generate(seed=1),
+        identifierInPrimarySource="0",
+    )
+    thing_2 = ExtractedThing(
+        identifier=thing_1.identifier,
+        hadPrimarySource=PrimarySourceID.generate(seed=1),
+        identifierInPrimarySource="0",
     )
 
-    with pytest.raises(ValidationError, match="Identifier not found"):
+    assert thing_1.identifier == thing_2.identifier
+
+
+def test_extracted_data_does_not_allow_changing_mex_stable_target_id() -> None:
+    with pytest.raises(ValidationError, match="Cannot change `stableTargetId` of MEx"):
         ExtractedThing(
-            identifier=extracted_data.identifier,
-            hadPrimarySource=Identifier.generate(seed=1),
-            identifierInPrimarySource="that",
+            identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            identifierInPrimarySource=MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
+            stableTargetId=PrimarySourceID.generate(seed=12345),
         )
 
 
-def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
-    extracted_data_1 = ExtractedThing(
-        hadPrimarySource=Identifier.generate(seed=1),
-        identifierInPrimarySource="0",
-    )
-    extracted_data_2 = ExtractedThing(
-        identifier=extracted_data_1.identifier,
-        hadPrimarySource=Identifier.generate(seed=1),
-        identifierInPrimarySource="0",
-    )
-
-    assert extracted_data_1.identifier == extracted_data_2.identifier
-
-
-def test_extracted_data_get_entity_type() -> None:
-    assert ExtractedThing.get_entity_type() == "ExtractedThing"
-
-
-def test_entity_merged_id() -> None:
+def test_extracted_data_stores_identity_in_provider() -> None:
     thing = ExtractedThing(
-        identifierInPrimarySource="123",
-        hadPrimarySource=Identifier.generate(seed=1),
+        identifierInPrimarySource="12345",
+        hadPrimarySource=PrimarySourceID.generate(seed=12345),
     )
 
-    identity = fetch_identity(
+    provider = get_provider()
+    identities = provider.fetch(
         had_primary_source=thing.hadPrimarySource,
         identifier_in_primary_source=thing.identifierInPrimarySource,
     )
-    assert identity is not None
-    assert str(thing.stableTargetId) == identity.merged_id
+    assert len(identities) == 1
+    assert str(thing.identifier) == identities[0].identifier
+    assert str(thing.stableTargetId) == identities[0].stableTargetId
