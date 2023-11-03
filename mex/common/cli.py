@@ -12,7 +12,6 @@ from click import Command, Option
 from click.core import ParameterSource
 from click.exceptions import Abort, Exit
 from pydantic.fields import FieldInfo
-from pydantic_core import PydanticUndefined
 
 from mex.common.connector import reset_connector_context
 from mex.common.logging import echo, logger
@@ -71,7 +70,7 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
     if field.annotation in (int, bool, float):
         field_type = field.annotation
 
-    if field.default == PydanticUndefined:
+    if field.is_required():
         default = None
     elif field.annotation in (int, bool, float):
         default = field.default
@@ -87,7 +86,7 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
         show_default=True,
         show_envvar=True,
         type=field_type,
-        required=field.default == PydanticUndefined,
+        required=field.is_required(),
     )
 
 
