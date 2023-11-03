@@ -110,7 +110,7 @@
     }
   },
   {
-    "identifier": "https://mex.rki.de/item/resource-type-general-10",
+    "identifier": "https://mex.rki.de/item/resource-type-general-11",
     "inScheme": "https://mex.rki.de/item/resource-type-general",
     "notation": "1.3",
     "prefLabel": {
@@ -119,7 +119,7 @@
     }
   },
   {
-    "identifier": "https://mex.rki.de/item/resource-type-general-11",
+    "identifier": "https://mex.rki.de/item/resource-type-general-12",
     "inScheme": "https://mex.rki.de/item/resource-type-general",
     "notation": "1.4",
     "prefLabel": {
