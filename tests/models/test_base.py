@@ -4,8 +4,6 @@ from typing import Any, Optional, Union
 import pytest
 
 from mex.common.models import BaseModel
-from mex.common.models.base import FlatValueMap
-from mex.common.types import Timestamp
 
 
 class Animal(Enum):
@@ -13,26 +11,6 @@ class Animal(Enum):
 
     CAT = "cat"
     DOG = "dog"
-
-
-@pytest.mark.parametrize(
-    ("mapping", "expected"),
-    [
-        ({}, "N/A"),
-        ({"key": None}, "N/A"),
-        ({"key": Timestamp(1970, 1, 1)}, "1970-01-01"),
-        ({"key": ["foo", 0.1, Animal.CAT]}, "foo, 0.1, cat"),
-    ],
-    ids=[
-        "missing key",
-        "missing value",
-        "single value",
-        "list value",
-    ],
-)
-def test_flat_value_map(mapping: dict[str, Any], expected: str) -> None:
-    flat_value_map = FlatValueMap(mapping)
-    assert flat_value_map["key"] == expected
 
 
 @pytest.mark.parametrize(
