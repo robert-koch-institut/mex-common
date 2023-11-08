@@ -10,8 +10,8 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
-from mex.common.identity import IdentityProvider
-from mex.common.sinks import Sink
+from mex.common.identity.types import IdentityProvider
+from mex.common.sinks.types import Sink
 from mex.common.transform import MExEncoder
 from mex.common.types import AssetsPath
 
