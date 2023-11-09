@@ -63,11 +63,13 @@ class BaseOrganization(BaseModel):
             ),
         ]
     ] = []
-    wikidataId: str | None = Field(
-        None,
-        examples=["http://www.wikidata.org/entity/Q679041"],
-        pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
-    )
+    wikidataId: Annotated[
+        str,
+        Field(
+            examples=["http://www.wikidata.org/entity/Q679041"],
+            pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
+        ),
+    ] | None = None
 
 
 class ExtractedOrganization(BaseOrganization, ExtractedData):
