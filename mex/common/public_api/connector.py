@@ -39,7 +39,7 @@ PublicApiItemT = TypeVar(
 class PublicApiConnector(HTTPConnector):  # pragma: no cover
     """Connector class to handle authentication and interaction with the public API."""
 
-    API_VERSION: str = "v0"
+    API_VERSION: Final[str] = "v0"
 
     def _set_session(self) -> None:
         """Create and set request session."""
