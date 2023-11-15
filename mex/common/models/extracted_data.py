@@ -155,8 +155,6 @@ class ExtractedData(BaseExtractedData):
         # provided to the constructor, we raise an error because it should not be
         # allowed to change the identifier of an existing item.
         if identifier := values.get("identifier"):
-            if identity.identifier is None:
-                raise ValueError("Identifier not found by identity provider.")
             if isinstance(identifier, list):
                 if len(identifier) == 1:
                     identifier = identifier[0]
