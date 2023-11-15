@@ -67,9 +67,9 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
     field = settings_cls.model_fields[name]
 
     if field.annotation in (int, bool, float):
-        field_type = field.annotation
+        field_type: Any = field.annotation
     else:
-        field_type: Any = str
+        field_type = str
 
     if field.is_required():
         default = None

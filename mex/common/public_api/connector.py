@@ -1,7 +1,7 @@
 import json
 from base64 import b64decode
 from datetime import datetime, timedelta
-from typing import Generator, TypeVar, cast
+from typing import Final, Generator, TypeVar, cast
 from urllib.parse import urljoin
 from uuid import UUID
 
