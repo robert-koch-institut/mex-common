@@ -57,21 +57,29 @@ class BaseModel(PydanticBaseModel):
         return list_fields
 
     @classmethod
+    @cache
+    def _is_none_allowed(cls, annotation: type | None) -> bool:
+        """Check if None is an allowed value for the provided annotation.
+
+        caches results
+        """
+        validator = TypeAdapter(annotation)
+        try:
+            validator.validate_python(None)
+        except ValidationError:
+            return False
+        return True
+
+    @classmethod
     def _convert_non_list_to_list(
         cls, field: FieldInfo, value: Any
     ) -> Optional[list[Any]]:
         """Convert a non-list value to a list value by wrapping it in a list."""
         if value is None:
-            # test if None is an allowed value
-            validator = TypeAdapter(field.annotation)
-            try:
-                validator.validate_python(value)
-            # if a list is required, we interpret None as an empty list
-            except ValidationError:
-                return []
-            # if the field is allowed to be None, we can leave it at None
-            else:
+            if cls._is_none_allowed(field.annotation):
                 return None
+            # if a list is required, we interpret None as an empty list
+            return []
         # if the value is non-None, wrap it in a list
         return [value]
 
