@@ -66,9 +66,10 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
     # https://pydantic-docs.helpmanual.io/usage/types/#secret-types
     field = settings_cls.model_fields[name]
 
-    field_type: Any = str
     if field.annotation in (int, bool, float):
         field_type = field.annotation
+    else:
+        field_type: Any = str
 
     if field.is_required():
         default = None
