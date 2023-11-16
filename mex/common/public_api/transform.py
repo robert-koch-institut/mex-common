@@ -14,6 +14,11 @@ from mex.common.public_api.models import (
 from mex.common.types import Link, LinkLanguage, Text, TextLanguage
 
 
+def _is_type(type_: type, annotation: type | None) -> bool:
+    """Check if annotation is or contains the provided type."""
+    return type_ in (annotation, *get_args(annotation))
+
+
 def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
     """Convert an ExtractedData instance into a Public API item.
 
@@ -27,9 +32,8 @@ def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
     model_dict = model.model_dump(exclude_none=True)
     for field_name in sorted(model_dict):
         field = model.model_fields[field_name]
-        is_text_or_link = any(
-            type_ in (Text, Link)
-            for type_ in [field.annotation, *get_args(field.annotation)]
+        is_text_or_link = _is_type(Text, field.annotation) or _is_type(
+            Link, field.annotation
         )
         if is_text_or_link:
             model_values = getattr(model, field_name)
@@ -76,8 +80,8 @@ def transform_public_api_item_to_mex_model(
     for value in api_item.values:
         field_name = value.fieldName
         annotation = cls.model_fields[field_name].annotation
-        is_link = any(type_ is Link for type_ in [annotation, *get_args(annotation)])
-        is_text = any(type_ is Text for type_ in [annotation, *get_args(annotation)])
+        is_link = _is_type(Link, annotation)
+        is_text = _is_type(Text, annotation)
         if isinstance(value.fieldValue, list):
             values = value.fieldValue
         else:
