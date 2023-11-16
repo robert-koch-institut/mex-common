@@ -6,6 +6,22 @@ import pytest
 from mex.common.models import BaseModel
 
 
+class ComplexDummyModel(BaseModel):
+    """Dummy Model with multiple attributes."""
+
+    optional_str: Optional[str] = None
+    required_str: str = "default"
+    optional_list: Optional[list[str]] = None
+    required_list: list[str] = []
+
+
+def test__get_field_names_allowing_none():
+    assert ComplexDummyModel._get_field_names_allowing_none() == [
+        "optional_str",
+        "optional_list",
+    ]
+
+
 class Animal(Enum):
     """Dummy enum to use in tests."""
 
@@ -43,14 +59,8 @@ class Animal(Enum):
 def test_base_model_listyness_fix(
     data: dict[str, Any], expected: Union[str, dict[str, Any]]
 ) -> None:
-    class ListynessFixModel(BaseModel):
-        optional_str: Optional[str] = None
-        required_str: str = "default"
-        optional_list: Optional[list[str]] = None
-        required_list: list[str] = []
-
     try:
-        model = ListynessFixModel.model_validate(data)
+        model = ComplexDummyModel.model_validate(data)
     except Exception as error:
         assert str(expected) in str(error)
     else:
