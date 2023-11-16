@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -32,20 +34,30 @@ class BaseActivity(BaseModel):
 
     stableTargetId: ActivityID
     abstract: list[Text] = []
-    activityType: list[ActivityType] = Field(
-        [], examples=["https://mex.rki.de/item/activity-type-1"]
-    )
+    activityType: list[
+        Annotated[
+            ActivityType, Field(examples=["https://mex.rki.de/item/activity-type-1"])
+        ]
+    ] = []
     alternativeTitle: list[Text] = []
-    contact: list[OrganizationalUnitID | PersonID | ContactPointID] = Field(
+    contact: list[
+        Annotated[
+            OrganizationalUnitID | PersonID | ContactPointID,
+            Field(examples=[Identifier.generate(seed=42)]),
+        ]
+    ] = Field(
         ...,
-        examples=[Identifier.generate(seed=42)],
         min_length=1,
     )
     documentation: list[Link] = []
-    end: list[Timestamp] = Field(
-        [],
-        examples=["2024-01-17", "2024", "2024-01"],
-    )
+    end: list[
+        Annotated[
+            Timestamp,
+            Field(
+                examples=["2024-01-17", "2024", "2024-01"],
+            ),
+        ]
+    ] = []
     externalAssociate: list[OrganizationalUnitID | PersonID] = []
     funderOrCommissioner: list[OrganizationID] = []
     fundingProgram: list[str] = []
@@ -58,12 +70,13 @@ class BaseActivity(BaseModel):
         min_length=1,
     )
     shortName: list[Text] = []
-    start: list[Timestamp] = Field(
-        [],
-        examples=["2023-01-16", "2023", "2023-02"],
-    )
+    start: list[
+        Annotated[Timestamp, Field(examples=["2023-01-16", "2023", "2023-02"])]
+    ] = []
     succeeds: list[ActivityID] = []
-    theme: list[Theme] = Field([], examples=["https://mex.rki.de/item/theme-1"])
+    theme: list[
+        Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
+    ] = []
     title: list[Text] = Field(..., min_length=1)
     website: list[Link] = []
 

@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -10,9 +12,15 @@ class BaseContactPoint(BaseModel):
     """A contact point - for example, an interdepartmental project."""
 
     stableTargetId: ContactPointID
-    email: list[Email] = Field(
+    email: list[
+        Annotated[
+            Email,
+            Field(
+                examples=["info@rki.de"],
+            ),
+        ]
+    ] = Field(
         ...,
-        examples=["info@rki.de"],
         min_length=1,
     )
 

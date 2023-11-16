@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -32,19 +34,33 @@ class BaseVariable(BaseModel):
         examples=["https://mex.rki.de/item/data-type-1"],
     )
     description: list[Text] = []
-    label: list[Text] = Field(
+    label: list[
+        Annotated[
+            Text,
+            Field(
+                examples=[
+                    {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
+                ],
+            ),
+        ]
+    ] = Field(
         ...,
-        examples=[{"language": "de", "value": "Mehrere Treppenabsätze steigen"}],
         min_length=1,
     )
     usedIn: list[ResourceID] = Field(..., min_length=1)
-    valueSet: list[str] = Field(
+    valueSet: list[
+        Annotated[
+            str,
+            Field(
+                examples=[
+                    "Ja, stark eingeschränkt",
+                    "Ja, etwas eingeschränkt",
+                    "Nein, überhaupt nicht eingeschränkt",
+                ],
+            ),
+        ]
+    ] = Field(
         [],
-        examples=[
-            "Ja, stark eingeschränkt",
-            "Ja, etwas eingeschränkt",
-            "Nein, überhaupt nicht eingeschränkt",
-        ],
     )
 
 

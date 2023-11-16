@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -11,10 +13,14 @@ class BaseOrganizationalUnit(BaseModel):
 
     stableTargetId: OrganizationalUnitID
     alternativeName: list[Text] = []
-    email: list[Email] = Field(
-        [],
-        examples=["info@rki.de"],
-    )
+    email: list[
+        Annotated[
+            Email,
+            Field(
+                examples=["info@rki.de"],
+            ),
+        ]
+    ] = []
     name: list[Text] = Field(..., min_length=1)
     parentUnit: OrganizationalUnitID | None = None
     shortName: list[Text] = []

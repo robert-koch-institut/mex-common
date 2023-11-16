@@ -72,9 +72,14 @@ class BaseResource(BaseModel):
         None, examples=["https://mex.rki.de/item/frequency-1"]
     )
     alternativeTitle: list[Text] = []
-    anonymizationPseudonymization: list[AnonymizationPseudonymization] = Field(
-        [], examples=["https://mex.rki.de/item/anonymization-pseudonymization-1"]
-    )
+    anonymizationPseudonymization: list[
+        Annotated[
+            AnonymizationPseudonymization,
+            Field(
+                examples=["https://mex.rki.de/item/anonymization-pseudonymization-1"]
+            ),
+        ]
+    ] = []
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = Field(
         ..., min_length=1
     )
@@ -90,13 +95,17 @@ class BaseResource(BaseModel):
     instrumentToolOrApparatus: list[Text] = []
     isPartOf: list[ResourceID] = []
     keyword: list[Text] = []
-    language: list[Language] = Field(
-        [], examples=["https://mex.rki.de/item/language-1"]
-    )
-    license: list[License] = Field(
-        [],
-        examples=["https://mex.rki.de/item/license-1"],
-    )
+    language: list[
+        Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
+    ] = []
+    license: list[
+        Annotated[
+            License,
+            Field(
+                examples=["https://mex.rki.de/item/license-1"],
+            ),
+        ]
+    ] = []
     loincId: list[str] = []
     meshId: list[
         Annotated[str, Field(pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$")]
@@ -107,10 +116,14 @@ class BaseResource(BaseModel):
     publication: list[Link] = []
     publisher: list[OrganizationID] = []
     qualityInformation: list[Text] = []
-    resourceTypeGeneral: list[ResourceTypeGeneral] = Field(
-        [],
-        examples=["https://mex.rki.de/item/resource-type-general-1"],
-    )
+    resourceTypeGeneral: list[
+        Annotated[
+            ResourceTypeGeneral,
+            Field(
+                examples=["https://mex.rki.de/item/resource-type-general-1"],
+            ),
+        ]
+    ] = []
     resourceTypeSpecific: list[Text] = []
     rights: list[Text] = []
     sizeOfDataBasis: str | None = None
@@ -119,9 +132,9 @@ class BaseResource(BaseModel):
         None, examples=["https://mex.rki.de/item/data-processing-state-1"]
     )
     temporal: list[Timestamp | str] = []
-    theme: list[Theme] = Field(
-        ..., min_length=1, examples=["https://mex.rki.de/item/theme-1"]
-    )
+    theme: list[
+        Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
+    ] = Field(..., min_length=1)
     title: list[Text] = Field(..., min_length=1)
     unitInCharge: list[OrganizationalUnitID] = Field(..., min_length=1)
     wasGeneratedBy: ActivityID | None = None
