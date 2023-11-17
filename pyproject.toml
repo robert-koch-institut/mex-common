@@ -22,6 +22,7 @@ requests = "^2.31.0"
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"
 ipdb = "^0.13.13"
+mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "feature/package-model-as-python-dist"}
 mypy = "^1.6.1"
 mypy-extensions = "^1.0.0"
 pytest = "^7.4.3"

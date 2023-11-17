@@ -20,6 +20,7 @@ class BasePerson(BaseModel):
         examples=["Patapoutian", "Skłodowska-Curie", "Muta Maathai"],
     )
     fullName: list[str] = Field(
+        [],
         examples=["Anna Schmidt", "P. Meier", "Wolf Maria Hermann"],
     )
     givenName: list[str] = Field(
