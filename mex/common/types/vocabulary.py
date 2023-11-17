@@ -31,8 +31,8 @@ class Concept(BaseModel):
     identifier: AnyUrl
     inScheme: AnyUrl
     prefLabel: BilingualText
-    altLabel: Optional[BilingualText]
-    definition: Optional[BilingualText]
+    altLabel: Optional[BilingualText] = None
+    definition: Optional[BilingualText] = None
 
 
 @cache
@@ -62,7 +62,8 @@ class VocabularyLoader(EnumMeta):
         with open(path) as handle:
             raw_vocabularies = json.load(handle)
         return [
-            Concept.parse_obj(raw_vocabulary) for raw_vocabulary in raw_vocabularies
+            Concept.model_validate(raw_vocabulary)
+            for raw_vocabulary in raw_vocabularies
         ]
 
 
@@ -103,7 +104,7 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
                 elif language_label := label.dict().get(language.value):
                     searchable_labels.append(normalize(language_label))
             if search_term in searchable_labels:
-                return cls(concept.identifier)
+                return cls(str(concept.identifier))
         return None
 
 

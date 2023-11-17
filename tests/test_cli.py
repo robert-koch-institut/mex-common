@@ -5,12 +5,12 @@ from typing import Any, Union
 
 import pytest
 from click.testing import CliRunner
-from pydantic import HttpUrl
-from pydantic.fields import FieldInfo, ModelField
+from pydantic import HttpUrl, create_model
+from pydantic.fields import Field
 from pytest import LogCaptureFixture
 
 from mex.common.cli import _field_to_option, entrypoint
-from mex.common.settings import BaseSettings
+from mex.common.settings import BaseSettings, SettingsType
 
 
 class MyStr(str):
@@ -25,16 +25,14 @@ class MyEnum(Enum):
 
 
 @pytest.mark.parametrize(
-    ("field", "info_dict"),
+    ("name", "settings_cls", "info_dict"),
     [
         (
-            ModelField(
-                name="required_field",
-                class_validators={},
-                default=4.2,
-                model_config=BaseSettings.__config__,
-                required=True,
-                type_=float,
+            "required_field",
+            create_model(
+                "RequiredFieldSettings",
+                __base__=BaseSettings,
+                required_field=(float, Field()),
             ),
             {
                 "name": "required_field",
@@ -42,26 +40,25 @@ class MyEnum(Enum):
                 "opts": ["--required-field"],
                 "secondary_opts": [],
                 "type": {"param_type": "Float", "name": "float"},
-                "required": False,
+                "required": True,
                 "nargs": 1,
                 "multiple": False,
-                "default": 4.2,
+                "default": None,
                 "envvar": "MEX_REQUIRED_FIELD",
                 "help": None,
                 "prompt": None,
                 "is_flag": False,
-                "flag_value": False,
+                "flag_value": True,
                 "count": False,
                 "hidden": False,
             },
         ),
         (
-            ModelField(
-                name="url_field",
-                class_validators={},
-                default="https://example.com",
-                model_config=BaseSettings.__config__,
-                type_=HttpUrl,
+            "url_field",
+            create_model(
+                "UrlFieldSettings",
+                __base__=BaseSettings,
+                url_field=(HttpUrl, "https://example.com"),
             ),
             {
                 "name": "url_field",
@@ -83,12 +80,11 @@ class MyEnum(Enum):
             },
         ),
         (
-            ModelField(
-                name="str_like_field",
-                class_validators={},
-                default=MyStr("test"),
-                model_config=BaseSettings.__config__,
-                type_=MyStr,
+            "str_like_field",
+            create_model(
+                "StrLikeFieldSettings",
+                __base__=BaseSettings,
+                str_like_field=(MyStr, MyStr("test")),
             ),
             {
                 "name": "str_like_field",
@@ -110,13 +106,11 @@ class MyEnum(Enum):
             },
         ),
         (
-            ModelField(
-                name="optional_flag",
-                class_validators={},
-                default=False,
-                field_info=FieldInfo(description="This flag is optional"),
-                model_config=BaseSettings.__config__,
-                type_=bool,
+            "optional_flag",
+            create_model(
+                "OptionalFlagSettings",
+                __base__=BaseSettings,
+                optional_flag=(bool, Field(False, description="This flag is optional")),
             ),
             {
                 "name": "optional_flag",
@@ -138,13 +132,16 @@ class MyEnum(Enum):
             },
         ),
         (
-            ModelField(
-                name="enum_list",
-                class_validators={},
-                default=[MyEnum.FOO, MyEnum.BAR],
-                field_info=FieldInfo(description="Multiple values allowed"),
-                model_config=BaseSettings.__config__,
-                type_=list[MyEnum],
+            "enum_list",
+            create_model(
+                "EnumListSettings",
+                __base__=BaseSettings,
+                enum_list=(
+                    list[MyEnum],
+                    Field(
+                        [MyEnum.FOO, MyEnum.BAR], description="Multiple values allowed"
+                    ),
+                ),
             ),
             {
                 "name": "enum_list",
@@ -166,13 +163,14 @@ class MyEnum(Enum):
             },
         ),
         (
-            ModelField(
-                name="union_field",
-                class_validators={},
-                default=True,
-                field_info=FieldInfo(description="String or boolean"),
-                model_config=BaseSettings.__config__,
-                type_=Union[bool, str],  # type: ignore
+            "union_field",
+            create_model(
+                "UnionFieldSettings",
+                __base__=BaseSettings,
+                union_field=(
+                    Union[bool, str],
+                    Field(True, description="String or boolean"),
+                ),
             ),
             {
                 "name": "union_field",
@@ -203,8 +201,10 @@ class MyEnum(Enum):
         "union field",
     ],
 )
-def test_field_to_option(field: ModelField, info_dict: dict[str, Any]) -> None:
-    option = _field_to_option(field)
+def test_field_to_option(
+    name: str, settings_cls: type[SettingsType], info_dict: dict[str, Any]
+) -> None:
+    option = _field_to_option(name, settings_cls)
     assert option.to_info_dict() == info_dict
 
 

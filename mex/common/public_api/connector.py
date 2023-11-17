@@ -1,7 +1,7 @@
 import json
 from base64 import b64decode
 from datetime import datetime, timedelta
-from typing import Generator, TypeVar, cast
+from typing import Final, Generator, TypeVar, cast
 from urllib.parse import urljoin
 from uuid import UUID
 
@@ -39,7 +39,7 @@ PublicApiItemT = TypeVar(
 class PublicApiConnector(HTTPConnector):  # pragma: no cover
     """Connector class to handle authentication and interaction with the public API."""
 
-    API_VERSION = "v0"
+    API_VERSION: Final[str] = "v0"
 
     def _set_session(self) -> None:
         """Create and set request session."""
@@ -50,7 +50,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     def _set_url(self) -> None:
         """Set url of the host with api version."""
         settings = BaseSettings.get()
-        self.url = urljoin(settings.public_api_url, self.API_VERSION)
+        self.url = urljoin(str(settings.public_api_url), self.API_VERSION)
 
     def _check_availability(self) -> None:
         """Send an empty search request to verify the host is available."""
@@ -64,13 +64,13 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
         """Generate JWT using secret payload and attach it to session."""
         settings = BaseSettings.get()
         response = self.session.post(
-            settings.public_api_token_provider,
+            str(settings.public_api_token_provider),
             data=b64decode(settings.public_api_token_payload.get_secret_value()),
             timeout=self.TIMEOUT,
             headers={"Accept": "*/*", "Authorization": None},
         )
         response.raise_for_status()
-        auth_response = PublicApiAuthResponse.parse_obj(response.json())
+        auth_response = PublicApiAuthResponse.model_validate(response.json())
         expires_at = datetime.now() + timedelta(seconds=auth_response.expires_in)
         echo(
             f"authenticated with public api (expires {expires_at})", fg="bright_magenta"
@@ -111,7 +111,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             Generator for identifiers of manipulated items
         """
         response = self.request("GET", f"jobs/{job_id}/items")
-        items_response = PublicApiJobItemsResponse.parse_obj(response)
+        items_response = PublicApiJobItemsResponse.model_validate(response)
         for item_id in items_response.itemIds:
             if isinstance(item_id, UUID):
                 if item := self.get_item(item_id):
@@ -187,14 +187,14 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
                     values=[model_cls.get_entity_type()], axis="entityName"
                 ),
             ],
-            fields=list(model_cls.__fields__),
+            fields=list(model_cls.model_fields),
         )
         response = self.request(
             "POST",
             "query/search",
             request,
         )
-        search_response = PublicApiSearchResponse.parse_obj(response)
+        search_response = PublicApiSearchResponse.model_validate(response)
         if search_response.numFound == 1 and len(search_response.items) == 1:
             return search_response.items[0]
         return None
@@ -217,7 +217,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             # re-raise any unexpected errors
             raise error
         else:
-            return PublicApiItem.parse_obj(response)
+            return PublicApiItem.model_validate(response)
 
     def search_model(
         self, model_cls: type[ModelT], identifier: Identifier
@@ -303,14 +303,14 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
                     values=[model_cls.get_entity_type()], axis="entityName"
                 )
             ],
-            fields=list(model_cls.__fields__),
+            fields=list(model_cls.model_fields),
         )
         response = self.request(
             "POST",
             "query/search",
             request,
         )
-        return PublicApiSearchResponse.parse_obj(response).items
+        return PublicApiSearchResponse.model_validate(response).items
 
     def search_mex_model_items(
         self, model_cls: type[ModelT], offset: int = 0, limit: int = 10
@@ -343,4 +343,4 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
         if offset_item_id:
             endpoint += f"?next={offset_item_id}"
         response = self.request("GET", endpoint)
-        return PublicApiMetadataItemsResponse.parse_obj(response)
+        return PublicApiMetadataItemsResponse.model_validate(response)

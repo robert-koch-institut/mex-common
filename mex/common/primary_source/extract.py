@@ -19,4 +19,4 @@ def extract_seed_primary_sources() -> Generator[SeedPrimarySource, None, None]:
     settings = BaseSettings.get()
     with open(settings.primary_sources_path, "r") as fh:
         for raw in json.load(fh):
-            yield SeedPrimarySource.parse_obj(raw)
+            yield SeedPrimarySource.model_validate(raw)

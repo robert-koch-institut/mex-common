@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any, Literal
 from uuid import UUID
 
-from pydantic import Extra, Field, validator
+from pydantic import ConfigDict, Field, field_validator
 
 from mex.common.models import BaseModel
 from mex.common.types import (
@@ -23,9 +23,7 @@ PublicApiFieldValueTypesOrList = (
 class PublicApiBaseModel(BaseModel):
     """Common Public API base class."""
 
-    class Config:
-        extra = Extra.ignore
-        min_anystr_length = 0
+    model_config = ConfigDict(extra="ignore", str_min_length=0)
 
 
 class PublicApiAxisConstraint(PublicApiBaseModel):
@@ -50,11 +48,12 @@ class PublicApiSearchRequest(PublicApiBaseModel):
 class PublicApiField(PublicApiBaseModel):
     """A single field of an item as represented in the Public API format."""
 
-    fieldName: str = Field(..., include=True)
-    fieldValue: PublicApiFieldValueTypesOrList = Field(..., include=True)
-    language: LinkLanguage | TextLanguage | None = Field(None, include=True)
+    fieldName: str
+    fieldValue: PublicApiFieldValueTypesOrList
+    language: LinkLanguage | TextLanguage | None = None
 
-    @validator("language", pre=True)
+    @field_validator("language", mode="before")
+    @classmethod
     def fix_language(cls, value: Any) -> Any:
         """Only try to parse languages when the string is non-empty."""
         if isinstance(value, str) and value.strip() == "":
@@ -65,10 +64,10 @@ class PublicApiField(PublicApiBaseModel):
 class PublicApiItem(PublicApiBaseModel):
     """Public API item representing an entity or extracted data model."""
 
-    entityType: str = Field(..., include=True)
-    itemId: UUID | None = None
-    businessId: str
-    values: list[PublicApiField] = Field(..., include=True)
+    entityType: str
+    itemId: UUID | None = Field(None, exclude=True)
+    businessId: str = Field(..., exclude=True)
+    values: list[PublicApiField]
 
     @property
     def stableTargetId(self) -> Identifier:  # noqa: N802
@@ -87,7 +86,7 @@ class PublicApiAuthResponse(PublicApiBaseModel):
     """Response body that is expected for auth requests."""
 
     access_token: str
-    refresh_token: str | None
+    refresh_token: str | None = None
     token_type: str
     expires_in: int
 
@@ -95,9 +94,9 @@ class PublicApiAuthResponse(PublicApiBaseModel):
 class PublicApiItemWithoutValues(PublicApiBaseModel):
     """Public API item representing an entity or extracted data model."""
 
-    entityType: str = Field(..., include=True)
-    itemId: UUID | None
-    businessId: str
+    entityType: str
+    itemId: UUID | None = Field(None, exclude=True)
+    businessId: str = Field(..., exclude=True)
 
     @property
     def stableTargetId(self) -> Identifier:  # noqa: N802

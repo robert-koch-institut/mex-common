@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mex-common"
-version = "0.14.1"
+version = "0.15.0"
 description = "RKI MEx common library."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
@@ -15,8 +15,9 @@ click = "^8.1.7"
 langdetect = "^1.0.9"
 ldap3 = "^2.9.1"
 numpy = "^1.25.2"
-pandas = "^2.0.3"
-pydantic = { version = "^1.10.12", extras = ["dotenv", "email"] }
+pandas = "^2.1.0"
+pydantic =  "^2.1.1"
+pydantic-settings = "^2.0.2"
 requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -24,6 +25,7 @@ black = "^23.10.1"
 ipdb = "^0.13.13"
 mypy = "^1.6.1"
 mypy-extensions = "^1.0.0"
+pandas-stubs = "^2.0.3.230814"
 pytest = "^7.4.3"
 pytest-cov = "^4.1.0"
 ruff = "^0.1.4"

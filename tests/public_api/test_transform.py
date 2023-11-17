@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 from pytest import MonkeyPatch
@@ -6,6 +6,7 @@ from pytest import MonkeyPatch
 from mex.common.models import EXTRACTED_MODEL_CLASSES_BY_NAME, MExModel
 from mex.common.public_api.models import PublicApiItem
 from mex.common.public_api.transform import (
+    _is_type,
     transform_mex_model_to_public_api_item,
     transform_public_api_item_to_mex_model,
 )
@@ -23,7 +24,7 @@ from mex.common.types import (
 
 class DummyModel(MExModel):
     stableTargetId: Identifier
-    optional: Optional[str]
+    optional: str | None = None
     oneString: str
     manyStrings: list[str]
     oneText: Text
@@ -126,6 +127,21 @@ def raw_api_item() -> dict[str, Any]:
     }
 
 
+@pytest.mark.parametrize(
+    ("type_", "annotation", "expected"),
+    [
+        (str, str, True),
+        (int, int, True),
+        (str, int, False),
+        (str, list[int], False),
+        (str, list[str], True),
+        (str, str | None, True),
+    ],
+)
+def test__is_type(type_: type, annotation: type | None, expected: bool) -> None:
+    assert _is_type(type_, annotation) is expected
+
+
 def test_transform_mex_model_to_public_api_item(
     raw_mex_model: dict[str, Any], raw_api_item: dict[str, Any]
 ) -> None:
@@ -134,7 +150,7 @@ def test_transform_mex_model_to_public_api_item(
 
     dummy_item = transform_mex_model_to_public_api_item(dummy_model)
 
-    assert dummy_item.dict(exclude_none=True) == raw_api_item
+    assert dummy_item.model_dump(exclude_none=True) == raw_api_item
 
 
 def test_transform_public_api_item_to_mex_model(
@@ -150,7 +166,7 @@ def test_transform_public_api_item_to_mex_model(
     dummy_model = transform_public_api_item_to_mex_model(dummy_item)
 
     assert dummy_model
-    assert dummy_model.dict(exclude_none=True) == raw_mex_model
+    assert dummy_model.model_dump(exclude_none=True) == raw_mex_model
 
 
 def test_transform_public_api_item_to_mex_model_unknown() -> None:

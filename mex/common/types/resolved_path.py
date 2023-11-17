@@ -1,11 +1,11 @@
 from abc import ABCMeta, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Type, TypeVar, Union
+
+from pydantic_core import core_schema
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.typing import CallableGenerator
-
     from mex.common.settings import BaseSettings
 
 ResolvedPathT = TypeVar("ResolvedPathT", bound="ResolvedPath")
@@ -30,21 +30,39 @@ class ResolvedPath(PathLike[str], metaclass=ABCMeta):
         """Return the file system path representation."""
         return self.resolve().__fspath__()
 
+    @classmethod
     @abstractmethod
     def __get_base_path__(cls, settings: "BaseSettings") -> Path:  # pragma: no cover
         """Return the base path that relative paths will follow."""
 
     @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        """Get all validators for this class."""
-        yield cls.validate
+    def __get_pydantic_core_schema__(cls, _source: Type[Any]) -> core_schema.CoreSchema:
+        """Set schema to str schema."""
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
+        )
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(ResolvedPath),
+            ]
+        )
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
+        )
 
     @classmethod
     def validate(cls: type[ResolvedPathT], value: Any) -> "ResolvedPathT":
         """Convert a string value to a Text instance."""
         if isinstance(value, (str, Path, ResolvedPath)):
             return cls(value)
-        raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
+        raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     def resolve(self) -> Path:
         """Lazily resolve the underlying path to an absolute path.

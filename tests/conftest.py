@@ -11,7 +11,7 @@ pytest_plugins = ("mex.common.testing.plugin",)
 @pytest.fixture
 def extracted_person() -> ExtractedPerson:
     """Return a dummy extracted person for testing purposes."""
-    return ExtractedPerson.construct(
+    return ExtractedPerson.model_construct(
         identifierInPrimarySource=str(UUID(int=990, version=4)),
         identifier=Identifier.generate(seed=550),
         stableTargetId=Identifier.generate(seed=876),

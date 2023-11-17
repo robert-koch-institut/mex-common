@@ -188,7 +188,7 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
     search_results = list(search_organization_by_label(item_label="TEST"))
 
     assert len(search_results) == 2
-    assert search_results[0].dict() == expected_item_details_response
+    assert search_results[0].model_dump() == expected_item_details_response
 
 
 @pytest.mark.integration
@@ -287,7 +287,7 @@ def test_get_organization_details() -> None:
 
     organization_details = _get_organization_details(item_id="Q679041")
 
-    assert organization_details.dict(exclude_none=True) == expected
+    assert organization_details.model_dump(exclude_none=True) == expected
 
 
 @pytest.mark.usefixtures(
@@ -408,4 +408,4 @@ def test_get_organization_details_mocked(monkeypatch: MonkeyPatch) -> None:
 
     organization_details = _get_organization_details(item_id="Q26678")
 
-    assert organization_details.dict() == expected
+    assert organization_details.model_dump() == expected

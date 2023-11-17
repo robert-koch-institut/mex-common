@@ -12,7 +12,7 @@ class WikidataQueryServiceConnector(HTTPConnector):
     def _set_url(self) -> None:
         """Set url of the host."""
         settings = BaseSettings.get()
-        self.url = settings.wiki_query_service_url
+        self.url = str(settings.wiki_query_service_url)
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the host is available."""
@@ -41,7 +41,7 @@ class WikidataAPIConnector(HTTPConnector):
     def _set_url(self) -> None:
         """Set url of the host."""
         settings = BaseSettings.get()
-        self.url = settings.wiki_api_url
+        self.url = str(settings.wiki_api_url)
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the host is available."""

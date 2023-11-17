@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+import pytest
+from pydantic import BaseModel, ValidationError
 
 from mex.common.types import Text, TextLanguage
 
@@ -36,17 +37,22 @@ def test_parsing_from_string() -> None:
     class DummyModel(BaseModel):
         text: Text
 
-    model = DummyModel.parse_obj({"text": "we are parsing a string here"})
-    assert model.dict() == {
+    model = DummyModel.model_validate({"text": "we are parsing a string here"})
+    assert model.model_dump() == {
         "text": {"value": "we are parsing a string here", "language": TextLanguage.EN}
     }
 
-    model = DummyModel.parse_obj({"text": {"value": "and here, we parsing an object"}})
-    assert model.dict() == {
+    with pytest.raises(ValidationError):
+        _ = DummyModel.model_validate({"text": 1})
+
+    model = DummyModel.model_validate(
+        {"text": {"value": "and here, we parsing an object"}}
+    )
+    assert model.model_dump() == {
         "text": {"value": "and here, we parsing an object", "language": TextLanguage.EN}
     }
 
-    model = DummyModel.parse_obj(
+    model = DummyModel.model_validate(
         {
             "text": {
                 "value": "now we parse an object with a language key",
@@ -54,7 +60,7 @@ def test_parsing_from_string() -> None:
             }
         }
     )
-    assert model.dict() == {
+    assert model.model_dump() == {
         "text": {
             "value": "now we parse an object with a language key",
             "language": TextLanguage.DE,

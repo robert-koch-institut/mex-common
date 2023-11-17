@@ -14,4 +14,4 @@ class LDAPActor(BaseModel):
     @staticmethod
     def get_ldap_fields() -> tuple[str, ...]:
         """Return the fields that should be fetched from LDAP."""
-        return tuple(sorted(LDAPActor.__fields__))
+        return tuple(sorted(LDAPActor.model_fields))
