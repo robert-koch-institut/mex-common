@@ -620,7 +620,7 @@ develop = false
 type = "git"
 url = "https://github.com/robert-koch-institut/mex-model.git"
 reference = "feature/package-model-as-python-dist"
-resolved_reference = "310761a52dd425504e960f5edbe56a28f79ae098"
+resolved_reference = "172e5b7515b9e6fe7d39e39400f68903e9dce042"
 
 [[package]]
 name = "mypy"
