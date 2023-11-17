@@ -7,7 +7,9 @@ from mex.common.types import (
     AccessPlatformID,
     AccessRestriction,
     DistributionID,
+    License,
     Link,
+    OrganizationID,
     PersonID,
     Timestamp,
     VocabularyEnum,
@@ -36,16 +38,18 @@ class BaseDistribution(BaseModel):
     dataManager: list[PersonID] = []
     downloadURL: Link | None = None
     issued: Timestamp
-    license: list[Link] = []
+    license: License | None = Field(
+        None, examples=["https://mex.rki.de/item/license-1"]
+    )
     mediaType: MIMEType | None = Field(
         None,
         examples=["https://mex.rki.de/item/mime-type-1"],
     )
-    modified: list[Timestamp] = []
+    modified: Timestamp | None = None
     otherContributor: list[PersonID] = []
     projectLeader: list[PersonID] = []
     projectManager: list[PersonID] = []
-    publisher: list[PersonID] = Field(..., min_length=1)
+    publisher: list[OrganizationID] = Field(..., min_length=1)
     researcher: list[PersonID] = []
     title: str = Field(
         ...,

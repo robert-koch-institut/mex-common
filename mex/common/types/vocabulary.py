@@ -118,3 +118,9 @@ class Theme(VocabularyEnum):
     """The theme type."""
 
     __vocabulary__ = "theme"
+
+
+class License(VocabularyEnum):
+    """License type."""
+
+    __vocabulary__ = "license"

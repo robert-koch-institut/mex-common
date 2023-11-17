@@ -11,6 +11,7 @@ from mex.common.types import (
     ActivityID,
     ContactPointID,
     DistributionID,
+    License,
     Link,
     OrganizationalUnitID,
     OrganizationID,
@@ -53,12 +54,6 @@ class Language(VocabularyEnum):
     __vocabulary__ = "language"
 
 
-class License(VocabularyEnum):
-    """License type."""
-
-    __vocabulary__ = "license"
-
-
 class BaseResource(BaseModel):
     """A defined piece or collection of information."""
 
@@ -85,7 +80,7 @@ class BaseResource(BaseModel):
     )
     contributingUnit: list[OrganizationalUnitID] = []
     contributor: list[PersonID] = []
-    created: list[Timestamp] = []
+    created: Timestamp | None = None
     creator: list[PersonID] = []
     description: list[Text] = []
     distribution: list[DistributionID] = []
@@ -98,21 +93,23 @@ class BaseResource(BaseModel):
     language: list[
         Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
     ] = []
-    license: list[
+    license: License | None = Field(
+        None, examples=["https://mex.rki.de/item/license-1"]
+    )
+    loincId: list[str] = []
+    meshId: list[
         Annotated[
-            License,
+            str,
             Field(
-                examples=["https://mex.rki.de/item/license-1"],
+                pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$",
+                examples=["http://id.nlm.nih.gov/mesh/D001604"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
-    loincId: list[str] = []
-    meshId: list[
-        Annotated[str, Field(pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$")]
-    ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: list[Timestamp] = []
+    modified: Timestamp | None = None
     publication: list[Link] = []
     publisher: list[OrganizationID] = []
     qualityInformation: list[Text] = []
@@ -128,10 +125,15 @@ class BaseResource(BaseModel):
     rights: list[Text] = []
     sizeOfDataBasis: str | None = None
     spatial: list[Text] = []
-    stateOfDataProcessing: DataProcessingState | None = Field(
-        None, examples=["https://mex.rki.de/item/data-processing-state-1"]
-    )
-    temporal: list[Timestamp | str] = []
+    stateOfDataProcessing: list[
+        Annotated[
+            DataProcessingState,
+            Field(
+                examples=["https://mex.rki.de/item/data-processing-state-1"],
+            ),
+        ]
+    ] = []
+    temporal: Timestamp | str | None = None
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
     ] = Field(..., min_length=1)

@@ -26,6 +26,7 @@ from mex.common.types.timestamp import (
 )
 from mex.common.types.vocabulary import (
     AccessRestriction,
+    License,
     Theme,
     VocabularyEnum,
     VocabularyLoader,
@@ -42,6 +43,7 @@ __all__ = (
     "DistributionID",
     "Email",
     "Identifier",
+    "License",
     "Link",
     "LinkLanguage",
     "OrganizationalUnitID",

@@ -167,6 +167,7 @@ class Timestamp:
         """Modify the schema to add the class name as title and examples."""
         json_schema = handler(core_schema_)
         json_schema["title"] = cls.__name__
+        json_schema["format"] = "date-time"
         json_schema["examples"] = [
             "2011",
             "2019-03",

@@ -45,30 +45,19 @@ class BaseActivity(BaseModel):
             OrganizationalUnitID | PersonID | ContactPointID,
             Field(examples=[Identifier.generate(seed=42)]),
         ]
-    ] = Field(
-        ...,
-        min_length=1,
-    )
+    ] = Field(..., min_length=1)
     documentation: list[Link] = []
     end: list[
-        Annotated[
-            Timestamp,
-            Field(
-                examples=["2024-01-17", "2024", "2024-01"],
-            ),
-        ]
+        Annotated[Timestamp, Field(examples=["2024-01-17", "2024", "2024-01"])]
     ] = []
-    externalAssociate: list[OrganizationalUnitID | PersonID] = []
+    externalAssociate: list[OrganizationID | PersonID] = []
     funderOrCommissioner: list[OrganizationID] = []
     fundingProgram: list[str] = []
     involvedPerson: list[PersonID] = []
     involvedUnit: list[OrganizationalUnitID] = []
     isPartOfActivity: list[ActivityID] = []
     publication: list[Link] = []
-    responsibleUnit: list[OrganizationalUnitID] = Field(
-        ...,
-        min_length=1,
-    )
+    responsibleUnit: list[OrganizationalUnitID] = Field(..., min_length=1)
     shortName: list[Text] = []
     start: list[
         Annotated[Timestamp, Field(examples=["2023-01-16", "2023", "2023-02"])]

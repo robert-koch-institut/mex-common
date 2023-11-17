@@ -33,7 +33,7 @@ class BasePerson(BaseModel):
         Annotated[
             str,
             Field(
-                examples=["Anna Schmidt", "P. Meier", "Wolf Maria Hermann"],
+                examples=["Juturna Felicitás", "M. Berhanu", "Keone Seong-Hyeon"],
             ),
         ]
     ] = []
@@ -41,7 +41,7 @@ class BasePerson(BaseModel):
         Annotated[
             str,
             Field(
-                examples=["Wangari", "Marie Salomea", "May-Britt"],
+                examples=["Romāns", "Marie Salomea", "May-Britt"],
             ),
         ]
     ] = []
@@ -51,6 +51,7 @@ class BasePerson(BaseModel):
             Field(
                 pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
                 examples=["https://isni.org/isni/0000000109403744"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
@@ -61,6 +62,7 @@ class BasePerson(BaseModel):
             Field(
                 pattern=r"^https://orcid\.org/[-X0-9]{9,21}$",
                 examples=["https://orcid.org/0000-0002-9079-593X"],
+                json_schema_extra={"format": "uri"},
             ),
         ],
     ] = []
