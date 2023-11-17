@@ -33,7 +33,7 @@ def test_authenticate_mocked(mocked_api_session: MagicMock) -> None:
     connector = PublicApiConnector.get()
 
     mocked_post.assert_called_once_with(
-        settings.public_api_token_provider,
+        str(settings.public_api_token_provider),
         data=b64decode(settings.public_api_token_payload.get_secret_value()),
         timeout=PublicApiConnector.TIMEOUT,
         headers={"Accept": "*/*", "Authorization": None},
@@ -138,6 +138,7 @@ def test_search_model_that_does_not_exist() -> None:
     random_id = Identifier.generate()
     connector = PublicApiConnector.get()
 
+    result = None
     try:
         result = connector.search_model(ExtractedActivity, random_id)
     except HTTPError as error:

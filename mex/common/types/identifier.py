@@ -1,11 +1,11 @@
 import re
 import string
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, Type, TypeVar
 from uuid import UUID, uuid4
 
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.typing import CallableGenerator
-
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema, core_schema
 
 ALPHABET = string.ascii_letters + string.digits
 MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
@@ -33,12 +33,7 @@ class Identifier(str):
         return cls(output[::-1])
 
     @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        """Get all validators for this class."""
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, value: Any) -> "Identifier":
+    def validate(cls: type[IdentifierT], value: Any) -> IdentifierT:
         """Validate a string, UUID or Identifier."""
         if isinstance(value, (str, UUID, Identifier)):
             value = str(value)
@@ -47,16 +42,31 @@ class Identifier(str):
             if re.match(UUID_PATTERN, value):
                 return cls.generate(seed=UUID(value).int)
             raise ValueError(f"Invalid identifier format: {value}")
-        raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
+        raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @classmethod
-    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        """Modify the schema to add the ID regex and correct title."""
-        field_schema.update(
-            title=cls.__name__,
-            type="string",
-            pattern=MEX_ID_PATTERN,
+    def __get_pydantic_core_schema__(
+        cls, source: Type[Any], handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Modify the schema to add the ID regex."""
+        identifier_schema = {
+            "type": "str",
+            "pattern": MEX_ID_PATTERN,
+        }
+        return core_schema.no_info_before_validator_function(
+            cls.validate,
+            identifier_schema,
         )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        """Modify the schema to add the class name as title."""
+        json_schema = handler(core_schema_)
+        json_schema = handler.resolve_ref_schema(json_schema)
+        json_schema["title"] = cls.__name__
+        return json_schema
 
     def __repr__(self) -> str:
         """Overwrite the default representation."""

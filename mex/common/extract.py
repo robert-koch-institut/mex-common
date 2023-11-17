@@ -30,11 +30,14 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
     Returns:
         Mapping from field alias to dtype strings
     """
-    return {f.alias: PANDAS_DTYPE_MAP[f.type_] for f in model.__fields__.values()}
+    return {
+        f.alias or name: PANDAS_DTYPE_MAP[f.annotation or type(None)]
+        for name, f in model.model_fields.items()
+    }
 
 
 def parse_csv(
-    path_or_buffer: Union[str, Path, "ReadCsvBuffer"],
+    path_or_buffer: Union[str, Path, "ReadCsvBuffer[Any]"],
     into: type[ModelT],
     chunksize: int = 10,
     **kwargs: Any,
@@ -58,7 +61,7 @@ def parse_csv(
                 row.replace(to_replace=np.nan, value=None, inplace=True)
                 row.replace(regex=r"^\s*$", value=None, inplace=True)
                 try:
-                    model = into.parse_obj(row)
+                    model = into.model_validate(row.to_dict())
                     echo(f"[parse csv] {into.__name__} {index} OK")
                     yield model
                 except ValidationError as error:

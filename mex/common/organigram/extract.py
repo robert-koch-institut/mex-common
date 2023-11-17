@@ -21,7 +21,7 @@ def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
     settings = BaseSettings.get()
     with open(settings.organigram_path, "r") as fh:
         for raw in json.load(fh):
-            yield OrganigramUnit.parse_obj(raw)
+            yield OrganigramUnit.model_validate(raw)
 
 
 def _get_synonyms(

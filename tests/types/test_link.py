@@ -8,28 +8,30 @@ def test_parsing_from_string() -> None:
         link: Link
 
     # plain link
-    model = DummyModel.parse_obj({"link": "https://example.com"})
-    assert model.dict(exclude_none=True) == {"link": {"url": "https://example.com"}}
+    model = DummyModel.model_validate({"link": "https://example.com"})
+    assert model.model_dump(exclude_none=True) == {
+        "link": {"url": "https://example.com"}
+    }
 
     # link with title
-    model = DummyModel.parse_obj({"link": "[Example](https://example.com)"})
-    assert model.dict(exclude_none=True) == {
+    model = DummyModel.model_validate({"link": "[Example](https://example.com)"})
+    assert model.model_dump(exclude_none=True) == {
         "link": {"url": "https://example.com", "title": "Example"}
     }
 
     # link with funky characters
-    model = DummyModel.parse_obj(
+    model = DummyModel.model_validate(
         {"link": r"[\[TEST\] Example](https://example.com/test?q=\(\.\*\))"}
     )
-    assert model.dict(exclude_none=True) == {
+    assert model.model_dump(exclude_none=True) == {
         "link": {"url": "https://example.com/test?q=(.*)", "title": "[TEST] Example"}
     }
 
     # nested model
-    model = DummyModel.parse_obj(
+    model = DummyModel.model_validate(
         {"link": {"url": "https://example.com", "title": "Example", "language": "en"}}
     )
-    assert model.dict(exclude_none=True) == {
+    assert model.model_dump(exclude_none=True) == {
         "link": {
             "url": "https://example.com",
             "title": "Example",
@@ -40,15 +42,15 @@ def test_parsing_from_string() -> None:
 
 def test_rendering_as_string() -> None:
     # plain link
-    link = Link.parse_obj({"url": "https://example.com"})
+    link = Link.model_validate({"url": "https://example.com"})
     assert str(link) == "https://example.com"
 
     # link with title
-    link = Link.parse_obj({"url": "https://example.com", "title": "Example"})
+    link = Link.model_validate({"url": "https://example.com", "title": "Example"})
     assert str(link) == r"[Example](https://example\.com)"
 
     # link with funky characters
-    link = Link.parse_obj(
+    link = Link.model_validate(
         {"url": "https://example.com/test?q=(.*)", "title": "[TEST] Example"}
     )
     assert str(link) == r"[\[TEST\] Example](https://example\.com/test?q=\(\.\*\))"

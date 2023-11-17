@@ -10,7 +10,7 @@ def test_assign() -> None:
 
     new_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
-    assert new_identity.dict() == dict(
+    assert new_identity.model_dump() == dict(
         hadPrimarySource=had_primary_source,
         identifierInPrimarySource=identifier_in_primary_source,
         stableTargetId=Joker(),
@@ -19,7 +19,7 @@ def test_assign() -> None:
 
     found_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
-    assert found_identity.dict() == dict(
+    assert found_identity.model_dump() == dict(
         hadPrimarySource=had_primary_source,
         identifierInPrimarySource=identifier_in_primary_source,
         stableTargetId=new_identity.stableTargetId,

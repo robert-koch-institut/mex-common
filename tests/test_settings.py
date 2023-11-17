@@ -13,11 +13,11 @@ def test_debug_setting() -> None:
 
 
 def test_settings_text() -> None:
-    # Test settings can be converted to a ledigble multi-line paragraph
+    # Test settings can be converted to a legible multi-line paragraph
     settings = BaseSettings.get()
     text = settings.text()
 
-    assert len(text.splitlines()) == len(BaseSettings.__fields__)
+    assert len(text.splitlines()) == len(BaseSettings.model_fields)
     assert re.search(r"debug\s+False", text)
     assert re.search(r"api_token_payload\s+\*+", text)  # masked secret
 
@@ -67,6 +67,14 @@ def test_settings_getting_caches_singleton() -> None:
     # repeated get
     settings_fetched_again = FooSettings.get()
     assert settings_fetched_again is settings
+
+
+@pytest.mark.integration
+def test_parse_env_file() -> None:
+    settings = BaseSettings.get()
+    # "work_dir" and "assets_dir" are always set, assert that more than these two are
+    # set. This indicates an .env file was found and at least one setting was parsed.
+    assert settings.model_fields_set != {"work_dir", "assets_dir"}
 
 
 def test_settings_getting_wrong_class_raises_error() -> None:

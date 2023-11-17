@@ -16,7 +16,7 @@ SPECIFIED_SCHEMA_PATH = Path(".venv", "src", "mex-model", "schema", "entities")
 GENERATED_SCHEMAS = dict(
     sorted(
         {
-            name.removeprefix("Extracted"): model.schema()
+            name.removeprefix("Extracted"): model.model_json_schema()
             for name, model in EXTRACTED_MODEL_CLASSES_BY_NAME.items()
         }.items()
     )

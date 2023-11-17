@@ -34,7 +34,7 @@ def test_transform_organigram_units_to_organizational_units(
     ]
 
     # check serialized as expected
-    assert parent_extracted_unit.dict(exclude_none=True) == {
+    assert parent_extracted_unit.model_dump(exclude_none=True) == {
         "identifier": Joker(),
         "hadPrimarySource": extracted_primary_sources["organigram"].stableTargetId,
         "identifierInPrimarySource": "parent-unit",

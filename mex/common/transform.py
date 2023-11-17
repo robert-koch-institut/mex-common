@@ -6,8 +6,8 @@ from pathlib import PurePath
 from typing import Any
 from uuid import UUID
 
+from pydantic import AnyUrl, SecretStr
 from pydantic import BaseModel as PydanticModel
-from pydantic import SecretStr
 
 from mex.common.types import ResolvedPath, Timestamp
 
@@ -18,7 +18,9 @@ class MExEncoder(json.JSONEncoder):
     def default(self, obj: Any) -> Any:
         """Implement custom serialization rules."""
         if isinstance(obj, PydanticModel):
-            return obj.dict()
+            return obj.model_dump()
+        if isinstance(obj, AnyUrl):
+            return str(obj)
         if isinstance(obj, SecretStr):
             return obj.get_secret_value()
         if isinstance(obj, Enum):
