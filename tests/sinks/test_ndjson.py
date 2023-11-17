@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Optional
 from uuid import UUID
 
 from pydantic import UUID4
@@ -16,9 +15,9 @@ class DummyEnum(Enum):
 
 class Thing(MExModel):
     str_attr: str
-    enum_attr: Optional[DummyEnum]
-    uuid_attr: Optional[UUID4]
-    ts_attr: Optional[Timestamp]
+    enum_attr: DummyEnum | None = None
+    uuid_attr: UUID4 | None = None
+    ts_attr: Timestamp | None = None
 
     @classmethod
     def get_entity_type(cls) -> str:
@@ -29,12 +28,14 @@ def test_write_ndjson() -> None:
     settings = BaseSettings.get()
 
     test_models = [
-        Thing.construct(identifier="1", str_attr="foo"),
-        Thing.construct(identifier="2", str_attr="bar", enum_attr=DummyEnum.NAME),
-        Thing.construct(
+        Thing.model_construct(identifier="1", str_attr="foo"),
+        Thing.model_construct(identifier="2", str_attr="bar", enum_attr=DummyEnum.NAME),
+        Thing.model_construct(
             identifier="3", str_attr="baz", uuid_attr=UUID(int=42, version=4)
         ),
-        Thing.construct(identifier="4", str_attr="dat", ts_attr=Timestamp(2000, 1, 1)),
+        Thing.model_construct(
+            identifier="4", str_attr="dat", ts_attr=Timestamp(2000, 1, 1)
+        ),
     ]
 
     ids = list(write_ndjson(test_models))

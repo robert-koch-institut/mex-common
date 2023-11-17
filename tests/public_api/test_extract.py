@@ -25,7 +25,7 @@ def test_extract_mex_person_items_mocked(
 
     monkeypatch.setattr(PublicApiConnector, "__init__", __init__)
 
-    mex_metadata_items_response_with_next = mex_metadata_items_response.copy()
+    mex_metadata_items_response_with_next = mex_metadata_items_response.model_copy()
     mex_metadata_items_response_with_next.next = UUID(
         "3fcce11e80e920b410efd0c919001a31"
     )

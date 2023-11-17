@@ -47,14 +47,14 @@ def test_vocabulary_enum_model() -> None:
 
     # check wrong type raises error
     with pytest.raises(ValidationError):
-        DummyModel.parse_obj({"dummy": object()})
+        DummyModel.model_validate({"dummy": object()})
 
     # check wrong value raises error
     with pytest.raises(ValidationError):
-        DummyModel.parse_obj({"dummy": "https://dummy/not-a-valid-concept"})
+        DummyModel.model_validate({"dummy": "https://dummy/not-a-valid-concept"})
 
     # check parsing from string works
-    model = DummyModel.parse_obj({"dummy": "https://dummy/concept-two"})
+    model = DummyModel.model_validate({"dummy": "https://dummy/concept-two"})
     assert model.dummy == DummyEnum["PREF_EN_TWO"]
 
 

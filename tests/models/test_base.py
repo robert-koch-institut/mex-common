@@ -6,6 +6,22 @@ import pytest
 from mex.common.models import BaseModel
 
 
+class ComplexDummyModel(BaseModel):
+    """Dummy Model with multiple attributes."""
+
+    optional_str: Optional[str] = None
+    required_str: str = "default"
+    optional_list: Optional[list[str]] = None
+    required_list: list[str] = []
+
+
+def test__get_field_names_allowing_none() -> None:
+    assert ComplexDummyModel._get_field_names_allowing_none() == [
+        "optional_str",
+        "optional_list",
+    ]
+
+
 class Animal(Enum):
     """Dummy enum to use in tests."""
 
@@ -19,9 +35,21 @@ class Animal(Enum):
         ({"optional_str": []}, {"optional_str": None}),
         ({"optional_str": [None]}, {"optional_str": None}),
         ({"optional_str": ["value"]}, {"optional_str": "value"}),
-        ({"required_str": []}, "none is not an allowed value"),
-        ({"required_str": [None]}, "none is not an allowed value"),
-        ({"required_str": ["value", "value"]}, "got multiple values for required_str"),
+        (
+            {"required_str": []},
+            "Input should be a valid string [type=string_type, input_value=None, "
+            "input_type=NoneType]",
+        ),
+        (
+            {"required_str": [None]},
+            "Input should be a valid string [type=string_type, input_value=None, "
+            "input_type=NoneType]",
+        ),
+        (
+            {"required_str": ["value", "value"]},
+            "got multiple values for required_str [type=value_error, "
+            "input_value={'required_str': ['value', 'value']}, input_type=dict]",
+        ),
         ({"optional_list": None}, {"optional_list": None}),
         ({"optional_list": "value"}, {"optional_list": ["value"]}),
         ({"required_list": None}, {"required_list": []}),
@@ -31,18 +59,12 @@ class Animal(Enum):
 def test_base_model_listyness_fix(
     data: dict[str, Any], expected: Union[str, dict[str, Any]]
 ) -> None:
-    class ListynessFixModel(BaseModel):
-        optional_str: Optional[str] = None
-        required_str: str = "default"
-        optional_list: Optional[list[str]] = None
-        required_list: list[str] = []
-
     try:
-        model = ListynessFixModel.parse_obj(data)
+        model = ComplexDummyModel.model_validate(data)
     except Exception as error:
         assert str(expected) in str(error)
     else:
-        assert model.dict(exclude_unset=True) == expected
+        assert model.model_dump(exclude_unset=True) == expected
 
 
 class DummyModel(BaseModel):
@@ -51,7 +73,7 @@ class DummyModel(BaseModel):
 
 def test_checksum() -> None:
     model_1 = DummyModel()
-    assert model_1.checksum() == "9a3cba5e4d465e234420e2ffd04135dc"
+    assert model_1.checksum() == "6a48475b6851bc444c39abec23f8520e"
 
     model_2 = DummyModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
@@ -59,4 +81,4 @@ def test_checksum() -> None:
 
 def test_model_str() -> None:
     model = DummyModel(foo="bar")
-    assert str(model) == "DummyModel: cd6a532d2c8c8a90f378f7af53db351b"
+    assert str(model) == "DummyModel: 68008f92758ef95dd4de3319183c3fef"

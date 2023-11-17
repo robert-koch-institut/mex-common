@@ -49,7 +49,7 @@ def test_transform_ldap_actors_to_mex_contact_points(
     }
 
     assert (
-        extracted_contact_point.dict(exclude_none=True, exclude_defaults=True)
+        extracted_contact_point.model_dump(exclude_none=True, exclude_defaults=True)
         == expected
     )
 
@@ -89,7 +89,10 @@ def test_transform_ldap_persons_to_mex_persons(
         "stableTargetId": Joker(),
     }
 
-    assert extracted_person.dict(exclude_none=True, exclude_defaults=True) == expected
+    assert (
+        extracted_person.model_dump(exclude_none=True, exclude_defaults=True)
+        == expected
+    )
 
 
 def test_transform_ldap_persons_to_mex_persons_with_unknown_department_raises_error(

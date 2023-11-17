@@ -70,4 +70,4 @@ def _get_organization_details(item_id: str) -> WikidataOrganization:
 
     item = connector.get_wikidata_item_details_by_id(item_id)
 
-    return WikidataOrganization.parse_obj(item)
+    return WikidataOrganization.model_validate(item)

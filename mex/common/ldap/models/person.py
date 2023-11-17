@@ -12,14 +12,14 @@ class LDAPPerson(LDAPActor):
     departmentNumber: str | None = Field(None)
     displayName: str | None = Field(None)
     employeeID: str = Field(...)
-    givenName: list[str] = Field(..., min_items=1)
+    givenName: list[str] = Field(..., min_length=1)
     ou: list[str] = Field([])
     sn: str = Field(...)
 
     @classmethod
     def get_ldap_fields(cls) -> tuple[str, ...]:
         """Return the fields that should be fetched from LDAP."""
-        return tuple(sorted(cls.__fields__))
+        return tuple(sorted(cls.model_fields))
 
 
 class LDAPPersonWithQuery(BaseModel):

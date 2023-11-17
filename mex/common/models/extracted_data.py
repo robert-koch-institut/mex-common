@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import Field, root_validator
+from pydantic import Field, model_validator
 
 from mex.common.models.base import MExModel
 from mex.common.types import PrimarySourceID
@@ -67,8 +67,11 @@ class ExtractedData(BaseExtractedData):
     to automatically set identifiers for provenance. See below, for description.
     """
 
-    @root_validator(pre=True)
-    def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:
+    @model_validator(mode="before")
+    @classmethod
+    def set_identifiers(  # noqa: C901 # TODO in https://jira.rki.local/browse/MX-1435
+        cls, values: dict[str, Any]
+    ) -> dict[str, Any]:
         """Ensure identifier and provenance attributes are set for this instance.
 
         All extracted data classes have four important identifiers that are defined
@@ -118,35 +121,69 @@ class ExtractedData(BaseExtractedData):
 
         # validate ID in primary source and primary source ID
         if identifier_in_primary_source := values.get("identifierInPrimarySource"):
-            identifier_in_primary_source = str(identifier_in_primary_source)
+            if isinstance(identifier_in_primary_source, list):
+                if len(identifier_in_primary_source) == 1:
+                    identifier_in_primary_source = str(identifier_in_primary_source[0])
+                else:
+                    raise ValueError(
+                        f"Expected one value for identifierInPrimarySource, "
+                        f"got {len(identifier_in_primary_source)}"
+                    )
+            else:
+                identifier_in_primary_source = str(identifier_in_primary_source)
         else:
             raise ValueError("Missing value for `identifierInPrimarySource`.")
 
         if had_primary_source := values.get("hadPrimarySource"):
-            had_primary_source = PrimarySourceID(had_primary_source)
+            if isinstance(had_primary_source, list):
+                if len(had_primary_source) == 1:
+                    had_primary_source = PrimarySourceID(had_primary_source[0])
+                else:
+                    raise ValueError(
+                        f"Expected one value for hadPrimarySource, "
+                        f"got {len(had_primary_source)}"
+                    )
+            else:
+                had_primary_source = PrimarySourceID(had_primary_source)
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 
         provider = get_provider()
         identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
-        # In case an identity was already found and the identifier provided to the
-        # constructor do not match we raise an error because it should not be
+        # In case an identity was already found and it differs from the identifier
+        # provided to the constructor, we raise an error because it should not be
         # allowed to change the identifier of an existing item.
-        if (identifier := values.get("identifier")) and identity.identifier != str(
-            identifier
-        ):
-            raise ValueError("Identifier cannot be set manually to new value.")
+        if identifier := values.get("identifier"):
+            if isinstance(identifier, list):
+                if len(identifier) == 1:
+                    identifier = identifier[0]
+                else:
+                    raise ValueError(
+                        f"Expected one value for Identifier, got {len(identifier)}"
+                    )
+            if identity.identifier != str(identifier):
+                raise ValueError("Identifier cannot be set manually to new value.")
 
         # In case an identity was found, we allow assigning a new stable target ID
         # for the purpose of merging two items, except for the MEx
         # primary source itself.
-        if (
-            (stable_target_id := values.get("stableTargetId"))
-            and identity.stableTargetId != str(stable_target_id)
-            and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-        ):
-            raise ValueError("Cannot change `stableTargetId` of MEx primary source.")
+        if stable_target_id := values.get("stableTargetId"):
+            if isinstance(stable_target_id, list):
+                if len(stable_target_id) == 1:
+                    stable_target_id = stable_target_id[0]
+                else:
+                    raise ValueError(
+                        f"Expected one value for stableTargetId, "
+                        f"got {len(stable_target_id)}"
+                    )
+            if (
+                identity.stableTargetId != str(stable_target_id)
+                and stable_target_id != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+            ):
+                raise ValueError(
+                    "Cannot change `stableTargetId` of MEx primary source."
+                )
 
         # update instance values
         values["identifier"] = identity.identifier

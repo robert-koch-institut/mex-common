@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from pydantic import Extra, Field, root_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from mex.common.models import BaseModel
 
@@ -17,7 +17,8 @@ class DataValue(BaseModel):
 
     value: Value
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def transform_strings_to_dict(
         cls, values: dict[str, Union[str, dict[str, str]]]
     ) -> Union[dict[str, dict[str, str | None]], dict[str, Union[str, dict[str, str]]]]:
@@ -71,8 +72,8 @@ class Label(BaseModel):
 class Labels(BaseModel):
     """Model class for Labels."""
 
-    de: Optional[Label]
-    en: Optional[Label]
+    de: Optional[Label] = None
+    en: Optional[Label] = None
 
 
 class Alias(BaseModel):
@@ -92,10 +93,7 @@ class Aliases(BaseModel):
 class WikidataOrganization(BaseModel):
     """Model class for Wikidata sources."""
 
-    class Config:
-        """Configs for wikidata source."""
-
-        extra = Extra.ignore
+    model_config = ConfigDict(extra="ignore")
 
     identifier: str = Field(alias="id")
     labels: Labels

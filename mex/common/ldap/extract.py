@@ -25,7 +25,7 @@ def _get_merged_ids_by_attribute(
     Returns:
         Mapping from `LDAPPerson[attribute]` to corresponding `Identity.stableTargetId`
     """
-    if attribute not in LDAPPerson.__fields__:
+    if attribute not in LDAPPerson.model_fields:
         raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
     merged_ids_by_attribute = defaultdict(list)
     provider = get_provider()

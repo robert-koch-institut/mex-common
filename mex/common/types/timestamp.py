@@ -3,13 +3,13 @@ from datetime import date, datetime, tzinfo
 from enum import Enum
 from functools import total_ordering
 from itertools import zip_longest
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union, cast, overload
+from typing import Any, Literal, Optional, Type, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema, core_schema
 from pytz import timezone
-
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.typing import CallableGenerator
 
 
 class TimestampPrecision(Enum):
@@ -136,18 +136,44 @@ class Timestamp:
         self.precision = precision
 
     @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        """Yield the validator function for timestamps."""
-        yield cls.validate
+    def __get_pydantic_core_schema__(
+        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Mutate the field schema for timestamps."""
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=TIMESTAMP_REGEX),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
+        )
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(Timestamp),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
+        )
 
     @classmethod
-    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
-        """Mutate the field schema for timestamps."""
-        field_schema.update(
-            pattern=TIMESTAMP_REGEX,
-            examples=["2011", "2019-03", "2014-08-24", "2022-09-30T20:48:35Z"],
-            type="string",
-        )
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        """Modify the schema to add the class name as title and examples."""
+        json_schema = handler(core_schema_)
+        json_schema["title"] = cls.__name__
+        json_schema["examples"] = [
+            "2011",
+            "2019-03",
+            "2014-08-24",
+            "2022-09-30T20:48:35Z",
+        ]
+        return json_schema
 
     @classmethod
     def validate(cls, value: Any) -> "Timestamp":
@@ -176,7 +202,7 @@ class Timestamp:
     @staticmethod
     def _parse_string(value: str) -> tuple[datetime, TimestampPrecision]:
         """Parse a string containing a timestamp using pandas' tslibs."""
-        parsed, precision = parsing.parse_datetime_string_with_reso(
+        parsed, precision = parsing.parse_datetime_string_with_reso(  # type: ignore[attr-defined]
             value, freq=None, dayfirst=False, yearfirst=True
         )
         if parsed.tzinfo is None:

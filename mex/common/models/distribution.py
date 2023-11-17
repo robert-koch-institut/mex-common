@@ -45,7 +45,7 @@ class BaseDistribution(BaseModel):
     otherContributor: list[PersonID] = []
     projectLeader: list[PersonID] = []
     projectManager: list[PersonID] = []
-    publisher: list[PersonID] = Field(..., min_items=1)
+    publisher: list[PersonID] = Field(..., min_length=1)
     researcher: list[PersonID] = []
     title: str = Field(
         ...,
