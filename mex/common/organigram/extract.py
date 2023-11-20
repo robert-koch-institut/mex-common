@@ -79,7 +79,7 @@ def get_unit_merged_ids_by_emails(
         Mapping from lowercased `email` to stableTargetIds
     """
     return {
-        email.lower(): extracted_unit.stableTargetId
+        email.lower(): OrganizationalUnitID(extracted_unit.stableTargetId)
         for extracted_unit in extracted_units
         for email in extracted_unit.email
     }
