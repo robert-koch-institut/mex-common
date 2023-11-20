@@ -1,17 +1,17 @@
 from collections import defaultdict
-from typing import Hashable, Iterable, cast
+from typing import Iterable
 
 from mex.common.identity import get_provider
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
-from mex.common.types import Identifier
+from mex.common.types import PersonID
 
 
 def _get_merged_ids_by_attribute(
     attribute: str,
     persons: Iterable[LDAPPerson],
     primary_source: ExtractedPrimarySource,
-) -> dict[Hashable, list[Identifier]]:
+) -> dict[str, list[PersonID]]:
     """Return a mapping from a dynamic Person attribute to the merged IDs.
 
     Merged IDs are looked up in the identity table and will be omitted
@@ -35,14 +35,14 @@ def _get_merged_ids_by_attribute(
             identifier_in_primary_source=str(person.objectGUID),
         ):
             merged_ids_by_attribute[str(getattr(person, attribute))].append(
-                Identifier(identities[0].stableTargetId)
+                PersonID(identities[0].stableTargetId)
             )
-    return cast(dict[Hashable, list[Identifier]], merged_ids_by_attribute)
+    return merged_ids_by_attribute
 
 
 def get_merged_ids_by_employee_ids(
     persons: Iterable[LDAPPerson], primary_source: ExtractedPrimarySource
-) -> dict[Hashable, list[Identifier]]:
+) -> dict[str, list[PersonID]]:
     """Return a mapping from person's employeeID to the merged IDs.
 
     Merged IDs are looked up in the identity table and will be omitted
@@ -60,7 +60,7 @@ def get_merged_ids_by_employee_ids(
 
 def get_merged_ids_by_email(
     persons: Iterable[LDAPPerson], primary_source: ExtractedPrimarySource
-) -> dict[Hashable, list[Identifier]]:
+) -> dict[str, list[PersonID]]:
     """Return a mapping from person's e-mail to the merged IDs.
 
     Merged IDs are looked up in the identity table and will be omitted
@@ -79,7 +79,7 @@ def get_merged_ids_by_email(
 def get_merged_ids_by_query_string(
     persons_with_query: Iterable[LDAPPersonWithQuery],
     primary_source: ExtractedPrimarySource,
-) -> dict[Hashable, list[Identifier]]:
+) -> dict[str, list[PersonID]]:
     """Return a mapping from an author query string to the resolved merged IDs.
 
     Merged IDs are looked up in the identity table and will be omitted
@@ -100,7 +100,7 @@ def get_merged_ids_by_query_string(
             had_primary_source=primary_source.stableTargetId,
             identifier_in_primary_source=str(person_with_query.person.objectGUID),
         ):
-            merged_ids_by_attribute[person_with_query.query].append(
-                Identifier(identities[0].stableTargetId)
+            merged_ids_by_attribute[str(person_with_query.query)].append(
+                PersonID(identities[0].stableTargetId)
             )
-    return cast(dict[Hashable, list[Identifier]], merged_ids_by_attribute)
+    return merged_ids_by_attribute
