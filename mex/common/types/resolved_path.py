@@ -72,6 +72,7 @@ class ResolvedPath(PathLike[str], metaclass=ABCMeta):
         decide what it is relative to. We read the settings from the current
         `SettingsContext` and pick a base path from there.
         """
+        # break import cycle, sigh
         from mex.common.settings import SettingsContext
 
         if self._path.is_absolute():

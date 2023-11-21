@@ -263,3 +263,7 @@ class BaseSettings(PydanticBaseSettings):
             '{}="{}"'.format(key, value.replace('"', '\\"'))
             for key, value in sorted(self.env().items())
         )
+
+    def env_keys(self) -> list[str]:
+        """Get the environment variable names of the current settings."""
+        return sorted([self.get_env_name(key) for key in self.model_dump()])
