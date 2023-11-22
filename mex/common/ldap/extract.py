@@ -80,7 +80,7 @@ def get_merged_ids_by_query_string(
     persons_with_query: Iterable[LDAPPersonWithQuery],
     primary_source: ExtractedPrimarySource,
 ) -> dict[str, list[PersonID]]:
-    """Return a mapping from a person query string to their PersonIsD.
+    """Return a mapping from a person query string to their PersonIDs.
 
     PersonIDs are looked up in the identity provider and will be omitted
     for any person that has not yet been assigned an `Identity` there.
