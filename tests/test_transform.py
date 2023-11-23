@@ -9,7 +9,12 @@ import pytest
 from pydantic import BaseModel as PydanticModel
 from pydantic import Field, SecretStr
 
-from mex.common.transform import MExEncoder, dromedary_to_snake, snake_to_dromedary
+from mex.common.transform import (
+    MExEncoder,
+    dromedary_to_kebab,
+    dromedary_to_snake,
+    snake_to_dromedary,
+)
 from mex.common.types import AssetsPath, Identifier, Timestamp
 
 
@@ -92,4 +97,26 @@ def test_snake_to_dromedary(string: str, expected: str) -> None:
 )
 def test_dromedary_to_snake(string: str, expected: str) -> None:
     result = dromedary_to_snake(string)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [
+        ("", ""),
+        ("word", "word"),
+        ("already-kebab", "already-kebab"),
+        ("ABWordCDEWordFG", "ab-word-cde-word-fg"),
+        ("multipleWordsInAString", "multiple-words-in-a-string"),
+    ],
+    ids=[
+        "empty",
+        "single word",
+        "already kebab",
+        "caps words",
+        "multiple words",
+    ],
+)
+def test_dromedary_to_kebab(string: str, expected: str) -> None:
+    result = dromedary_to_kebab(string)
     assert result == expected
