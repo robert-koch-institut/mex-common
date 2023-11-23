@@ -204,7 +204,7 @@ class Timestamp:
     def _parse_string(value: str) -> tuple[datetime, TimestampPrecision]:
         """Parse a string containing a timestamp using pandas' tslibs."""
         parsed, precision = parsing.parse_datetime_string_with_reso(  # type: ignore[attr-defined]
-            value, freq=None, dayfirst=False, yearfirst=True
+            str(value), freq=None, dayfirst=False, yearfirst=True
         )
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=CET)
