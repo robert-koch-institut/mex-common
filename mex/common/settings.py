@@ -11,6 +11,7 @@ from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettings
 
 from mex.common.identity.types import IdentityProvider
 from mex.common.sinks.types import Sink
+from mex.common.types.path import AssetsPath, WorkPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
 SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
@@ -146,14 +147,13 @@ class BaseSettings(PydanticBaseSettings):
         description="Backend API key with write access to call POST/PUT endpoints",
         validation_alias="MEX_BACKEND_API_KEY",
     )
-    verify_session: Union[bool, Path] = Field(
+    verify_session: Union[bool, AssetsPath] = Field(
         True,
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
             "certificate, or a path to a CA bundle to use. If a path is given, it can "
             "be either absolute or relative to the `assets_dir`. Defaults to True."
         ),
-        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_VERIFY_SESSION",
     )
     public_api_url: AnyUrl = Field(
@@ -173,31 +173,28 @@ class BaseSettings(PydanticBaseSettings):
         ),
         validation_alias="MEX_PUBLIC_API_TOKEN_PAYLOAD",
     )
-    public_api_verify_session: Union[bool, Path] = Field(
+    public_api_verify_session: Union[bool, AssetsPath] = Field(
         True,
         description=(
             "Public API-specific session verification setting, "
             "see `verify_session` for possible values."
         ),
-        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_PUBLIC_API_VERIFY_SESSION",
     )
-    organigram_path: Path = Field(
-        Path("raw-data/organigram/organizational_units.json"),
+    organigram_path: AssetsPath = Field(
+        AssetsPath("raw-data/organigram/organizational_units.json"),
         description=(
             "Path to the JSON file describing the organizational units, "
             "absolute path or relative to `assets_dir`."
         ),
-        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_ORGANIGRAM_PATH",
     )
-    primary_sources_path: Path = Field(
-        Path("raw-data/primary-sources/primary-sources.json"),
+    primary_sources_path: AssetsPath = Field(
+        AssetsPath("raw-data/primary-sources/primary-sources.json"),
         description=(
             "Path to the JSON file describing the primary sources, "
             "absolute path or relative to `assets_dir`."
         ),
-        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_PRIMARY_SOURCES_PATH",
     )
     ldap_url: SecretStr = Field(
@@ -259,18 +256,15 @@ class BaseSettings(PydanticBaseSettings):
         """Resolve AssetPath and WorkPath."""
         for name, field_info in self.model_fields.items():
             value = getattr(self, name)
-            if not isinstance(value, Path):
-                continue
-            path_type = (
-                field_info.json_schema_extra.get("path_type")  # type: ignore[union-attr]
-                if getattr(field_info, "json_schema_extra")
-                else "Path"
-            )
-            if path_type not in ["AssetsPath", "WorkPath"]:
+            if not isinstance(value, (AssetsPath, WorkPath)):
                 continue
             if value.is_absolute():
                 continue
-            base_path = self.assets_dir if path_type == "AssetsPath" else self.work_dir
+
+            if isinstance(value, AssetsPath):
+                base_path: AssetsPath | WorkPath = AssetsPath(self.assets_dir)
+            else:
+                base_path = WorkPath(self.work_dir)
             setattr(self, name, base_path / value)
 
         return self

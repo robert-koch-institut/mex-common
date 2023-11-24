@@ -1,13 +1,11 @@
-import os
 import platform
 import re
 from pathlib import Path
-from typing import Annotated
 
 import pytest
-from pydantic import Field
 
 from mex.common.settings import BaseSettings, SettingsContext
+from mex.common.types.path import AssetsPath, WorkPath
 
 
 def test_debug_setting() -> None:
@@ -82,30 +80,26 @@ def test_settings_getting_wrong_class_raises_error() -> None:
 def test_resolve_paths() -> None:
     class DummySettings(BaseSettings):
         non_path: str
-        abs_path: Annotated[Path, Field(json_schema_extra={"path_type": "WorkPath"})]
-        work_path: Annotated[Path, Field(json_schema_extra={"path_type": "WorkPath"})]
-        assets_path: Annotated[
-            Path, Field(json_schema_extra={"path_type": "AssetsPath"})
-        ]
+        abs_path: WorkPath
+        work_path: WorkPath
+        assets_path: AssetsPath
 
     if platform.system() == "Windows":  # pragma: no cover
-        absolute = Path(r"C:\absolute\path")
+        absolute = WorkPath(r"C:\absolute\path")
     else:
-        absolute = Path("/absolute/path")
+        absolute = WorkPath("/absolute/path")
     relative = Path("relative", "path")
 
     settings = DummySettings(
         non_path="blablabla",
         abs_path=absolute,
-        work_path=relative,
-        assets_path=relative,
-        assets_dir=os.path.join(absolute, "assets_dir"),
+        work_path=WorkPath(relative),
+        assets_path=AssetsPath(relative),
+        assets_dir=AssetsPath(absolute / "assets_dir"),
     )
 
     settings_dir = settings.model_dump(exclude_defaults=True)
     assert settings_dir["non_path"] == "blablabla"
     assert settings_dir["abs_path"] == absolute
     assert settings.work_path == settings.work_dir / relative
-    assert settings_dir["assets_path"] == Path(
-        os.path.join(absolute, "assets_dir", relative)
-    )
+    assert settings_dir["assets_path"] == absolute / "assets_dir" / relative
