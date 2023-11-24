@@ -1,10 +1,9 @@
-import json
 from base64 import b64encode
 from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
-from pydantic import AnyUrl, Field, SecretStr
+from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
@@ -12,8 +11,6 @@ from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettings
 
 from mex.common.identity.types import IdentityProvider
 from mex.common.sinks.types import Sink
-from mex.common.transform import MExEncoder
-from mex.common.types import AssetsPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
 SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
@@ -149,13 +146,14 @@ class BaseSettings(PydanticBaseSettings):
         description="Backend API key with write access to call POST/PUT endpoints",
         validation_alias="MEX_BACKEND_API_KEY",
     )
-    verify_session: Union[bool, AssetsPath] = Field(
+    verify_session: Union[bool, Path] = Field(
         True,
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
             "certificate, or a path to a CA bundle to use. If a path is given, it can "
             "be either absolute or relative to the `assets_dir`. Defaults to True."
         ),
+        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_VERIFY_SESSION",
     )
     public_api_url: AnyUrl = Field(
@@ -175,28 +173,31 @@ class BaseSettings(PydanticBaseSettings):
         ),
         validation_alias="MEX_PUBLIC_API_TOKEN_PAYLOAD",
     )
-    public_api_verify_session: Union[bool, AssetsPath] = Field(
+    public_api_verify_session: Union[bool, Path] = Field(
         True,
         description=(
             "Public API-specific session verification setting, "
             "see `verify_session` for possible values."
         ),
+        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_PUBLIC_API_VERIFY_SESSION",
     )
-    organigram_path: AssetsPath = Field(
-        AssetsPath("raw-data/organigram/organizational_units.json"),
+    organigram_path: Path = Field(
+        Path("raw-data/organigram/organizational_units.json"),
         description=(
             "Path to the JSON file describing the organizational units, "
             "absolute path or relative to `assets_dir`."
         ),
+        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_ORGANIGRAM_PATH",
     )
-    primary_sources_path: AssetsPath = Field(
-        AssetsPath("raw-data/primary-sources/primary-sources.json"),
+    primary_sources_path: Path = Field(
+        Path("raw-data/primary-sources/primary-sources.json"),
         description=(
             "Path to the JSON file describing the primary sources, "
             "absolute path or relative to `assets_dir`."
         ),
+        json_schema_extra={"path_type": "AssetsPath"},
         validation_alias="MEX_PRIMARY_SOURCES_PATH",
     )
     ldap_url: SecretStr = Field(
@@ -249,21 +250,27 @@ class BaseSettings(PydanticBaseSettings):
         env_info = env_settings._extract_field_info(field, name)
         return env_info[0][1].upper()
 
-    def env(self) -> dict[str, str]:
-        """Dump the current settings as a mapping of environment variables."""
-        return {
-            self.get_env_name(key): json.dumps(value, cls=MExEncoder).strip('"')
-            for key, value in self.model_dump().items()
-            if value not in (None, [], {})
-        }
-
-    def env_text(self) -> str:
-        """Dump the current settings as an .env-file compatible text."""
-        return "\n".join(
-            '{}="{}"'.format(key, value.replace('"', '\\"'))
-            for key, value in sorted(self.env().items())
-        )
-
     def env_keys(self) -> list[str]:
         """Get the environment variable names of the current settings."""
         return sorted([self.get_env_name(key) for key in self.model_dump()])
+
+    @model_validator(mode="after")
+    def resolve_paths(self) -> "BaseSettings":
+        """Resolve AssetPath and WorkPath."""
+        for name, field_info in self.model_fields.items():
+            value = getattr(self, name)
+            if not isinstance(value, Path):
+                continue
+            path_type = (
+                field_info.json_schema_extra.get("path_type")  # type: ignore[union-attr]
+                if getattr(field_info, "json_schema_extra")
+                else "Path"
+            )
+            if path_type not in ["AssetsPath", "WorkPath"]:
+                continue
+            if value.is_absolute():
+                continue
+            base_path = self.assets_dir if path_type == "AssetsPath" else self.work_dir
+            setattr(self, name, base_path / value)
+
+        return self
