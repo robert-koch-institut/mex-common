@@ -14,6 +14,7 @@ from mex.common.types.identifier import (
     VariableID,
 )
 from mex.common.types.link import Link, LinkLanguage
+from mex.common.types.path import AssetsPath, WorkPath
 from mex.common.types.text import Text, TextLanguage
 from mex.common.types.timestamp import (
     CET,
@@ -35,6 +36,7 @@ __all__ = (
     "AccessPlatformID",
     "AccessRestriction",
     "ActivityID",
+    "AssetsPath",
     "CET",
     "ContactPointID",
     "DistributionID",
@@ -60,4 +62,5 @@ __all__ = (
     "VariableID",
     "VocabularyEnum",
     "VocabularyLoader",
+    "WorkPath",
 )
