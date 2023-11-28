@@ -38,6 +38,21 @@ types-setuptools = "^68.2.0.1"
 [tool.ipdb]
 context = 5
 
+[tool.mypy]
+python_version = "3.11"
+show_error_codes = true
+strict = true
+plugins = [
+  "pydantic.mypy"
+]
+
+[[tool.mypy.overrides]]
+module = 'langdetect.*'
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+warn_untyped_fields = true
+
 [tool.ruff]
 fix = true
 ignore = [
