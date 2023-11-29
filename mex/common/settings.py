@@ -268,3 +268,42 @@ class BaseSettings(PydanticBaseSettings):
             setattr(self, name, base_path / value)
 
         return self
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_paths(cls, raw_input: dict[str, Any]) -> dict[str, Any]:
+        """Coerce relevant input strings to AssetPath or WorkPaths."""
+        fields_by_keys = cls.model_fields
+        fields_by_alias = {
+            field.validation_alias: field for key, field in cls.model_fields.items()
+        }
+
+        for field_name, field_value in raw_input.items():
+            if field_name not in fields_by_keys and field_name not in fields_by_alias:
+                continue
+            field_type = None
+            if field_name in fields_by_keys:
+                field_type = fields_by_keys[field_name].annotation
+            elif field_name in fields_by_alias:
+                field_type = fields_by_alias[field_name].annotation
+            if field_type is not None:
+                if isinstance(field_type, AssetsPath) or (
+                    hasattr(field_type, "__args__")
+                    and AssetsPath in field_type.__args__
+                ):
+                    try:
+                        raw_input[field_name] = AssetsPath(raw_input[field_name])
+                        # TODO coercing here is not enough to check if input is pathlike
+                        #  All input comes in as string and AssetsPath and WorkPath only
+                        #  check if the input is a string.
+                    except TypeError:
+                        continue
+                elif isinstance(field_type, WorkPath) or (
+                    hasattr(field_type, "__args__") and WorkPath in field_type.__args__
+                ):
+                    try:
+                        raw_input[field_name] = WorkPath(raw_input[field_name])
+                    except TypeError:
+                        continue
+
+        return raw_input
