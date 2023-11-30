@@ -30,12 +30,40 @@ pytest-cov = "^4.1.0"
 ruff = "^0.1.6"
 sphinx = "^6.2.1"
 sphinx-book-theme = "^1.0.1"
+types-ldap3 = "^2.9.13.15"
 types-pytz = "^2023.3.1.1"
 types-requests = "^2.31.0.10"
 types-setuptools = "^68.2.0.1"
 
 [tool.ipdb]
 context = 5
+
+[tool.mypy]
+python_version = "3.11"
+show_error_codes = true
+strict = true
+plugins = [
+  "pydantic.mypy"
+]
+
+[[tool.mypy.overrides]]
+module = 'langdetect.*'
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+warn_untyped_fields = true
+
+[tool.pytest.ini_options]
+addopts = [
+    "--verbose",
+    "--cov",
+    "--no-cov-on-fail",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=90",
+    "--cov-branch",
+    "--pdbcls=IPython.terminal.debugger:TerminalPdb"
+]
+markers = "integration: mark a test as integration test"
 
 [tool.ruff]
 fix = true
