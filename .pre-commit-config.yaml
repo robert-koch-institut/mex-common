@@ -26,7 +26,7 @@ repos:
         name: poetry
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.7.0
-    hooks:  # configure according to mypy maintainer: https://github.com/python/mypy/issues/13916
+    hooks:  # configured according to mypy maintainer: https://github.com/python/mypy/issues/13916
       - id: mypy
         name: mypy
         files: ^mex/
