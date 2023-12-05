@@ -10,6 +10,7 @@ from pydantic import AnyUrl, SecretStr
 from pydantic import BaseModel as PydanticModel
 
 from mex.common.types import Timestamp
+from mex.common.types.path import PathWrapper
 
 
 class MExEncoder(json.JSONEncoder):
@@ -31,6 +32,8 @@ class MExEncoder(json.JSONEncoder):
             return str(obj)
         if isinstance(obj, PurePath):
             return obj.as_posix()
+        if isinstance(obj, PathWrapper):
+            return str(obj)
         return json.JSONEncoder.default(self, obj)
 
 

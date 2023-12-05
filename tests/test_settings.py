@@ -95,11 +95,13 @@ def test_resolve_paths() -> None:
         abs_path=absolute,
         work_path=WorkPath(relative),
         assets_path=AssetsPath(relative),
-        assets_dir=AssetsPath(absolute / "assets_dir"),
+        assets_dir=Path(absolute / "assets_dir"),
     )
 
-    settings_dir = settings.model_dump(exclude_defaults=True)
-    assert settings_dir["non_path"] == "blablabla"
-    assert settings_dir["abs_path"] == absolute
-    assert settings.work_path == settings.work_dir / relative
-    assert settings_dir["assets_path"] == absolute / "assets_dir" / relative
+    settings_dict = settings.model_dump(exclude_defaults=True)
+    assert settings_dict["non_path"] == "blablabla"
+    assert settings_dict["abs_path"] == absolute
+    assert settings_dict["work_path"] == WorkPath(settings.work_dir / relative)
+    assert settings_dict["assets_path"] == AssetsPath(
+        absolute / "assets_dir" / relative
+    )
