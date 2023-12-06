@@ -25,7 +25,7 @@ SPECIFIED_SCHEMAS = dict(
     sorted(
         {
             schema["title"].replace(" ", ""): schema
-            for file_name in glob.glob(str(SPECIFIED_SCHEMA_PATH / "*.json"))
+            for file_name in SPECIFIED_SCHEMA_PATH.glob("*.json")
             if (schema := json.load(open(file_name, encoding="utf-8")))
             and not schema["title"].startswith("Concept")
         }.items()
