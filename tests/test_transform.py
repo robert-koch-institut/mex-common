@@ -15,7 +15,7 @@ from mex.common.transform import (
     dromedary_to_snake,
     snake_to_dromedary,
 )
-from mex.common.types import AssetsPath, Identifier, Timestamp
+from mex.common.types import Identifier, Timestamp
 
 
 class DummyModel(PydanticModel):
@@ -46,7 +46,7 @@ class DummyEnum(Enum):
         ),
         (PureWindowsPath(r"C:\\System\\Win32\\exe.dll"), '"C:/System/Win32/exe.dll"'),
         (PurePosixPath(r"/dev/sys/etc/launch.ctl"), '"/dev/sys/etc/launch.ctl"'),
-        (AssetsPath(Path("relative", "path")), '"relative/path"'),
+        (Path("relative", "path"), '"relative/path"'),
     ],
 )
 def test_mex_json_encoder(raw: Any, expected: str) -> None:

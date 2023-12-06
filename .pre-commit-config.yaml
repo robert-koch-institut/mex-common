@@ -3,7 +3,7 @@ default_language_version:
   python: python3.11
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.6
+    rev: v0.1.7
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -20,23 +20,26 @@ repos:
       - id: check-yaml
         name: yaml
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.7.0
+    rev: 1.7.1
     hooks:
       - id: poetry-check
         name: poetry
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.0
-    hooks:
+    rev: v1.7.1
+    hooks:  # configured according to mypy maintainer: https://github.com/python/mypy/issues/13916
       - id: mypy
         name: mypy
         files: ^mex/
+        pass_filenames: false
+        args: [mex]
         additional_dependencies:
           - "backoff>=2.2.1,<3"
           - "click>=8.1.7,<9"
           - "pandas-stubs>=2.1.1,<3"
           - "pydantic-settings>=2.1.0,<3"
-          - "pydantic>=2.5.1,<3"
+          - "pydantic>=2.5.2,<3"
           - "pytest>=7.4.3,<8"
-          - "types-pytz>=2023.3.1.1,<2024"
-          - "types-requests>=2.31.0.10,<3"
-          - "types-setuptools>=68.2.0.1,<69"
+          - "types-ldap3>=2.9.13,<3"
+          - "types-pytz>=2023.3.1,<2024"
+          - "types-requests>=2.31.0,<3"
+          - "types-setuptools>=69.0.0,<70"

@@ -1,10 +1,9 @@
-import json
 from base64 import b64encode
 from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
-from pydantic import AnyUrl, Field, SecretStr
+from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
@@ -12,8 +11,7 @@ from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettings
 
 from mex.common.identity.types import IdentityProvider
 from mex.common.sinks.types import Sink
-from mex.common.transform import MExEncoder
-from mex.common.types import AssetsPath
+from mex.common.types.path import AssetsPath, WorkPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
 SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
@@ -249,17 +247,24 @@ class BaseSettings(PydanticBaseSettings):
         env_info = env_settings._extract_field_info(field, name)
         return env_info[0][1].upper()
 
-    def env(self) -> dict[str, str]:
-        """Dump the current settings as a mapping of environment variables."""
-        return {
-            self.get_env_name(key): json.dumps(value, cls=MExEncoder).strip('"')
-            for key, value in self.model_dump().items()
-            if value not in (None, [], {})
-        }
+    def env_keys(self) -> list[str]:
+        """Get the environment variable names of the current settings."""
+        return sorted([self.get_env_name(key) for key in self.model_dump()])
 
-    def env_text(self) -> str:
-        """Dump the current settings as an .env-file compatible text."""
-        return "\n".join(
-            '{}="{}"'.format(key, value.replace('"', '\\"'))
-            for key, value in sorted(self.env().items())
-        )
+    @model_validator(mode="after")
+    def resolve_paths(self) -> "BaseSettings":
+        """Resolve AssetPath and WorkPath."""
+        for name, field_info in self.model_fields.items():
+            value = getattr(self, name)
+            if not isinstance(value, (AssetsPath, WorkPath)):
+                continue
+            if value.is_absolute():
+                continue
+
+            if isinstance(value, AssetsPath):
+                base_path: AssetsPath | WorkPath = AssetsPath(self.assets_dir)
+            else:
+                base_path = WorkPath(self.work_dir)
+            setattr(self, name, base_path / value)
+
+        return self
