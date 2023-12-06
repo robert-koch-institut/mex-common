@@ -22,8 +22,8 @@
     "inScheme": "https://mex.rki.de/item/resource-type-general",
     "notation": "3.",
     "prefLabel": {
-      "de": "Studien",
-      "en": "Studies"
+      "de": "Studiendaten",
+      "en": "Survey data"
     }
   },
   {
@@ -89,6 +89,42 @@
     "prefLabel": {
       "de": "Fragebogen",
       "en": "Questionnaire"
+    }
+  },
+  {
+    "identifier": "https://mex.rki.de/item/resource-type-general-9",
+    "inScheme": "https://mex.rki.de/item/resource-type-general",
+    "notation": "1.1",
+    "prefLabel": {
+      "de": "Sequenzdaten",
+      "en": "Sequence data"
+    }
+  },
+  {
+    "identifier": "https://mex.rki.de/item/resource-type-general-10",
+    "inScheme": "https://mex.rki.de/item/resource-type-general",
+    "notation": "1.2",
+    "prefLabel": {
+      "de": "Surveillancedaten",
+      "en": "Surveillance data"
+    }
+  },
+  {
+    "identifier": "https://mex.rki.de/item/resource-type-general-11",
+    "inScheme": "https://mex.rki.de/item/resource-type-general",
+    "notation": "1.3",
+    "prefLabel": {
+      "de": "Meldedaten",
+      "en": "Notifiable Diseases Data"
+    }
+  },
+  {
+    "identifier": "https://mex.rki.de/item/resource-type-general-12",
+    "inScheme": "https://mex.rki.de/item/resource-type-general",
+    "notation": "1.4",
+    "prefLabel": {
+      "de": "Labordaten",
+      "en": "Laboratory data"
     }
   }
 ]
