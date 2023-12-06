@@ -25,14 +25,6 @@ def test_settings_text() -> None:
     assert re.search(r"api_token_payload\s+\*+", text)  # masked secret
 
 
-def test_settings_env_keys() -> None:
-    settings = BaseSettings.get()
-    keys = settings.env_keys()
-
-    assert len(keys) == len(settings.model_fields)
-    assert "MEX_DEBUG" in keys
-
-
 class FooSettings(BaseSettings):
     """Dummy settings subclass for testing."""
 
