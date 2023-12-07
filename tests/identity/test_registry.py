@@ -11,8 +11,8 @@ from mex.common.identity.registry import (
     get_provider,
     register_provider,
 )
-from mex.common.identity.types import IdentityProvider
 from mex.common.settings import BaseSettings
+from mex.common.types import IdentityProvider
 
 
 class DummyIdentityProvider(Enum):

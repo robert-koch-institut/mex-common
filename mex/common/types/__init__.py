@@ -13,8 +13,10 @@ from mex.common.types.identifier import (
     VariableGroupID,
     VariableID,
 )
+from mex.common.types.identity import IdentityProvider
 from mex.common.types.link import Link, LinkLanguage
-from mex.common.types.path import AssetsPath, WorkPath
+from mex.common.types.path import AssetsPath, PathWrapper, WorkPath
+from mex.common.types.sink import Sink
 from mex.common.types.text import Text, TextLanguage
 from mex.common.types.timestamp import (
     CET,
@@ -42,13 +44,16 @@ __all__ = (
     "DistributionID",
     "Email",
     "Identifier",
+    "IdentityProvider",
     "Link",
     "LinkLanguage",
     "OrganizationalUnitID",
     "OrganizationID",
+    "PathWrapper",
     "PersonID",
     "PrimarySourceID",
     "ResourceID",
+    "Sink",
     "split_to_caps",
     "Text",
     "TextLanguage",

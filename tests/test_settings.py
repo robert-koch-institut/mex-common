@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from mex.common.settings import BaseSettings, SettingsContext
-from mex.common.types.path import AssetsPath, WorkPath
+from mex.common.types import AssetsPath, WorkPath
 
 
 def test_debug_setting() -> None:
