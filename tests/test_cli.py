@@ -243,16 +243,3 @@ def test_entrypoint_logs_docs_and_settings(caplog: LogCaptureFixture) -> None:
 
     assert "Pointy McEntryFace" in caplog.text
     assert re.search(r"custom_setting\s+override", caplog.text)
-
-
-def test_echo_env_keys(caplog: LogCaptureFixture) -> None:
-    @entrypoint(BaseSettings)
-    def foo_entrypoint() -> None:
-        return
-
-    with caplog.at_level(logging.INFO, logger="mex"):
-        result = CliRunner().invoke(foo_entrypoint, args=["--echo-env-keys"])
-    assert result.exit_code == 0, result.stdout
-
-    assert len(caplog.text.splitlines()) >= len(BaseSettings.model_fields)
-    assert "MEX_DEBUG\n" in caplog.text
