@@ -19,10 +19,6 @@ class Thing(MExModel):
     uuid_attr: UUID4 | None = None
     ts_attr: Timestamp | None = None
 
-    @classmethod
-    def get_entity_type(cls) -> str:
-        return "Thing"
-
 
 def test_write_ndjson() -> None:
     settings = BaseSettings.get()

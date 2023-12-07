@@ -42,7 +42,7 @@ def purge_models_from_public_api(
     connector = PublicApiConnector.get()
     for model in models:
         api_id = connector.delete_model(model)
-        yield f"purged item {api_id} for {model.get_entity_type()} {model.identifier}"
+        yield f"purged item {api_id} for {model.__class__.__name__} {model.identifier}"
 
 
 @watch

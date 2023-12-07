@@ -47,7 +47,7 @@ def test_post_models_mocked(
     expected_payload = {
         "items": [
             {
-                "entityType": ExtractedPerson.get_entity_type(),
+                "entityType": "ExtractedPerson",
                 "values": [
                     {
                         "fieldName": "affiliation",
@@ -183,7 +183,7 @@ def test_search_model_mocked(mocked_api_session_authenticated: MagicMock) -> Non
             "items": [
                 {
                     "itemId": item_id,
-                    "entityType": ExtractedActivity.get_entity_type(),
+                    "entityType": "ExtractedActivity",
                     "businessId": "vhK1I2voBK5bO12MAfZYmi",
                     "values": [
                         {

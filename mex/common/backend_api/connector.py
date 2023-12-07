@@ -43,10 +43,10 @@ class BackendApiConnector(HTTPConnector):
             method="POST",
             endpoint="ingest",
             payload={
-                entity_type: list(entities)
-                for entity_type, entities in groupby(
-                    sorted(models, key=lambda e: e.get_entity_type()),
-                    lambda e: e.get_entity_type(),
+                class_name: list(entities)
+                for class_name, entities in groupby(
+                    sorted(models, key=lambda e: e.__class__.__name__),
+                    lambda e: e.__class__.__name__,
                 )
             },
         )

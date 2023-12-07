@@ -53,7 +53,7 @@ def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
                 )
             )
     return PublicApiItem(
-        entityType=model.get_entity_type(),
+        entityType=model.__class__.__name__,
         businessId=model.stableTargetId,
         values=api_values,
     )

@@ -183,9 +183,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             limit=1,
             axisConstraints=[
                 PublicApiAxisConstraint(values=[str(identifier)], axis="identifier"),
-                PublicApiAxisConstraint(
-                    values=[model_cls.get_entity_type()], axis="entityName"
-                ),
+                PublicApiAxisConstraint(values=[model_cls.__name__], axis="entityName"),
             ],
             fields=list(model_cls.model_fields),
         )
@@ -299,9 +297,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
             offset=offset,
             limit=limit,
             axisConstraints=[
-                PublicApiAxisConstraint(
-                    values=[model_cls.get_entity_type()], axis="entityName"
-                )
+                PublicApiAxisConstraint(values=[model_cls.__name__], axis="entityName")
             ],
             fields=list(model_cls.model_fields),
         )
@@ -315,7 +311,7 @@ class PublicApiConnector(HTTPConnector):  # pragma: no cover
     def search_mex_model_items(
         self, model_cls: type[ModelT], offset: int = 0, limit: int = 10
     ) -> list[ModelT]:
-        """Get all instances of a mex model entity type with pagination.
+        """Get all instances of a model class with pagination.
 
         Args:
             model_cls: Model class to fetch
