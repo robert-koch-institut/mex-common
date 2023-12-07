@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
@@ -26,7 +26,7 @@ class APIType(VocabularyEnum):
     __vocabulary__ = "api-type"
 
 
-class BaseAccessPlatform(BaseModel):
+class BaseAccessPlatform(MExModel):
     """A way of physically accessing the Resource for re-use."""
 
     stableTargetId: AccessPlatformID

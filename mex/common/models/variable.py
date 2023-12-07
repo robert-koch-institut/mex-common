@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
@@ -20,7 +20,7 @@ class DataType(VocabularyEnum):
     __vocabulary__ = "data-type"
 
 
-class BaseVariable(BaseModel):
+class BaseVariable(MExModel):
     """A single piece of information within a resource."""
 
     stableTargetId: VariableID

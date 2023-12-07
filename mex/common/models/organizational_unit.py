@@ -2,13 +2,13 @@ from typing import Annotated
 
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import Email, Link, OrganizationalUnitID, OrganizationID, Text
 
 
-class BaseOrganizationalUnit(BaseModel):
+class BaseOrganizationalUnit(MExModel):
     """An organizational unit which is part of some larger organization."""
 
     stableTargetId: OrganizationalUnitID

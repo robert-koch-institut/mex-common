@@ -2,13 +2,13 @@ from typing import Annotated
 
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import Email, OrganizationalUnitID, OrganizationID, PersonID
 
 
-class BasePerson(BaseModel):
+class BasePerson(MExModel):
     """A person related to a source and/or resource, i.e. a project leader."""
 
     stableTargetId: PersonID

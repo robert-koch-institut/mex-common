@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
@@ -13,7 +13,7 @@ from mex.common.types import (
 )
 
 
-class BasePrimarySource(BaseModel):
+class BasePrimarySource(MExModel):
     """A collection of information, that is managed and curated by an RKI unit."""
 
     stableTargetId: PrimarySourceID

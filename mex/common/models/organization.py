@@ -2,13 +2,13 @@ from typing import Annotated
 
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import OrganizationID, Text
 
 
-class BaseOrganization(BaseModel):
+class BaseOrganization(MExModel):
     """Represents a collection of people organized together.
 
     This can be any community or other social, commercial or political structure.

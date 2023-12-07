@@ -1,12 +1,12 @@
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import ResourceID, Text, VariableGroupID
 
 
-class BaseVariableGroup(BaseModel):
+class BaseVariableGroup(MExModel):
     """The grouping of variables according to a certain aspect."""
 
     stableTargetId: VariableGroupID

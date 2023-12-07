@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base import MExModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
@@ -26,7 +26,7 @@ class ActivityType(VocabularyEnum):
     __vocabulary__ = "activity-type"
 
 
-class BaseActivity(BaseModel):
+class BaseActivity(MExModel):
     """The context a resource was generated in.
 
     This may be a project, an area of work or an administrative procedure.
