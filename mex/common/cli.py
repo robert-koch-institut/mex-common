@@ -126,11 +126,6 @@ def _callback(
     )
     SettingsContext.set(settings)
 
-    # print new line separated env keys if echo-env-keys flag is set, then exit.
-    if cli_settings.get("echo_env_keys"):
-        logger.info(click.style("\n".join(settings.env_keys())))
-        context.exit(0)
-
     # otherwise print loaded settings in pretty way and continue
     logger.info(click.style(dedent(f"    {func.__doc__}"), fg="green"))
     logger.info(click.style(f"{settings.text()}\n", fg="bright_cyan"))
@@ -176,14 +171,6 @@ def entrypoint(
     """
 
     def decorator(func: Callable[[], None]) -> Command:
-        meta_parameters = [
-            Option(
-                ["--echo-env-keys"],
-                help="Echo current env keys new line separated and exit.",
-                is_flag=True,
-                type=bool,
-            )
-        ]
         return Command(
             func.__name__,
             help=HELP_TEMPLATE.format(
@@ -191,11 +178,8 @@ def entrypoint(
             ),
             callback=partial(_callback, func, settings_cls),
             params=[
-                *[
-                    _field_to_option(name, settings_cls)
-                    for name in settings_cls.model_fields
-                ],
-                *meta_parameters,
+                _field_to_option(name, settings_cls)
+                for name in settings_cls.model_fields
             ],
         )
 

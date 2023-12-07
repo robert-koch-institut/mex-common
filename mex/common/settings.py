@@ -247,10 +247,6 @@ class BaseSettings(PydanticBaseSettings):
         env_info = env_settings._extract_field_info(field, name)
         return env_info[0][1].upper()
 
-    def env_keys(self) -> list[str]:
-        """Get the environment variable names of the current settings."""
-        return sorted([self.get_env_name(key) for key in self.model_dump()])
-
     @model_validator(mode="after")
     def resolve_paths(self) -> "BaseSettings":
         """Resolve AssetPath and WorkPath."""
