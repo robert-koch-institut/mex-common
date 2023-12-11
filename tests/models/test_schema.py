@@ -92,17 +92,15 @@ def test_field_defs_match_spec(entity_type: str, field_name: str) -> None:  # no
             r"^\d{4}(-\d{2})?(-\d{2})?$",  # ignore date/time pattern differences
         ):
             obj["pattern"] = r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"
+        title = obj.pop("title", None)
         if obj.get("pattern") == MEX_ID_PATTERN:  # align concept/enum annotations
             obj.pop("pattern")
             obj.pop("type")
-            if obj.get("title") and field_name not in ("identifier", "stableTargetId"):
-                title = dromedary_to_kebab(obj.pop("title").removesuffix("ID"))
+            if title and field_name not in ("identifier", "stableTargetId"):
+                title = dromedary_to_kebab(title.removesuffix("ID"))
                 obj["$ref"] = f"/schema/entities/{title}#/identifier"
             else:
                 obj["$ref"] = "/schema/fields/identifier"
-                obj.pop("title", None)
-        else:
-            obj.pop("title", None)
         if "$ref" in obj:  # align reference paths
             obj["$ref"] = obj["$ref"].replace("#/$defs/", "/schema/fields/").lower()
             if obj["$ref"] == "/schema/entities/concept#/identifier" and (
