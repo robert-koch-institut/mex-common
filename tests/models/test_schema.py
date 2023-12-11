@@ -129,8 +129,7 @@ def test_field_defs_match_spec(entity_type: str, field_name: str) -> None:  # no
                 ]
         if "anyOf" in obj:  # ignore any/one difference
             obj["oneOf"] = obj.pop("anyOf")
-        for quantifier in ("oneOf", "allOf"):
-            if quantifier in obj:
+        for quantifier in ({"oneOf", "allOf"} & set(obj)):
                 prepare_field(obj[quantifier])  # prepare choices
                 obj[quantifier] = list(
                     json.loads(s) for s in {json.dumps(o) for o in obj[quantifier]}
