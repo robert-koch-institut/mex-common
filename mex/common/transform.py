@@ -71,4 +71,6 @@ def dromedary_to_kebab(string: str) -> str:
 @cache
 def kebab_to_camel(string: str) -> str:
     """Convert the given string from `kebab-case` into `CamelCase`."""
-    return "".join(word.title() for word in re.split(r"\-+", string))
+    if len(tokens := re.split(r"\-+", string)) > 1:
+        return "".join(word.title() for word in tokens)
+    return string[:1].upper() + string[1:]
