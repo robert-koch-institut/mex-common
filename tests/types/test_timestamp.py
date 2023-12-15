@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Any
 
 import pytest
+from pytz import timezone
 
 from mex.common.types import CET, UTC, Timestamp
 
@@ -60,6 +61,11 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
             "1999-01-20T21:00:00Z",
         ),
         (
+            ("2016-06-10T21:42:24.76073899Z",),
+            {},
+            "2016-06-10T21:42:24Z",
+        ),
+        (
             (date(2020, 3, 22),),
             {},
             "2020-03-22",
@@ -68,6 +74,15 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
             (datetime(2020, 3, 22, 14, 30, 58),),
             {},
             "2020-03-22T13:30:58Z",
+        ),
+        (
+            (
+                datetime(
+                    2020, 3, 22, 14, 30, 58, tzinfo=timezone("America/Los_Angeles")
+                ),
+            ),
+            {},
+            "2020-03-22T22:23:58Z",
         ),
         (
             (Timestamp(2004, 11),),
@@ -86,8 +101,10 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
         "date string",
         "time string",
         "padded time",
+        "nano seconds",
         "date",
         "datetime",
+        "pacific time",
         "timestamp",
     ],
 )
@@ -96,3 +113,31 @@ def test_timestamp_parsing(
 ) -> None:
     timestamp = Timestamp(*args, **kwargs)
     assert str(timestamp) == expected
+
+
+def test_timestamp_eq() -> None:
+    assert Timestamp(2004) == Timestamp("2004")
+    assert Timestamp(2004, 11) == Timestamp(2004, 11)
+    assert Timestamp(2004, 11, 2) == "2004-11-02"
+    assert Timestamp(2020, 3, 22, 14, 30, 58, 0) == datetime(2020, 3, 22, 14, 30, 58, 0)
+
+    with pytest.raises(NotImplementedError):
+        assert Timestamp(2005) == object()
+
+
+def test_timestamp_gt() -> None:
+    assert Timestamp(2004) > Timestamp("2003")
+    assert Timestamp(2004, 11) < "2013-10-02"
+    assert Timestamp(2004, 11) <= Timestamp(2004, 12)
+    assert Timestamp(2020, 3, 22, 14, 30, 58) >= datetime(2020, 3, 22, 14, 29)
+
+    with pytest.raises(NotImplementedError):
+        assert Timestamp(2005) > object()
+
+
+def test_timestamp_str() -> None:
+    assert str(Timestamp(2004, 11, 26)) == "2004-11-26"
+
+
+def test_timestamp_repr() -> None:
+    assert repr(Timestamp(2018, 3, 2, 13, 0, 1)) == 'Timestamp("2018-03-02T12:00:01Z")'

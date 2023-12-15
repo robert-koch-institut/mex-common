@@ -233,7 +233,7 @@ class Timestamp:
         try:
             other = self.validate(other)
         except TypeError:
-            return NotImplemented
+            raise NotImplementedError()
         return bool(
             self.date_time == other.date_time and self.precision == other.precision
         )
@@ -243,7 +243,7 @@ class Timestamp:
         try:
             other = self.validate(other)
         except TypeError:
-            return NotImplemented
+            raise NotImplementedError()
         return bool(self.date_time > other.date_time)
 
     def __str__(self) -> str:
