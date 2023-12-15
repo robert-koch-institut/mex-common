@@ -84,7 +84,7 @@ def sub_only_text(repl: Callable[[str], str], string: str) -> str:
 
 
 def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
-    # prepare each item in a list
+    # prepare each item in a list (in-place)
     if isinstance(obj, list):
         for item in obj:
             prepare_field(field, item)
@@ -111,6 +111,8 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
         obj["format"] = "date-time"
 
     # align reference paths
+    # (the paths to referenced vocabularies and types differ between the models
+    # and the specification, so we need to make sure they match before comparing)
     if obj.get("pattern") == MEX_ID_PATTERN:
         obj.pop("pattern")
         obj.pop("type")
@@ -125,6 +127,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
         obj["$ref"] = f"/schema/fields/{vocabulary}"
 
     # make sure all refs have paths in kebab-case
+    # (the models use the class names, whereas the spec uses kebab-case URLs)
     if "$ref" in obj:
         obj["$ref"] = sub_only_text(dromedary_to_kebab, obj["$ref"])
 
