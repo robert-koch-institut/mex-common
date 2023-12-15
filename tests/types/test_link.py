@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+import pytest
+from pydantic import BaseModel, ValidationError
 
 from mex.common.types import Link, LinkLanguage
 
@@ -38,6 +39,10 @@ def test_parsing_from_string() -> None:
             "language": LinkLanguage.EN,
         }
     }
+
+    # invalid data
+    with pytest.raises(ValidationError):
+        DummyModel.model_validate(["lists", "are", "not", "valid"])
 
 
 def test_rendering_as_string() -> None:

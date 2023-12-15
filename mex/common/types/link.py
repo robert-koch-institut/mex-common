@@ -55,14 +55,11 @@ class Link(BaseModel):
             return values
         if isinstance(values, str):
             if match := re.match(r"\[(?P<title>.*)\]\((?P<url>.*)\)", values):
-                url_dict = {
+                return {
                     key: markdown_unescape(value)
                     for key, value in match.groupdict().items()
                 }
-            else:
-                url_dict = {"url": values}
-
-            return url_dict
+            return {"url": values}
         raise ValueError(f"Allowed input types are dict and str, got {type(values)}")
 
     def __str__(self) -> str:

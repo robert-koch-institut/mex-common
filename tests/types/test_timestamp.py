@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 import pytest
@@ -60,9 +60,9 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
             "1999-01-20T21:00:00Z",
         ),
         (
-            (datetime(2020, 3, 22),),
+            (date(2020, 3, 22),),
             {},
-            "2020-03-21T23:00:00Z",
+            "2020-03-22",
         ),
         (
             (datetime(2020, 3, 22, 14, 30, 58),),
