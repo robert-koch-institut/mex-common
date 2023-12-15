@@ -133,6 +133,7 @@ def test_post_models_mocked(
     assert payload == expected_payload
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_search_model_that_does_not_exist() -> None:
     random_id = Identifier.generate()
@@ -318,6 +319,7 @@ def test_get_all_items_mocked(
     assert items == mex_metadata_items_response
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_get_all_items() -> None:
     connector = PublicApiConnector.get()

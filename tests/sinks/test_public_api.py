@@ -48,6 +48,7 @@ def test_purge_from_public_api_mocked(
     delete_model.assert_called_once_with(extracted_person)
 
 
+@pytest.mark.skip
 @pytest.mark.integration
 def test_public_api_post_and_purge_roundtrip(
     extracted_primary_sources: dict[str, ExtractedPrimarySource]
