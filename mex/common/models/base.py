@@ -11,7 +11,6 @@ from pydantic.fields import FieldInfo
 
 from mex.common.types import Identifier
 
-ModelValuesT = TypeVar("ModelValuesT", bound=dict[str, Any])
 RawModelDataT = TypeVar("RawModelDataT")
 
 
