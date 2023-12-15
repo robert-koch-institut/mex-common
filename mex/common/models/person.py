@@ -13,14 +13,7 @@ class BasePerson(BaseModel):
 
     stableTargetId: PersonID
     affiliation: list[OrganizationID] = []
-    email: list[
-        Annotated[
-            Email,
-            Field(
-                examples=["info@rki.de"],
-            ),
-        ]
-    ] = []
+    email: list[Email] = []
     familyName: list[
         Annotated[
             str,

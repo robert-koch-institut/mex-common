@@ -2,15 +2,37 @@ import hashlib
 import pickle  # nosec
 from abc import abstractmethod
 from functools import cache
-from typing import TYPE_CHECKING, Any, Optional, TypeVar, Union, get_args, get_origin
+from typing import TYPE_CHECKING, Annotated, Any, TypeVar, Union, get_args, get_origin
 
-from pydantic import BaseModel as PydanticBaseModel
+from pydantic import (
+    BaseModel as PydanticBaseModel,
+)
 from pydantic import ConfigDict, Field, TypeAdapter, ValidationError, model_validator
 from pydantic.fields import FieldInfo
+from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode, JsonSchemaValue
+from pydantic.json_schema import (
+    GenerateJsonSchema as PydanticJsonSchemaGenerator,
+)
 
 from mex.common.types import Identifier
 
 ModelValuesT = TypeVar("ModelValuesT", bound=dict[str, Any])
+
+
+class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
+    """Customization of the pydantic class for generating JSON schemas."""
+
+    def handle_ref_overrides(self, json_schema: JsonSchemaValue) -> JsonSchemaValue:
+        """Disable pydantic behavior to wrap top-level `$ref` keys in an `allOf`.
+
+        For example, pydantic would convert
+            {"$ref": "#/$defs/APIType", "examples": ["api-type-1"]}
+        into
+            {"allOf": {"$ref": "#/$defs/APIType"}, "examples": ["api-type-1"]}
+        which is in fact recommended by JSON schema, but we need to disable this
+        to stay compatible with mex-editor and mex-model.
+        """
+        return json_schema
 
 
 class BaseModel(PydanticBaseModel):
@@ -26,6 +48,32 @@ class BaseModel(PydanticBaseModel):
         validate_default=True,
         validate_assignment=True,
     )
+
+    @classmethod
+    def model_json_schema(
+        cls,
+        by_alias: bool = True,
+        ref_template: str = DEFAULT_REF_TEMPLATE,
+        schema_generator: type[PydanticJsonSchemaGenerator] = JsonSchemaGenerator,
+        mode: JsonSchemaMode = "validation",
+    ) -> dict[str, Any]:
+        """Generates a JSON schema for a model class.
+
+        Args:
+            by_alias: Whether to use attribute aliases or not.
+            ref_template: The reference template.
+            schema_generator: Overriding the logic used to generate the JSON schema
+            mode: The mode in which to generate the schema.
+
+        Returns:
+            The JSON schema for the given model class.
+        """
+        return super().model_json_schema(
+            by_alias=by_alias,
+            ref_template=ref_template,
+            schema_generator=schema_generator,
+            mode=mode,
+        )
 
     @classmethod
     @cache
@@ -73,7 +121,7 @@ class BaseModel(PydanticBaseModel):
     @classmethod
     def _convert_non_list_to_list(
         cls, name: str, field: FieldInfo, value: Any
-    ) -> Optional[list[Any]]:
+    ) -> list[Any] | None:
         """Convert a non-list value to a list value by wrapping it in a list."""
         if value is None:
             if name in cls._get_field_names_allowing_none():
@@ -169,15 +217,16 @@ class MExModel(BaseModel):
         # also used as the foreign key for all fields containing references.
         stableTargetId: Any
 
-    identifier: Identifier = Field(
-        ...,
-        description=(
-            "A globally unique identifier for this item. Regardless of the entity-type "
-            "or whether this item was extracted, merged, etc. identifiers will be "
-            "assigned just once."
+    identifier: Annotated[
+        Identifier,
+        Field(
+            description=(
+                "A globally unique identifier for this item. Regardless of the "
+                "entity-type or whether this item was extracted, merged, etc. "
+                "identifiers will be assigned just once."
+            ),
         ),
-        examples=[Identifier.generate(seed=42)],
-    )
+    ]
 
     @classmethod
     @abstractmethod

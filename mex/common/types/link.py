@@ -41,7 +41,6 @@ class Link(BaseModel):
     language: LinkLanguage | None = None
     title: str | None = None
     url: str = Field(
-        ...,
         pattern=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
         min_length=1,
         examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],

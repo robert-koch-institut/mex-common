@@ -124,3 +124,63 @@ class License(VocabularyEnum):
     """License type."""
 
     __vocabulary__ = "license"
+
+
+class TechnicalAccessibility(VocabularyEnum):
+    """Technical accessibility within RKI and outside of RKI."""
+
+    __vocabulary__ = "technical-accessibility"
+
+
+class APIType(VocabularyEnum):
+    """Technical standard or style of a network API."""
+
+    __vocabulary__ = "api-type"
+
+
+class ActivityType(VocabularyEnum):
+    """The activity type."""
+
+    __vocabulary__ = "activity-type"
+
+
+class MIMEType(VocabularyEnum):
+    """The mime type."""
+
+    __vocabulary__ = "mime-type"
+
+
+class ResourceTypeGeneral(VocabularyEnum):
+    """The general type of a resource."""
+
+    __vocabulary__ = "resource-type-general"
+
+
+class AnonymizationPseudonymization(VocabularyEnum):
+    """Whether the resource is anonymized/pseudonymized."""
+
+    __vocabulary__ = "anonymization-pseudonymization"
+
+
+class DataProcessingState(VocabularyEnum):
+    """Type for state of data processing."""
+
+    __vocabulary__ = "data-processing-state"
+
+
+class Frequency(VocabularyEnum):
+    """Frequency type."""
+
+    __vocabulary__ = "frequency"
+
+
+class Language(VocabularyEnum):
+    """Language type."""
+
+    __vocabulary__ = "language"
+
+
+class DataType(VocabularyEnum):
+    """The type of the single piece of information within a datum."""
+
+    __vocabulary__ = "data-type"

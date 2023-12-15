@@ -40,12 +40,10 @@ class MExEncoder(json.JSONEncoder):
 @cache
 def snake_to_dromedary(string: str) -> str:
     """Convert the given string from `snake_case` into `dromedaryCase`."""
-    if len(tokens := re.split(r"_", string)) > 1:
-        return "".join(
-            word.capitalize() if index else word.lower()
-            for index, word in enumerate(tokens)
-        )
-    return string
+    return "".join(
+        word.capitalize() if index else word.lower()
+        for index, word in enumerate(re.split(r"_+", string))
+    )
 
 
 @cache
@@ -66,3 +64,9 @@ def dromedary_to_kebab(string: str) -> str:
         for word in re.split(r"([A-Z]+(?![a-z])|[a-z]+|[A-Z][a-z]+)", string)
         if word.strip("-")
     )
+
+
+@cache
+def kebab_to_camel(string: str) -> str:
+    """Convert the given string from `kebab-case` into `CamelCase`."""
+    return "".join(word.title() for word in re.split(r"\-+", string))

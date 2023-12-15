@@ -26,7 +26,17 @@ from mex.common.types.timestamp import (
 )
 from mex.common.types.vocabulary import (
     AccessRestriction,
+    ActivityType,
+    AnonymizationPseudonymization,
+    APIType,
+    DataProcessingState,
+    DataType,
+    Frequency,
+    Language,
     License,
+    MIMEType,
+    ResourceTypeGeneral,
+    TechnicalAccessibility,
     Theme,
     VocabularyEnum,
     VocabularyLoader,
@@ -34,7 +44,17 @@ from mex.common.types.vocabulary import (
 )
 
 __all__ = (
+    "DataType",
     "AccessPlatformID",
+    "ActivityType",
+    "ResourceTypeGeneral",
+    "AnonymizationPseudonymization",
+    "DataProcessingState",
+    "Frequency",
+    "Language",
+    "APIType",
+    "MIMEType",
+    "TechnicalAccessibility",
     "AccessRestriction",
     "ActivityID",
     "AssetsPath",

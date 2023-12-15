@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -24,10 +26,12 @@ class BasePrimarySource(BaseModel):
     locatedAt: list[Link] = []
     title: list[Text] = []
     unitInCharge: list[OrganizationalUnitID] = []
-    version: str | None = Field(
-        None,
-        examples=["v1", "2023-01-16", "Schema 9"],
-    )
+    version: Annotated[
+        str,
+        Field(
+            examples=["v1", "2023-01-16", "Schema 9"],
+        ),
+    ] | None = None
 
 
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):

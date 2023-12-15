@@ -12,17 +12,7 @@ class BaseContactPoint(BaseModel):
     """A contact point - for example, an interdepartmental project."""
 
     stableTargetId: ContactPointID
-    email: list[
-        Annotated[
-            Email,
-            Field(
-                examples=["info@rki.de"],
-            ),
-        ]
-    ] = Field(
-        ...,
-        min_length=1,
-    )
+    email: Annotated[list[Email], Field(min_length=1)]
 
 
 class ExtractedContactPoint(BaseContactPoint, ExtractedData):

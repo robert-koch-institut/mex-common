@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -9,17 +11,11 @@ from mex.common.types import (
     DistributionID,
     License,
     Link,
+    MIMEType,
     OrganizationID,
     PersonID,
     Timestamp,
-    VocabularyEnum,
 )
-
-
-class MIMEType(VocabularyEnum):
-    """The mime type."""
-
-    __vocabulary__ = "mime-type"
 
 
 class BaseDistribution(BaseModel):
@@ -27,10 +23,10 @@ class BaseDistribution(BaseModel):
 
     stableTargetId: DistributionID
     accessService: AccessPlatformID | None = None
-    accessRestriction: AccessRestriction = Field(
-        ...,
-        examples=["https://mex.rki.de/item/access-restriction-1"],
-    )
+    accessRestriction: Annotated[
+        AccessRestriction,
+        Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
+    ]
     accessURL: Link | None = None
     author: list[PersonID] = []
     contactPerson: list[PersonID] = []
@@ -38,24 +34,28 @@ class BaseDistribution(BaseModel):
     dataManager: list[PersonID] = []
     downloadURL: Link | None = None
     issued: Timestamp
-    license: License | None = Field(
-        None, examples=["https://mex.rki.de/item/license-1"]
-    )
-    mediaType: MIMEType | None = Field(
-        None,
-        examples=["https://mex.rki.de/item/mime-type-1"],
-    )
+    license: Annotated[
+        License, Field(examples=["https://mex.rki.de/item/license-1"])
+    ] | None = None
+    mediaType: Annotated[
+        MIMEType,
+        Field(
+            examples=["https://mex.rki.de/item/mime-type-1"],
+        ),
+    ] | None = None
     modified: Timestamp | None = None
     otherContributor: list[PersonID] = []
     projectLeader: list[PersonID] = []
     projectManager: list[PersonID] = []
-    publisher: list[OrganizationID] = Field(..., min_length=1)
+    publisher: Annotated[list[OrganizationID], Field(min_length=1)]
     researcher: list[PersonID] = []
-    title: str = Field(
-        ...,
-        examples=["theNameOfTheFile"],
-        min_length=1,
-    )
+    title: Annotated[
+        str,
+        Field(
+            examples=["theNameOfTheFile"],
+            min_length=1,
+        ),
+    ]
 
 
 class ExtractedDistribution(BaseDistribution, ExtractedData):

@@ -7,8 +7,8 @@ from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     ActivityID,
+    ActivityType,
     ContactPointID,
-    Identifier,
     Link,
     OrganizationalUnitID,
     OrganizationID,
@@ -16,14 +16,7 @@ from mex.common.types import (
     Text,
     Theme,
     Timestamp,
-    VocabularyEnum,
 )
-
-
-class ActivityType(VocabularyEnum):
-    """The activity type."""
-
-    __vocabulary__ = "activity-type"
 
 
 class BaseActivity(BaseModel):
@@ -40,12 +33,9 @@ class BaseActivity(BaseModel):
         ]
     ] = []
     alternativeTitle: list[Text] = []
-    contact: list[
-        Annotated[
-            OrganizationalUnitID | PersonID | ContactPointID,
-            Field(examples=[Identifier.generate(seed=42)]),
-        ]
-    ] = Field(..., min_length=1)
+    contact: Annotated[
+        list[OrganizationalUnitID | PersonID | ContactPointID,], Field(min_length=1)
+    ]
     documentation: list[Link] = []
     end: list[
         Annotated[Timestamp, Field(examples=["2024-01-17", "2024", "2024-01"])]
@@ -57,7 +47,7 @@ class BaseActivity(BaseModel):
     involvedUnit: list[OrganizationalUnitID] = []
     isPartOfActivity: list[ActivityID] = []
     publication: list[Link] = []
-    responsibleUnit: list[OrganizationalUnitID] = Field(..., min_length=1)
+    responsibleUnit: Annotated[list[OrganizationalUnitID], Field(min_length=1)]
     shortName: list[Text] = []
     start: list[
         Annotated[Timestamp, Field(examples=["2023-01-16", "2023", "2023-02"])]
@@ -66,7 +56,7 @@ class BaseActivity(BaseModel):
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
     ] = []
-    title: list[Text] = Field(..., min_length=1)
+    title: Annotated[list[Text], Field(min_length=1)]
     website: list[Link] = []
 
 

@@ -46,7 +46,7 @@ class BaseOrganization(BaseModel):
             ),
         ]
     ] = []
-    officialName: list[Text] = Field(..., min_length=1)
+    officialName: Annotated[list[Text], Field(min_length=1)]
     rorId: list[
         Annotated[
             str,

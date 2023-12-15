@@ -23,4 +23,5 @@ class Email(str):
         field_schema = handler(core_schema_)
         field_schema["title"] = cls.__name__
         field_schema["format"] = "email"
+        field_schema["examples"] = ["info@rki.de"]
         return field_schema
