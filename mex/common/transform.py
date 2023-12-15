@@ -40,10 +40,12 @@ class MExEncoder(json.JSONEncoder):
 @cache
 def snake_to_dromedary(string: str) -> str:
     """Convert the given string from `snake_case` into `dromedaryCase`."""
-    return "".join(
-        word.capitalize() if index else word.lower()
-        for index, word in enumerate(re.split(r"_+", string))
-    )
+    if len(tokens := re.split(r"_", string)) > 1:
+        return "".join(
+            word.capitalize() if index else word.lower()
+            for index, word in enumerate(tokens)
+        )
+    return string
 
 
 @cache

@@ -13,6 +13,7 @@ from mex.common.transform import (
     MExEncoder,
     dromedary_to_kebab,
     dromedary_to_snake,
+    kebab_to_camel,
     snake_to_dromedary,
 )
 from mex.common.types import Identifier, Timestamp
@@ -119,4 +120,24 @@ def test_dromedary_to_snake(string: str, expected: str) -> None:
 )
 def test_dromedary_to_kebab(string: str, expected: str) -> None:
     result = dromedary_to_kebab(string)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [
+        ("", ""),
+        ("word", "word"),
+        ("alreadyCamel", "alreadyCamel"),
+        ("multiple-words-in-a-string", "multipleWordsInAString"),
+    ],
+    ids=[
+        "empty",
+        "single word",
+        "already camel",
+        "multiple words",
+    ],
+)
+def test_kebab_to_camel(string: str, expected: str) -> None:
+    result = kebab_to_camel(string)
     assert result == expected
