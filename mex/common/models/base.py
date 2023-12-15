@@ -1,6 +1,7 @@
 import hashlib
 import pickle  # nosec
 from abc import abstractmethod
+from collections.abc import MutableMapping
 from functools import cache
 from typing import TYPE_CHECKING, Any, Optional, TypeVar, Union, get_args, get_origin
 
@@ -10,7 +11,7 @@ from pydantic.fields import FieldInfo
 
 from mex.common.types import Identifier
 
-ModelValuesT = TypeVar("ModelValuesT", bound=dict[str, Any])
+RawModelDataT = TypeVar("RawModelDataT")
 
 
 class BaseModel(PydanticBaseModel):
@@ -112,12 +113,13 @@ class BaseModel(PydanticBaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def fix_listyness(cls, values: ModelValuesT) -> ModelValuesT:
-        """Adjust the listyness of to-be-parsed values to match the desired shape.
+    def fix_listyness(cls, data: RawModelDataT) -> RawModelDataT:
+        """Adjust the listyness of to-be-parsed data to match the desired shape.
 
-        If the model defines a list[T] field but the raw data contains just a value
-        of type T, it will be wrapped into a list. If the raw data contains a literal
-        `None`, but the list field is defined as required, we substitute an empty list.
+        If that data is a Mapping and the model defines a list[T] field but the raw data
+        contains just a value of type T, it will be wrapped into a list. If the raw
+        data contains a literal `None`, but the list field is defined as required, we
+        substitute an empty list.
 
         If the model does not expect a list, but the raw data contains a list with
         no entries, it will be substituted with `None`. If the raw data contains exactly
@@ -125,18 +127,19 @@ class BaseModel(PydanticBaseModel):
         entry however, an error is raised, because we would not know which to choose.
 
         Args:
-            values: Raw values to be parsed
+            data: Raw data to be parsed
 
         Returns:
-            dict: Values with fixed list shapes
+            data with fixed list shapes
         """
-        for name, value in values.items():
-            field_name = cls._get_alias_lookup().get(name, name)
-            if field := cls.model_fields.get(field_name):
-                values[name] = cls._fix_value_listyness_for_field(
-                    field_name, field, value
-                )
-        return values
+        if isinstance(data, MutableMapping):
+            for name, value in data.items():
+                field_name = cls._get_alias_lookup().get(name, name)
+                if field := cls.model_fields.get(field_name):
+                    data[name] = cls._fix_value_listyness_for_field(
+                        field_name, field, value
+                    )
+        return data
 
     def checksum(self) -> str:
         """Calculate md5 checksum for this model."""

@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Any, Optional, Union
 
 import pytest
+from pydantic import ValidationError
 
 from mex.common.models import BaseModel
 
@@ -65,6 +66,20 @@ def test_base_model_listyness_fix(
         assert str(expected) in str(error)
     else:
         assert model.model_dump(exclude_unset=True) == expected
+
+
+def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
+    class Pet(BaseModel):
+        name: str
+
+    class Shelter(Pet):
+        inhabitants: list[Pet]
+
+    # make sure this raises a validation error and does not fail in fix_listyness
+    with pytest.raises(
+        ValidationError, match="Input should be a valid dictionary or instance of Pet"
+    ):
+        Shelter(inhabitants="foo")  # type: ignore
 
 
 class DummyModel(BaseModel):
