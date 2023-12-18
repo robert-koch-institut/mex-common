@@ -120,9 +120,7 @@ def test_timestamp_eq() -> None:
     assert Timestamp(2004, 11) == Timestamp(2004, 11)
     assert Timestamp(2004, 11, 2) == "2004-11-02"
     assert Timestamp(2020, 3, 22, 14, 30, 58, 0) == datetime(2020, 3, 22, 14, 30, 58, 0)
-
-    with pytest.raises(NotImplementedError):
-        assert Timestamp(2005) == object()
+    assert Timestamp(2005) != object()
 
 
 def test_timestamp_gt() -> None:
