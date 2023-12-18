@@ -608,8 +608,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/robert-koch-institut/mex-model.git"
-reference = "feature/mx-1478-more-model-alignments"
-resolved_reference = "40ed078ad0fa46d468535ca1fe5537c70875a1bc"
+reference = "2.2.0"
+resolved_reference = "d8ef77aa5a5f3a696e5698969ffa0dae46d5b785"
 
 [[package]]
 name = "mypy"
@@ -1581,4 +1581,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2e395f580feee674402be8efb626fe90562215ffa84b82bc31850b3b1f3feccf"
+content-hash = "f3ac6b95468e64df5c0dcab47ed27d2823036df2047fb8ce727075c49d429086"

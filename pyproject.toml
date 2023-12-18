@@ -23,7 +23,7 @@ requests = "^2.31.0"
 [tool.poetry.group.dev.dependencies]
 black = "^23.11.0"
 ipdb = "^0.13.13"
-mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "feature/mx-1478-more-model-alignments"}
+mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0"}
 mypy = "^1.7.1"
 pandas-stubs = "^2.1.1"
 pytest = "^7.4.3"
