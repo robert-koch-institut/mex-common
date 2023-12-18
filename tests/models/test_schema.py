@@ -1,8 +1,8 @@
 import json
 import re
 from copy import deepcopy
+from importlib.resources import files
 from itertools import zip_longest
-from pathlib import Path
 from typing import Any, Callable
 
 import pytest
@@ -11,8 +11,7 @@ from mex.common.models import EXTRACTED_MODEL_CLASSES_BY_NAME
 from mex.common.transform import dromedary_to_kebab
 from mex.common.types.identifier import MEX_ID_PATTERN
 
-# TODO: find a cleaner way to get to the mex-model JSON schemas
-SPECIFIED_SCHEMA_PATH = Path(".venv", "src", "mex-model", "schema", "entities")
+SPECIFIED_SCHEMA_PATH = files("mex.model").joinpath("entities")
 
 GENERATED_SCHEMAS = dict(
     sorted(

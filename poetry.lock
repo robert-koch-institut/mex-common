@@ -599,7 +599,7 @@ traitlets = "*"
 [[package]]
 name = "mex-model"
 version = "2.2.0"
-description = "RKI MEx metadata model"
+description = "RKI MEx metadata model."
 optional = false
 python-versions = "*"
 files = []
@@ -609,7 +609,7 @@ develop = false
 type = "git"
 url = "https://github.com/robert-koch-institut/mex-model.git"
 reference = "feature/mx-1478-more-model-alignments"
-resolved_reference = "64937774fc91f1cdb2ba3e84a62059e7c473964e"
+resolved_reference = "40ed078ad0fa46d468535ca1fe5537c70875a1bc"
 
 [[package]]
 name = "mypy"
