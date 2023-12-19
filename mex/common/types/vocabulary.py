@@ -114,6 +114,72 @@ class AccessRestriction(VocabularyEnum):
     __vocabulary__ = "access-restriction"
 
 
+class ActivityType(VocabularyEnum):
+    """The activity type."""
+
+    __vocabulary__ = "activity-type"
+
+
+class AnonymizationPseudonymization(VocabularyEnum):
+    """Whether the resource is anonymized/pseudonymized."""
+
+    __vocabulary__ = "anonymization-pseudonymization"
+
+
+class APIType(VocabularyEnum):
+    """Technical standard or style of a network API."""
+
+    __vocabulary__ = "api-type"
+
+
+class DataProcessingState(VocabularyEnum):
+    """Type for state of data processing."""
+
+    __vocabulary__ = "data-processing-state"
+
+
+class DataType(VocabularyEnum):
+    """The type of the single piece of information within a datum."""
+
+    __vocabulary__ = "data-type"
+
+
+class Frequency(VocabularyEnum):
+    """Frequency type."""
+
+    __vocabulary__ = "frequency"
+
+
+class Language(VocabularyEnum):
+    """Language type."""
+
+    __vocabulary__ = "language"
+
+
+class License(VocabularyEnum):
+    """License type."""
+
+    __vocabulary__ = "license"
+
+
+class MIMEType(VocabularyEnum):
+    """The mime type."""
+
+    __vocabulary__ = "mime-type"
+
+
+class ResourceTypeGeneral(VocabularyEnum):
+    """The general type of a resource."""
+
+    __vocabulary__ = "resource-type-general"
+
+
+class TechnicalAccessibility(VocabularyEnum):
+    """Technical accessibility within RKI and outside of RKI."""
+
+    __vocabulary__ = "technical-accessibility"
+
+
 class Theme(VocabularyEnum):
     """The theme type."""
 

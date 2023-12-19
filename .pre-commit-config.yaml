@@ -3,7 +3,7 @@ default_language_version:
   python: python3.11
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.6
+    rev: v0.1.8
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -20,7 +20,7 @@ repos:
       - id: check-yaml
         name: yaml
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.7.0
+    rev: 1.7.1
     hooks:
       - id: poetry-check
         name: poetry

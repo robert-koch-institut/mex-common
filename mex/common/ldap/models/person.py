@@ -7,14 +7,14 @@ from mex.common.models import BaseModel
 class LDAPPerson(LDAPActor):
     """Model class for LDAP persons."""
 
-    company: str | None = Field(None)
-    department: str | None = Field(None)
-    departmentNumber: str | None = Field(None)
-    displayName: str | None = Field(None)
-    employeeID: str = Field(...)
-    givenName: list[str] = Field(..., min_length=1)
-    ou: list[str] = Field([])
-    sn: str = Field(...)
+    company: str | None = None
+    department: str | None = None
+    departmentNumber: str | None = None
+    displayName: str | None = None
+    employeeID: str
+    givenName: list[str] = Field(min_length=1)
+    ou: list[str] = []
+    sn: str
 
     @classmethod
     def get_ldap_fields(cls) -> tuple[str, ...]:

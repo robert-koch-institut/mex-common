@@ -4,7 +4,7 @@ from pydantic import GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 
-EMAIL_PATTERN = r".+@.+"
+EMAIL_PATTERN = r"^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$"
 
 
 class Email(str):
@@ -12,7 +12,7 @@ class Email(str):
 
     @classmethod
     def __get_pydantic_core_schema__(cls, _source: Type[Any]) -> core_schema.CoreSchema:
-        """Get pydanctic core schema."""
+        """Get pydantic core schema."""
         return core_schema.str_schema(pattern=EMAIL_PATTERN)
 
     @classmethod
@@ -21,5 +21,7 @@ class Email(str):
     ) -> JsonSchemaValue:
         """Add title and format."""
         field_schema = handler(core_schema_)
-        field_schema.update(title=cls.__name__, format="email")
+        field_schema["title"] = cls.__name__
+        field_schema["format"] = "email"
+        field_schema["examples"] = ["info@rki.de"]
         return field_schema

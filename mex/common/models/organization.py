@@ -22,6 +22,7 @@ class BaseOrganization(BaseModel):
             Field(
                 pattern=r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$",
                 examples=["https://gepris.dfg.de/gepris/institution/10179"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
@@ -31,6 +32,7 @@ class BaseOrganization(BaseModel):
             Field(
                 pattern=r"^https://d\-nb\.info/gnd/[-X0-9]{3,10}$",
                 examples=["https://d-nb.info/gnd/17690-4"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
@@ -40,16 +42,18 @@ class BaseOrganization(BaseModel):
             Field(
                 pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
                 examples=["https://isni.org/isni/0000000109403744"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
-    officialName: list[Text] = Field(..., min_length=1)
+    officialName: Annotated[list[Text], Field(min_length=1)]
     rorId: list[
         Annotated[
             str,
             Field(
                 pattern=r"^https://ror\.org/[a-z0-9]{9}$",
                 examples=["https://ror.org/01k5qnb77"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
@@ -60,16 +64,20 @@ class BaseOrganization(BaseModel):
             Field(
                 pattern=r"^https://viaf\.org/viaf/[0-9]{2,22}$",
                 examples=["https://viaf.org/viaf/123556639"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
-    wikidataId: Annotated[
-        str,
-        Field(
-            examples=["http://www.wikidata.org/entity/Q679041"],
-            pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
-        ),
-    ] | None = None
+    wikidataId: list[
+        Annotated[
+            str,
+            Field(
+                examples=["http://www.wikidata.org/entity/Q679041"],
+                pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
+                json_schema_extra={"format": "uri"},
+            ),
+        ]
+    ] = []
 
 
 class ExtractedOrganization(BaseOrganization, ExtractedData):

@@ -9,7 +9,13 @@ import pytest
 from pydantic import BaseModel as PydanticModel
 from pydantic import Field, SecretStr
 
-from mex.common.transform import MExEncoder, dromedary_to_snake, snake_to_dromedary
+from mex.common.transform import (
+    MExEncoder,
+    dromedary_to_kebab,
+    dromedary_to_snake,
+    kebab_to_camel,
+    snake_to_dromedary,
+)
 from mex.common.types import Identifier, Timestamp
 
 
@@ -92,4 +98,50 @@ def test_snake_to_dromedary(string: str, expected: str) -> None:
 )
 def test_dromedary_to_snake(string: str, expected: str) -> None:
     result = dromedary_to_snake(string)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [
+        ("", ""),
+        ("word", "word"),
+        ("already-kebab", "already-kebab"),
+        ("Such-AWeird-MIXEDCase", "such-a-weird-mixed-case"),
+        ("ABWordCDEWordFG", "ab-word-cde-word-fg"),
+        ("multipleWordsInAString", "multiple-words-in-a-string"),
+    ],
+    ids=[
+        "empty",
+        "single word",
+        "already kebab",
+        "mixed case",
+        "caps words",
+        "multiple words",
+    ],
+)
+def test_dromedary_to_kebab(string: str, expected: str) -> None:
+    result = dromedary_to_kebab(string)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [
+        ("", ""),
+        ("word", "Word"),
+        ("AlreadyCamel", "AlreadyCamel"),
+        ("Mixed-CASE", "MixedCase"),
+        ("multiple-words-in-a-string", "MultipleWordsInAString"),
+    ],
+    ids=[
+        "empty",
+        "single word",
+        "already camel",
+        "mixed case",
+        "multiple words",
+    ],
+)
+def test_kebab_to_camel(string: str, expected: str) -> None:
+    result = kebab_to_camel(string)
     assert result == expected
