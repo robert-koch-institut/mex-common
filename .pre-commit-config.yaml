@@ -28,7 +28,7 @@ repos:
     hooks:
     - id: mypy
       name: mypy
-      entry: poetry run dmypy run --timeout 3600 -- mex
+      entry: poetry run dmypy run --timeout 7200 -- mex
       files: ^mex/
       language: system
       pass_filenames: false
