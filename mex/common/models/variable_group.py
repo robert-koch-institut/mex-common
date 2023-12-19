@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models.base import BaseModel
@@ -10,8 +12,8 @@ class BaseVariableGroup(BaseModel):
     """The grouping of variables according to a certain aspect."""
 
     stableTargetId: VariableGroupID
-    containedBy: list[ResourceID] = Field(..., min_length=1)
-    label: list[Text] = Field(..., min_length=1)
+    containedBy: Annotated[list[ResourceID], Field(min_length=1)]
+    label: Annotated[list[Text], Field(min_length=1)]
 
 
 class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):

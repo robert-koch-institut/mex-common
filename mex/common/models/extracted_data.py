@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import Field, model_validator
 
@@ -19,31 +19,34 @@ class BaseExtractedData(MExModel):
     correct type, e.g. `PersonID`.
     """
 
-    hadPrimarySource: PrimarySourceID = Field(
-        ...,
-        description=(
-            "The stableTargetID of the primary source, that this item was extracted "
-            "from. This field is mandatory for all extracted items to aid with data "
-            "provenance. Extracted primary sources also have this field and are all "
-            "extracted from a primary source called MEx, which is its own primary "
-            "source and has the static stableTargetID: "
-            f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    hadPrimarySource: Annotated[
+        PrimarySourceID,
+        Field(
+            description=(
+                "The stableTargetID of the primary source, that this item was "
+                "extracted from. This field is mandatory for all extracted items to "
+                "aid with data provenance. Extracted primary sources also have this "
+                "field and are all extracted from a primary source called MEx, which "
+                "is its own primary source and has the static stableTargetID: "
+                f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+            ),
         ),
-        examples=[PrimarySourceID.generate(seed=42)],
-    )
-    identifierInPrimarySource: str = Field(
-        ...,
-        description=(
-            "This is the identifier the original item had in its source system. "
-            "It is only unique amongst items coming from the same system, because "
-            "identifier formats are likely to overlap between systems. "
-            "The value for `identifierInPrimarySource` is therefore only unique in "
-            "composition with `hadPrimarySource`. MEx uses this composite key "
-            "to assign a stable and globally unique `identifier` to each item."
+    ]
+    identifierInPrimarySource: Annotated[
+        str,
+        Field(
+            description=(
+                "This is the identifier the original item had in its source system. "
+                "It is only unique amongst items coming from the same system, because "
+                "identifier formats are likely to overlap between systems. "
+                "The value for `identifierInPrimarySource` is therefore only unique in "
+                "composition with `hadPrimarySource`. MEx uses this composite key "
+                "to assign a stable and globally unique `identifier` to each item."
+            ),
+            examples=["123456", "item-501", "D7/x4/zz.final3"],
+            min_length=1,
         ),
-        examples=["123456", "item-501", "D7/x4/zz.final3"],
-        min_length=1,
-    )
+    ]
 
     @classmethod
     def get_entity_type(cls) -> str:

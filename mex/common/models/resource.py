@@ -9,54 +9,23 @@ from mex.common.types import (
     AccessPlatformID,
     AccessRestriction,
     ActivityID,
+    AnonymizationPseudonymization,
     ContactPointID,
+    DataProcessingState,
     DistributionID,
+    Frequency,
+    Language,
+    License,
     Link,
     OrganizationalUnitID,
     OrganizationID,
     PersonID,
     ResourceID,
+    ResourceTypeGeneral,
     Text,
     Theme,
     Timestamp,
-    VocabularyEnum,
 )
-
-
-class ResourceTypeGeneral(VocabularyEnum):
-    """The general type of a resource."""
-
-    __vocabulary__ = "resource-type-general"
-
-
-class AnonymizationPseudonymization(VocabularyEnum):
-    """Whether the resource is anonymized/pseudonymized."""
-
-    __vocabulary__ = "anonymization-pseudonymization"
-
-
-class DataProcessingState(VocabularyEnum):
-    """Type for state of data processing."""
-
-    __vocabulary__ = "data-processing-state"
-
-
-class Frequency(VocabularyEnum):
-    """Frequency type."""
-
-    __vocabulary__ = "frequency"
-
-
-class Language(VocabularyEnum):
-    """Language type."""
-
-    __vocabulary__ = "language"
-
-
-class License(VocabularyEnum):
-    """License type."""
-
-    __vocabulary__ = "license"
 
 
 class BaseResource(BaseModel):
@@ -64,13 +33,15 @@ class BaseResource(BaseModel):
 
     stableTargetId: ResourceID
     accessPlatform: list[AccessPlatformID] = []
-    accessRestriction: AccessRestriction = Field(
-        ...,
-        examples=["https://mex.rki.de/item/access-restriction-1"],
-    )
-    accrualPeriodicity: Frequency | None = Field(
-        None, examples=["https://mex.rki.de/item/frequency-1"]
-    )
+    accessRestriction: Annotated[
+        AccessRestriction,
+        Field(
+            examples=["https://mex.rki.de/item/access-restriction-1"],
+        ),
+    ]
+    accrualPeriodicity: Annotated[
+        Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])
+    ] | None = None
     alternativeTitle: list[Text] = []
     anonymizationPseudonymization: list[
         Annotated[
@@ -80,12 +51,12 @@ class BaseResource(BaseModel):
             ),
         ]
     ] = []
-    contact: list[OrganizationalUnitID | PersonID | ContactPointID] = Field(
-        ..., min_length=1
-    )
+    contact: Annotated[
+        list[OrganizationalUnitID | PersonID | ContactPointID], Field(min_length=1)
+    ]
     contributingUnit: list[OrganizationalUnitID] = []
     contributor: list[PersonID] = []
-    created: list[Timestamp] = []
+    created: Timestamp | None = None
     creator: list[PersonID] = []
     description: list[Text] = []
     distribution: list[DistributionID] = []
@@ -98,21 +69,23 @@ class BaseResource(BaseModel):
     language: list[
         Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
     ] = []
-    license: list[
+    license: Annotated[
+        License, Field(examples=["https://mex.rki.de/item/license-1"])
+    ] | None = None
+    loincId: list[str] = []
+    meshId: list[
         Annotated[
-            License,
+            str,
             Field(
-                examples=["https://mex.rki.de/item/license-1"],
+                pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$",
+                examples=["http://id.nlm.nih.gov/mesh/D001604"],
+                json_schema_extra={"format": "uri"},
             ),
         ]
     ] = []
-    loincId: list[str] = []
-    meshId: list[
-        Annotated[str, Field(pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$")]
-    ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: list[Timestamp] = []
+    modified: Timestamp | None = None
     publication: list[Link] = []
     publisher: list[OrganizationID] = []
     qualityInformation: list[Text] = []
@@ -128,15 +101,26 @@ class BaseResource(BaseModel):
     rights: list[Text] = []
     sizeOfDataBasis: str | None = None
     spatial: list[Text] = []
-    stateOfDataProcessing: DataProcessingState | None = Field(
-        None, examples=["https://mex.rki.de/item/data-processing-state-1"]
-    )
-    temporal: list[Timestamp | str] = []
-    theme: list[
-        Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
-    ] = Field(..., min_length=1)
-    title: list[Text] = Field(..., min_length=1)
-    unitInCharge: list[OrganizationalUnitID] = Field(..., min_length=1)
+    stateOfDataProcessing: list[
+        Annotated[
+            DataProcessingState,
+            Field(
+                examples=["https://mex.rki.de/item/data-processing-state-1"],
+            ),
+        ]
+    ] = []
+    temporal: Timestamp | Annotated[
+        str,
+        Field(
+            examples=["2022-01 bis 2022-03", "Sommer 2023", "nach 2013", "1998-2008"]
+        ),
+    ] | None = None
+    theme: Annotated[
+        list[Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]],
+        Field(min_length=1),
+    ]
+    title: Annotated[list[Text], Field(min_length=1)]
+    unitInCharge: Annotated[list[OrganizationalUnitID], Field(min_length=1)]
     wasGeneratedBy: ActivityID | None = None
 
 
