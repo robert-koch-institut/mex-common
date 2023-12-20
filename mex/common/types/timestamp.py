@@ -167,6 +167,7 @@ class Timestamp:
         """Modify the schema to add the class name as title and examples."""
         json_schema = handler(core_schema_)
         json_schema["title"] = cls.__name__
+        json_schema["format"] = "date-time"
         json_schema["examples"] = [
             "2011",
             "2019-03",
@@ -232,7 +233,7 @@ class Timestamp:
         try:
             other = self.validate(other)
         except TypeError:
-            return NotImplemented
+            return False
         return bool(
             self.date_time == other.date_time and self.precision == other.precision
         )
@@ -242,7 +243,7 @@ class Timestamp:
         try:
             other = self.validate(other)
         except TypeError:
-            return NotImplemented
+            raise NotImplementedError()
         return bool(self.date_time > other.date_time)
 
     def __str__(self) -> str:

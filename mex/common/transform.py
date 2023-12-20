@@ -55,3 +55,21 @@ def dromedary_to_snake(string: str) -> str:
         for word in re.split(r"([A-Z]+(?![a-z])|[a-z]+|[A-Z][a-z]+)", string)
         if word.strip("_")
     )
+
+
+@cache
+def dromedary_to_kebab(string: str) -> str:
+    """Convert the given string from `dromedaryCase` into `kebab-case`."""
+    return "-".join(
+        word.lower()
+        for word in re.split(r"([A-Z]+(?![a-z])|[a-z]+|[A-Z][a-z]+)", string)
+        if word.strip("-")
+    )
+
+
+@cache
+def kebab_to_camel(string: str) -> str:
+    """Convert the given string from `kebab-case` into `CamelCase`."""
+    if len(tokens := re.split(r"\-+", string)) > 1:
+        return "".join(word.title() for word in tokens)
+    return string[:1].upper() + string[1:]

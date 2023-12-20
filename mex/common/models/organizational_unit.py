@@ -13,15 +13,8 @@ class BaseOrganizationalUnit(BaseModel):
 
     stableTargetId: OrganizationalUnitID
     alternativeName: list[Text] = []
-    email: list[
-        Annotated[
-            Email,
-            Field(
-                examples=["info@rki.de"],
-            ),
-        ]
-    ] = []
-    name: list[Text] = Field(..., min_length=1)
+    email: list[Email] = []
+    name: Annotated[list[Text], Field(min_length=1)]
     parentUnit: OrganizationalUnitID | None = None
     shortName: list[Text] = []
     unitOf: list[OrganizationID] = []

@@ -10,7 +10,7 @@ class Joker:
         assert value == {"predictable": 42, "timestamp": Joker()}
     """
 
-    _repr_cache = None
+    _repr_cache: str | None = None
 
     def __eq__(self, obj: Any) -> bool:
         """Pretend to be equal to any other object."""

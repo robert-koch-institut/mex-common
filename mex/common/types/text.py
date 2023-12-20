@@ -26,7 +26,7 @@ class Text(BaseModel):
         Text(value="foo") == Text.model_validate("foo")
     """
 
-    value: str = Field(..., min_length=1)
+    value: str = Field(min_length=1)
     language: TextLanguage | None = None
 
     @model_validator(mode="before")

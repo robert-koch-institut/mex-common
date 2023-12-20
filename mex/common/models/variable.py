@@ -6,18 +6,12 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
+    DataType,
     ResourceID,
     Text,
     VariableGroupID,
     VariableID,
-    VocabularyEnum,
 )
-
-
-class DataType(VocabularyEnum):
-    """The type of the single piece of information within a datum."""
-
-    __vocabulary__ = "data-type"
 
 
 class BaseVariable(BaseModel):
@@ -25,29 +19,33 @@ class BaseVariable(BaseModel):
 
     stableTargetId: VariableID
     belongsTo: list[VariableGroupID] = []
-    codingSystem: str | None = Field(
-        None,
-        examples=["SF-36 Version 1"],
-    )
-    dataType: DataType | None = Field(
-        None,
-        examples=["https://mex.rki.de/item/data-type-1"],
-    )
+    codingSystem: Annotated[
+        str,
+        Field(
+            examples=["SF-36 Version 1"],
+        ),
+    ] | None = None
+    dataType: Annotated[
+        DataType,
+        Field(
+            examples=["https://mex.rki.de/item/data-type-1"],
+        ),
+    ] | None = None
     description: list[Text] = []
-    label: list[
-        Annotated[
-            Text,
-            Field(
-                examples=[
-                    {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
-                ],
-            ),
-        ]
-    ] = Field(
-        ...,
-        min_length=1,
-    )
-    usedIn: list[ResourceID] = Field(..., min_length=1)
+    label: Annotated[
+        list[
+            Annotated[
+                Text,
+                Field(
+                    examples=[
+                        {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
+                    ],
+                ),
+            ]
+        ],
+        Field(min_length=1),
+    ]
+    usedIn: Annotated[list[ResourceID], Field(min_length=1)]
     valueSet: list[
         Annotated[
             str,
@@ -59,9 +57,7 @@ class BaseVariable(BaseModel):
                 ],
             ),
         ]
-    ] = Field(
-        [],
-    )
+    ] = []
 
 
 class ExtractedVariable(BaseVariable, ExtractedData):

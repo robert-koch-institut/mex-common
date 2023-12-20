@@ -66,7 +66,7 @@ class PublicApiItem(PublicApiBaseModel):
 
     entityType: str
     itemId: UUID | None = Field(None, exclude=True)
-    businessId: str = Field(..., exclude=True)
+    businessId: str = Field(exclude=True)
     values: list[PublicApiField]
 
     @property
@@ -96,7 +96,7 @@ class PublicApiItemWithoutValues(PublicApiBaseModel):
 
     entityType: str
     itemId: UUID | None = Field(None, exclude=True)
-    businessId: str = Field(..., exclude=True)
+    businessId: str = Field(exclude=True)
 
     @property
     def stableTargetId(self) -> Identifier:  # noqa: N802
