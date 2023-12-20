@@ -4,7 +4,7 @@ import pytest
 
 from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.identity.registry import _PROVIDER_REGISTRY, register_provider
-from mex.common.identity.types import IdentityProvider
+from mex.common.types import IdentityProvider
 
 
 @pytest.fixture(autouse=True)

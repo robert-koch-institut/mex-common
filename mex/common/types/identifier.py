@@ -73,8 +73,8 @@ class Identifier(str):
         return f"{self.__class__.__name__}({super().__str__().__repr__()})"
 
 
-# We have technically-identical subclasses of identifier types (one per entity type).
-# This allows us to annotate which entity types are allowed on reference fields.
+# We have technically-identical subclasses of identifier types (one per entity-type).
+# This allows us to annotate which entity-types are allowed on reference fields.
 # For example `contact: PersonID | OrganizationID` tells us that a contact for an item
 # has to be either a person or an organization.
 # We cannot validate this using pydantic, because all identifiers have the same

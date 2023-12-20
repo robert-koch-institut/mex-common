@@ -48,11 +48,6 @@ class BaseExtractedData(MExModel):
         ),
     ]
 
-    @classmethod
-    def get_entity_type(cls) -> str:
-        """Get the schema-conform name of this model class."""
-        return cls.__name__
-
     def __str__(self) -> str:
         """Format this extracted data instance as a string for logging."""
         return (

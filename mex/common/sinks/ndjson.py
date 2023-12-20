@@ -27,15 +27,15 @@ def write_ndjson(models: Iterable[MExModel]) -> Generator[Identifier, None, None
     settings = BaseSettings.get()
     with ExitStack() as stack:
         for model in models:
-            entity_type = model.get_entity_type()
+            class_name = model.__class__.__name__
             try:
-                handle = file_handles[entity_type]
+                handle = file_handles[class_name]
             except KeyError:
-                file_name = Path(settings.work_dir, f"{entity_type}.ndjson")
+                file_name = Path(settings.work_dir, f"{class_name}.ndjson")
                 writer = open(file_name, "a+", encoding="utf-8")
-                file_handles[entity_type] = handle = stack.enter_context(writer)
+                file_handles[class_name] = handle = stack.enter_context(writer)
                 echo(
-                    f"[writing {entity_type} to file] {file_name.as_posix()}",
+                    f"[writing {class_name} to file] {file_name.as_posix()}",
                     fg="green",
                 )
 

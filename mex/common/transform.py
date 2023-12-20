@@ -9,8 +9,7 @@ from uuid import UUID
 from pydantic import AnyUrl, SecretStr
 from pydantic import BaseModel as PydanticModel
 
-from mex.common.types import Timestamp
-from mex.common.types.path import PathWrapper
+from mex.common.types import PathWrapper, Timestamp
 
 
 class MExEncoder(json.JSONEncoder):

@@ -147,7 +147,3 @@ MERGED_MODEL_CLASSES: Final[list[type[MergedItem]]] = [
 MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[MergedItem]]] = {
     cls.__name__: cls for cls in MERGED_MODEL_CLASSES
 }
-
-# bw-compat
-MODEL_CLASSES = EXTRACTED_MODEL_CLASSES
-MODEL_CLASSES_BY_ENTITY_TYPE = EXTRACTED_MODEL_CLASSES_BY_NAME

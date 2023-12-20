@@ -2,7 +2,7 @@ from typing import Final, Hashable
 
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.memory import MemoryIdentityProvider
-from mex.common.identity.types import IdentityProvider
+from mex.common.types import IdentityProvider
 
 _PROVIDER_REGISTRY: Final[dict[Hashable, type[BaseProvider]]] = {}
 

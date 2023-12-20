@@ -35,10 +35,6 @@ class DummyModel(MExModel):
     manyReferences: list[PersonID | OrganizationID]
     timestamp: Timestamp
 
-    @classmethod
-    def get_entity_type(cls) -> str:
-        return cls.__name__
-
 
 @pytest.fixture
 def raw_mex_model() -> dict[str, Any]:
@@ -159,7 +155,7 @@ def test_transform_public_api_item_to_mex_model(
     raw_mex_model: dict[str, Any],
 ) -> None:
     monkeypatch.setitem(
-        EXTRACTED_MODEL_CLASSES_BY_NAME, DummyModel.get_entity_type(), DummyModel
+        EXTRACTED_MODEL_CLASSES_BY_NAME, DummyModel.__name__, DummyModel
     )
     dummy_item = PublicApiItem(**raw_api_item, businessId="00000000000fds")
 

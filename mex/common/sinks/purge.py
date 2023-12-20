@@ -5,12 +5,12 @@ from mex.common.exceptions import MExError
 from mex.common.models import MExModel
 from mex.common.public_api.models import PublicApiItem, PublicApiItemWithoutValues
 from mex.common.settings import BaseSettings
-from mex.common.sinks import Sink
 from mex.common.sinks.ndjson import write_ndjson
 from mex.common.sinks.public_api import (
     purge_items_from_public_api,
     purge_models_from_public_api,
 )
+from mex.common.types import Sink
 
 PublicApiItemOptionalValues = PublicApiItem | PublicApiItemWithoutValues
 

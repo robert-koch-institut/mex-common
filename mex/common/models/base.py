@@ -1,6 +1,5 @@
 import hashlib
 import pickle  # nosec
-from abc import abstractmethod
 from collections.abc import MutableMapping
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, TypeVar, Union, get_args, get_origin
@@ -230,9 +229,3 @@ class MExModel(BaseModel):
             ),
         ),
     ]
-
-    @classmethod
-    @abstractmethod
-    def get_entity_type(cls) -> str:
-        """Get the schema-conform name of this model class."""
-        ...
