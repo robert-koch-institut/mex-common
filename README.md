@@ -19,6 +19,10 @@ Via MEx, metadata will be made findable, accessible and shareable, as well as av
 for further research. The goal is to get an overview of what research data is available,
 understand its context, and know what needs to be considered for subsequent use.
 
+For the pilot phase of the MEx project, the RKI cooperated with D4L data4life gGmbH, 
+where we jointly explored the vision of a FAIR metadata catalog and developed concepts 
+based on this. With the successful conclusion of the pilot phase, the partnership with D4L ended.
+
 After an internal launch, the metadata will also be made publicly available and thus be
 available to external researchers as well as the interested (professional) public to
 find research data from the RKI.
