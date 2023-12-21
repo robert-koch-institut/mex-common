@@ -15,10 +15,10 @@ class PathWrapper(PathLike[str]):
 
     def __init__(self, path: Union[str, Path, "PathWrapper"]) -> None:
         """Create a new resolved path instance."""
-        if isinstance(path, str):
-            path = Path(path)
-        elif isinstance(path, PathWrapper):
+        if isinstance(path, PathWrapper):
             path = path._path
+        elif isinstance(path, str):
+            path = Path(path)
         self._path = path
 
     def __fspath__(self) -> str:
