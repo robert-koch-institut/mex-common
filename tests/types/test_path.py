@@ -6,11 +6,9 @@ from mex.common.types import PathWrapper
 
 
 def test_path_wrapper_instantiation() -> None:
-    assert (
-        PathWrapper(Path("foo", "bar"))
-        == PathWrapper("foo/bar")
-        == PathWrapper(PathWrapper("foo/bar"))
-    )
+    assert PathWrapper(Path("foo", "bar"))._path == Path("foo", "bar")
+    assert PathWrapper("foo/bar")._path == Path("foo", "bar")
+    assert PathWrapper(PathWrapper("foo/bar"))._path == Path("foo", "bar")
 
 
 def test_path_wrapper_fspath() -> None:
@@ -20,11 +18,11 @@ def test_path_wrapper_fspath() -> None:
 
 
 def test_path_wrapper_slash() -> None:
-    assert PathWrapper(Path("foo")) / "bar" == PathWrapper(Path("foo") / "bar")
+    assert PathWrapper(Path("foo")) / "bar" == PathWrapper(Path("foo") / "bar")._path
 
 
 def test_path_wrapper_string() -> None:
-    assert str(PathWrapper(Path("foo", "bar"))) == str(Path("foo", "bar"))
+    assert str(PathWrapper(Path("foo", "bar"))) == Path("foo", "bar").as_posix()
 
 
 def test_path_wrapper_representation() -> None:
