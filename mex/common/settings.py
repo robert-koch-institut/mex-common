@@ -251,8 +251,7 @@ class BaseSettings(PydanticBaseSettings):
         for name in self.model_fields:
             value = getattr(self, name)
             if isinstance(value, AssetsPath) and value.is_relative():
-                setattr(self, name, self.assets_dir / value)
+                setattr(self, name, self.assets_dir.resolve() / value)
             elif isinstance(value, WorkPath) and value.is_relative():
-                setattr(self, name, self.work_dir / value)
-
+                setattr(self, name, self.work_dir.resolve() / value)
         return self
