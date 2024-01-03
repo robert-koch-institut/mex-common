@@ -248,17 +248,10 @@ class BaseSettings(PydanticBaseSettings):
     @model_validator(mode="after")
     def resolve_paths(self) -> "BaseSettings":
         """Resolve AssetPath and WorkPath."""
-        for name, field_info in self.model_fields.items():
+        for name in self.model_fields:
             value = getattr(self, name)
-            if not isinstance(value, (AssetsPath, WorkPath)):
-                continue
-            if value.is_absolute():
-                continue
-
-            if isinstance(value, AssetsPath):
-                base_path: AssetsPath | WorkPath = AssetsPath(self.assets_dir)
-            else:
-                base_path = WorkPath(self.work_dir)
-            setattr(self, name, base_path / value)
-
+            if isinstance(value, AssetsPath) and value.is_relative():
+                setattr(self, name, self.assets_dir.resolve() / value)
+            elif isinstance(value, WorkPath) and value.is_relative():
+                setattr(self, name, self.work_dir.resolve() / value)
         return self
