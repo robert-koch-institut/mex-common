@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `CHANGELOG.md` documenting notable changes to this project
+- a template for pull requests
+
 ### Changes
 
 - move `Sink` and `IdentityProvider` to `mex.common.types`
