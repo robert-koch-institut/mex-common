@@ -1,5 +1,9 @@
 # Description
-<!--- A short summary of the pull request (PR). -->
+<!--- 
+- a short summary of the pull request (PR)
+- acceptance criteria that you did not cover and why you did not cover these
+- open questions
+-->
 
 ## Ticket Link
 <!--- Link to the ticket of this PR. -->
