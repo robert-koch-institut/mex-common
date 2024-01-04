@@ -97,3 +97,8 @@ def test_checksum() -> None:
 def test_model_str() -> None:
     model = DummyModel(foo="bar")
     assert str(model) == "DummyModel: 68008f92758ef95dd4de3319183c3fef"
+
+
+def test_entity_type() -> None:
+    model = DummyModel(foo="bar")
+    assert model.entityType == "DummyModel"

@@ -48,6 +48,7 @@ def test_post_models_mocked(
                 "isniId": "https://isni.org/isni/0000000109403744",
                 "memberOf": ["bFQoRhcVH5DHV2", "bFQoRhcVH5DHV3"],
                 "orcidId": "https://orcid.org/0000-0002-9079-593X",
+                "entityType": "ExtractedPerson",
             }
         ]
     }
