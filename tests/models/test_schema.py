@@ -52,6 +52,7 @@ def test_entity_types_match_spec() -> None:
 def test_field_names_match_spec(
     generated: dict[str, Any], specified: dict[str, Any]
 ) -> None:
+    generated["properties"].pop("entityType", None)  # only in generated models
     assert set(generated["properties"]) == set(specified["properties"])
 
 

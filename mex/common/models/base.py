@@ -2,12 +2,27 @@ import hashlib
 import pickle  # nosec
 from collections.abc import MutableMapping
 from functools import cache
-from typing import TYPE_CHECKING, Annotated, Any, TypeVar, Union, get_args, get_origin
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    Any,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
 from pydantic import (
     BaseModel as PydanticBaseModel,
 )
-from pydantic import ConfigDict, Field, TypeAdapter, ValidationError, model_validator
+from pydantic import (
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 from pydantic.fields import FieldInfo
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode, JsonSchemaValue
 from pydantic.json_schema import (
@@ -48,6 +63,14 @@ class BaseModel(PydanticBaseModel):
         validate_default=True,
         validate_assignment=True,
     )
+
+    entityType: Any = None  # dynamically set by field validator
+
+    @field_validator("entityType", mode="before")
+    @classmethod
+    def set_type(cls, v: Any) -> str:
+        """Dynamically add $type attribute to each model class."""
+        return cls.__name__
 
     @classmethod
     def model_json_schema(
