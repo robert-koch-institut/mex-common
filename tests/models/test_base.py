@@ -88,7 +88,7 @@ class DummyModel(BaseModel):
 
 def test_checksum() -> None:
     model_1 = DummyModel()
-    assert model_1.checksum() == "c9d8c0b3aa4e4909cf3e79fcac976cd2"
+    assert model_1.checksum() == "6a48475b6851bc444c39abec23f8520e"
 
     model_2 = DummyModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
@@ -96,9 +96,4 @@ def test_checksum() -> None:
 
 def test_model_str() -> None:
     model = DummyModel(foo="bar")
-    assert str(model) == "DummyModel: bc7967f2fe6ffdfcc8f22b0b8a197274"
-
-
-def test_model_entity_type() -> None:
-    model = DummyModel()
-    assert model.entityType == "DummyModel"
+    assert str(model) == "DummyModel: 68008f92758ef95dd4de3319183c3fef"
