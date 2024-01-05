@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -41,6 +41,14 @@ class BaseAccessPlatform(BaseModel):
 class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     """An automatically extracted metadata set describing an access platform."""
 
+    entityType: Literal["ExtractedAccessPlatform"] = Field(
+        "ExtractedAccessPlatform", alias="$type", frozen=True
+    )
+
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     """The result of merging all extracted data and rules for an access platform."""
+
+    entityType: Literal["MergedAccessPlatform"] = Field(
+        "MergedAccessPlatform", alias="$type", frozen=True
+    )

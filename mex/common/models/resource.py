@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -127,6 +127,14 @@ class BaseResource(BaseModel):
 class ExtractedResource(BaseResource, ExtractedData):
     """An automatically extracted metadata set describing a resource."""
 
+    entityType: Literal["ExtractedResource"] = Field(
+        "ExtractedResource", alias="$type", frozen=True
+    )
+
 
 class MergedResource(BaseResource, MergedItem):
     """The result of merging all extracted data and rules for a resource."""
+
+    entityType: Literal["MergedResource"] = Field(
+        "MergedResource", alias="$type", frozen=True
+    )

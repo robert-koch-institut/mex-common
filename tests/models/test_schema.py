@@ -52,7 +52,24 @@ def test_entity_types_match_spec() -> None:
 def test_field_names_match_spec(
     generated: dict[str, Any], specified: dict[str, Any]
 ) -> None:
-    assert set(generated["properties"]) == set(specified["properties"])
+    generated = {
+        k: v for k, v in generated["properties"].items() if k != "$type"
+    }  # only in generated models
+    assert set(generated) == set(specified["properties"])
+
+
+@pytest.mark.parametrize(
+    ("generated", "specified"),
+    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values()),
+    ids=GENERATED_SCHEMAS,
+)
+def test_entity_type_matches_class_name(
+    generated: dict[str, Any], specified: dict[str, Any]
+) -> None:
+    assert generated["title"] == generated["properties"]["$type"]["const"]
+    assert (
+        specified["title"].replace(" ", "") in generated["properties"]["$type"]["const"]
+    )
 
 
 @pytest.mark.parametrize(

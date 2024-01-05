@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -64,6 +64,14 @@ class BasePerson(BaseModel):
 class ExtractedPerson(BasePerson, ExtractedData):
     """An automatically extracted metadata set describing a person."""
 
+    entityType: Literal["ExtractedPerson"] = Field(
+        "ExtractedPerson", alias="$type", frozen=True
+    )
+
 
 class MergedPerson(BasePerson, MergedItem):
     """The result of merging all extracted data and rules for a person."""
+
+    entityType: Literal["MergedPerson"] = Field(
+        "MergedPerson", alias="$type", frozen=True
+    )

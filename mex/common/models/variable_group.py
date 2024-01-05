@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -19,6 +19,14 @@ class BaseVariableGroup(BaseModel):
 class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     """An automatically extracted metadata set describing a variable group."""
 
+    entityType: Literal["ExtractedVariableGroup"] = Field(
+        "ExtractedVariableGroup", alias="$type", frozen=True
+    )
+
 
 class MergedVariableGroup(BaseVariableGroup, MergedItem):
     """The result of merging all extracted data and rules for a variable group."""
+
+    entityType: Literal["MergedVariableGroup"] = Field(
+        "MergedVariableGroup", alias="$type", frozen=True
+    )

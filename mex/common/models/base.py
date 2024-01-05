@@ -2,12 +2,26 @@ import hashlib
 import pickle  # nosec
 from collections.abc import MutableMapping
 from functools import cache
-from typing import TYPE_CHECKING, Annotated, Any, TypeVar, Union, get_args, get_origin
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    Any,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
 from pydantic import (
     BaseModel as PydanticBaseModel,
 )
-from pydantic import ConfigDict, Field, TypeAdapter, ValidationError, model_validator
+from pydantic import (
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    ValidationError,
+    model_validator,
+)
 from pydantic.fields import FieldInfo
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode, JsonSchemaValue
 from pydantic.json_schema import (
