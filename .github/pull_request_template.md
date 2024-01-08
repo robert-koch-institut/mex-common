@@ -5,8 +5,8 @@
 - open questions
 -->
 
-## Ticket Link
-<!--- Link to the ticket of this PR. -->
+## Ticket Number
+<!--- Number of the ticket of this PR. -->
 
 # Changes
 
