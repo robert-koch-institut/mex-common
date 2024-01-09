@@ -26,4 +26,4 @@
 <!--- For any bug fixes. -->
 
 ## Security
-<!--- In case of vulnerabilities. --> 
+<!--- In case of fixed vulnerabilities. --> 
