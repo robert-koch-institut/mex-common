@@ -47,6 +47,10 @@ class PathWrapper(PathLike[str]):
         """True if the underlying path is absolute."""
         return self._path.is_absolute()
 
+    def is_relative(self) -> bool:
+        """True if the underlying path is relative."""
+        return not self._path.is_absolute()
+
     def resolve(self) -> Path:
         """Return the resolved path which is the underlying path."""
         warn("deprecated", DeprecationWarning)
