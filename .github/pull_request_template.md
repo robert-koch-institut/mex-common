@@ -1,12 +1,11 @@
-# Description
-<!--- 
-- a short summary of the pull request (PR)
-- acceptance criteria that you did not cover and why you did not cover these
-- open questions
--->
-
-## Ticket Number
+# Ticket Number
 <!--- Number of the ticket of this PR. -->
+
+# Uncovered Acceptance Criteria
+<!--- Acceptance criteria that you did not cover and why you did not cover them. -->
+
+# Open Questions
+<!--- Questions that you have. -->
 
 # Changes
 
