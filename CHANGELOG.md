@@ -11,6 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `CHANGELOG.md` documenting notable changes to this project
 - a template for pull requests
+- tests for `mex.common.types.PathWrapper`
+- method `is_relative` to `mex.common.types.PathWrapper` to check whether the path is 
+  relative
+
+### Changes
+
+- resolve base paths of work/assets path fields in settings
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- nesting of `mex.common.types.PathWrapper` on instantiation 
+
+### Security
+
+## [0.18.0] - 2023-12-20
 
 ### Changes
 
@@ -21,11 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - deprecate `MExModel.get_entity_type`, use `cls.__name__` instead
 - deprecate `mex.common.models.MODEL_CLASSES[_BY_ENTITY_TYPE]`, use the more precise lists or dicts like `EXTRACTED_MODEL_CLASSES_BY_NAME` instead
 
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.17.1] - 2023-12-20
 
