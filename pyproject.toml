@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mex-common"
 version = "0.18.1"
-description = "RKI MEx common library."
+description = "Common library for MEx python projects."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
 license = "MIT"
@@ -38,6 +38,9 @@ types-setuptools = "^69.0.0"
 
 [tool.ipdb]
 context = 5
+
+[tool.cruft]
+template = "https://github.com/robert-koch-institut/mex-template"
 
 [tool.mypy]
 python_version = "3.11"

@@ -25,4 +25,4 @@
 <!--- For any bug fixes. -->
 
 ## Security
-<!--- In case of fixed vulnerabilities. --> 
+<!--- In case of fixed vulnerabilities. -->

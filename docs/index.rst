@@ -1,5 +1,5 @@
 mex-common
-==========
+===
 
 .. toctree::
     :glob:
