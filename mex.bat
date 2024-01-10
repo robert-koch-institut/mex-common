@@ -32,7 +32,7 @@ echo linting all files
 pre-commit run --all-files
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-@REM run the pytest test suite with all unit tests
+@REM run the pytest test suite with unit and integration tests
 echo running all tests
 poetry run pytest
 exit /b %errorlevel%
