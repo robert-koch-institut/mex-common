@@ -1,0 +1,13 @@
+{
+  "checkout": null,
+  "commit": "7f75bc4585b418b1d89714b0beb7a4772280273d",
+  "context": {
+    "cookiecutter": {
+      "_template": "https://github.com/robert-koch-institut/mex-template",
+      "package_ecosystem": "pip",
+      "project_name": "common"
+    }
+  },
+  "directory": null,
+  "template": "https://github.com/robert-koch-institut/mex-template"
+}
