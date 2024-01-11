@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.2] - 2024-01-11
+
 ### Added
 
 - `CHANGELOG.md` documenting notable changes to this project
 - a template for pull requests
+- language french in language vocabulary
+
+## [0.18.1] - 2024-01-03
+
+### Added
+
 - tests for `mex.common.types.PathWrapper`
 - method `is_relative` to `mex.common.types.PathWrapper` to check whether the path is 
   relative
