@@ -1,4 +1,4 @@
-.PHONY: all test setup hooks install pytest linter build docs
+.PHONY: .PHONY: all test setup hooks install linter pytest wheel docs
 all: install test
 test: linter pytest
 
@@ -28,7 +28,7 @@ pytest:
 	@ echo running unit tests; \
 	poetry run pytest -m "not integration"; \
 
-build:
+wheel:
 	# build the python package
 	@ echo building wheel; \
 	poetry build --no-interaction --format wheel; \
