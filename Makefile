@@ -1,4 +1,4 @@
-.PHONY: .PHONY: all test setup hooks install linter pytest wheel docs
+.PHONY: all test setup hooks install linter pytest wheel docs
 all: install test
 test: linter pytest
 
