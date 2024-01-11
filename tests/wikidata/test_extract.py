@@ -223,7 +223,7 @@ def test_get_organization_details() -> None:
                 },
             ],
             "isni_id": [
-                {"mainsnak": {"datavalue": {"value": {"text": "0000 0001 0940 3744"}}}}
+                {"mainsnak": {"datavalue": {"value": {"text": "0000000109403744"}}}}
             ],
             "ror_id": [{"mainsnak": {"datavalue": {"value": {"text": "01k5qnb77"}}}}],
             "official_name": [
