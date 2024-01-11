@@ -24,5 +24,18 @@
       "de": "Englisch",
       "en": "English"
     }
+  },
+  {
+    "altLabel": {
+      "de": "fr",
+      "en": "fr"
+    },
+    "exactMatch": "",
+    "identifier": "https://mex.rki.de/item/language-3",
+    "inScheme": "https://mex.rki.de/item/language",
+    "prefLabel": {
+      "de": "Französisch",
+      "en": "French"
+    }
   }
 ]
