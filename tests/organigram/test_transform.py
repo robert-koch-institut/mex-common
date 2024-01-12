@@ -57,4 +57,5 @@ def test_transform_organigram_units_to_organizational_units(
                 "url": "https://www.example.com/departments/parent.html",
             }
         ],
+        "entityType": "ExtractedOrganizationalUnit",
     }

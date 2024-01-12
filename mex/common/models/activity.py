@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -63,6 +63,14 @@ class BaseActivity(BaseModel):
 class ExtractedActivity(BaseActivity, ExtractedData):
     """An automatically extracted metadata set describing an activity."""
 
+    entityType: Literal["ExtractedActivity"] = Field(
+        "ExtractedActivity", alias="$type", frozen=True
+    )
+
 
 class MergedActivity(BaseActivity, MergedItem):
     """The result of merging all extracted data and rules for an activity."""
+
+    entityType: Literal["MergedActivity"] = Field(
+        "MergedActivity", alias="$type", frozen=True
+    )

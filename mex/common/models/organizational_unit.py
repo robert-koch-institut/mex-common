@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -24,6 +24,14 @@ class BaseOrganizationalUnit(BaseModel):
 class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     """An automatically extracted metadata set describing an organizational unit."""
 
+    entityType: Literal["ExtractedOrganizationalUnit"] = Field(
+        "ExtractedOrganizationalUnit", alias="$type", frozen=True
+    )
+
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
     """The result of merging all extracted data and rules for an organizational unit."""
+
+    entityType: Literal["MergedOrganizationalUnit"] = Field(
+        "MergedOrganizationalUnit", alias="$type", frozen=True
+    )

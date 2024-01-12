@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -37,6 +37,14 @@ class BasePrimarySource(BaseModel):
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     """An automatically extracted metadata set describing a primary source."""
 
+    entityType: Literal["ExtractedPrimarySource"] = Field(
+        "ExtractedPrimarySource", alias="$type", frozen=True
+    )
+
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):
     """The result of merging all extracted data and rules for a primary source."""
+
+    entityType: Literal["MergedPrimarySource"] = Field(
+        "MergedPrimarySource", alias="$type", frozen=True
+    )

@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.19.0] - 2024-01-12
+
+### Added
+
+- add `entityType` field in all extracted and merged models
+
 ### Fixed
 
 - wikidata test
@@ -31,15 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - resolve base paths of work/assets path fields in settings
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - nesting of `mex.common.types.PathWrapper` on instantiation 
-
-### Security
 
 ## [0.18.0] - 2023-12-20
 

@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -18,6 +18,14 @@ class BaseContactPoint(BaseModel):
 class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     """An automatically extracted metadata set describing a contact point."""
 
+    entityType: Literal["ExtractedContactPoint"] = Field(
+        "ExtractedContactPoint", alias="$type", frozen=True
+    )
+
 
 class MergedContactPoint(BaseContactPoint, MergedItem):
     """The result of merging all extracted data and rules for a contact point."""
+
+    entityType: Literal["MergedContactPoint"] = Field(
+        "MergedContactPoint", alias="$type", frozen=True
+    )
