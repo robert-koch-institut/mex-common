@@ -60,6 +60,11 @@ def test_post_models_mocked(
                         "language": None,
                     },
                     {
+                        "fieldName": "entityType",
+                        "fieldValue": "ExtractedPerson",
+                        "language": None,
+                    },
+                    {
                         "fieldName": "familyName",
                         "fieldValue": "Tintzmann",
                         "language": None,
