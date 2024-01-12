@@ -9,8 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
+## [0.19.0] - 2024-01-12
+
+### Added
+
+- add `entityType` field in all extracted and merged models
+
+### Fixed
+
+- wikidata test
+
+## [0.18.2] - 2024-01-11
+
+### Added
+
 - `CHANGELOG.md` documenting notable changes to this project
 - a template for pull requests
+- language french in language vocabulary
+
+## [0.18.1] - 2024-01-03
+
+### Added
+
 - tests for `mex.common.types.PathWrapper`
 - method `is_relative` to `mex.common.types.PathWrapper` to check whether the path is 
   relative
@@ -19,22 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - resolve base paths of work/assets path fields in settings
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - nesting of `mex.common.types.PathWrapper` on instantiation 
-
-### Security
-
-## [0.19.0] - 2024-01-??
-
-### Added
-
-- add `entityType` field in all extracted and merged models
-
 
 ## [0.18.0] - 2023-12-20
 
