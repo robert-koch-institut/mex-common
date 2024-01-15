@@ -37,4 +37,4 @@ docs:
 	# use sphinx to auto-generate html docs from code
 	@ echo generating api docs; \
 	poetry run sphinx-apidoc -f -o docs/source mex; \
-	poetry run sphinx-build -b dirhtml docs docs/dist; \
+	poetry run sphinx-build -aE -b dirhtml docs docs/dist; \

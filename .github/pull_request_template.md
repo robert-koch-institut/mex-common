@@ -1,28 +1,20 @@
-# Ticket Number
-<!--- Number of the ticket of this PR. -->
+# PR Context
+<!-- Additional info for the reviewer -->
 
-# Uncovered Acceptance Criteria
-<!--- Acceptance criteria that you did not cover and why you did not cover them. -->
-
-# Open Questions
-<!--- Questions that you have. -->
+# Added
+<!-- New features and interfaces -->
 
 # Changes
+<!-- Changes in existing functionality -->
 
-## Added
-<!--- For new features. -->
+# Deprecated
+<!-- Soon-to-be removed features -->
 
-## Changes
-<!--- For changes in existing functionality. -->
+# Removed
+<!-- Definitely removed features -->
 
-## Deprecated
-<!--- For soon-to-be removed features. -->
+# Fixed
+<!-- Fixed bugs -->
 
-## Removed
-<!--- For now removed features. -->
-
-## Fixed
-<!--- For any bug fixes. -->
-
-## Security
-<!--- In case of fixed vulnerabilities. -->
+# Security
+<!-- Fixed vulnerabilities -->

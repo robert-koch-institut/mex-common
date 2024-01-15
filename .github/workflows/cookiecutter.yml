@@ -1,7 +1,8 @@
-name: Linting
+name: Cookiecutter
 
 on:
   push:
+    branches: ["main"]
   workflow_dispatch:
 
 env:
@@ -29,23 +30,13 @@ jobs:
           restore-keys: |
             ${{ env.cache-name }}-
 
-      - name: Cache poetry
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-poetry
-        with:
-          path: ~/.cache/pip
-          key: ${{ env.cache-name }}-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            ${{ env.cache-name }}-
-
       - name: Setup python
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
 
       - name: Install requirements
-        run: make install
+        run: make setup
 
-      - name: Run linters
-        run: make linter
+      - name: Check template
+        run: cruft check
