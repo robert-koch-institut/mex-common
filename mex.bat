@@ -32,7 +32,7 @@ echo linting all files
 pre-commit run --all-files
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-@REM run the pytest test suite with all unit tests
+@REM run the pytest test suite with unit and integration tests
 echo running all tests
 poetry run pytest
 exit /b %errorlevel%
@@ -41,7 +41,7 @@ exit /b %errorlevel%
 :docs
 @REM use sphinx to auto-generate html docs from code
 echo generating api docs
-poetry run sphinx-apidoc -f -o docs/source mex
+poetry run sphinx-apidoc -f -o docs\source mex
 if %errorlevel% neq 0 exit /b %errorlevel%
-poetry run sphinx-build -b dirhtml docs docs/dist
+poetry run sphinx-build -aE -b dirhtml docs docs\dist
 exit /b %errorlevel%

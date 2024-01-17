@@ -19,6 +19,10 @@ Via MEx, metadata will be made findable, accessible and shareable, as well as av
 for further research. The goal is to get an overview of what research data is available,
 understand its context, and know what needs to be considered for subsequent use.
 
+RKI cooperated with D4L data4life gGmbH for a pilot phase where the vision of a
+FAIR metadata catalog was explored and concepts and prototypes were developed.
+The partnership has ended with the successful conclusion of the pilot phase.
+
 After an internal launch, the metadata will also be made publicly available and thus be
 available to external researchers as well as the interested (professional) public to
 find research data from the RKI.
@@ -33,15 +37,15 @@ data Findable, Accessible, Interoperable and Reusable.
 ## package
 
 The `mex-common` library is a software development toolkit that is used by multiple
-components within the MEx project. It contains utilities for building pipelines
-like a common commandline interface, logging and configuration setup. It also provides
-common auxiliary connectors that can be used to fetch data from external services and
-a re-usable implementation of the MEx metadata schema as pydantic models.
+components within the MEx project. It contains utilities for building pipelines like a
+common commandline interface, logging and configuration setup. It also provides common
+auxiliary connectors that can be used to fetch data from external services and a
+re-usable implementation of the MEx metadata schema as pydantic models.
 
 ## license
 
-This package is licensed under the [MIT license](/LICENSE). Other components of the
-MEx project will be released under the same license in the future.
+This package is licensed under the [MIT license](/LICENSE). All other software
+components of the MEx project are open-sourced under the same license as well.
 
 ## development
 
@@ -66,11 +70,20 @@ MEx project will be released under the same license in the future.
 - or run manually
   - linter checks via `pre-commit run --all-files`
   - all tests via `poetry run pytest`
+  - just unit tests via `poetry run pytest -m "not integration"`
 
 ### updating dependencies
 
+- update boilerplate files with `cruft update`
 - update global dependencies in `requirements.txt` manually
 - update git hooks with `pre-commit autoupdate`
 - show outdated dependencies with `poetry show --outdated`
 - update dependencies in poetry using `poetry update --lock`
-- update github actions manually in `.github\workflows\default.yml`
+- update github actions manually in `.github/workflows/*.yml`
+
+### creating release
+
+- update version, eg `poetry version minor`
+- commit update `git commit --message "..." pyproject.toml`
+- create a tag `git tag ...`
+- push `git push --follow-tags`

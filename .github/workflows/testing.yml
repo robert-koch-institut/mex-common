@@ -35,7 +35,7 @@ jobs:
           cache-name: cache-poetry
         with:
           path: ~/.cache/pip
-          key: ${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
+          key: ${{ env.cache-name }}-${{ hashFiles('poetry.lock') }}
           restore-keys: |
             ${{ env.cache-name }}-
 

@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- cruft template link
+
 ### Changes
+
+- harmonized boilerplate
 
 ### Deprecated
 
@@ -43,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - tests for `mex.common.types.PathWrapper`
-- method `is_relative` to `mex.common.types.PathWrapper` to check whether the path is 
+- method `is_relative` to `mex.common.types.PathWrapper` to check whether the path is
   relative
 
 ### Changes
@@ -52,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- nesting of `mex.common.types.PathWrapper` on instantiation 
+- nesting of `mex.common.types.PathWrapper` on instantiation
 
 ## [0.18.0] - 2023-12-20
 

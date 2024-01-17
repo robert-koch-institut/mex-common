@@ -34,7 +34,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Testing / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -54,7 +54,7 @@ pytestdebug.log
 *.mo
 *.pot
 
-# Scrapy stuff:
+# Scrapy stuff
 .scrapy
 
 # Sphinx documentation
@@ -75,7 +75,7 @@ ipython_config.py
 # pyenv
 .python-version
 
-# PEP 582; used by e.g. pyflow
+# PEP 582
 __pypackages__/
 
 # Celery stuff

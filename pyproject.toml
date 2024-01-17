@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mex-common"
 version = "0.19.0"
-description = "RKI MEx common library."
+description = "Common library for MEx python projects."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
 license = "MIT"
@@ -21,20 +21,23 @@ pydantic-settings = "^2.1.0"
 requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.11.0"
+black = "^23.12.1"
 ipdb = "^0.13.13"
-mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0"}
+mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0" }
 mypy = "^1.8.0"
 pandas-stubs = "^2.1.4"
-pytest = "^7.4.3"
+pytest = "^7.4.4"
 pytest-cov = "^4.1.0"
-ruff = "^0.1.9"
-sphinx = "^6.2.1"
-sphinx-book-theme = "^1.1.0"
+ruff = "^0.1.13"
+sphinx = "^7.2.6"
 types-ldap3 = "^2.9.13"
 types-pytz = "^2023.3.1"
 types-requests = "^2.31.0"
 types-setuptools = "^69.0.0"
+
+[tool.cruft]
+template = "https://github.com/robert-koch-institut/mex-template"
+skip = ["tests/conftest.py"]
 
 [tool.ipdb]
 context = 5
@@ -43,9 +46,7 @@ context = 5
 python_version = "3.11"
 show_error_codes = true
 strict = true
-plugins = [
-  "pydantic.mypy"
-]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = 'langdetect.*'
@@ -62,7 +63,7 @@ addopts = [
     "--cov-report=term-missing:skip-covered",
     "--cov-fail-under=95",
     "--cov-branch",
-    "--pdbcls=IPython.terminal.debugger:TerminalPdb"
+    "--pdbcls=IPython.terminal.debugger:TerminalPdb",
 ]
 markers = "integration: mark a test as integration test"
 
