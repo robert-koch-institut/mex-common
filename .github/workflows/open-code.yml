@@ -16,6 +16,6 @@ jobs:
           ref: 'main'
       - name: Force push main branch
         run: |
-          git remote add opencode https://RKIOpenData:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/mex/mex-common.git
+          git remote add opencode https://RKIOpenData:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
           git push opencode -f
           git push opencode -f --tags
