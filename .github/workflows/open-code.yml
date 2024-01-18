@@ -1,0 +1,22 @@
+name: OpenCoDE
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Github repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          ref: 'main'
+      - name: Force push main branch
+        run: |
+          git remote add opencode https://RKIOpenData:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
+          git push opencode -f
+          git push opencode -f --tags
