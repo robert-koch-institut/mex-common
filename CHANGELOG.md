@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - cruft template link
-- new workflow that syncs main branch to openCoDE
+- workflow that syncs main branch to openCoDE
 
 ### Changes
 

@@ -10,14 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout Github repository
+      - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          persist-credentials: false
           ref: 'main'
-          fetch-depth: '0'
-      - name: Force push main branch
+          fetch-depth: 0
+      - name: Push main branch
         run: |
-          git remote add opencode https://RKIOpenData:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
+          git remote add opencode https://${{ secrets.OPENCODE_USER }}:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
           git push opencode -f
           git push opencode -f --tags
