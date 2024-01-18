@@ -15,6 +15,7 @@ jobs:
         with:
           persist-credentials: false
           ref: 'main'
+          fetch-depth: '0'
       - name: Force push main branch
         run: |
           git remote add opencode https://RKIOpenData:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
