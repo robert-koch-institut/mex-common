@@ -30,6 +30,11 @@ class ExtractedThing(BaseThing, ExtractedData):
     """Extracted version of a dummy thing model."""
 
 
+def test_extracted_data_requires_dict_for_construction() -> None:
+    with pytest.raises(ValidationError, match="Input should be a valid dictionary"):
+        ExtractedThing.model_validate(["this is a list"])
+
+
 def test_extracted_data_requires_identifier_in_primary_source() -> None:
     with pytest.raises(ValidationError, match="identifierInPrimarySource"):
         ExtractedThing(
