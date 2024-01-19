@@ -1,12 +1,13 @@
 from typing import Annotated, Any
 
-from pydantic import Field, model_validator
+from pydantic import Field, model_validator, validate_call
 
 from mex.common.models.base import MExModel
-from mex.common.types import PrimarySourceID
+from mex.common.types import Identifier, PrimarySourceID
 
-MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
+MEX_PRIMARY_SOURCE_IDENTIFIER = Identifier("00000000000000")
 MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
+MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
 
 
 class BaseExtractedData(MExModel):
@@ -65,11 +66,11 @@ class ExtractedData(BaseExtractedData):
     to automatically set identifiers for provenance. See below, for description.
     """
 
+    # TODO make stable_target_id and identifier computed fields (MX-1435)
     @model_validator(mode="before")
     @classmethod
-    def set_identifiers(  # noqa: C901 # TODO in https://jira.rki.local/browse/MX-1435
-        cls, values: dict[str, Any]
-    ) -> dict[str, Any]:
+    @validate_call
+    def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:  # noqa: C901
         """Ensure identifier and provenance attributes are set for this instance.
 
         All extracted data classes have four important identifiers that are defined

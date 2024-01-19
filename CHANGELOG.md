@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - cruft template link
 - workflow that syncs main branch to openCoDE
+- constant for MEX_PRIMARY_SOURCE_IDENTIFIER
 
 ### Changes
 
@@ -21,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- ExtractedData raises proper ValidationError when parsing wrong base type
 
 ### Security
 

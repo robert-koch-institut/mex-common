@@ -1370,13 +1370,13 @@ test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,
 
 [[package]]
 name = "types-ldap3"
-version = "2.9.13.20240106"
+version = "2.9.13.20240119"
 description = "Typing stubs for ldap3"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-ldap3-2.9.13.20240106.tar.gz", hash = "sha256:113a505d0d324a23321ca3d8918c3bc405987fc7ddc327382ebc52a988732bbd"},
-    {file = "types_ldap3-2.9.13.20240106-py3-none-any.whl", hash = "sha256:66b321408d5cd0ebb9224acd7a32ccfd2927d71c0571e262d3b055a779944968"},
+    {file = "types-ldap3-2.9.13.20240119.tar.gz", hash = "sha256:512ae997c365d01b178aae3e862ef8b081ae3e29af1e4ecfd1f1e53189d6e433"},
+    {file = "types_ldap3-2.9.13.20240119-py3-none-any.whl", hash = "sha256:3f08d4635ab2c139bdcf9237be60303b2e878a61704f632c1e89f4fb64116c59"},
 ]
 
 [package.dependencies]
@@ -1481,4 +1481,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e0aeb9f36a2a3e3f68d07eadf6f219b10c075e2230e80a12fe4e5ec286f3c192"
+content-hash = "a7ce6cc1869667350d4c68292b5fdb56e597ea08f4044908013e04763a78905f"
