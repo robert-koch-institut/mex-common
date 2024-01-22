@@ -23,6 +23,7 @@ requests = "^2.31.0"
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.1"
 ipdb = "^0.13.13"
+line-profiler = "^4.1.2"
 mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0" }
 mypy = "^1.8.0"
 pandas-stubs = "^2.1.4"
