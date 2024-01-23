@@ -233,6 +233,12 @@ class MExModel(BaseModel):
         # also used as the foreign key for all fields containing references.
         stableTargetId: Any
 
+        # We add the entityType as a final class variable to all `MExModel` subclasses.
+        # This helps with assigning the correct class when reading raw JSON entities.
+        # Simple duck-typing would not work, because some entity types have overlapping
+        # attributes, like `Person.email` and `ContactPoint.email`.
+        entityType: str
+
     identifier: Annotated[
         Identifier,
         Field(
