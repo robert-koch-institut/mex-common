@@ -10,14 +10,17 @@ MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
 MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
 
 
-class BaseExtractedData(MExModel):
-    """Base model class definition for all extracted data instances.
+class ExtractedData(MExModel):
+    """Base model for all extracted data classes.
 
     This class adds two important attributes for metadata provenance: `hadPrimarySource`
     and `identifierInPrimarySource`, which are used to uniquely identify an
     item in its original primary source. The attribute `stableTargetId` has to be set
     by each concrete subclass, like `ExtractedPerson`, because it needs to have the
     correct type, e.g. `PersonID`.
+
+    This class also adds a validator to automatically set identifiers for provenance.
+    See below, for a full description.
     """
 
     hadPrimarySource: Annotated[
@@ -27,9 +30,9 @@ class BaseExtractedData(MExModel):
                 "The stableTargetID of the primary source, that this item was "
                 "extracted from. This field is mandatory for all extracted items to "
                 "aid with data provenance. Extracted primary sources also have this "
-                "field and are all extracted from a primary source called MEx, which "
-                "is its own primary source and has the static stableTargetID: "
-                f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+                "field and are all extracted from a static primary source for MEx. "
+                "The primary source for MEx has itself as a primary source, which "
+                "is meant to be the only loop in the graph formed by MEx metadata."
             ),
         ),
     ]
@@ -48,23 +51,6 @@ class BaseExtractedData(MExModel):
             min_length=1,
         ),
     ]
-
-    def __str__(self) -> str:
-        """Format this extracted data instance as a string for logging."""
-        return (
-            f"{self.__class__.__name__}: "
-            f"{self.identifierInPrimarySource} "
-            f"{self.identifier} "
-            f"{self.stableTargetId}"
-        )
-
-
-class ExtractedData(BaseExtractedData):
-    """Base model class for extracted data items that ensures identities.
-
-    This base class does not add any attributes. It only adds the functionality
-    to automatically set identifiers for provenance. See below, for description.
-    """
 
     # TODO make stable_target_id and identifier computed fields (MX-1435)
     @model_validator(mode="before")

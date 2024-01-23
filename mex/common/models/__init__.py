@@ -1,4 +1,4 @@
-from typing import Final
+from typing import Final, Union, get_args
 
 from mex.common.models.access_platform import (
     BaseAccessPlatform,
@@ -21,7 +21,6 @@ from mex.common.models.extracted_data import (
     MEX_PRIMARY_SOURCE_IDENTIFIER,
     MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-    BaseExtractedData,
     ExtractedData,
 )
 from mex.common.models.merged_item import MergedItem
@@ -50,11 +49,15 @@ from mex.common.models.variable_group import (
 )
 
 __all__ = (
+    "AnyBaseModel",
+    "AnyExtractedModel",
+    "AnyMergedModel",
+    "BASE_MODEL_CLASSES_BY_NAME",
+    "BASE_MODEL_CLASSES",
     "BaseAccessPlatform",
     "BaseActivity",
     "BaseContactPoint",
     "BaseDistribution",
-    "BaseExtractedData",
     "BaseModel",
     "BaseOrganization",
     "BaseOrganizationalUnit",
@@ -78,6 +81,7 @@ __all__ = (
     "ExtractedVariable",
     "ExtractedVariableGroup",
     "MERGED_MODEL_CLASSES_BY_NAME",
+    "MERGED_MODEL_CLASSES",
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedContactPoint",
@@ -96,7 +100,7 @@ __all__ = (
     "MExModel",
 )
 
-BASE_MODEL_CLASSES: Final[list[type[BaseModel]]] = [
+AnyBaseModel = Union[
     BaseAccessPlatform,
     BaseActivity,
     BaseContactPoint,
@@ -109,12 +113,12 @@ BASE_MODEL_CLASSES: Final[list[type[BaseModel]]] = [
     BaseVariable,
     BaseVariableGroup,
 ]
-
+BASE_MODEL_CLASSES: Final[list[type[BaseModel]]] = list(get_args(AnyBaseModel))
 BASE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[BaseModel]]] = {
     cls.__name__: cls for cls in BASE_MODEL_CLASSES
 }
 
-EXTRACTED_MODEL_CLASSES: Final[list[type[ExtractedData]]] = [
+AnyExtractedModel = Union[
     ExtractedAccessPlatform,
     ExtractedActivity,
     ExtractedContactPoint,
@@ -127,12 +131,14 @@ EXTRACTED_MODEL_CLASSES: Final[list[type[ExtractedData]]] = [
     ExtractedVariable,
     ExtractedVariableGroup,
 ]
-
+EXTRACTED_MODEL_CLASSES: Final[list[type[ExtractedData]]] = list(
+    get_args(AnyExtractedModel)
+)
 EXTRACTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[ExtractedData]]] = {
     cls.__name__: cls for cls in EXTRACTED_MODEL_CLASSES
 }
 
-MERGED_MODEL_CLASSES: Final[list[type[MergedItem]]] = [
+AnyMergedModel = Union[
     MergedAccessPlatform,
     MergedActivity,
     MergedContactPoint,
@@ -145,7 +151,7 @@ MERGED_MODEL_CLASSES: Final[list[type[MergedItem]]] = [
     MergedVariable,
     MergedVariableGroup,
 ]
-
+MERGED_MODEL_CLASSES: Final[list[type[MergedItem]]] = list(get_args(AnyMergedModel))
 MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[MergedItem]]] = {
     cls.__name__: cls for cls in MERGED_MODEL_CLASSES
 }

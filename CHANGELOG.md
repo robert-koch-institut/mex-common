@@ -9,13 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add entityType type hint to MExModel
+- add entityType type hint to MExModel
+- add types for AnyBaseModel, AnyExtractedModel and AnyMergedModel
 
 ### Changes
 
 ### Deprecated
 
 ### Removed
+
+- absorb unused `BaseExtractedData` into `ExtractedData`
 
 ### Fixed
 

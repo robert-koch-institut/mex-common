@@ -212,9 +212,10 @@ class BaseModel(PydanticBaseModel):
 
 
 class MExModel(BaseModel):
-    """Abstract base model for extracted data and merged item classes.
+    """Abstract base model for extracted data, merged item and rule set classes.
 
-    This class only defines an `identifier` and gives a type hint for `stableTargetId`.
+    This class defines an `identifier` field and gives type hints for `stableTargetId`
+    and the class variable `entityType`.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -249,3 +250,7 @@ class MExModel(BaseModel):
             ),
         ),
     ]
+
+    def __str__(self) -> str:
+        """Format this instance as a string for logging."""
+        return f"{self.entityType}: {self.identifier}"
