@@ -113,8 +113,8 @@ AnyBaseModel = Union[
     BaseVariable,
     BaseVariableGroup,
 ]
-BASE_MODEL_CLASSES: Final[list[type[BaseModel]]] = list(get_args(AnyBaseModel))
-BASE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[BaseModel]]] = {
+BASE_MODEL_CLASSES: Final[list[type[AnyBaseModel]]] = list(get_args(AnyBaseModel))
+BASE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyBaseModel]]] = {
     cls.__name__: cls for cls in BASE_MODEL_CLASSES
 }
 
@@ -131,10 +131,10 @@ AnyExtractedModel = Union[
     ExtractedVariable,
     ExtractedVariableGroup,
 ]
-EXTRACTED_MODEL_CLASSES: Final[list[type[ExtractedData]]] = list(
+EXTRACTED_MODEL_CLASSES: Final[list[type[AnyExtractedModel]]] = list(
     get_args(AnyExtractedModel)
 )
-EXTRACTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[ExtractedData]]] = {
+EXTRACTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedModel]]] = {
     cls.__name__: cls for cls in EXTRACTED_MODEL_CLASSES
 }
 
@@ -151,7 +151,7 @@ AnyMergedModel = Union[
     MergedVariable,
     MergedVariableGroup,
 ]
-MERGED_MODEL_CLASSES: Final[list[type[MergedItem]]] = list(get_args(AnyMergedModel))
-MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[MergedItem]]] = {
+MERGED_MODEL_CLASSES: Final[list[type[AnyMergedModel]]] = list(get_args(AnyMergedModel))
+MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
     cls.__name__: cls for cls in MERGED_MODEL_CLASSES
 }

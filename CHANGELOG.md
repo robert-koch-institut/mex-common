@@ -11,8 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add entityType type hint to MExModel
 - add types for AnyBaseModel, AnyExtractedModel and AnyMergedModel
+- pytest plugins for random order and parallelized test execution
 
 ### Changes
+
+- `mex.bat test` uses random order and xdist plugins by default
 
 ### Deprecated
 
