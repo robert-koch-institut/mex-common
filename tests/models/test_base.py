@@ -1,10 +1,11 @@
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 import pytest
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 
-from mex.common.models import BaseModel
+from mex.common.models import BaseModel, MExModel
+from mex.common.types import Identifier
 
 
 class ComplexDummyModel(BaseModel):
@@ -82,18 +83,34 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
         Shelter(inhabitants="foo")  # type: ignore
 
 
-class DummyModel(BaseModel):
+class DummyBaseModel(BaseModel):
     foo: Optional[str] = None
 
 
-def test_checksum() -> None:
-    model_1 = DummyModel()
-    assert model_1.checksum() == "6a48475b6851bc444c39abec23f8520e"
+def test_base_model_checksum() -> None:
+    model_1 = DummyBaseModel()
+    assert model_1.checksum() == "69d67f58c6948849283e78d7b3f1a51e"
 
-    model_2 = DummyModel(foo="bar")
+    model_2 = DummyBaseModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
 
 
-def test_model_str() -> None:
-    model = DummyModel(foo="bar")
-    assert str(model) == "DummyModel: 68008f92758ef95dd4de3319183c3fef"
+def test_base_model_str() -> None:
+    model = DummyBaseModel(foo="bar")
+    assert str(model) == "DummyBaseModel: ab794a793aad8fa45b0f85ac05ee2126"
+
+
+class DummyMExModel(MExModel):
+    entityType: Literal["DummyMExModel"] = Field(
+        "DummyMExModel", alias="$type", frozen=True
+    )
+    identifier: Identifier
+    stableTargetId: Identifier
+
+
+def test_mex_model_str() -> None:
+    model = DummyMExModel(
+        identifier=Identifier.generate(seed=99),
+        stableTargetId=Identifier.generate(seed=42),
+    )
+    assert str(model) == "DummyMExModel: bFQoRhcVH5DHV1"
