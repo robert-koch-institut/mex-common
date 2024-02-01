@@ -12,7 +12,6 @@ packages = [{ include = "mex" }]
 python = "^3.11"
 backoff = "^2.2.1"
 click = "^8.1.7"
-jsonref = "^1.1.0"
 langdetect = "^1.0.9"
 ldap3 = "^2.9.1"
 numpy = "^1.26.2"
@@ -35,7 +34,6 @@ ruff = "^0.1.13"
 sphinx = "^7.2.6"
 types-ldap3 = "^2.9.13"
 types-pytz = "^2023.3.1"
-types-pyyaml = "^6.0.12"
 types-requests = "^2.31.0"
 types-setuptools = "^69.0.0"
 
@@ -53,7 +51,7 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ['langdetect.*', 'jsonref']
+module = ['langdetect.*']
 ignore_missing_imports = true
 
 [tool.pydantic-mypy]
