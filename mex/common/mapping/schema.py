@@ -1,10 +1,8 @@
-import json
 from typing import Any, Optional, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import EXTRACTED_MODEL_CLASSES, ExtractedData
-from mex.common.settings import BaseSettings
+from mex.common.models import ExtractedData
 
 
 class GenericRule(BaseModel, extra="forbid"):  # forbid additional fields
@@ -121,47 +119,3 @@ def generate_entity_filter_schema(
         **filters,
     )
     return entity_filter_model
-
-
-def mapping_schemas() -> None:
-    """Run automatic mapping schema generation with dynamic types for model classes.
-
-    Settings:
-        assets_dir: resolved path to the assets directory
-    """
-    out_dir = BaseSettings.get().assets_dir / "mappings" / "__schema__"
-    out_dir.mkdir(exist_ok=True, parents=True)
-
-    for cls in EXTRACTED_MODEL_CLASSES:
-        mapping_schema = generate_mapping_schema_for_mex_class(
-            mex_model_class=cls,
-        )
-        with open(
-            out_dir / f"{cls.__name__}_MappingSchema.json",
-            "w",
-        ) as outfile:
-            outfile.write(
-                json.dumps(mapping_schema.model_json_schema(), indent=2) + "\n"
-            )
-
-
-def entity_filter_schemas() -> None:
-    """Run automatic schema generation for entity filters for extracted model classes.
-
-    Settings:
-        assets_dir: resolved path to the assets directory
-    """
-    out_dir = BaseSettings.get().assets_dir / "mappings" / "__schema__"
-    out_dir.mkdir(exist_ok=True, parents=True)
-
-    for cls in EXTRACTED_MODEL_CLASSES:
-        mapping_schema = generate_entity_filter_schema(
-            mex_model_class=cls,
-        )
-        with open(
-            out_dir / f"{cls.__name__}_EntityFilterSchema.json",
-            "w",
-        ) as outfile:
-            outfile.write(
-                json.dumps(mapping_schema.model_json_schema(), indent=2) + "\n"
-            )
