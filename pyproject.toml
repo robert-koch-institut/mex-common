@@ -51,7 +51,7 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ['langdetect.*']
+module = 'langdetect.*'
 ignore_missing_imports = true
 
 [tool.pydantic-mypy]
