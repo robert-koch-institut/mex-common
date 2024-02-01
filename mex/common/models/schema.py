@@ -2,7 +2,7 @@ from typing import Any, Optional, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import ExtractedData
+from mex.common.models import EXTRACTED_MODEL_CLASSES, ExtractedData
 
 
 class GenericRule(BaseModel, extra="forbid"):  # forbid additional fields
@@ -42,8 +42,8 @@ class EntityFilter(BaseModel, extra="forbid"):
 
 def generate_mapping_schema_for_mex_class(
     mex_model_class: type[ExtractedData],
-) -> BaseModel:
-    """Create a mapping schema the MEx extracted model classes.
+) -> type[BaseModel]:
+    """Create a mapping schema the MEx extracted model class.
 
     Pydantic models are dynamically created for the given entity type from
     depending on the respective fields and their types.
@@ -52,7 +52,7 @@ def generate_mapping_schema_for_mex_class(
         mex_model_class: a pydantic model (type) of a MEx model class/entity
 
     Returns:
-        model of the mapping schema for the provided MEx model class
+        dynamic mapping model for the provided extracted model class
     """
     # dicts for create_model() must be declared as dict[str, Any] to silence mypy
     field_models: dict[str, Any] = {}
@@ -89,7 +89,9 @@ def generate_mapping_schema_for_mex_class(
             field_models[field_name] = (list[field_model], ...)  # type: ignore[valid-type]
         else:
             field_models[field_name] = (list[field_model], None)  # type: ignore[valid-type]
-    class_model: BaseModel = create_model(mex_model_class.__name__, **field_models)
+    class_model: type[BaseModel] = create_model(
+        mex_model_class.__name__, **field_models
+    )
     name = mex_model_class.__name__
     class_model.__doc__ = str(
         f"Schema for mapping the properties of the entity type {name}."
@@ -97,9 +99,17 @@ def generate_mapping_schema_for_mex_class(
     return class_model
 
 
+MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME = {
+    cls.__name__: generate_mapping_schema_for_mex_class(
+        mex_model_class=cls,
+    )
+    for cls in EXTRACTED_MODEL_CLASSES
+}
+
+
 def generate_entity_filter_schema(
     mex_model_class: type[BaseModel],
-) -> BaseModel:
+) -> type[BaseModel]:
     """Create a mapping schema for an entity filter for a Mex model class.
 
     Example entity filter: If activity starts before 2016: do not extract.
@@ -114,8 +124,16 @@ def generate_entity_filter_schema(
         f"{mex_model_class.__name__}": (list[EntityFilter], None)
     }
 
-    entity_filter_model: BaseModel = create_model(
+    entity_filter_model: type[BaseModel] = create_model(
         f"{mex_model_class.__name__}",
         **filters,
     )
     return entity_filter_model
+
+
+FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {
+    cls.__name__: generate_entity_filter_schema(
+        mex_model_class=cls,
+    )
+    for cls in EXTRACTED_MODEL_CLASSES
+}
