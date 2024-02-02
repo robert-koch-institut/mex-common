@@ -9,7 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.19.2]
+
+### Added
+
 - pytest plugins for random order and parallelized test execution
+- move dynamic mapping model generation from mex-assets
 
 ### Changes
 
