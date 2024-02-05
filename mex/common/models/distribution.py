@@ -34,15 +34,18 @@ class BaseDistribution(BaseModel):
     dataManager: list[PersonID] = []
     downloadURL: Link | None = None
     issued: Timestamp
-    license: Annotated[
-        License, Field(examples=["https://mex.rki.de/item/license-1"])
-    ] | None = None
-    mediaType: Annotated[
-        MIMEType,
-        Field(
-            examples=["https://mex.rki.de/item/mime-type-1"],
-        ),
-    ] | None = None
+    license: (
+        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
+    ) = None
+    mediaType: (
+        Annotated[
+            MIMEType,
+            Field(
+                examples=["https://mex.rki.de/item/mime-type-1"],
+            ),
+        ]
+        | None
+    ) = None
     modified: Timestamp | None = None
     otherContributor: list[PersonID] = []
     projectLeader: list[PersonID] = []

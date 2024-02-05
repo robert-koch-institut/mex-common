@@ -39,9 +39,10 @@ class BaseResource(BaseModel):
             examples=["https://mex.rki.de/item/access-restriction-1"],
         ),
     ]
-    accrualPeriodicity: Annotated[
-        Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])
-    ] | None = None
+    accrualPeriodicity: (
+        Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
+        | None
+    ) = None
     alternativeTitle: list[Text] = []
     anonymizationPseudonymization: list[
         Annotated[
@@ -69,9 +70,9 @@ class BaseResource(BaseModel):
     language: list[
         Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
     ] = []
-    license: Annotated[
-        License, Field(examples=["https://mex.rki.de/item/license-1"])
-    ] | None = None
+    license: (
+        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
+    ) = None
     loincId: list[str] = []
     meshId: list[
         Annotated[
@@ -109,12 +110,21 @@ class BaseResource(BaseModel):
             ),
         ]
     ] = []
-    temporal: Timestamp | Annotated[
-        str,
-        Field(
-            examples=["2022-01 bis 2022-03", "Sommer 2023", "nach 2013", "1998-2008"]
-        ),
-    ] | None = None
+    temporal: (
+        Timestamp
+        | Annotated[
+            str,
+            Field(
+                examples=[
+                    "2022-01 bis 2022-03",
+                    "Sommer 2023",
+                    "nach 2013",
+                    "1998-2008",
+                ]
+            ),
+        ]
+        | None
+    ) = None
     theme: Annotated[
         list[Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]],
         Field(min_length=1),

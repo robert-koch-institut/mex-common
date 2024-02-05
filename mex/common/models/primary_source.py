@@ -26,12 +26,15 @@ class BasePrimarySource(BaseModel):
     locatedAt: list[Link] = []
     title: list[Text] = []
     unitInCharge: list[OrganizationalUnitID] = []
-    version: Annotated[
-        str,
-        Field(
-            examples=["v1", "2023-01-16", "Schema 9"],
-        ),
-    ] | None = None
+    version: (
+        Annotated[
+            str,
+            Field(
+                examples=["v1", "2023-01-16", "Schema 9"],
+            ),
+        ]
+        | None
+    ) = None
 
 
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
