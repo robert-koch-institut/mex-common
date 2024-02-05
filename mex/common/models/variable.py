@@ -19,18 +19,24 @@ class BaseVariable(BaseModel):
 
     stableTargetId: VariableID
     belongsTo: list[VariableGroupID] = []
-    codingSystem: Annotated[
-        str,
-        Field(
-            examples=["SF-36 Version 1"],
-        ),
-    ] | None = None
-    dataType: Annotated[
-        DataType,
-        Field(
-            examples=["https://mex.rki.de/item/data-type-1"],
-        ),
-    ] | None = None
+    codingSystem: (
+        Annotated[
+            str,
+            Field(
+                examples=["SF-36 Version 1"],
+            ),
+        ]
+        | None
+    ) = None
+    dataType: (
+        Annotated[
+            DataType,
+            Field(
+                examples=["https://mex.rki.de/item/data-type-1"],
+            ),
+        ]
+        | None
+    ) = None
     description: list[Text] = []
     label: Annotated[
         list[
