@@ -72,9 +72,8 @@ def generate_mapping_schema_for_mex_class(
             field_models[field_name] = (list[field_model], ...)  # type: ignore[valid-type]
         else:
             field_models[field_name] = (list[field_model], None)  # type: ignore[valid-type]
-    class_model: type[BaseModel] = create_model(
-        mex_model_class.__name__, **field_models
-    )
+    mapping_name = f"{mex_model_class.__name__}Mapping".removeprefix("Extracted")
+    class_model: type[BaseModel] = create_model(mapping_name, **field_models)
     name = mex_model_class.__name__
     class_model.__doc__ = str(
         f"Schema for mapping the properties of the entity type {name}."

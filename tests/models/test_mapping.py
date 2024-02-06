@@ -8,7 +8,7 @@ from mex.common.types import OrganizationalUnitID
 from mex.common.types.email import Email
 
 
-class DummyClass(ExtractedData):
+class ExtractedDummyClass(ExtractedData):
     dummy_identifier: OrganizationalUnitID | None = None  # not required
     dummy_str: str
     dummy_int: int | None = None  # not required
@@ -18,7 +18,7 @@ class DummyClass(ExtractedData):
 
 
 def test_generate_mapping_schema() -> None:
-    schema_model = generate_mapping_schema_for_mex_class(DummyClass)
+    schema_model = generate_mapping_schema_for_mex_class(ExtractedDummyClass)
 
     expected = {
         "$defs": {
@@ -713,7 +713,7 @@ def test_generate_mapping_schema() -> None:
             },
         },
         "description": "Schema for mapping the properties of the entity type "
-        "DummyClass.",
+        "ExtractedDummyClass.",
         "properties": {
             "dummy_email": {
                 "items": {"$ref": "#/$defs/Dummy_emailFieldsInPrimarySource"},
@@ -774,7 +774,7 @@ def test_generate_mapping_schema() -> None:
             "dummy_email",
             "dummy_min_length_list",
         ],
-        "title": "DummyClass",
+        "title": "DummyClassMapping",
         "type": "object",
     }
 

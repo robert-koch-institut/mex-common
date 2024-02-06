@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.19.3] - 2024-02-06
+
+### Added
+
+### Changes
+
 - update cruft to apply new workflow trigger config
 - update poetry and pre-commit dependencies
 
@@ -19,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+- fix mex mapping model name
 
 ### Security
 
