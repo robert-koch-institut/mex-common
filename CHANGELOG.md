@@ -11,8 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update cruft to apply new workflow trigger config
-- update poetry and pre-commit dependencies
+- update cruft and minor dependencies
 
 ### Deprecated
 
