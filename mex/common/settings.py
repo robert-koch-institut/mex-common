@@ -1,7 +1,6 @@
 from base64 import b64encode
-from contextvars import ContextVar
 from pathlib import Path
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union, cast
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
@@ -9,11 +8,12 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
+from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
-SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
-    "SettingsContext", default=None
+SettingsContext = ContextStore(
+    "SettingsContext", default=cast(Optional["BaseSettings"], None)
 )
 
 

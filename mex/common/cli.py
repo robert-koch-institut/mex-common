@@ -116,7 +116,7 @@ def _callback(
     # ensure connectors are closed on exit.
     context.call_on_close(reset_connector_context)
 
-    # load settings from parameters and store in ContextVar.
+    # load settings from parameters and store in ContextStore.
     settings = settings_cls.model_validate(
         {
             key: value
