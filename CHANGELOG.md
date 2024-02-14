@@ -9,9 +9,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+- update cruft and minor dependencies
 - add entityType type hint to MExModel
 - add types for AnyBaseModel, AnyExtractedModel and AnyMergedModel
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.19.3] - 2024-02-06
+
+### Added
+
+### Changes
+
+- update cruft to apply new workflow trigger config
+- update poetry and pre-commit dependencies
+
+### Deprecated
+
+### Removed
+
+### Fixed
+- fix mex mapping model name
+
+### Security
+
+## [0.19.2] - 2024-02-02
+
+### Added
+
 - pytest plugins for random order and parallelized test execution
+- move dynamic mapping model generation from mex-assets
 
 ### Changes
 

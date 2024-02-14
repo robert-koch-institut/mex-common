@@ -3,6 +3,7 @@
 Activate by adding `pytest_plugins = ("mex.common.testing.plugin",)`
 to the `conftest.py` in your root test folder.
 """
+
 import os
 from enum import Enum
 from pathlib import Path

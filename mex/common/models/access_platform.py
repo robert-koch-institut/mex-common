@@ -25,9 +25,10 @@ class BaseAccessPlatform(BaseModel):
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
     description: list[Text] = []
     endpointDescription: Link | None = None
-    endpointType: Annotated[
-        APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])
-    ] | None = None
+    endpointType: (
+        Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
+        | None
+    ) = None
     endpointURL: Link | None = None
     landingPage: list[Link] = []
     technicalAccessibility: Annotated[
