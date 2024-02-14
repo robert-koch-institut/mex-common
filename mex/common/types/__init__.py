@@ -1,3 +1,5 @@
+from typing import Final, Union, get_args
+
 from mex.common.types.email import Email
 from mex.common.types.identifier import (
     AccessPlatformID,
@@ -51,6 +53,7 @@ __all__ = (
     "ActivityID",
     "ActivityType",
     "AnonymizationPseudonymization",
+    "AnyNestedModel",
     "APIType",
     "AssetsPath",
     "CET",
@@ -67,6 +70,8 @@ __all__ = (
     "Link",
     "LinkLanguage",
     "MIMEType",
+    "NESTED_MODEL_CLASSES_BY_NAME",
+    "NESTED_MODEL_CLASSES",
     "OrganizationalUnitID",
     "OrganizationID",
     "PathWrapper",
@@ -91,3 +96,12 @@ __all__ = (
     "VocabularyLoader",
     "WorkPath",
 )
+
+AnyNestedModel = Union[
+    Link,
+    Text,
+]
+NESTED_MODEL_CLASSES: Final[list[type[AnyNestedModel]]] = list(get_args(AnyNestedModel))
+NESTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyNestedModel]]] = {
+    cls.__name__: cls for cls in NESTED_MODEL_CLASSES
+}

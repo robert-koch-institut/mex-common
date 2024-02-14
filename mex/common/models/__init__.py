@@ -23,6 +23,8 @@ from mex.common.models.extracted_data import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ExtractedData,
 )
+from mex.common.models.filter import FILTER_MODEL_BY_EXTRACTED_CLASS_NAME
+from mex.common.models.mapping import MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME
 from mex.common.models.merged_item import MergedItem
 from mex.common.models.organization import (
     BaseOrganization,
@@ -80,6 +82,8 @@ __all__ = (
     "ExtractedResource",
     "ExtractedVariable",
     "ExtractedVariableGroup",
+    "FILTER_MODEL_BY_EXTRACTED_CLASS_NAME",
+    "MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME",
     "MERGED_MODEL_CLASSES_BY_NAME",
     "MERGED_MODEL_CLASSES",
     "MergedAccessPlatform",
