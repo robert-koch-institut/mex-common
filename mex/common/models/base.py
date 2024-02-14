@@ -235,6 +235,7 @@ class MExModel(BaseModel):
                 "entity-type or whether this item was extracted, merged, etc. "
                 "identifiers will be assigned just once."
             ),
+            frozen=True,
         ),
     ]
 

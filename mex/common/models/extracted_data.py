@@ -48,6 +48,7 @@ class ExtractedData(MExModel):
                 "The primary source for MEx has itself as a primary source, which "
                 "is meant to be the only loop in the graph formed by MEx metadata."
             ),
+            frozen=True,
         ),
     ]
     identifierInPrimarySource: Annotated[
@@ -63,6 +64,7 @@ class ExtractedData(MExModel):
             ),
             examples=["123456", "item-501", "D7/x4/zz.final3"],
             min_length=1,
+            frozen=True,
         ),
     ]
 
