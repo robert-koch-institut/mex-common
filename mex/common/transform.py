@@ -3,7 +3,7 @@ import re
 from enum import Enum
 from functools import cache
 from pathlib import PurePath
-from typing import Any
+from typing import Any, Iterable, cast
 from uuid import UUID
 
 from pydantic import AnyUrl, SecretStr
@@ -73,3 +73,26 @@ def kebab_to_camel(string: str) -> str:
     if len(tokens := re.split(r"\-+", string)) > 1:
         return "".join(word.title() for word in tokens)
     return string[:1].upper() + string[1:]
+
+
+def ensure_prefix(string: Any, prefix: Any) -> str:
+    """Return a str with the given prefix prepended if it is not present yet.
+
+    If the string already starts with the prefix, return a copy.
+    This method is the inverse of `str.removeprefix`.
+    """
+    string = str(string)
+    prefix = str(prefix)
+    if string.startswith(prefix):
+        return cast(str, string)
+    return f"{prefix}{string}"
+
+
+def to_key_and_values(dct: dict[str, Any]) -> Iterable[tuple[str, list[Any]]]:
+    """Return an iterable of dictionary items where the values are always lists."""
+    for key, value in dct.items():
+        if value is None:
+            value = []
+        elif not isinstance(value, list):
+            value = [value]
+        yield key, value
