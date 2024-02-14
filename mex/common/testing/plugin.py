@@ -27,7 +27,6 @@ class NoOpPytest:
     FixtureRequest = Any
     MonkeyPatch = Any
     fixture = MagicMock()
-    mark = MagicMock()
 
 
 try:
@@ -70,7 +69,7 @@ def settings() -> BaseSettings:
 
 @pytest.fixture(autouse=True)
 def isolate_settings_context() -> Generator[None, None, None]:
-    """Automatically close all connectors and remove from context variable."""
+    """Automatically reset the settings context variable."""
     yield
     SettingsContext.set(None)
 
@@ -107,7 +106,6 @@ def faker_session_locale() -> list[str]:
 
 
 @pytest.fixture()
-@pytest.mark.usefixtures("settings")
 def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
     seed_primary_sources = extract_seed_primary_sources()
