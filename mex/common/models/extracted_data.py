@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import Field, model_validator, validate_call
 
@@ -22,6 +22,20 @@ class ExtractedData(MExModel):
     This class also adds a validator to automatically set identifiers for provenance.
     See below, for a full description.
     """
+
+    if TYPE_CHECKING:
+        # Sometimes multiple primary sources describe the same activity, resource, etc.
+        # and a complete metadata item can only be created by merging these fragments.
+        # The `stableTargetID` is part of all models in `mex.common.models` to allow
+        # MEx to identify which extracted items describe the same thing and should be
+        # merged to create a complete metadata item.
+        # The name might be a bit misleading (also due to historical reasons), but the
+        # "stability" is only guaranteed for one "real world" or "digital world" thing
+        # having the same ID in MEx over time. But not as a guarantee, that the same
+        # metadata sources contribute to the complete metadata item.
+        # Because we anticipate that items have to be merged, the `stableTargetID` is
+        # also used as the foreign key for all fields containing references.
+        stableTargetId: Any
 
     hadPrimarySource: Annotated[
         PrimarySourceID,

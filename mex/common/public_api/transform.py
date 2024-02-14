@@ -6,6 +6,7 @@ from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MExModel,
 )
+from mex.common.models.extracted_data import ExtractedData
 from mex.common.public_api.models import (
     PublicApiField,
     PublicApiFieldValueTypes,
@@ -54,7 +55,11 @@ def transform_mex_model_to_public_api_item(model: MExModel) -> PublicApiItem:
             )
     return PublicApiItem(
         entityType=model.__class__.__name__,
-        businessId=model.stableTargetId,
+        businessId=(
+            model.stableTargetId
+            if isinstance(model, ExtractedData)
+            else model.identifier
+        ),
         values=api_values,
     )
 
