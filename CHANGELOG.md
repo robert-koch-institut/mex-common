@@ -11,11 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.19.4] - 2024-02-15
+
+### Added
+
+### Changes
+
 - update cruft and minor dependencies
 
 ### Deprecated
 
 ### Removed
+
+- date-time format validation for mapping model generation
 
 ### Fixed
 
