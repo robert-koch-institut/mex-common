@@ -10,6 +10,7 @@ import pytest
 from mex.common.models import EXTRACTED_MODEL_CLASSES_BY_NAME
 from mex.common.transform import dromedary_to_kebab
 from mex.common.types.identifier import MEX_ID_PATTERN
+from mex.common.types.timestamp import TIMESTAMP_REGEX
 
 SPECIFIED_SCHEMA_PATH = files("mex.model").joinpath("entities")
 
@@ -121,7 +122,10 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     # ignore differences between dates and datetimes
     # (we only have `Timestamp` as a date-time implementation, but no type for `date`,
     # but we might/should add that in the future)
-    if obj.get("format") in ("date", "date-time"):
+    if (
+        obj.get("format") in ("date", "date-time")
+        or obj.get("pattern") == TIMESTAMP_REGEX
+    ):
         obj.pop("examples", None)
         obj.pop("pattern", None)
         obj["format"] = "date-time"
