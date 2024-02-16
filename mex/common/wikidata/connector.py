@@ -18,7 +18,7 @@ class WikidataQueryServiceConnector(HTTPConnector):
         """Send a GET request to verify the host is available."""
         self.request("GET", params={"format": "json"})
 
-    @cache
+    @cache  # noqa: B019
     def get_data_by_query(self, query: str) -> list[dict[str, dict[str, str]]]:
         """Run provided query on wikidata using wikidata query service.
 
@@ -49,7 +49,7 @@ class WikidataAPIConnector(HTTPConnector):
             "GET", self.url, params={"format": "json", "action": "wbgetentities"}
         )
 
-    @cache
+    @cache  # noqa: B019
     def get_wikidata_item_details_by_id(self, item_id: str) -> dict[str, str]:
         """Get details of a wikidata item by item id.
 

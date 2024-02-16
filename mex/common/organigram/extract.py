@@ -19,7 +19,7 @@ def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
         Generator for organigram units
     """
     settings = BaseSettings.get()
-    with open(settings.organigram_path, "r") as fh:
+    with open(settings.organigram_path) as fh:
         for raw in json.load(fh):
             yield OrganigramUnit.model_validate(raw)
 

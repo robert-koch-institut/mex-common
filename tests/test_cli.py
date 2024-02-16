@@ -220,7 +220,7 @@ def test_good_entrypoint_exits_zero() -> None:
 def test_faulty_entrypoint_exits_non_zero() -> None:
     @entrypoint(BaseSettings)
     def faulty_entrypoint() -> None:
-        1 / 0
+        _ = 1 / 0
 
     result = CliRunner().invoke(faulty_entrypoint, args=[])
     assert result.exit_code == 1, result.stdout

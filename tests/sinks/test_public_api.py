@@ -51,7 +51,7 @@ def test_purge_from_public_api_mocked(
 @pytest.mark.skip(reason="public api is being deprecated")
 @pytest.mark.integration
 def test_public_api_post_and_purge_roundtrip(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource]
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     extracted_person = ExtractedPerson(
         identifierInPrimarySource=str(uuid4()),

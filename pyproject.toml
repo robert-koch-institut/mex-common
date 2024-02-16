@@ -31,7 +31,7 @@ pytest = "^8.0.0"
 pytest-cov = "^4.1.0"
 pytest-random-order = "^1.1.1"
 pytest-xdist = "^3.5.0"
-ruff = "^0.2.0"
+ruff = "^0.2.1"
 sphinx = "^7.2.6"
 types-ldap3 = "^2.9.13"
 types-pytz = "^2024.1.0"
@@ -72,6 +72,9 @@ markers = "integration: mark a test as integration test"
 
 [tool.ruff]
 fix = true
+show-fixes = true
+
+[tool.ruff.lint]
 ignore = [
     "D100",   # Allow missing module docstring for brevity
     "D104",   # Allow missing package docstring for brevity
@@ -86,24 +89,26 @@ ignore = [
     "RUF012", # Allow mutable class attributes (pydantic compat)
 ]
 select = [
-    "C90", # McCabe complexity checker
-    "D",   # Python docstring style checker
-    "E",   # Python code style errors
-    "ERA", # Commented-out code detector
-    "F",   # Pyflakes passive python checker
-    "I",   # Isort import utility
-    "N",   # Pep8 naming conventions
-    "RET", # Flake8 return statement checker
-    "RUF", # Ruff-specific rules
-    "S",   # Bandit automated security testing
-    "T10", # Flake8 debug statement checker
-    "T20", # Flake8 print statement checker
-    "W",   # Python code style warnings
+    "A",    # Flake8 builtin shaddow
+    "B",    # BugBear bug and issue finder
+    "C90",  # McCabe complexity checker
+    "D",    # Python docstring style checker
+    "E",    # Python code style errors
+    "ERA",  # Commented-out code detector
+    "F",    # Pyflakes passive python checker
+    "I",    # Isort import utility
+    "N",    # Pep8 naming conventions
+    "PERF", # Lint performance anti-patterns
+    "RET",  # Flake8 return statement checker
+    "RUF",  # Ruff-specific rules
+    "S",    # Bandit automated security testing
+    "T10",  # Flake8 debug statement checker
+    "T20",  # Flake8 print statement checker
+    "UP",   # PyUpgrade syntax recommender
+    "W",    # Python code style warnings
 ]
-show-fixes = true
-target-version = "py311"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**" = [
     "D101", # Allow missing docstring in public class for tests
     "D102", # Allow missing docstring in public method for tests
@@ -114,10 +119,10 @@ target-version = "py311"
     "S101", # Allow use of `assert` in tests
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [build-system]

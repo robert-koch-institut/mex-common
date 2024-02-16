@@ -5,7 +5,7 @@ class MExError(Exception):
         """Format this exception as a string for logging."""
         return (
             f"{self.__class__.__name__}: "
-            f"{(', '.join((str(arg) for arg in self.args)))} "
+            f"{(', '.join(str(arg) for arg in self.args))} "
         )
 
 
