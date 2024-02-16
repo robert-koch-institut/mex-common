@@ -14,12 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update cruft and minor dependencies
 - add entityType type hint to MExModel
 - add types for AnyBaseModel, AnyExtractedModel and AnyMergedModel
+- update linting according to https://github.com/robert-koch-institut/mex-template/pull/3
+- swap `contextvars.ContextVar` for `mex.common.context.ContextStore`
+- freeze all `Identity` fields
+- freeze `identifier` field on `MExModel`
+- freeze `hadPrimarySource` and `identifierInPrimarySource` on `ExtractedData`
 
 ### Deprecated
 
 ### Removed
+- absorb unused `BaseExtractedData` into `ExtractedData`
 
 ### Fixed
+- remove `pytest.mark` from fixture in `mex.common.testing.plugin`
 
 ### Security
 
@@ -55,8 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
-
-- absorb unused `BaseExtractedData` into `ExtractedData`
 
 ### Fixed
 
