@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update cruft and minor dependencies
 - add entityType type hint to MExModel
 - add types for AnyBaseModel, AnyExtractedModel and AnyMergedModel
 - update linting according to https://github.com/robert-koch-institut/mex-template/pull/3
@@ -23,30 +22,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
 - absorb unused `BaseExtractedData` into `ExtractedData`
 
 ### Fixed
+
 - remove `pytest.mark` from fixture in `mex.common.testing.plugin`
 
 ### Security
 
-## [0.19.3] - 2024-02-06
+## [0.19.4] - 2024-02-15
 
-### Added
+### Changes
+
+- update cruft and minor dependencies
+
+### Removed
+
+- date-time format validation for mapping model generation
+
+## [0.19.3] - 2024-02-06
 
 ### Changes
 
 - update cruft to apply new workflow trigger config
 - update poetry and pre-commit dependencies
 
-### Deprecated
-
-### Removed
-
 ### Fixed
-- fix mex mapping model name
 
-### Security
+- fix mex mapping model name
 
 ## [0.19.2] - 2024-02-02
 
@@ -58,14 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - `mex.bat test` uses random order and xdist plugins by default
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.19.1] - 2024-01-19
 
