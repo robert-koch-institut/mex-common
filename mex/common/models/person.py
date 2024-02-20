@@ -11,7 +11,6 @@ from mex.common.types import Email, OrganizationalUnitID, OrganizationID, Person
 class BasePerson(BaseModel):
     """A person related to a source and/or resource, i.e. a project leader."""
 
-    stableTargetId: PersonID
     affiliation: list[OrganizationID] = []
     email: list[Email] = []
     familyName: list[
@@ -67,6 +66,7 @@ class ExtractedPerson(BasePerson, ExtractedData):
     entityType: Literal["ExtractedPerson"] = Field(
         "ExtractedPerson", alias="$type", frozen=True
     )
+    stableTargetId: PersonID
 
 
 class MergedPerson(BasePerson, MergedItem):

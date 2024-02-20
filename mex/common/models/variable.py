@@ -17,7 +17,6 @@ from mex.common.types import (
 class BaseVariable(BaseModel):
     """A single piece of information within a resource."""
 
-    stableTargetId: VariableID
     belongsTo: list[VariableGroupID] = []
     codingSystem: (
         Annotated[
@@ -72,6 +71,7 @@ class ExtractedVariable(BaseVariable, ExtractedData):
     entityType: Literal["ExtractedVariable"] = Field(
         "ExtractedVariable", alias="$type", frozen=True
     )
+    stableTargetId: VariableID
 
 
 class MergedVariable(BaseVariable, MergedItem):

@@ -21,7 +21,6 @@ from mex.common.types import (
 class BaseDistribution(BaseModel):
     """A specific representation of a dataset."""
 
-    stableTargetId: DistributionID
     accessService: AccessPlatformID | None = None
     accessRestriction: Annotated[
         AccessRestriction,
@@ -67,6 +66,7 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
     entityType: Literal["ExtractedDistribution"] = Field(
         "ExtractedDistribution", alias="$type", frozen=True
     )
+    stableTargetId: DistributionID
 
 
 class MergedDistribution(BaseDistribution, MergedItem):

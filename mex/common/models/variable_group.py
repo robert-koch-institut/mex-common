@@ -11,7 +11,6 @@ from mex.common.types import ResourceID, Text, VariableGroupID
 class BaseVariableGroup(BaseModel):
     """The grouping of variables according to a certain aspect."""
 
-    stableTargetId: VariableGroupID
     containedBy: Annotated[list[ResourceID], Field(min_length=1)]
     label: Annotated[list[Text], Field(min_length=1)]
 
@@ -22,6 +21,7 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     entityType: Literal["ExtractedVariableGroup"] = Field(
         "ExtractedVariableGroup", alias="$type", frozen=True
     )
+    stableTargetId: VariableGroupID
 
 
 class MergedVariableGroup(BaseVariableGroup, MergedItem):

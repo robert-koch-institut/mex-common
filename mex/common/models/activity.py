@@ -25,7 +25,6 @@ class BaseActivity(BaseModel):
     This may be a project, an area of work or an administrative procedure.
     """
 
-    stableTargetId: ActivityID
     abstract: list[Text] = []
     activityType: list[
         Annotated[
@@ -66,6 +65,7 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     entityType: Literal["ExtractedActivity"] = Field(
         "ExtractedActivity", alias="$type", frozen=True
     )
+    stableTargetId: ActivityID
 
 
 class MergedActivity(BaseActivity, MergedItem):

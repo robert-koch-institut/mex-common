@@ -18,7 +18,6 @@ from mex.common.types import (
 class BasePrimarySource(BaseModel):
     """A collection of information, that is managed and curated by an RKI unit."""
 
-    stableTargetId: PrimarySourceID
     alternativeTitle: list[Text] = []
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
     description: list[Text] = []
@@ -43,6 +42,7 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     entityType: Literal["ExtractedPrimarySource"] = Field(
         "ExtractedPrimarySource", alias="$type", frozen=True
     )
+    stableTargetId: PrimarySourceID
 
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):

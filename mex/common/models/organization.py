@@ -14,7 +14,6 @@ class BaseOrganization(BaseModel):
     This can be any community or other social, commercial or political structure.
     """
 
-    stableTargetId: OrganizationID
     alternativeName: list[Text] = []
     geprisId: list[
         Annotated[
@@ -86,6 +85,7 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
     entityType: Literal["ExtractedOrganization"] = Field(
         "ExtractedOrganization", alias="$type", frozen=True
     )
+    stableTargetId: OrganizationID
 
 
 class MergedOrganization(BaseOrganization, MergedItem):

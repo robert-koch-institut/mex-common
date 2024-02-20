@@ -11,7 +11,6 @@ from mex.common.types import ContactPointID, Email
 class BaseContactPoint(BaseModel):
     """A contact point - for example, an interdepartmental project."""
 
-    stableTargetId: ContactPointID
     email: Annotated[list[Email], Field(min_length=1)]
 
 
@@ -21,6 +20,7 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     entityType: Literal["ExtractedContactPoint"] = Field(
         "ExtractedContactPoint", alias="$type", frozen=True
     )
+    stableTargetId: ContactPointID
 
 
 class MergedContactPoint(BaseContactPoint, MergedItem):

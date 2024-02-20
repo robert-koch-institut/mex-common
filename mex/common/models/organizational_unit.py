@@ -11,7 +11,6 @@ from mex.common.types import Email, Link, OrganizationalUnitID, OrganizationID, 
 class BaseOrganizationalUnit(BaseModel):
     """An organizational unit which is part of some larger organization."""
 
-    stableTargetId: OrganizationalUnitID
     alternativeName: list[Text] = []
     email: list[Email] = []
     name: Annotated[list[Text], Field(min_length=1)]
@@ -27,6 +26,7 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     entityType: Literal["ExtractedOrganizationalUnit"] = Field(
         "ExtractedOrganizationalUnit", alias="$type", frozen=True
     )
+    stableTargetId: OrganizationalUnitID
 
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):

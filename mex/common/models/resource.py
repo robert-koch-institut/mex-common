@@ -31,7 +31,6 @@ from mex.common.types import (
 class BaseResource(BaseModel):
     """A defined piece or collection of information."""
 
-    stableTargetId: ResourceID
     accessPlatform: list[AccessPlatformID] = []
     accessRestriction: Annotated[
         AccessRestriction,
@@ -140,6 +139,7 @@ class ExtractedResource(BaseResource, ExtractedData):
     entityType: Literal["ExtractedResource"] = Field(
         "ExtractedResource", alias="$type", frozen=True
     )
+    stableTargetId: ResourceID
 
 
 class MergedResource(BaseResource, MergedItem):

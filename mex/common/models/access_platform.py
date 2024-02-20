@@ -20,7 +20,6 @@ from mex.common.types import (
 class BaseAccessPlatform(BaseModel):
     """A way of physically accessing the Resource for re-use."""
 
-    stableTargetId: AccessPlatformID
     alternativeTitle: list[Text] = []
     contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
     description: list[Text] = []
@@ -45,6 +44,7 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     entityType: Literal["ExtractedAccessPlatform"] = Field(
         "ExtractedAccessPlatform", alias="$type", frozen=True
     )
+    stableTargetId: AccessPlatformID
 
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
