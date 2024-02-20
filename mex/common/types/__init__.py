@@ -2,18 +2,29 @@ from typing import Final, Union, get_args
 
 from mex.common.types.email import Email
 from mex.common.types.identifier import (
-    AccessPlatformID,
-    ActivityID,
-    ContactPointID,
-    DistributionID,
+    ExtractedAccessPlatformIdentifier,
+    ExtractedActivityIdentifier,
+    ExtractedContactPointIdentifier,
+    ExtractedDistributionIdentifier,
+    ExtractedOrganizationalUnitIdentifier,
+    ExtractedOrganizationIdentifier,
+    ExtractedPersonIdentifier,
+    ExtractedPrimarySourceIdentifier,
+    ExtractedResourceIdentifier,
+    ExtractedVariableGroupIdentifier,
+    ExtractedVariableIdentifier,
     Identifier,
-    OrganizationalUnitID,
-    OrganizationID,
-    PersonID,
-    PrimarySourceID,
-    ResourceID,
-    VariableGroupID,
-    VariableID,
+    MergedAccessPlatformIdentifier,
+    MergedActivityIdentifier,
+    MergedContactPointIdentifier,
+    MergedDistributionIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
+    MergedVariableIdentifier,
 )
 from mex.common.types.identity import IdentityProvider
 from mex.common.types.link import Link, LinkLanguage
@@ -48,20 +59,27 @@ from mex.common.types.vocabulary import (
 )
 
 __all__ = (
-    "AccessPlatformID",
     "AccessRestriction",
-    "ActivityID",
     "ActivityType",
     "AnonymizationPseudonymization",
     "AnyNestedModel",
     "APIType",
     "AssetsPath",
     "CET",
-    "ContactPointID",
     "DataProcessingState",
     "DataType",
-    "DistributionID",
     "Email",
+    "ExtractedAccessPlatformIdentifier",
+    "ExtractedActivityIdentifier",
+    "ExtractedContactPointIdentifier",
+    "ExtractedDistributionIdentifier",
+    "ExtractedOrganizationalUnitIdentifier",
+    "ExtractedOrganizationIdentifier",
+    "ExtractedPersonIdentifier",
+    "ExtractedPrimarySourceIdentifier",
+    "ExtractedResourceIdentifier",
+    "ExtractedVariableGroupIdentifier",
+    "ExtractedVariableIdentifier",
     "Frequency",
     "Identifier",
     "IdentityProvider",
@@ -69,15 +87,21 @@ __all__ = (
     "License",
     "Link",
     "LinkLanguage",
+    "MergedAccessPlatformIdentifier",
+    "MergedActivityIdentifier",
+    "MergedContactPointIdentifier",
+    "MergedDistributionIdentifier",
+    "MergedOrganizationalUnitIdentifier",
+    "MergedOrganizationIdentifier",
+    "MergedPersonIdentifier",
+    "MergedPrimarySourceIdentifier",
+    "MergedResourceIdentifier",
+    "MergedVariableGroupIdentifier",
+    "MergedVariableIdentifier",
     "MIMEType",
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",
-    "OrganizationalUnitID",
-    "OrganizationID",
     "PathWrapper",
-    "PersonID",
-    "PrimarySourceID",
-    "ResourceID",
     "ResourceTypeGeneral",
     "Sink",
     "split_to_caps",
@@ -90,8 +114,6 @@ __all__ = (
     "Timestamp",
     "TimestampPrecision",
     "UTC",
-    "VariableGroupID",
-    "VariableID",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
@@ -104,4 +126,44 @@ AnyNestedModel = Union[
 NESTED_MODEL_CLASSES: Final[list[type[AnyNestedModel]]] = list(get_args(AnyNestedModel))
 NESTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyNestedModel]]] = {
     cls.__name__: cls for cls in NESTED_MODEL_CLASSES
+}
+
+AnyMergedIdentifier = Union[
+    MergedAccessPlatformIdentifier,
+    MergedActivityIdentifier,
+    MergedContactPointIdentifier,
+    MergedDistributionIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
+    MergedVariableIdentifier,
+]
+MERGED_IDENTIFIER_CLASSES: Final[list[type[AnyMergedIdentifier]]] = list(
+    get_args(AnyMergedIdentifier)
+)
+MERGED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedIdentifier]]] = {
+    cls.__name__: cls for cls in MERGED_IDENTIFIER_CLASSES
+}
+
+AnyExtractedIdentifier = Union[
+    ExtractedAccessPlatformIdentifier,
+    ExtractedActivityIdentifier,
+    ExtractedContactPointIdentifier,
+    ExtractedDistributionIdentifier,
+    ExtractedOrganizationalUnitIdentifier,
+    ExtractedOrganizationIdentifier,
+    ExtractedPersonIdentifier,
+    ExtractedPrimarySourceIdentifier,
+    ExtractedResourceIdentifier,
+    ExtractedVariableGroupIdentifier,
+    ExtractedVariableIdentifier,
+]
+EXTRACTED_IDENTIFIER_CLASSES: Final[list[type[AnyExtractedIdentifier]]] = list(
+    get_args(AnyExtractedIdentifier)
+)
+EXTRACTED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedIdentifier]]] = {
+    cls.__name__: cls for cls in EXTRACTED_IDENTIFIER_CLASSES
 }

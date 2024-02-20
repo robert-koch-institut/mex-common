@@ -6,12 +6,13 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
-    AccessPlatformID,
     APIType,
-    ContactPointID,
+    ExtractedAccessPlatformIdentifier,
     Link,
-    OrganizationalUnitID,
-    PersonID,
+    MergedAccessPlatformIdentifier,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
     TechnicalAccessibility,
     Text,
 )
@@ -21,7 +22,11 @@ class BaseAccessPlatform(BaseModel):
     """A way of physically accessing the Resource for re-use."""
 
     alternativeTitle: list[Text] = []
-    contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
+    contact: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ] = []
     description: list[Text] = []
     endpointDescription: Link | None = None
     endpointType: (
@@ -35,7 +40,7 @@ class BaseAccessPlatform(BaseModel):
         Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
     ]
     title: list[Text] = []
-    unitInCharge: list[OrganizationalUnitID] = []
+    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
 
 
 class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
@@ -44,7 +49,8 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     entityType: Literal["ExtractedAccessPlatform"] = Field(
         "ExtractedAccessPlatform", alias="$type", frozen=True
     )
-    stableTargetId: AccessPlatformID
+    identifier: Annotated[ExtractedAccessPlatformIdentifier, Field(frozen=True)]
+    stableTargetId: MergedAccessPlatformIdentifier
 
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
@@ -53,3 +59,4 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     entityType: Literal["MergedAccessPlatform"] = Field(
         "MergedAccessPlatform", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]

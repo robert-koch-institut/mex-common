@@ -10,7 +10,7 @@ from mex.common.models import (
     BaseModel,
     ExtractedData,
 )
-from mex.common.types import Identifier, PrimarySourceID
+from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
 
 class Animal(Enum):
@@ -38,7 +38,7 @@ def test_extracted_data_requires_dict_for_construction() -> None:
 def test_extracted_data_requires_identifier_in_primary_source() -> None:
     with pytest.raises(ValidationError, match="identifierInPrimarySource"):
         ExtractedThing(
-            hadPrimarySource=PrimarySourceID.generate(seed=1),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         )
 
 
@@ -53,19 +53,19 @@ def test_extracted_data_does_not_allow_setting_identifier() -> None:
     with pytest.raises(ValidationError, match="Identifier cannot be set manually"):
         ExtractedThing(
             identifier=Identifier.generate(seed=0),
-            hadPrimarySource=PrimarySourceID.generate(seed=1),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
             identifierInPrimarySource="0",
         )
 
 
 def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
     thing_1 = ExtractedThing(
-        hadPrimarySource=PrimarySourceID.generate(seed=1),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         identifierInPrimarySource="0",
     )
     thing_2 = ExtractedThing(
         identifier=thing_1.identifier,
-        hadPrimarySource=PrimarySourceID.generate(seed=1),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         identifierInPrimarySource="0",
     )
 
@@ -78,14 +78,14 @@ def test_extracted_data_does_not_allow_changing_mex_stable_target_id() -> None:
             identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
             hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
             identifierInPrimarySource=MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
-            stableTargetId=PrimarySourceID.generate(seed=12345),
+            stableTargetId=MergedPrimarySourceIdentifier.generate(seed=12345),
         )
 
 
 def test_extracted_data_stores_identity_in_provider() -> None:
     thing = ExtractedThing(
         identifierInPrimarySource="12345",
-        hadPrimarySource=PrimarySourceID.generate(seed=12345),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=12345),
     )
 
     provider = get_provider()

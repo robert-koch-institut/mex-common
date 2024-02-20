@@ -4,12 +4,12 @@ from mex.common.models import ExtractedData
 from mex.common.models.mapping import (
     generate_mapping_schema_for_mex_class,
 )
-from mex.common.types import OrganizationalUnitID
+from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.common.types.email import Email
 
 
 class ExtractedDummyClass(ExtractedData):
-    dummy_identifier: OrganizationalUnitID | None = None  # not required
+    dummy_identifier: MergedOrganizationalUnitIdentifier | None = None  # not required
     dummy_str: str
     dummy_int: int | None = None  # not required
     dummy_email: Email
@@ -172,7 +172,7 @@ def test_generate_mapping_schema() -> None:
                                     "anyOf": [
                                         {
                                             "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                            "title": "OrganizationalUnitID",
+                                            "title": "MergedOrganizationalUnitIdentifier",
                                             "type": "string",
                                         },
                                         {"type": "null"},
@@ -542,7 +542,7 @@ def test_generate_mapping_schema() -> None:
                             {
                                 "items": {
                                     "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                    "title": "PrimarySourceID",
+                                    "title": "MergedPrimarySourceIdentifier",
                                     "type": "string",
                                 },
                                 "type": "array",

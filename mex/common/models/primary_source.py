@@ -6,11 +6,12 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
-    ContactPointID,
+    ExtractedPrimarySourceIdentifier,
     Link,
-    OrganizationalUnitID,
-    PersonID,
-    PrimarySourceID,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     Text,
 )
 
@@ -19,12 +20,16 @@ class BasePrimarySource(BaseModel):
     """A collection of information, that is managed and curated by an RKI unit."""
 
     alternativeTitle: list[Text] = []
-    contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
+    contact: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ] = []
     description: list[Text] = []
     documentation: list[Link] = []
     locatedAt: list[Link] = []
     title: list[Text] = []
-    unitInCharge: list[OrganizationalUnitID] = []
+    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
     version: (
         Annotated[
             str,
@@ -42,7 +47,8 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     entityType: Literal["ExtractedPrimarySource"] = Field(
         "ExtractedPrimarySource", alias="$type", frozen=True
     )
-    stableTargetId: PrimarySourceID
+    identifier: Annotated[ExtractedPrimarySourceIdentifier, Field(frozen=True)]
+    stableTargetId: MergedPrimarySourceIdentifier
 
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):
@@ -51,3 +57,4 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     entityType: Literal["MergedPrimarySource"] = Field(
         "MergedPrimarySource", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]

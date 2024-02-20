@@ -75,52 +75,96 @@ class Identifier(str):
 
 # We have technically-identical subclasses of identifier types (one per entity-type).
 # This allows us to annotate which entity-types are allowed on reference fields.
-# For example `contact: PersonID | OrganizationID` tells us that a contact for an item
-# has to be either a person or an organization.
+# For example `contact: MergedPersonIdentifier | MergedOrganizationIdentifier` tells us
+# that a contact for an item has to be either a merged person or merged organization.
 # We cannot validate this using pydantic, because all identifiers have the same
-# format. But it helps for documentation purposes and allows us to generate a more
-# precise JSON schema / swagger definition.
+# format. But it helps for documentation purposes, allows us to generate a more
+# precise JSON schema definitions and to derive database queries from the models.
 
 
-class AccessPlatformID(Identifier):
+class ExtractedAccessPlatformIdentifier(Identifier):
+    """Identifier for extracted access platforms."""
+
+
+class ExtractedActivityIdentifier(Identifier):
+    """Identifier for extracted activities."""
+
+
+class ExtractedContactPointIdentifier(Identifier):
+    """Identifier for extracted contact points."""
+
+
+class ExtractedDistributionIdentifier(Identifier):
+    """Identifier for extracted distributions."""
+
+
+class ExtractedOrganizationIdentifier(Identifier):
+    """Identifier for extracted organizations."""
+
+
+class ExtractedOrganizationalUnitIdentifier(Identifier):
+    """Identifier for extracted organizational units."""
+
+
+class ExtractedPersonIdentifier(Identifier):
+    """Identifier for extracted persons."""
+
+
+class ExtractedPrimarySourceIdentifier(Identifier):
+    """Identifier for extracted primary sources."""
+
+
+class ExtractedResourceIdentifier(Identifier):
+    """Identifier for extracted resources."""
+
+
+class ExtractedVariableIdentifier(Identifier):
+    """Identifier for extracted variables."""
+
+
+class ExtractedVariableGroupIdentifier(Identifier):
+    """Identifier for extracted variable groups."""
+
+
+class MergedAccessPlatformIdentifier(Identifier):
     """Identifier for merged access platforms."""
 
 
-class ActivityID(Identifier):
+class MergedActivityIdentifier(Identifier):
     """Identifier for merged activities."""
 
 
-class ContactPointID(Identifier):
+class MergedContactPointIdentifier(Identifier):
     """Identifier for merged contact points."""
 
 
-class DistributionID(Identifier):
+class MergedDistributionIdentifier(Identifier):
     """Identifier for merged distributions."""
 
 
-class OrganizationID(Identifier):
+class MergedOrganizationIdentifier(Identifier):
     """Identifier for merged organizations."""
 
 
-class OrganizationalUnitID(Identifier):
+class MergedOrganizationalUnitIdentifier(Identifier):
     """Identifier for merged organizational units."""
 
 
-class PersonID(Identifier):
+class MergedPersonIdentifier(Identifier):
     """Identifier for merged persons."""
 
 
-class PrimarySourceID(Identifier):
+class MergedPrimarySourceIdentifier(Identifier):
     """Identifier for merged primary sources."""
 
 
-class ResourceID(Identifier):
+class MergedResourceIdentifier(Identifier):
     """Identifier for merged resources."""
 
 
-class VariableID(Identifier):
+class MergedVariableIdentifier(Identifier):
     """Identifier for merged variables."""
 
 
-class VariableGroupID(Identifier):
+class MergedVariableGroupIdentifier(Identifier):
     """Identifier for merged variable groups."""

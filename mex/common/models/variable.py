@@ -7,17 +7,18 @@ from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     DataType,
-    ResourceID,
+    ExtractedVariableIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
+    MergedVariableIdentifier,
     Text,
-    VariableGroupID,
-    VariableID,
 )
 
 
 class BaseVariable(BaseModel):
     """A single piece of information within a resource."""
 
-    belongsTo: list[VariableGroupID] = []
+    belongsTo: list[MergedVariableGroupIdentifier] = []
     codingSystem: (
         Annotated[
             str,
@@ -50,7 +51,7 @@ class BaseVariable(BaseModel):
         ],
         Field(min_length=1),
     ]
-    usedIn: Annotated[list[ResourceID], Field(min_length=1)]
+    usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
     valueSet: list[
         Annotated[
             str,
@@ -71,7 +72,8 @@ class ExtractedVariable(BaseVariable, ExtractedData):
     entityType: Literal["ExtractedVariable"] = Field(
         "ExtractedVariable", alias="$type", frozen=True
     )
-    stableTargetId: VariableID
+    identifier: Annotated[ExtractedVariableIdentifier, Field(frozen=True)]
+    stableTargetId: MergedVariableIdentifier
 
 
 class MergedVariable(BaseVariable, MergedItem):
@@ -80,3 +82,4 @@ class MergedVariable(BaseVariable, MergedItem):
     entityType: Literal["MergedVariable"] = Field(
         "MergedVariable", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]

@@ -4,12 +4,12 @@ from mex.common.models import ExtractedData
 from mex.common.models.filter import (
     generate_entity_filter_schema,
 )
-from mex.common.types import OrganizationalUnitID
+from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.common.types.email import Email
 
 
 class DummyClass(ExtractedData):
-    dummy_identifier: OrganizationalUnitID | None = None  # not required
+    dummy_identifier: MergedOrganizationalUnitIdentifier | None = None  # not required
     dummy_str: str
     dummy_int: int | None = None  # not required
     dummy_email: Email

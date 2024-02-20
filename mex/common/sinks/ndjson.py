@@ -4,18 +4,20 @@ from pathlib import Path
 from typing import IO, Any, Generator, Iterable
 
 from mex.common.logging import echo, watch
-from mex.common.models import MExModel
+from mex.common.models import AnyExtractedModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 from mex.common.types import Identifier
 
 
 @watch
-def write_ndjson(models: Iterable[MExModel]) -> Generator[Identifier, None, None]:
+def write_ndjson(
+    models: Iterable[AnyExtractedModel],
+) -> Generator[Identifier, None, None]:
     """Write the incoming models into a new-line delimited JSON file.
 
     Args:
-        models: Iterable of models to write
+        models: Iterable of extracted models to write
 
     Settings:
         work_dir: Path to store the NDJSON files in

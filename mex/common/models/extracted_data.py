@@ -3,11 +3,14 @@ from typing import TYPE_CHECKING, Annotated, Any
 from pydantic import Field, model_validator, validate_call
 
 from mex.common.models.base import MExModel
-from mex.common.types import Identifier, PrimarySourceID
+from mex.common.types import (
+    ExtractedPrimarySourceIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 
-MEX_PRIMARY_SOURCE_IDENTIFIER = Identifier("00000000000000")
+MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000000")
 MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
-MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
+MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
 
 
 class ExtractedData(MExModel):
@@ -17,7 +20,7 @@ class ExtractedData(MExModel):
     and `identifierInPrimarySource`, which are used to uniquely identify an
     item in its original primary source. The attribute `stableTargetId` has to be set
     by each concrete subclass, like `ExtractedPerson`, because it needs to have the
-    correct type, e.g. `PersonID`.
+    correct type, e.g. `MergedPersonIdentifier`.
 
     This class also adds a validator to automatically set identifiers for provenance.
     See below, for a full description.
@@ -38,7 +41,7 @@ class ExtractedData(MExModel):
         stableTargetId: Any
 
     hadPrimarySource: Annotated[
-        PrimarySourceID,
+        MergedPrimarySourceIdentifier,
         Field(
             description=(
                 "The stableTargetID of the primary source, that this item was "
@@ -138,14 +141,16 @@ class ExtractedData(MExModel):
         if had_primary_source := values.get("hadPrimarySource"):
             if isinstance(had_primary_source, list):
                 if len(had_primary_source) == 1:
-                    had_primary_source = PrimarySourceID(had_primary_source[0])
+                    had_primary_source = MergedPrimarySourceIdentifier(
+                        had_primary_source[0]
+                    )
                 else:
                     raise ValueError(
                         f"Expected one value for hadPrimarySource, "
                         f"got {len(had_primary_source)}"
                     )
             else:
-                had_primary_source = PrimarySourceID(had_primary_source)
+                had_primary_source = MergedPrimarySourceIdentifier(had_primary_source)
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 

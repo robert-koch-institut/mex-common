@@ -5,7 +5,11 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.types import ContactPointID, Email
+from mex.common.types import (
+    Email,
+    ExtractedContactPointIdentifier,
+    MergedContactPointIdentifier,
+)
 
 
 class BaseContactPoint(BaseModel):
@@ -20,7 +24,8 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     entityType: Literal["ExtractedContactPoint"] = Field(
         "ExtractedContactPoint", alias="$type", frozen=True
     )
-    stableTargetId: ContactPointID
+    identifier: Annotated[ExtractedContactPointIdentifier, Field(frozen=True)]
+    stableTargetId: MergedContactPointIdentifier
 
 
 class MergedContactPoint(BaseContactPoint, MergedItem):
@@ -29,3 +34,4 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
     entityType: Literal["MergedContactPoint"] = Field(
         "MergedContactPoint", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]

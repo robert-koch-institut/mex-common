@@ -17,7 +17,7 @@ The module `organigram.extract` contains functions for data extraction.
 The module `organigram.transform` contains functions for data transformation.
 
 Use the `stableTargetId` attribute of the transformed objects to set attributes
-requiring an `OrganizationalUnitID`.
+requiring an `MergedOrganizationalUnitIdentifier`.
 
 # Convenience Functions
 

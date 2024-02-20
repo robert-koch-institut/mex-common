@@ -5,13 +5,19 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.types import Email, OrganizationalUnitID, OrganizationID, PersonID
+from mex.common.types import (
+    Email,
+    ExtractedPersonIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+)
 
 
 class BasePerson(BaseModel):
     """A person related to a source and/or resource, i.e. a project leader."""
 
-    affiliation: list[OrganizationID] = []
+    affiliation: list[MergedOrganizationIdentifier] = []
     email: list[Email] = []
     familyName: list[
         Annotated[
@@ -47,7 +53,7 @@ class BasePerson(BaseModel):
             ),
         ]
     ] = []
-    memberOf: list[OrganizationalUnitID] = []
+    memberOf: list[MergedOrganizationalUnitIdentifier] = []
     orcidId: list[
         Annotated[
             str,
@@ -66,7 +72,8 @@ class ExtractedPerson(BasePerson, ExtractedData):
     entityType: Literal["ExtractedPerson"] = Field(
         "ExtractedPerson", alias="$type", frozen=True
     )
-    stableTargetId: PersonID
+    identifier: Annotated[ExtractedPersonIdentifier, Field(frozen=True)]
+    stableTargetId: MergedPersonIdentifier
 
 
 class MergedPerson(BasePerson, MergedItem):
@@ -75,3 +82,4 @@ class MergedPerson(BasePerson, MergedItem):
     entityType: Literal["MergedPerson"] = Field(
         "MergedPerson", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]

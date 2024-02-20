@@ -5,13 +5,18 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.types import ResourceID, Text, VariableGroupID
+from mex.common.types import (
+    ExtractedVariableGroupIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
+    Text,
+)
 
 
 class BaseVariableGroup(BaseModel):
     """The grouping of variables according to a certain aspect."""
 
-    containedBy: Annotated[list[ResourceID], Field(min_length=1)]
+    containedBy: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
     label: Annotated[list[Text], Field(min_length=1)]
 
 
@@ -21,7 +26,8 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     entityType: Literal["ExtractedVariableGroup"] = Field(
         "ExtractedVariableGroup", alias="$type", frozen=True
     )
-    stableTargetId: VariableGroupID
+    identifier: Annotated[ExtractedVariableGroupIdentifier, Field(frozen=True)]
+    stableTargetId: MergedVariableGroupIdentifier
 
 
 class MergedVariableGroup(BaseVariableGroup, MergedItem):
@@ -30,3 +36,4 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
     entityType: Literal["MergedVariableGroup"] = Field(
         "MergedVariableGroup", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]

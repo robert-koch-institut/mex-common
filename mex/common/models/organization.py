@@ -5,7 +5,11 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.types import OrganizationID, Text
+from mex.common.types import (
+    ExtractedOrganizationIdentifier,
+    MergedOrganizationIdentifier,
+    Text,
+)
 
 
 class BaseOrganization(BaseModel):
@@ -85,7 +89,8 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
     entityType: Literal["ExtractedOrganization"] = Field(
         "ExtractedOrganization", alias="$type", frozen=True
     )
-    stableTargetId: OrganizationID
+    identifier: Annotated[ExtractedOrganizationIdentifier, Field(frozen=True)]
+    stableTargetId: MergedOrganizationIdentifier
 
 
 class MergedOrganization(BaseOrganization, MergedItem):
@@ -94,3 +99,4 @@ class MergedOrganization(BaseOrganization, MergedItem):
     entityType: Literal["MergedOrganization"] = Field(
         "MergedOrganization", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedOrganizationIdentifier, Field(frozen=True)]

@@ -5,7 +5,14 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.types import Email, Link, OrganizationalUnitID, OrganizationID, Text
+from mex.common.types import (
+    Email,
+    ExtractedOrganizationalUnitIdentifier,
+    Link,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    Text,
+)
 
 
 class BaseOrganizationalUnit(BaseModel):
@@ -14,9 +21,9 @@ class BaseOrganizationalUnit(BaseModel):
     alternativeName: list[Text] = []
     email: list[Email] = []
     name: Annotated[list[Text], Field(min_length=1)]
-    parentUnit: OrganizationalUnitID | None = None
+    parentUnit: MergedOrganizationalUnitIdentifier | None = None
     shortName: list[Text] = []
-    unitOf: list[OrganizationID] = []
+    unitOf: list[MergedOrganizationIdentifier] = []
     website: list[Link] = []
 
 
@@ -26,7 +33,8 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     entityType: Literal["ExtractedOrganizationalUnit"] = Field(
         "ExtractedOrganizationalUnit", alias="$type", frozen=True
     )
-    stableTargetId: OrganizationalUnitID
+    identifier: Annotated[ExtractedOrganizationalUnitIdentifier, Field(frozen=True)]
+    stableTargetId: MergedOrganizationalUnitIdentifier
 
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
@@ -35,3 +43,4 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
     entityType: Literal["MergedOrganizationalUnit"] = Field(
         "MergedOrganizationalUnit", alias="$type", frozen=True
     )
+    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]

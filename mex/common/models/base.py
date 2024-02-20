@@ -4,7 +4,6 @@ from collections.abc import MutableMapping
 from functools import cache
 from typing import (
     TYPE_CHECKING,
-    Annotated,
     Any,
     TypeVar,
     Union,
@@ -17,7 +16,6 @@ from pydantic import (
 )
 from pydantic import (
     ConfigDict,
-    Field,
     TypeAdapter,
     ValidationError,
     model_validator,
@@ -227,17 +225,10 @@ class MExModel(BaseModel):
         # attributes, like `Person.email` and `ContactPoint.email`.
         entityType: str
 
-    identifier: Annotated[
-        Identifier,
-        Field(
-            description=(
-                "A globally unique identifier for this item. Regardless of the "
-                "entity-type or whether this item was extracted, merged, etc. "
-                "identifiers will be assigned just once."
-            ),
-            frozen=True,
-        ),
-    ]
+        # A globally unique identifier for this item. Regardless of the entity-type or
+        # whether this item was extracted, merged, etc., identifiers will be assigned
+        # just once and should be declared as `frozen` on subclasses.
+        identifier: Identifier
 
     def __str__(self) -> str:
         """Format this instance as a string for logging."""
