@@ -1,7 +1,7 @@
 Helper extractor to extract data from Lightweight Directory Access Protocol (LDAP).
 
 Common use cases:
-- extract employee accounts  of your organization
+- extract employee accounts of your organization
 - extract functional accounts of your organization
 
 Possible queries are for example the account name, surname, given name, or email.
