@@ -55,6 +55,7 @@ TIME_PRECISIONS = [
 CET = timezone("CET")  # default assumed timezone
 UTC = timezone("UTC")  # required output timezone
 TIMESTAMP_REGEX = r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"
+YEAR_MONTH_REGEX = r"^(?:\d{4}|(?:\d{4}-(?:0[1-9]|1[0-2])))$"
 
 
 @total_ordering
@@ -250,3 +251,84 @@ class Timestamp:
     def __repr__(self) -> str:
         """Render a presentation showing this is not just a datetime."""
         return f'{self.__class__.__name__}("{self}")'
+
+
+class TimestampYearMonth(Timestamp):
+    """Partial date pattern that accepts yyyy or yyyy-MM format."""
+
+    def __init__(self, *args: int, tzinfo: Optional[tzinfo] = None) -> None:
+        """Validate for precision (year or month) after initialization."""
+        super().__init__(*args, tzinfo=tzinfo)
+        if self.precision not in (TimestampPrecision.YEAR, TimestampPrecision.MONTH):
+            raise ValueError("Expected precision level 'YEAR' or 'MONTH'")
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Mutate the field schema for year-month pattern."""
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=YEAR_MONTH_REGEX),
+            ]
+        )
+
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        """Modify the schema to add the class name as title and examples."""
+        json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
+        json_schema["examples"] = ["2011", "2019-03"]
+        return json_schema
+
+
+class TimestampDate(Timestamp):
+    """Date pattern that accepts only yyyy-MM-dd format."""
+
+    def __init__(self, *args: int, tzinfo: Optional[tzinfo] = None) -> None:
+        """Validate for day precision after initialization."""
+        super().__init__(*args, tzinfo=tzinfo)
+        if self.precision != TimestampPrecision.DAY:
+            raise ValueError("Expected precision level 'DAY'")
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        """Modify the schema to add the class name as title and examples."""
+        json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
+        json_schema["examples"] = ["2011-03-21"]
+        json_schema["format"] = "date"
+        return json_schema
+
+
+class TimestampDatetime(Timestamp):
+    """Date pattern that accepts only yyyy-MM-dd HH:mm:ss format."""
+
+    def __init__(self, *args: int, tzinfo: Optional[tzinfo] = None) -> None:
+        """Validate for timestamp (up to seconds) precision after initialization."""
+        super().__init__(*args, tzinfo=tzinfo)
+        if self.precision != TimestampPrecision.SECOND:
+            raise ValueError("Expected precision level 'SECOND'")
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        """Modify the schema to add the class name as title and examples."""
+        json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
+        json_schema["examples"] = ["2020-04-03T08:58:26Z"]
+        json_schema["format"] = "date-time"
+        return json_schema
