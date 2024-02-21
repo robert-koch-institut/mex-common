@@ -1,4 +1,3 @@
-from base64 import b64encode
 from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
@@ -110,7 +109,7 @@ class BaseSettings(PydanticBaseSettings):
         [Sink.NDJSON],
         description=(
             "Where to send data that is extracted or ingested. Defaults to writing "
-            "ndjson files, but can be set to backend or public APIs or to graph db."
+            "ndjson files, but can be configured to push to the backend or the graph."
         ),
         validation_alias="MEX_SINK",
     )
@@ -132,7 +131,7 @@ class BaseSettings(PydanticBaseSettings):
     )
     identity_provider: IdentityProvider = Field(
         IdentityProvider.MEMORY,
-        description="Provider to assign stableTargetIds to new model instances.",
+        description="Provider to assign identifiers to new model instances.",
         validation_alias="MEX_IDENTITY_PROVIDER",
     )
     backend_api_url: AnyUrl = Field(
@@ -153,31 +152,6 @@ class BaseSettings(PydanticBaseSettings):
             "be either absolute or relative to the `assets_dir`. Defaults to True."
         ),
         validation_alias="MEX_VERIFY_SESSION",
-    )
-    public_api_url: AnyUrl = Field(
-        Url("http://localhost:53000/"),
-        description="MEx public API url.",
-        validation_alias="MEX_PUBLIC_API_URL",
-    )
-    public_api_token_provider: AnyUrl = Field(
-        Url("http://localhost:53000/api/v0/oauth/token"),
-        description="URL of the JSON Web Token provider for the public API.",
-        validation_alias="MEX_PUBLIC_API_TOKEN_PROVIDER",
-    )
-    public_api_token_payload: SecretStr = Field(
-        SecretStr(b64encode(b"payload").decode()),
-        description=(
-            "Base64-encoded payload to send when requesting a JWT for the public API."
-        ),
-        validation_alias="MEX_PUBLIC_API_TOKEN_PAYLOAD",
-    )
-    public_api_verify_session: Union[bool, AssetsPath] = Field(
-        True,
-        description=(
-            "Public API-specific session verification setting, "
-            "see `verify_session` for possible values."
-        ),
-        validation_alias="MEX_PUBLIC_API_VERIFY_SESSION",
     )
     organigram_path: AssetsPath = Field(
         AssetsPath("raw-data/organigram/organizational_units.json"),

@@ -51,7 +51,7 @@ def test_transform_wikidata_organization_to_organization(
         "wikidataId": ["https://www.wikidata.org/entity/Q26678"],
     }
 
-    with open(TESTDATA_DIR / "items_details.json", "r", encoding="utf-8") as f:
+    with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
         wikidata_organizations = [
             WikidataOrganization.model_validate(item) for item in json.load(f)
         ]

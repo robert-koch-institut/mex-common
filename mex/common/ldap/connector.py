@@ -74,7 +74,7 @@ class LDAPConnector(BaseConnector):
             if attributes := entry.get("attributes"):
                 yield model_cls.model_validate(attributes)
 
-    @cache
+    @cache  # noqa: B019
     def _paged_ldap_search(
         self, fields: tuple[str], search_filter: str, search_base: str
     ) -> list[dict[str, str]]:

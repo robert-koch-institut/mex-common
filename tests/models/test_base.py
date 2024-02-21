@@ -16,7 +16,7 @@ class ComplexDummyModel(BaseModel):
     required_list: list[str] = []
 
 
-def test__get_field_names_allowing_none() -> None:
+def test_get_field_names_allowing_none() -> None:
     assert ComplexDummyModel._get_field_names_allowing_none() == [
         "optional_str",
         "optional_list",
