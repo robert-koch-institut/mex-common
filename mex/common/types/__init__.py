@@ -44,6 +44,7 @@ from mex.common.types.vocabulary import (
     VocabularyLoader,
     split_to_caps,
 )
+from mex.common.types.year_month import YearMonth
 
 __all__ = (
     "AccessPlatformID",
@@ -90,4 +91,5 @@ __all__ = (
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
+    "YearMonth",
 )
