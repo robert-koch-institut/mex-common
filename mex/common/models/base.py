@@ -3,7 +3,6 @@ import pickle  # nosec
 from collections.abc import MutableMapping
 from functools import cache
 from typing import (
-    TYPE_CHECKING,
     Any,
     TypeVar,
     Union,
@@ -11,9 +10,7 @@ from typing import (
     get_origin,
 )
 
-from pydantic import (
-    BaseModel as PydanticBaseModel,
-)
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import (
     ConfigDict,
     TypeAdapter,
@@ -21,30 +18,12 @@ from pydantic import (
     model_validator,
 )
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode, JsonSchemaValue
-from pydantic.json_schema import (
-    GenerateJsonSchema as PydanticJsonSchemaGenerator,
-)
+from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
+from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
-from mex.common.types import Identifier
+from mex.common.models.schema import JsonSchemaGenerator
 
 RawModelDataT = TypeVar("RawModelDataT")
-
-
-class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
-    """Customization of the pydantic class for generating JSON schemas."""
-
-    def handle_ref_overrides(self, json_schema: JsonSchemaValue) -> JsonSchemaValue:
-        """Disable pydantic behavior to wrap top-level `$ref` keys in an `allOf`.
-
-        For example, pydantic would convert
-            {"$ref": "#/$defs/APIType", "examples": ["api-type-1"]}
-        into
-            {"allOf": {"$ref": "#/$defs/APIType"}, "examples": ["api-type-1"]}
-        which is in fact recommended by JSON schema, but we need to disable this
-        to stay compatible with mex-editor and mex-model.
-        """
-        return json_schema
 
 
 class BaseModel(PydanticBaseModel):
@@ -207,29 +186,3 @@ class BaseModel(PydanticBaseModel):
     def __str__(self) -> str:
         """Format this model as a string for logging."""
         return f"{self.__class__.__name__}: {self.checksum()}"
-
-
-class MExModel(BaseModel):
-    """Abstract base model for extracted data, merged item and rule set classes.
-
-    This class defines an `identifier` field and gives a type hint for the frozen class
-    variable `entityType`.
-    """
-
-    model_config = ConfigDict(extra="forbid")
-
-    if TYPE_CHECKING:
-        # We add the entityType as a final class variable to all `MExModel` subclasses.
-        # This helps with assigning the correct class when reading raw JSON entities.
-        # Simple duck-typing would not work, because some entity types have overlapping
-        # attributes, like `Person.email` and `ContactPoint.email`.
-        entityType: str
-
-        # A globally unique identifier for this item. Regardless of the entity-type or
-        # whether this item was extracted, merged, etc., identifiers will be assigned
-        # just once and should be declared as `frozen` on subclasses.
-        identifier: Identifier
-
-    def __str__(self) -> str:
-        """Format this instance as a string for logging."""
-        return f"{self.entityType}: {self.identifier}"

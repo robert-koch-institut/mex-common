@@ -144,9 +144,9 @@ class BaseResource(BaseModel):
 class ExtractedResource(BaseResource, ExtractedData):
     """An automatically extracted metadata set describing a resource."""
 
-    entityType: Literal["ExtractedResource"] = Field(
-        "ExtractedResource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedResource"], Field(alias="$type", frozen=True)
+    ] = "ExtractedResource"
     identifier: Annotated[ExtractedResourceIdentifier, Field(frozen=True)]
     stableTargetId: MergedResourceIdentifier
 
@@ -154,7 +154,7 @@ class ExtractedResource(BaseResource, ExtractedData):
 class MergedResource(BaseResource, MergedItem):
     """The result of merging all extracted data and rules for a resource."""
 
-    entityType: Literal["MergedResource"] = Field(
-        "MergedResource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedResource"], Field(alias="$type", frozen=True)
+    ] = "MergedResource"
     identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]

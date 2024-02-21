@@ -64,9 +64,9 @@ class BaseDistribution(BaseModel):
 class ExtractedDistribution(BaseDistribution, ExtractedData):
     """An automatically extracted metadata set describing a distribution."""
 
-    entityType: Literal["ExtractedDistribution"] = Field(
-        "ExtractedDistribution", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedDistribution"], Field(alias="$type", frozen=True)
+    ] = "ExtractedDistribution"
     identifier: Annotated[ExtractedDistributionIdentifier, Field(frozen=True)]
     stableTargetId: MergedDistributionIdentifier
 
@@ -74,7 +74,7 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
 class MergedDistribution(BaseDistribution, MergedItem):
     """The result of merging all extracted data and rules for a distribution."""
 
-    entityType: Literal["MergedDistribution"] = Field(
-        "MergedDistribution", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedDistribution"], Field(alias="$type", frozen=True)
+    ] = "MergedDistribution"
     identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]

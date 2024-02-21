@@ -70,9 +70,9 @@ class BaseActivity(BaseModel):
 class ExtractedActivity(BaseActivity, ExtractedData):
     """An automatically extracted metadata set describing an activity."""
 
-    entityType: Literal["ExtractedActivity"] = Field(
-        "ExtractedActivity", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedActivity"], Field(alias="$type", frozen=True)
+    ] = "ExtractedActivity"
     identifier: Annotated[ExtractedActivityIdentifier, Field(frozen=True)]
     stableTargetId: MergedActivityIdentifier
 
@@ -80,7 +80,7 @@ class ExtractedActivity(BaseActivity, ExtractedData):
 class MergedActivity(BaseActivity, MergedItem):
     """The result of merging all extracted data and rules for an activity."""
 
-    entityType: Literal["MergedActivity"] = Field(
-        "MergedActivity", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedActivity"], Field(alias="$type", frozen=True)
+    ] = "MergedActivity"
     identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]

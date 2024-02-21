@@ -30,9 +30,9 @@ class BaseOrganizationalUnit(BaseModel):
 class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     """An automatically extracted metadata set describing an organizational unit."""
 
-    entityType: Literal["ExtractedOrganizationalUnit"] = Field(
-        "ExtractedOrganizationalUnit", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "ExtractedOrganizationalUnit"
     identifier: Annotated[ExtractedOrganizationalUnitIdentifier, Field(frozen=True)]
     stableTargetId: MergedOrganizationalUnitIdentifier
 
@@ -40,7 +40,7 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
     """The result of merging all extracted data and rules for an organizational unit."""
 
-    entityType: Literal["MergedOrganizationalUnit"] = Field(
-        "MergedOrganizationalUnit", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "MergedOrganizationalUnit"
     identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]

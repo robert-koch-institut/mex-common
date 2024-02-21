@@ -24,9 +24,9 @@ linter:
 	pre-commit run --all-files; \
 
 pytest:
-	# run the pytest test suite with unit and integration tests in random order
+	# run the pytest test suite with unit and integration tests
 	@ echo running unit tests; \
-	poetry run pytest --random-order-bucket=global -m "not integration"; \
+	poetry run pytest -m "not integration"; \
 
 wheel:
 	# build the python package

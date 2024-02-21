@@ -1,10 +1,10 @@
 from enum import Enum
-from typing import Any, Literal, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
 
 import pytest
 from pydantic import Field, ValidationError
 
-from mex.common.models import BaseModel, MExModel
+from mex.common.models import BaseModel, MergedItem
 from mex.common.types import Identifier
 
 
@@ -17,7 +17,7 @@ class ComplexDummyModel(BaseModel):
     required_list: list[str] = []
 
 
-def test__get_field_names_allowing_none() -> None:
+def test_get_field_names_allowing_none() -> None:
     assert ComplexDummyModel._get_field_names_allowing_none() == [
         "optional_str",
         "optional_list",
@@ -100,17 +100,13 @@ def test_base_model_str() -> None:
     assert str(model) == "DummyBaseModel: ab794a793aad8fa45b0f85ac05ee2126"
 
 
-class DummyMExModel(MExModel):
-    entityType: Literal["DummyMExModel"] = Field(
-        "DummyMExModel", alias="$type", frozen=True
-    )
-    identifier: Identifier
-    stableTargetId: Identifier
-
-
 def test_mex_model_str() -> None:
-    model = DummyMExModel(
-        identifier=Identifier.generate(seed=99),
-        stableTargetId=Identifier.generate(seed=42),
-    )
-    assert str(model) == "DummyMExModel: bFQoRhcVH5DHV1"
+    class MergedDummy(MergedItem):
+        entityType: Annotated[
+            Literal["MergedDummy"], Field(alias="$type", frozen=True)
+        ] = "MergedDummy"
+        identifier: Identifier
+
+    model = MergedDummy(identifier=Identifier.generate(seed=99))
+
+    assert str(model) == "MergedDummy: bFQoRhcVH5DHV1"

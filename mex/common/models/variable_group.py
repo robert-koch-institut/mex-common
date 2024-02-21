@@ -23,9 +23,9 @@ class BaseVariableGroup(BaseModel):
 class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     """An automatically extracted metadata set describing a variable group."""
 
-    entityType: Literal["ExtractedVariableGroup"] = Field(
-        "ExtractedVariableGroup", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedVariableGroup"], Field(alias="$type", frozen=True)
+    ] = "ExtractedVariableGroup"
     identifier: Annotated[ExtractedVariableGroupIdentifier, Field(frozen=True)]
     stableTargetId: MergedVariableGroupIdentifier
 
@@ -33,7 +33,7 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
 class MergedVariableGroup(BaseVariableGroup, MergedItem):
     """The result of merging all extracted data and rules for a variable group."""
 
-    entityType: Literal["MergedVariableGroup"] = Field(
-        "MergedVariableGroup", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedVariableGroup"], Field(alias="$type", frozen=True)
+    ] = "MergedVariableGroup"
     identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]

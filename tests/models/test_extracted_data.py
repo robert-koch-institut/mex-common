@@ -1,7 +1,8 @@
 from enum import Enum
+from typing import Annotated, Literal
 
 import pytest
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 
 from mex.common.identity import get_provider
 from mex.common.models import (
@@ -20,14 +21,28 @@ class Animal(Enum):
     DOG = "dog"
 
 
-class BaseThing(BaseModel):
-    """Dummy model defining a generic stableTargetId."""
+class ExtractedThingIdentifier(Identifier):
+    """Identifier for extracted things."""
 
-    stableTargetId: Identifier
+
+class MergedThingIdentifier(Identifier):
+    """Identifier for merged thing."""
+
+
+class BaseThing(BaseModel):
+    """Dummy model defining some arbitrary field."""
+
+    someField: str = "someDefault"
 
 
 class ExtractedThing(BaseThing, ExtractedData):
     """Extracted version of a dummy thing model."""
+
+    entityType: Annotated[
+        Literal["ExtractedThing"], Field(alias="$type", frozen=True)
+    ] = "ExtractedThing"
+    identifier: Annotated[ExtractedThingIdentifier, Field(frozen=True)]
+    stableTargetId: MergedThingIdentifier
 
 
 def test_extracted_data_requires_dict_for_construction() -> None:

@@ -6,7 +6,7 @@ from mex.common.models.access_platform import (
     MergedAccessPlatform,
 )
 from mex.common.models.activity import BaseActivity, ExtractedActivity, MergedActivity
-from mex.common.models.base import BaseModel, MExModel
+from mex.common.models.base import BaseModel
 from mex.common.models.contact_point import (
     BaseContactPoint,
     ExtractedContactPoint,
@@ -97,7 +97,6 @@ __all__ = (
     "MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE",
     "MEX_PRIMARY_SOURCE_IDENTIFIER",
     "MEX_PRIMARY_SOURCE_STABLE_TARGET_ID",
-    "MExModel",
 )
 
 AnyBaseModel = Union[

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import Field, model_validator, validate_call
 
-from mex.common.models.base import MExModel
+from mex.common.models.entity import BaseEntity
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
     MergedPrimarySourceIdentifier,
@@ -13,7 +13,7 @@ MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
 MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
 
 
-class ExtractedData(MExModel):
+class ExtractedData(BaseEntity):
     """Base model for all extracted data classes.
 
     This class adds two important attributes for metadata provenance: `hadPrimarySource`
@@ -26,17 +26,17 @@ class ExtractedData(MExModel):
     See below, for a full description.
     """
 
-    if TYPE_CHECKING:
+    if TYPE_CHECKING:  # pragma: no cover
         # Sometimes multiple primary sources describe the same activity, resource, etc.
         # and a complete metadata item can only be created by merging these fragments.
-        # The `stableTargetID` is part of all models in `mex.common.models` to allow
-        # MEx to identify which extracted items describe the same thing and should be
-        # merged to create a complete metadata item.
-        # The name might be a bit misleading (also due to historical reasons), but the
-        # "stability" is only guaranteed for one "real world" or "digital world" thing
-        # having the same ID in MEx over time. But not as a guarantee, that the same
-        # metadata sources contribute to the complete metadata item.
-        # Because we anticipate that items have to be merged, the `stableTargetID` is
+        # The `stableTargetId` is part of all extracted models to allow MEx to identify
+        # which items describe the same thing and should be merged to create a complete
+        # metadata item. The name `stableTargetId` might be a bit misleading, because
+        # the "stability" is only guaranteed for one "real world" or "digital world"
+        # thing having the same ID in MEx over time. But it is not a guarantee, that the
+        # same metadata sources contribute to the complete metadata item. The naming has
+        # its historical reasons, but we plan to change it in the near future.
+        # Because we anticipate that items have to be merged, the `stableTargetId` is
         # also used as the foreign key for all fields containing references.
         stableTargetId: Any
 
@@ -44,12 +44,12 @@ class ExtractedData(MExModel):
         MergedPrimarySourceIdentifier,
         Field(
             description=(
-                "The stableTargetID of the primary source, that this item was "
+                "The stableTargetId of the primary source, that this item was "
                 "extracted from. This field is mandatory for all extracted items to "
                 "aid with data provenance. Extracted primary sources also have this "
                 "field and are all extracted from a static primary source for MEx. "
-                "The primary source for MEx has itself as a primary source, which "
-                "is meant to be the only loop in the graph formed by MEx metadata."
+                "The extracted primary source for MEx has its own merged item as a "
+                "primary source."
             ),
             frozen=True,
         ),
@@ -62,8 +62,8 @@ class ExtractedData(MExModel):
                 "It is only unique amongst items coming from the same system, because "
                 "identifier formats are likely to overlap between systems. "
                 "The value for `identifierInPrimarySource` is therefore only unique in "
-                "composition with `hadPrimarySource`. MEx uses this composite key "
-                "to assign a stable and globally unique `identifier` to each item."
+                "composition with `hadPrimarySource`. MEx uses this composite key to "
+                "assign a stable and globally unique `identifier` per extracted item."
             ),
             examples=["123456", "item-501", "D7/x4/zz.final3"],
             min_length=1,
@@ -76,10 +76,10 @@ class ExtractedData(MExModel):
     @classmethod
     @validate_call
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:  # noqa: C901
-        """Ensure identifier and provenance attributes are set for this instance.
+        """Ensure identifiers and provenance attributes are set for this instance.
 
         All extracted data classes have four important identifiers that are defined
-        by `MExModel` and `BaseExtractedData`:
+        by `BaseEntity`, `ExtractedData` and the concrete classes themselves.
 
         - identifierInPrimarySource
         - hadPrimarySource
@@ -93,7 +93,7 @@ class ExtractedData(MExModel):
         because otherwise we cannot reliably determine the origin of this item.
         These two identifiers are the only two that need to be set during extraction.
 
-        Next we query the configured `IdentityProvider` to determine whether this item
+        Next, we query the configured `IdentityProvider` to determine whether this item
         already has an `identifier` and `stableTargetId`. If not, we let the identity
         provider generate new identifiers.
 
@@ -101,13 +101,13 @@ class ExtractedData(MExModel):
         with what we got from the identity provider, because we don't allow any system
         to change the association from `identifierInPrimarySource` and
         `hadPrimarySource` to the `identifier`.
-        A use case for passing a matching `identifier` to the constructor would be
+        A use-case for passing a matching `identifier` to the constructor would be
         parsing an already extracted item from an NDJSON file or an API endpoint.
 
         If a `stableTargetId` has been passed to the constructor, we use that as the
         new value, because changes to the stable target ID are generally allowed.
-        A use case for changing the `stableTargetId` will be the matching of
-        multiple extracted items (see `MExModel.stableTargetId` for details).
+        A use-case for changing the `stableTargetId` will be the matching of
+        multiple extracted items (see `BaseEntity.stableTargetId` for details).
 
         Args:
             values: Raw values to validate

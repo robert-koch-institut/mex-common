@@ -22,7 +22,7 @@ def test_settings_text() -> None:
 
     assert len(text.splitlines()) == len(BaseSettings.model_fields)
     assert re.search(r"debug\s+False", text)
-    assert re.search(r"api_token_payload\s+\*+", text)  # masked secret
+    assert re.search(r"backend_api_key\s+\*+", text)  # masked secret
 
 
 class FooSettings(BaseSettings):
@@ -78,7 +78,7 @@ def test_resolve_paths() -> None:
 
     if platform.system() == "Windows":  # pragma: no cover
         absolute = WorkPath(r"C:\absolute\path")
-    else:
+    else:  # pragma: no cover
         absolute = WorkPath("/absolute/path")
     relative = Path("relative", "path")
 

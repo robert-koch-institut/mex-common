@@ -23,10 +23,10 @@ class DummyProvider(BaseProvider):
     def __init__(self) -> None:
         pass
 
-    def assign(self, *_: str) -> Identity:
+    def assign(self, *_: str) -> Identity:  # pragma: no cover
         raise RuntimeError()
 
-    def fetch(self, **_: str | None) -> list[Identity]:
+    def fetch(self, **_: str | None) -> list[Identity]:  # pragma: no cover
         raise RuntimeError()
 
     def close(self) -> None:

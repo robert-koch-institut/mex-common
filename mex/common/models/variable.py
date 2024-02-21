@@ -69,9 +69,9 @@ class BaseVariable(BaseModel):
 class ExtractedVariable(BaseVariable, ExtractedData):
     """An automatically extracted metadata set describing a variable."""
 
-    entityType: Literal["ExtractedVariable"] = Field(
-        "ExtractedVariable", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedVariable"], Field(alias="$type", frozen=True)
+    ] = "ExtractedVariable"
     identifier: Annotated[ExtractedVariableIdentifier, Field(frozen=True)]
     stableTargetId: MergedVariableIdentifier
 
@@ -79,7 +79,7 @@ class ExtractedVariable(BaseVariable, ExtractedData):
 class MergedVariable(BaseVariable, MergedItem):
     """The result of merging all extracted data and rules for a variable."""
 
-    entityType: Literal["MergedVariable"] = Field(
-        "MergedVariable", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedVariable"], Field(alias="$type", frozen=True)
+    ] = "MergedVariable"
     identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]

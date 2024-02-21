@@ -44,9 +44,9 @@ class BasePrimarySource(BaseModel):
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     """An automatically extracted metadata set describing a primary source."""
 
-    entityType: Literal["ExtractedPrimarySource"] = Field(
-        "ExtractedPrimarySource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "ExtractedPrimarySource"
     identifier: Annotated[ExtractedPrimarySourceIdentifier, Field(frozen=True)]
     stableTargetId: MergedPrimarySourceIdentifier
 
@@ -54,7 +54,7 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
 class MergedPrimarySource(BasePrimarySource, MergedItem):
     """The result of merging all extracted data and rules for a primary source."""
 
-    entityType: Literal["MergedPrimarySource"] = Field(
-        "MergedPrimarySource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "MergedPrimarySource"
     identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]

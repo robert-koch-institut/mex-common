@@ -69,9 +69,9 @@ class BasePerson(BaseModel):
 class ExtractedPerson(BasePerson, ExtractedData):
     """An automatically extracted metadata set describing a person."""
 
-    entityType: Literal["ExtractedPerson"] = Field(
-        "ExtractedPerson", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedPerson"], Field(alias="$type", frozen=True)
+    ] = "ExtractedPerson"
     identifier: Annotated[ExtractedPersonIdentifier, Field(frozen=True)]
     stableTargetId: MergedPersonIdentifier
 
@@ -79,7 +79,7 @@ class ExtractedPerson(BasePerson, ExtractedData):
 class MergedPerson(BasePerson, MergedItem):
     """The result of merging all extracted data and rules for a person."""
 
-    entityType: Literal["MergedPerson"] = Field(
-        "MergedPerson", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedPerson"], Field(alias="$type", frozen=True)
+    ] = "MergedPerson"
     identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
