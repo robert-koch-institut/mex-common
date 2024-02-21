@@ -1,4 +1,5 @@
-from typing import Annotated, Literal
+from datetime import date, datetime
+from typing import Annotated, Literal, Union
 
 from pydantic import Field
 
@@ -24,7 +25,7 @@ from mex.common.types import (
     ResourceTypeGeneral,
     Text,
     Theme,
-    Timestamp,
+    YearMonth,
 )
 
 
@@ -57,7 +58,7 @@ class BaseResource(BaseModel):
     ]
     contributingUnit: list[OrganizationalUnitID] = []
     contributor: list[PersonID] = []
-    created: Timestamp | None = None
+    created: Union[date, datetime, YearMonth, None] = None
     creator: list[PersonID] = []
     description: list[Text] = []
     distribution: list[DistributionID] = []
@@ -86,7 +87,7 @@ class BaseResource(BaseModel):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: Timestamp | None = None
+    modified: Union[date, datetime, YearMonth, None] = None
     publication: list[Link] = []
     publisher: list[OrganizationID] = []
     qualityInformation: list[Text] = []
@@ -110,9 +111,12 @@ class BaseResource(BaseModel):
             ),
         ]
     ] = []
-    temporal: (
-        Timestamp
-        | Annotated[
+    temporal: Union[
+        None,
+        date,
+        datetime,
+        YearMonth,
+        Annotated[
             str,
             Field(
                 examples=[
@@ -122,9 +126,8 @@ class BaseResource(BaseModel):
                     "1998-2008",
                 ]
             ),
-        ]
-        | None
-    ) = None
+        ],
+    ] = None
     theme: Annotated[
         list[Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]],
         Field(min_length=1),
