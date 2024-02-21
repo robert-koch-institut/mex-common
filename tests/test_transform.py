@@ -2,7 +2,7 @@ import json
 from datetime import timedelta, timezone
 from enum import Enum
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 
 import pytest
@@ -20,7 +20,7 @@ from mex.common.types import Identifier, Timestamp
 
 
 class DummyModel(PydanticModel):
-    string_field: str = Field("foo", alias="strField")
+    string_field: Annotated[str, Field("foo", alias="strField")]
     integer: int = 42
 
 

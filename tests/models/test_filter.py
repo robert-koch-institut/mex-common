@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.models import ExtractedData
@@ -14,7 +16,7 @@ class DummyClass(ExtractedData):
     dummy_int: int | None = None  # not required
     dummy_email: Email
     dummy_list: list[str] = []  # not required
-    dummy_min_length_list: list[str] = Field(min_length=1)
+    dummy_min_length_list: Annotated[list[str], Field(min_length=1)]
 
 
 def test_entity_filter_schema() -> None:

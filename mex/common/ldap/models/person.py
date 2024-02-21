@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic import Field
 
 from mex.common.ldap.models.actor import LDAPActor
@@ -12,7 +14,7 @@ class LDAPPerson(LDAPActor):
     departmentNumber: str | None = None
     displayName: str | None = None
     employeeID: str
-    givenName: list[str] = Field(min_length=1)
+    givenName: Annotated[list[str], Field(min_length=1)]
     ou: list[str] = []
     sn: str
 

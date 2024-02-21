@@ -1,6 +1,6 @@
 import re
 from enum import StrEnum
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -40,12 +40,15 @@ class Link(BaseModel):
 
     language: LinkLanguage | None = None
     title: str | None = None
-    url: str = Field(
-        pattern=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
-        min_length=1,
-        examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
-        json_schema_extra={"format": "uri"},
-    )
+    url: Annotated[
+        str,
+        Field(
+            pattern=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+            min_length=1,
+            examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
+            json_schema_extra={"format": "uri"},
+        ),
+    ]
 
     @model_validator(mode="before")
     @classmethod

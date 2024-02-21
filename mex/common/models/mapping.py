@@ -1,4 +1,4 @@
-from typing import Any, Optional, get_origin
+from typing import Annotated, Any, Optional, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
@@ -19,7 +19,7 @@ class GenericField(BaseModel, extra="forbid"):
     fieldInPrimarySource: str
     locationInPrimarySource: Optional[str] = None
     examplesInPrimarySource: Optional[list[str]] = None
-    mappingRules: list[GenericRule] = Field(..., min_length=1)
+    mappingRules: Annotated[list[GenericRule], Field(min_length=1)]
     comment: Optional[str] = None
 
 
