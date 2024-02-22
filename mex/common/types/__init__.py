@@ -20,7 +20,6 @@ from mex.common.types.sink import Sink
 from mex.common.types.temporal_entity import (
     CET,
     TEMPORAL_ENTITY_FORMATS_BY_PRECISION,
-    TIMESTAMP_REGEX,
     UTC,
     TemporalEntity,
     TemporalEntityPrecision,
@@ -84,7 +83,6 @@ __all__ = (
     "TextLanguage",
     "Theme",
     "TEMPORAL_ENTITY_FORMATS_BY_PRECISION",
-    "TIMESTAMP_REGEX",
     "TemporalEntity",
     "YearMonth",
     "YearMonthDay",

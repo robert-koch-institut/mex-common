@@ -57,8 +57,8 @@ UTC = timezone("UTC")  # required output timezone
 TEMPORAL_ENTITY_REGEX = (
     r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"  # optional resolution
 )
-TIMESTAMP_REGEX = r"^[1-9]\\d{3}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
-DATE_REGEX = r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+YEAR_MONTH_DAY_TIME_REGEX = r"^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"
+YEAR_MONTH_DAY_REGEX = r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
 YEAR_MONTH_REGEX = r"^(?:\d{4}|(?:\d{4}-(?:0[1-9]|1[0-2])))$"
 
 
@@ -349,7 +349,7 @@ class YearMonthDay(TemporalEntity):
         """Mutate the field schema for date pattern."""
         from_str_schema = core_schema.chain_schema(
             [
-                core_schema.str_schema(pattern=DATE_REGEX),
+                core_schema.str_schema(pattern=YEAR_MONTH_DAY_REGEX),
                 core_schema.no_info_plain_validator_function(
                     cls.validate,
                 ),
@@ -399,7 +399,7 @@ class YearMonthDayTime(TemporalEntity):
         """Mutate the field schema for timestamp pattern."""
         from_str_schema = core_schema.chain_schema(
             [
-                core_schema.str_schema(pattern=TIMESTAMP_REGEX),
+                core_schema.str_schema(pattern=YEAR_MONTH_DAY_TIME_REGEX),
                 core_schema.no_info_plain_validator_function(
                     cls.validate,
                 ),
