@@ -35,7 +35,7 @@ class BaseDistribution(BaseModel):
     dataCurator: list[PersonID] = []
     dataManager: list[PersonID] = []
     downloadURL: Link | None = None
-    issued: YearMonth | YearMonthDay | YearMonthDayTime
+    issued: YearMonthDayTime | YearMonthDay | YearMonth
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -48,7 +48,7 @@ class BaseDistribution(BaseModel):
         ]
         | None
     ) = None
-    modified: YearMonth | YearMonthDay | YearMonthDayTime | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     otherContributor: list[PersonID] = []
     projectLeader: list[PersonID] = []
     projectManager: list[PersonID] = []

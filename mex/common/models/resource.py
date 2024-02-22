@@ -59,7 +59,7 @@ class BaseResource(BaseModel):
     ]
     contributingUnit: list[OrganizationalUnitID] = []
     contributor: list[PersonID] = []
-    created: Union[YearMonth, YearMonthDay, YearMonthDayTime, None] = None
+    created: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
     creator: list[PersonID] = []
     description: list[Text] = []
     distribution: list[DistributionID] = []
@@ -88,7 +88,7 @@ class BaseResource(BaseModel):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: Union[YearMonth, YearMonthDay, YearMonthDayTime, None] = None
+    modified: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
     publication: list[Link] = []
     publisher: list[OrganizationID] = []
     qualityInformation: list[Text] = []
@@ -113,9 +113,9 @@ class BaseResource(BaseModel):
         ]
     ] = []
     temporal: Union[
-        YearMonth,
-        YearMonthDay,
         YearMonthDayTime,
+        YearMonthDay,
+        YearMonth,
         Annotated[
             str,
             Field(
