@@ -253,7 +253,7 @@ class TemporalEntity:
         try:
             other = self.validate(other)
         except TypeError:
-            raise NotImplementedError()
+            raise NotImplementedError() from None
         return bool(self.date_time > other.date_time)
 
     def __str__(self) -> str:
