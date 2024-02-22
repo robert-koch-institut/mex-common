@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- Renamed Timestamp class to TemporalEntity and created three subclasses with specific resolution YearMonth, YearMonthDay, YearMonthDayTime
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- date and time validation working and harmonized with mex-model; removed exception from tests.models.test_model_schemas.py
 
 ### Security
 
