@@ -4,7 +4,11 @@ from typing import Any
 import pytest
 from pytz import timezone
 
-from mex.common.types import CET, UTC, TemporalEntity
+from mex.common.types import (
+    CET,
+    UTC,
+    TemporalEntity,
+)
 
 
 @pytest.mark.parametrize(
@@ -13,13 +17,13 @@ from mex.common.types import CET, UTC, TemporalEntity
         (
             (datetime.now(),),
             {"tzinfo": UTC},
-            "Timestamp does not accept tzinfo in parsing mode",
+            "Temporal entity does not accept tzinfo in parsing mode",
         ),
-        ((0,) * 10, {}, "Timestamp takes at most 7 arguments"),
+        ((0,) * 10, {}, "Temporal entity takes at most 7 arguments"),
         (
             (1.3, "foo", 42),
             {},
-            "Timestamp takes a single str, date, datetime or Timestamp argument or up to 7 integers",
+            "Temporal entity takes a single str, date, datetime or TemporalEntity argument or up to 7 integers",
         ),
     ],
 )
