@@ -1,7 +1,6 @@
 from os import PathLike
 from pathlib import Path
 from typing import Any, Type, TypeVar, Union
-from warnings import warn
 
 from pydantic_core import core_schema
 
@@ -50,16 +49,6 @@ class PathWrapper(PathLike[str]):
     def is_relative(self) -> bool:
         """True if the underlying path is relative."""
         return not self._path.is_absolute()
-
-    def resolve(self) -> Path:
-        """Return the resolved path which is the underlying path."""
-        warn("deprecated", DeprecationWarning)
-        return self._path
-
-    def raw(self) -> Path:
-        """Return the raw underlying path without resolving it."""
-        warn("deprecated", DeprecationWarning)
-        return self._path
 
     @classmethod
     def __get_pydantic_core_schema__(cls, _source: Type[Any]) -> core_schema.CoreSchema:

@@ -19,41 +19,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## [0.19.4] - 2024-02-15
+## [0.20.0] - 2024-02-22
 
-### Added
+### Changes
+
+- update cruft and dev dependencies
+- randomize test order by default
+
+### Removed
+
+- remove `mex.common.public_api` module and the correlating sinks
+- remove `PathWrapper.resolve` and `PathWrapper.raw` methods
+
+### Fixed
+
+- remove `pytest.mark` from fixture in `mex.common.testing.plugin`
+
+## [0.19.4] - 2024-02-15
 
 ### Changes
 
 - update cruft and minor dependencies
 
-### Deprecated
-
 ### Removed
 
 - date-time format validation for mapping model generation
 
-### Fixed
-
-### Security
-
 ## [0.19.3] - 2024-02-06
-
-### Added
 
 ### Changes
 
 - update cruft to apply new workflow trigger config
 - update poetry and pre-commit dependencies
 
-### Deprecated
-
-### Removed
-
 ### Fixed
-- fix mex mapping model name
 
-### Security
+- fix mex mapping model name
 
 ## [0.19.2] - 2024-02-02
 
@@ -65,14 +66,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - `mex.bat test` uses random order and xdist plugins by default
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.19.1] - 2024-01-19
 
@@ -133,8 +126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 - deprecate `MExModel.get_entity_type`, use `cls.__name__` instead
-- deprecate `mex.common.models.MODEL_CLASSES[_BY_ENTITY_TYPE]`, use the more precise lists or dicts like `EXTRACTED_MODEL_CLASSES_BY_NAME` instead
-
+- deprecate `mex.common.models.MODEL_CLASSES[_BY_ENTITY_TYPE]`,
+  use the more precise lists or dicts like `EXTRACTED_MODEL_CLASSES_BY_NAME` instead
 
 ## [0.17.1] - 2023-12-20
 

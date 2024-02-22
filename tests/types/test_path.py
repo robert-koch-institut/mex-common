@@ -34,7 +34,7 @@ def test_path_wrapper_equality() -> None:
     assert PathWrapper(Path("foo", "bar")) != PathWrapper(Path("bar", "batz"))
 
     with pytest.raises(TypeError):
-        PathWrapper("foo") == 42
+        _ = PathWrapper("foo") == 42
 
 
 def test_path_wrapper_relative_absolute() -> None:
