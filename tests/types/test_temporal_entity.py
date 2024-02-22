@@ -2,12 +2,16 @@ from datetime import date, datetime
 from typing import Any
 
 import pytest
+from pandas._libs.tslibs.parsing import DateParseError
 from pytz import timezone
 
 from mex.common.types import (
     CET,
     UTC,
     TemporalEntity,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
 
 
@@ -141,6 +145,9 @@ def test_timestamp_gt() -> None:
 
 def test_timestamp_str() -> None:
     assert str(TemporalEntity(2004, 11, 26)) == "2004-11-26"
+    assert str(YearMonth(2004, 11)) == "2004-11"
+    assert str(YearMonthDay(2004, 11, 26)) == "2004-11-26"
+    assert str(YearMonthDayTime(2018, 3, 2, 13, 0, 1)) == "2018-03-02T12:00:01Z"
 
 
 def test_timestamp_repr() -> None:
@@ -148,3 +155,37 @@ def test_timestamp_repr() -> None:
         repr(TemporalEntity(2018, 3, 2, 13, 0, 1))
         == 'TemporalEntity("2018-03-02T12:00:01Z")'
     )
+
+    assert repr(YearMonth("2022")) == 'YearMonth("2022")'
+
+    assert repr(YearMonthDay("2022-10-03")) == 'YearMonthDay("2022-10-03")'
+
+    assert (
+        repr(YearMonthDayTime("2018-03-02T12:00:01Z"))
+        == 'YearMonthDayTime("2018-03-02T12:00:01Z")'
+    )
+
+
+def test_invalid_temporal_resolution_throws_error() -> None:
+    with pytest.raises(ValueError, match="Expected time-based precision level"):
+        YearMonthDayTime("2001-04-24")
+
+    with pytest.raises(ValueError, match="Expected precision level 'DAY'"):
+        YearMonthDay("1999-02")
+
+    with pytest.raises(ValueError, match="Expected precision level 'YEAR' or 'MONTH'"):
+        YearMonth("1999-02-02")
+
+
+def test_invalid_dates_throw_error() -> None:
+    with pytest.raises(DateParseError):
+        YearMonthDay("2022-02-31")
+
+    with pytest.raises(DateParseError):
+        YearMonthDay("2023-02-29")  # not a leap year
+
+    with pytest.raises(DateParseError):
+        YearMonth("1987-13")
+
+    with pytest.raises(DateParseError):
+        YearMonthDayTime("2018-03-02T12:61:01Z")
