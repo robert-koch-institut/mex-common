@@ -368,7 +368,7 @@ class YearMonthDayTime(TemporalEntity):
     ) -> None:
         """Validate for timestamp (up to seconds) precision after initialization."""
         super().__init__(*args, tzinfo=tzinfo)  # type: ignore
-        if self.precision != TimestampPrecision.SECOND:
+        if self.precision not in TIME_PRECISIONS:
             raise ValueError("Expected precision level 'SECOND'")
 
     @classmethod
