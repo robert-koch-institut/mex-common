@@ -11,10 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.20.0] - 2024-02-22
+
+### Changes
+
 - update cruft and dev dependencies
 - randomize test order by default
-
-### Deprecated
 
 ### Removed
 
@@ -24,8 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - remove `pytest.mark` from fixture in `mex.common.testing.plugin`
-
-### Security
 
 ## [0.19.4] - 2024-02-15
 
