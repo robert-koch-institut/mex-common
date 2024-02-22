@@ -17,7 +17,6 @@ from mex.common.types import (
     Theme,
     YearMonth,
     YearMonthDay,
-    YearMonthDayTime,
 )
 
 
@@ -39,7 +38,7 @@ class BaseActivity(BaseModel):
         list[OrganizationalUnitID | PersonID | ContactPointID,], Field(min_length=1)
     ]
     documentation: list[Link] = []
-    end: list[YearMonth | YearMonthDay | YearMonthDayTime] = []
+    end: list[YearMonthDay | YearMonth] = []
     externalAssociate: list[OrganizationID | PersonID] = []
     funderOrCommissioner: list[OrganizationID] = []
     fundingProgram: list[str] = []
@@ -49,7 +48,7 @@ class BaseActivity(BaseModel):
     publication: list[Link] = []
     responsibleUnit: Annotated[list[OrganizationalUnitID], Field(min_length=1)]
     shortName: list[Text] = []
-    start: list[YearMonth | YearMonthDay | YearMonthDayTime] = []
+    start: list[YearMonthDay | YearMonth] = []
     succeeds: list[ActivityID] = []
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
