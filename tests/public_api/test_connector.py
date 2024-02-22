@@ -12,7 +12,7 @@ from mex.common.models.activity import ActivityType
 from mex.common.public_api.connector import PublicApiConnector
 from mex.common.public_api.models import PublicApiMetadataItemsResponse
 from mex.common.settings import BaseSettings
-from mex.common.types import Identifier, Link, Text, Timestamp
+from mex.common.types import Identifier, Link, Text, YearMonthDayTime
 
 
 def test_authenticate_mocked(mocked_api_session: MagicMock) -> None:
@@ -168,7 +168,7 @@ def test_search_model_mocked(mocked_api_session_authenticated: MagicMock) -> Non
         alternativeTitle=[Text(value="ᵗʰᵉ ˡᵃⁿᵍᵘᵃᵍᵉ ᵒᶠ ᵗʰᶦˢ ᵗᵉˣᵗ ᶦˢ ʰᵃʳᵈ ᵗᵒ ᵈᵉᵗᵉᶜᵗ")],
         contact=[Identifier("00000000000590")],
         documentation=[Link(url="https://docs.vsli.example.org/en/index.html")],
-        end=Timestamp("1970-06-16T16:20:00"),
+        end=[YearMonthDayTime("1970-06-16T16:20:00")],
         externalAssociate=[Identifier("000000000008a1")],
         funderOrCommissioner=[Identifier("00000000000be4")],
         fundingProgram=[],
@@ -224,7 +224,7 @@ def test_search_model_mocked(mocked_api_session_authenticated: MagicMock) -> Non
                         },
                         {
                             "fieldName": "end",
-                            "fieldValue": Timestamp("1970-06-16T15:20:00Z"),
+                            "fieldValue": YearMonthDayTime("1970-06-16T15:20:00Z"),
                             "language": None,
                         },
                         {

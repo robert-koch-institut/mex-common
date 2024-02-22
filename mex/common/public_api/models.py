@@ -9,12 +9,12 @@ from mex.common.types import (
     Identifier,
     Link,
     LinkLanguage,
+    TemporalEntity,
     Text,
     TextLanguage,
-    Timestamp,
 )
 
-PublicApiFieldValueTypes = UUID | Enum | Timestamp | str | Link | Text
+PublicApiFieldValueTypes = UUID | Enum | TemporalEntity | str | Link | Text
 PublicApiFieldValueTypesOrList = (
     PublicApiFieldValueTypes | list[PublicApiFieldValueTypes]
 )

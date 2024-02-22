@@ -54,12 +54,14 @@ TIME_PRECISIONS = [
 
 CET = timezone("CET")  # default assumed timezone
 UTC = timezone("UTC")  # required output timezone
-TIMESTAMP_REGEX = r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"
+TEMPORAL_ENTITY_REGEX = r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"
+TIMESTAMP_REGEX = r"^[1-9]\\d{3}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+DATE_REGEX = r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
 YEAR_MONTH_REGEX = r"^(?:\d{4}|(?:\d{4}-(?:0[1-9]|1[0-2])))$"
 
 
 @total_ordering
-class Timestamp:
+class TemporalEntity:
     """Custom timestamp with precision detection and timezone normalization."""
 
     __slots__ = ("precision", "date_time")
@@ -70,7 +72,7 @@ class Timestamp:
     @overload
     def __init__(
         self,
-        *args: Union[str, date, datetime, "Timestamp"],
+        *args: Union[str, date, datetime, "TemporalEntity"],
         tzinfo: Literal[None] = None,
     ) -> None: ...  # pragma: no cover
 
@@ -83,7 +85,7 @@ class Timestamp:
 
     def __init__(
         self,
-        *args: Union[int, str, date, datetime, "Timestamp"],
+        *args: Union[int, str, date, datetime, "TemporalEntity"],
         tzinfo: Optional[tzinfo] = None,
     ) -> None:
         """Create a new timestamp instance.
@@ -108,10 +110,12 @@ class Timestamp:
         if len(args) > 7:
             raise TypeError(f"Timestamp takes at most 7 arguments ({len(args)} given)")
 
-        if len(args) == 1 and isinstance(args[0], (str, date, datetime, Timestamp)):
+        if len(args) == 1 and isinstance(
+            args[0], (str, date, datetime, TemporalEntity)
+        ):
             if tzinfo:
                 raise TypeError("Timestamp does not accept tzinfo in parsing mode")
-            if isinstance(args[0], Timestamp):
+            if isinstance(args[0], TemporalEntity):
                 date_time, precision = self._parse_timestamp(args[0])
             elif isinstance(args[0], datetime):
                 date_time, precision = self._parse_datetime(args[0])
@@ -141,7 +145,7 @@ class Timestamp:
         """Mutate the field schema for timestamps."""
         from_str_schema = core_schema.chain_schema(
             [
-                core_schema.str_schema(pattern=TIMESTAMP_REGEX),
+                core_schema.str_schema(pattern=TEMPORAL_ENTITY_REGEX),
                 core_schema.no_info_plain_validator_function(
                     cls.validate,
                 ),
@@ -150,7 +154,7 @@ class Timestamp:
         from_anything_schema = core_schema.chain_schema(
             [
                 core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(Timestamp),
+                core_schema.is_instance_schema(TemporalEntity),
             ]
         )
 
@@ -175,9 +179,9 @@ class Timestamp:
         return json_schema
 
     @classmethod
-    def validate(cls, value: Any) -> "Timestamp":
+    def validate(cls, value: Any) -> "TemporalEntity":
         """Parse any value and try to convert it into a timestamp."""
-        if isinstance(value, (cls, date, str)):
+        if isinstance(value, (cls, date, str, TemporalEntity)):
             return cls(value)
         raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
 
@@ -194,7 +198,9 @@ class Timestamp:
         return date_time, precision
 
     @staticmethod
-    def _parse_timestamp(value: "Timestamp") -> tuple[datetime, TimestampPrecision]:
+    def _parse_timestamp(
+        value: "TemporalEntity",
+    ) -> tuple[datetime, TimestampPrecision]:
         """Parse a timestamp into a new timestamp by copying its attributes."""
         return deepcopy(value.date_time), value.precision
 
@@ -253,12 +259,16 @@ class Timestamp:
         return f'{self.__class__.__name__}("{self}")'
 
 
-class TimestampYearMonth(Timestamp):
+class YearMonth(TemporalEntity):
     """Partial date pattern that accepts yyyy or yyyy-MM format."""
 
-    def __init__(self, *args: int, tzinfo: Optional[tzinfo] = None) -> None:
+    def __init__(
+        self,
+        *args: Union[int, str, "YearMonth"],
+        tzinfo: Optional[tzinfo] = None,
+    ) -> None:
         """Validate for precision (year or month) after initialization."""
-        super().__init__(*args, tzinfo=tzinfo)
+        super().__init__(*args, tzinfo)  # type: ignore
         if self.precision not in (TimestampPrecision.YEAR, TimestampPrecision.MONTH):
             raise ValueError("Expected precision level 'YEAR' or 'MONTH'")
 
@@ -270,12 +280,16 @@ class TimestampYearMonth(Timestamp):
         from_str_schema = core_schema.chain_schema(
             [
                 core_schema.str_schema(pattern=YEAR_MONTH_REGEX),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
             ]
         )
 
         from_anything_schema = core_schema.chain_schema(
             [
                 core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(YearMonth),
             ]
         )
 
@@ -294,12 +308,16 @@ class TimestampYearMonth(Timestamp):
         return json_schema
 
 
-class TimestampDate(Timestamp):
+class YearMonthDay(TemporalEntity):
     """Date pattern that accepts only yyyy-MM-dd format."""
 
-    def __init__(self, *args: int, tzinfo: Optional[tzinfo] = None) -> None:
+    def __init__(
+        self,
+        *args: Union[int, str, date, datetime, "YearMonthDay"],
+        tzinfo: Optional[tzinfo] = None,
+    ) -> None:
         """Validate for day precision after initialization."""
-        super().__init__(*args, tzinfo=tzinfo)
+        super().__init__(*args, tzinfo=tzinfo)  # type: ignore
         if self.precision != TimestampPrecision.DAY:
             raise ValueError("Expected precision level 'DAY'")
 
@@ -309,17 +327,47 @@ class TimestampDate(Timestamp):
     ) -> JsonSchemaValue:
         """Modify the schema to add the class name as title and examples."""
         json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
-        json_schema["examples"] = ["2011-03-21"]
+        json_schema["examples"] = ["2014-08-24"]
         json_schema["format"] = "date"
         return json_schema
 
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Mutate the field schema for date pattern."""
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=DATE_REGEX),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
+        )
 
-class TimestampDatetime(Timestamp):
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(YearMonthDay),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
+        )
+
+
+class YearMonthDayTime(TemporalEntity):
     """Date pattern that accepts only yyyy-MM-dd HH:mm:ss format."""
 
-    def __init__(self, *args: int, tzinfo: Optional[tzinfo] = None) -> None:
+    def __init__(
+        self,
+        *args: Union[str, date, datetime, "YearMonthDayTime"],
+        tzinfo: Optional[tzinfo] = None,
+    ) -> None:
         """Validate for timestamp (up to seconds) precision after initialization."""
-        super().__init__(*args, tzinfo=tzinfo)
+        super().__init__(*args, tzinfo=tzinfo)  # type: ignore
         if self.precision != TimestampPrecision.SECOND:
             raise ValueError("Expected precision level 'SECOND'")
 
@@ -329,6 +377,32 @@ class TimestampDatetime(Timestamp):
     ) -> JsonSchemaValue:
         """Modify the schema to add the class name as title and examples."""
         json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
-        json_schema["examples"] = ["2020-04-03T08:58:26Z"]
+        json_schema["examples"] = ["2022-09-30T20:48:35Z"]
         json_schema["format"] = "date-time"
         return json_schema
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Mutate the field schema for timestamp pattern."""
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=TIMESTAMP_REGEX),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
+        )
+
+        from_anything_schema = core_schema.chain_schema(
+            [
+                core_schema.no_info_plain_validator_function(cls.validate),
+                core_schema.is_instance_schema(YearMonthDayTime),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=from_anything_schema,
+        )

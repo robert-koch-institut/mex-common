@@ -9,7 +9,7 @@ from uuid import UUID
 from pydantic import AnyUrl, SecretStr
 from pydantic import BaseModel as PydanticModel
 
-from mex.common.types import PathWrapper, Timestamp
+from mex.common.types import PathWrapper, TemporalEntity
 
 
 class MExEncoder(json.JSONEncoder):
@@ -27,7 +27,7 @@ class MExEncoder(json.JSONEncoder):
             return obj.value
         if isinstance(obj, UUID):
             return str(obj)
-        if isinstance(obj, Timestamp):
+        if isinstance(obj, TemporalEntity):
             return str(obj)
         if isinstance(obj, PurePath):
             return obj.as_posix()

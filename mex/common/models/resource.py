@@ -24,9 +24,9 @@ from mex.common.types import (
     ResourceTypeGeneral,
     Text,
     Theme,
-    TimestampDate,
-    TimestampDatetime,
-    TimestampYearMonth,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
 
 
@@ -59,7 +59,7 @@ class BaseResource(BaseModel):
     ]
     contributingUnit: list[OrganizationalUnitID] = []
     contributor: list[PersonID] = []
-    created: Union[TimestampYearMonth, TimestampDate, TimestampDatetime, None] = None
+    created: Union[YearMonth, YearMonthDay, YearMonthDayTime, None] = None
     creator: list[PersonID] = []
     description: list[Text] = []
     distribution: list[DistributionID] = []
@@ -88,7 +88,7 @@ class BaseResource(BaseModel):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: Union[TimestampYearMonth, TimestampDate, TimestampDatetime, None] = None
+    modified: Union[YearMonth, YearMonthDay, YearMonthDayTime, None] = None
     publication: list[Link] = []
     publisher: list[OrganizationID] = []
     qualityInformation: list[Text] = []
@@ -113,9 +113,9 @@ class BaseResource(BaseModel):
         ]
     ] = []
     temporal: Union[
-        TimestampYearMonth,
-        TimestampDate,
-        TimestampDatetime,
+        YearMonth,
+        YearMonthDay,
+        YearMonthDayTime,
         Annotated[
             str,
             Field(

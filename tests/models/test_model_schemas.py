@@ -10,7 +10,7 @@ import pytest
 from mex.common.models import EXTRACTED_MODEL_CLASSES_BY_NAME
 from mex.common.transform import dromedary_to_kebab
 from mex.common.types.identifier import MEX_ID_PATTERN
-from mex.common.types.timestamp import TIMESTAMP_REGEX
+from mex.common.types.temporal_entity import TIMESTAMP_REGEX
 
 SPECIFIED_SCHEMA_PATH = files("mex.model").joinpath("entities")
 

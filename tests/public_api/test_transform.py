@@ -16,9 +16,9 @@ from mex.common.types import (
     LinkLanguage,
     OrganizationID,
     PersonID,
+    TemporalEntity,
     Text,
     TextLanguage,
-    Timestamp,
 )
 
 
@@ -33,7 +33,7 @@ class DummyModel(MExModel):
     manyLinks: list[Link]
     reference: Identifier
     manyReferences: list[PersonID | OrganizationID]
-    timestamp: Timestamp
+    timestamp: TemporalEntity
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def raw_mex_model() -> dict[str, Any]:
         "oneString": "grün",
         "oneText": {"language": TextLanguage.EN, "value": "The lion sleeps."},
         "reference": Identifier("00000000001eab"),
-        "timestamp": Timestamp("2010-12-24T22:00"),
+        "timestamp": TemporalEntity("2010-12-24T22:00"),
     }
 
 
@@ -117,7 +117,7 @@ def raw_api_item() -> dict[str, Any]:
             {"fieldName": "stableTargetId", "fieldValue": Identifier("00000000000fds")},
             {
                 "fieldName": "timestamp",
-                "fieldValue": Timestamp("2010-12-24T22:00"),
+                "fieldValue": TemporalEntity("2010-12-24T22:00"),
             },
         ],
     }

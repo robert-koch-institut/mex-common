@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 from pytz import timezone
 
-from mex.common.types import CET, UTC, Timestamp
+from mex.common.types import CET, UTC, TemporalEntity
 
 
 @pytest.mark.parametrize(
@@ -27,16 +27,16 @@ def test_timestamp_parsing_errors(
     args: tuple[Any], kwargs: dict[str, Any], message: str
 ) -> None:
     with pytest.raises(TypeError, match=message):
-        Timestamp(*args, **kwargs)
+        TemporalEntity(*args, **kwargs)
 
 
 @pytest.mark.parametrize(
     ("value", "message"),
-    [(object(), "Cannot parse <class 'object'> as Timestamp")],
+    [(object(), "Cannot parse <class 'object'> as TemporalEntity")],
 )
 def test_timestamp_validation_errors(value: Any, message: str) -> None:
     with pytest.raises(TypeError, match=message):
-        Timestamp.validate(value)
+        TemporalEntity.validate(value)
 
 
 @pytest.mark.parametrize(
@@ -85,7 +85,7 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
             "2020-03-22T22:23:58Z",
         ),
         (
-            (Timestamp(2004, 11),),
+            (TemporalEntity(2004, 11),),
             {},
             "2004-11",
         ),
@@ -111,31 +111,36 @@ def test_timestamp_validation_errors(value: Any, message: str) -> None:
 def test_timestamp_parsing(
     args: tuple[Any], kwargs: dict[str, Any], expected: str
 ) -> None:
-    timestamp = Timestamp(*args, **kwargs)
+    timestamp = TemporalEntity(*args, **kwargs)
     assert str(timestamp) == expected
 
 
 def test_timestamp_eq() -> None:
-    assert Timestamp(2004) == Timestamp("2004")
-    assert Timestamp(2004, 11) == Timestamp(2004, 11)
-    assert Timestamp(2004, 11, 2) == "2004-11-02"
-    assert Timestamp(2020, 3, 22, 14, 30, 58, 0) == datetime(2020, 3, 22, 14, 30, 58, 0)
-    assert Timestamp(2005) != object()
+    assert TemporalEntity(2004) == TemporalEntity("2004")
+    assert TemporalEntity(2004, 11) == TemporalEntity(2004, 11)
+    assert TemporalEntity(2004, 11, 2) == "2004-11-02"
+    assert TemporalEntity(2020, 3, 22, 14, 30, 58, 0) == datetime(
+        2020, 3, 22, 14, 30, 58, 0
+    )
+    assert TemporalEntity(2005) != object()
 
 
 def test_timestamp_gt() -> None:
-    assert Timestamp(2004) > Timestamp("2003")
-    assert Timestamp(2004, 11) < "2013-10-02"
-    assert Timestamp(2004, 11) <= Timestamp(2004, 12)
-    assert Timestamp(2020, 3, 22, 14, 30, 58) >= datetime(2020, 3, 22, 14, 29)
+    assert TemporalEntity(2004) > TemporalEntity("2003")
+    assert TemporalEntity(2004, 11) < "2013-10-02"
+    assert TemporalEntity(2004, 11) <= TemporalEntity(2004, 12)
+    assert TemporalEntity(2020, 3, 22, 14, 30, 58) >= datetime(2020, 3, 22, 14, 29)
 
     with pytest.raises(NotImplementedError):
-        assert Timestamp(2005) > object()
+        assert TemporalEntity(2005) > object()
 
 
 def test_timestamp_str() -> None:
-    assert str(Timestamp(2004, 11, 26)) == "2004-11-26"
+    assert str(TemporalEntity(2004, 11, 26)) == "2004-11-26"
 
 
 def test_timestamp_repr() -> None:
-    assert repr(Timestamp(2018, 3, 2, 13, 0, 1)) == 'Timestamp("2018-03-02T12:00:01Z")'
+    assert (
+        repr(TemporalEntity(2018, 3, 2, 13, 0, 1))
+        == 'TemporalEntity("2018-03-02T12:00:01Z")'
+    )

@@ -17,18 +17,18 @@ from mex.common.types.identity import IdentityProvider
 from mex.common.types.link import Link, LinkLanguage
 from mex.common.types.path import AssetsPath, PathWrapper, WorkPath
 from mex.common.types.sink import Sink
-from mex.common.types.text import Text, TextLanguage
-from mex.common.types.timestamp import (
+from mex.common.types.temporal_entity import (
     CET,
     TIMESTAMP_FORMATS_BY_PRECISION,
     TIMESTAMP_REGEX,
     UTC,
-    Timestamp,
-    TimestampDate,
-    TimestampDatetime,
+    TemporalEntity,
     TimestampPrecision,
-    TimestampYearMonth,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
+from mex.common.types.text import Text, TextLanguage
 from mex.common.types.vocabulary import (
     AccessRestriction,
     ActivityType,
@@ -85,10 +85,10 @@ __all__ = (
     "Theme",
     "TIMESTAMP_FORMATS_BY_PRECISION",
     "TIMESTAMP_REGEX",
-    "Timestamp",
-    "TimestampDate",
-    "TimestampDatetime",
-    "TimestampYearMonth",
+    "TemporalEntity",
+    "YearMonth",
+    "YearMonthDay",
+    "YearMonthDayTime",
     "TimestampPrecision",
     "UTC",
     "VariableGroupID",

@@ -14,7 +14,9 @@ from mex.common.types import (
     MIMEType,
     OrganizationID,
     PersonID,
-    Timestamp,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
 
 
@@ -33,7 +35,7 @@ class BaseDistribution(BaseModel):
     dataCurator: list[PersonID] = []
     dataManager: list[PersonID] = []
     downloadURL: Link | None = None
-    issued: Timestamp
+    issued: YearMonth | YearMonthDay | YearMonthDayTime
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -46,7 +48,7 @@ class BaseDistribution(BaseModel):
         ]
         | None
     ) = None
-    modified: Timestamp | None = None
+    modified: YearMonth | YearMonthDay | YearMonthDayTime | None = None
     otherContributor: list[PersonID] = []
     projectLeader: list[PersonID] = []
     projectManager: list[PersonID] = []
