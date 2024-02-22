@@ -276,7 +276,7 @@ class YearMonth(TemporalEntity):
         tzinfo: Optional[tzinfo] = None,
     ) -> None:
         """Validate for precision (year or month) after initialization."""
-        super().__init__(*args, tzinfo)  # type: ignore
+        super().__init__(*args, tzinfo=tzinfo)  # type: ignore
         if self.precision not in (
             TemporalEntityPrecision.YEAR,
             TemporalEntityPrecision.MONTH,
@@ -374,7 +374,7 @@ class YearMonthDayTime(TemporalEntity):
 
     def __init__(
         self,
-        *args: Union[str, date, datetime, "YearMonthDayTime"],
+        *args: Union[int, str, date, datetime, "YearMonthDayTime"],
         tzinfo: Optional[tzinfo] = None,
     ) -> None:
         """Validate for timestamp (up to seconds) precision after initialization."""
