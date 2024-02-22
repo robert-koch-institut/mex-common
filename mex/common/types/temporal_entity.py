@@ -369,7 +369,7 @@ class YearMonthDayTime(TemporalEntity):
         """Validate for timestamp (up to seconds) precision after initialization."""
         super().__init__(*args, tzinfo=tzinfo)  # type: ignore
         if self.precision not in TIME_PRECISIONS:
-            raise ValueError("Expected precision level 'SECOND'")
+            raise ValueError("Expected time-based precision level")
 
     @classmethod
     def __get_pydantic_json_schema__(
