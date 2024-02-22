@@ -37,16 +37,16 @@ def test_write_ndjson() -> None:
     ids = list(write_ndjson(test_models))
     assert len(ids)
 
-    with open(settings.work_dir / "Thing.ndjson", "r") as handle:
+    with open(settings.work_dir / "Thing.ndjson") as handle:
         output = handle.read()
 
     expected = """\
-{"enum_attr": null, "identifier": "%s", "str_attr": "foo", "ts_attr": null, "uuid_attr": null}
-{"enum_attr": "value", "identifier": "%s", "str_attr": "bar", "ts_attr": null, "uuid_attr": null}
-{"enum_attr": null, "identifier": "%s", "str_attr": "baz", "ts_attr": null, "uuid_attr": "00000000-0000-4000-8000-00000000002a"}
-{"enum_attr": null, "identifier": "%s", "str_attr": "dat", "ts_attr": "2000-01-01", "uuid_attr": null}
-""" % tuple(
-        m.identifier for m in test_models
+{{"enum_attr": null, "identifier": "{}", "str_attr": "foo", "ts_attr": null, "uuid_attr": null}}
+{{"enum_attr": "value", "identifier": "{}", "str_attr": "bar", "ts_attr": null, "uuid_attr": null}}
+{{"enum_attr": null, "identifier": "{}", "str_attr": "baz", "ts_attr": null, "uuid_attr": "00000000-0000-4000-8000-00000000002a"}}
+{{"enum_attr": null, "identifier": "{}", "str_attr": "dat", "ts_attr": "2000-01-01", "uuid_attr": null}}
+""".format(
+        *[m.identifier for m in test_models]
     )
 
     assert output == expected

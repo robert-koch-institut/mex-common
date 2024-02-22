@@ -32,10 +32,9 @@ echo linting all files
 pre-commit run --all-files
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-@REM run the pytest test suite with unit and integration tests in random order
-@REM distributed across all available CPU cores
+@REM run pytest unit and integration tests distributed across available cores
 echo running all tests
-poetry run pytest --random-order-bucket=global --numprocesses=auto --dist=worksteal
+poetry run pytest --numprocesses=auto --dist=worksteal
 exit /b %errorlevel%
 
 

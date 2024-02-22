@@ -70,9 +70,10 @@ def _get_alternative_names(
     Returns:
         combined list of native labels and aliases in DE and EN
     """
-    alternative_names = []
-    for alias in all_aliases.en + all_aliases.de:
-        alternative_names.append(Text(value=alias.value, language=None))
+    alternative_names = [
+        Text(value=alias.value, language=None)
+        for alias in all_aliases.en + all_aliases.de
+    ]
 
     for native_label in native_labels:
         value = native_label.mainsnak.datavalue.value.text

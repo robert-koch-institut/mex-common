@@ -175,7 +175,7 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
     )
 
     def mocked_item_details_response():
-        with open(TESTDATA_DIR / "items_details.json", "r", encoding="utf-8") as f:
+        with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
             data = json.load(f)
             return data[0]
 
@@ -396,7 +396,7 @@ def test_get_organization_details_mocked(monkeypatch: MonkeyPatch) -> None:
     }
 
     def mocked_item_details_response():
-        with open(TESTDATA_DIR / "items_details.json", "r", encoding="utf-8") as f:
+        with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
             data = json.load(f)
             return data[0]
 
