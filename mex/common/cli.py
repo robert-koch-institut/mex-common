@@ -116,7 +116,7 @@ def _callback(
     # ensure connectors are closed on exit.
     context.call_on_close(reset_connector_context)
 
-    # load settings from parameters and store in ContextStore.
+    # load settings from parameters and store it globally.
     settings = settings_cls.model_validate(
         {
             key: value
@@ -126,7 +126,7 @@ def _callback(
     )
     SettingsContext.set(settings)
 
-    # otherwise print loaded settings in pretty way and continue
+    # otherwise print loaded settings in pretty way and continue.
     logger.info(click.style(dedent(f"    {func.__doc__}"), fg="green"))
     logger.info(click.style(f"{settings.text()}\n", fg="bright_cyan"))
 
@@ -142,7 +142,7 @@ def _callback(
             # if we are in debug mode, jump into interactive debugging.
             pdb.post_mortem(sys.exc_info()[2])
             raise error
-        # if not in debug mode, exit with code 1
+        # if not in debug mode, exit with code 1.
         echo("exit", fg="red")
         context.exit(1)
 

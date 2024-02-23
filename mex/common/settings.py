@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional, TypeVar, Union, cast
+from typing import Any, Optional, TypeVar, Union
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
@@ -11,9 +11,7 @@ from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
-SettingsContext = ContextStore(
-    "SettingsContext", default=cast(Optional["BaseSettings"], None)
-)
+SettingsContext = ContextStore[Optional["BaseSettings"]](None)
 
 
 class BaseSettings(PydanticBaseSettings):

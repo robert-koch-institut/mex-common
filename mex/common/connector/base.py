@@ -6,10 +6,7 @@ from typing import Optional, TypeVar, cast, final
 from mex.common.context import ContextStore
 
 ConnectorType = TypeVar("ConnectorType", bound="BaseConnector")
-ConnectorContextType = dict[type["BaseConnector"], "BaseConnector"]
-ConnectorContext = ContextStore(
-    "ConnectorContext", default=cast(ConnectorContextType, {})
-)
+ConnectorContext = ContextStore[dict[type["BaseConnector"], "BaseConnector"]]({})
 
 
 def reset_connector_context() -> None:
