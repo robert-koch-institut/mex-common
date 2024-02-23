@@ -9,12 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `entityType` type hint to `MExModel`
+- add types for `AnyBaseModel`, `AnyExtractedModel` and `AnyMergedModel`
+
+### Changes
+
+- swap `contextvars.ContextVar` for `mex.common.context.ContextStore`
+- move `stableTargetId` property from base models to extracted models
+
+### Deprecated
+
+### Removed
+
+- absorb unused `BaseExtractedData` into `ExtractedData`
+
+### Fixed
+
+### Security
+
+## [0.20.0] - 2024-02-22
+
 ### Changes
 
 - update cruft and dev dependencies
 - randomize test order by default
-
-### Deprecated
 
 ### Removed
 
@@ -24,8 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - remove `pytest.mark` from fixture in `mex.common.testing.plugin`
-
-### Security
 
 ## [0.19.4] - 2024-02-15
 

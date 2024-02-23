@@ -182,7 +182,7 @@ class BaseSettings(PydanticBaseSettings):
     wiki_api_url: AnyUrl = Field(
         Url("https://wikidata/"),
         description="URL of Wikidata API, this URL is used to send "
-        "wikidata organizatizion ID to get all the info about the organization, "
+        "wikidata organization ID to get all the info about the organization, "
         "which includes basic info, aliases, labels, descriptions, claims, and "
         "sitelinks",
         validation_alias="MEX_WIKI_API_URL",
