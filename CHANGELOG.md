@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - swap `contextvars.ContextVar` for `mex.common.context.ContextStore`
 - move `stableTargetId` property from base models to extracted models
 - update typing of identifiers to specific subclasses
-- use `Annotated[..., Field(...)] notation for pydantic field configs
+- use `Annotated[..., Field(...)]` notation for pydantic field configs
 - split up `mex.common.models.base` and move out `MExModel` and `JsonSchemaGenerator`
 - rename `MExModel` to `BaseEntity` with only type hints an model config
 - declare `hadPrimarySource`, `identifier` and `identifierInPrimarySource` as frozen
