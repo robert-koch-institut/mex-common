@@ -51,11 +51,15 @@ jobs:
           git checkout -b cruft/mex-template-${template_ref} origin/main
           git branch --set-upstream-to origin/cruft/mex-template-${template_ref}
           cruft update --skip-apply-ask
+          touch .cruft-pr-body
+          git status --porcelain | grep .rej | awk '{print $2;}' | while read -r line ; do
+            cat ${line} >> .cruft-pr-body
+          done
           git add --all --verbose
           git config --global user.email "mex@rki.de"
           git config --global user.name "RKIMetadataExchange"
-          git commit --message 'Update cruft template to ${template_ref}' --verbose
+          git commit --message 'Update cruft template to template_ref' --verbose
           git push origin --force --verbose
-          gh pr create --title 'Update cruft template to ${template_ref}' --body '# Changes\n-updated cruft template to ${template_ref}' --label dependencies
+          gh pr create --title 'Update cruft template to template_ref' --body-file .cruft-pr-body --label dependencies --assignee RKIMetadataExchange
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
