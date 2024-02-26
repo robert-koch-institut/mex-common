@@ -47,6 +47,7 @@ jobs:
       - name: Update cruft
         if: ${{ failure() }}
         run: |
+          gh pr list --label cruft
           template_ref=$(git ls-remote https://github.com/robert-koch-institut/mex-template --heads main --exit-code | awk '{print $1;}')
           git checkout -b cruft/mex-template-${template_ref} origin/main
           git branch --set-upstream-to origin/cruft/mex-template-${template_ref}
@@ -60,6 +61,6 @@ jobs:
           git config --global user.name "RKIMetadataExchange"
           git commit --message 'Update cruft template to template_ref' --verbose
           git push origin --force --verbose
-          gh pr create --title 'Update cruft template to template_ref' --body-file .cruft-pr-body --label dependencies --assignee RKIMetadataExchange
+          gh pr create --title 'Update cruft template to template_ref' --body-file .cruft-pr-body --label cruft --label dependencies --assignee RKIMetadataExchange
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
