@@ -44,6 +44,10 @@ jobs:
       - name: Check template
         run: cruft check
 
-      - name: The job has failed
+      - name: Update cruft
         if: ${{ failure() }}
-        run: exit 0
+        run: |
+          template_ref=$(git ls-remote https://github.com/robert-koch-institut/mex-template --heads main --exit-code | awk '{print $1;}')
+          gh pr create -B main -H cruft/mex-template-${template_ref} --title 'Update cruft template to ${template_ref}' --body 'Updates cruft template to ${template_ref}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
