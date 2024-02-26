@@ -48,10 +48,10 @@ jobs:
         if: ${{ failure() }}
         run: |
           template_ref=$(git ls-remote https://github.com/robert-koch-institut/mex-template --heads main --exit-code | awk '{print $1;}')
-          gh checkout --branch cruft/mex-template-${template_ref} main
+          git checkout --branch cruft/mex-template-${template_ref} main
           cruft update --skip-apply-ask
-          gh add --all --verbose
-          gh commit --message 'Update cruft template to ${template_ref}'
+          git add --all --verbose
+          git commit --message 'Update cruft template to ${template_ref}'
           gh pr create --title 'Update cruft template to ${template_ref}' --body 'Updates cruft template to ${template_ref}' --label dependencies
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
