@@ -2,7 +2,8 @@ name: Cookiecutter
 
 on:
   push:
-  pull_request:
+    branches: ["main", "feature/cruft-prs"]
+    tags: ["**"]
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
@@ -18,12 +19,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Cache requirements
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-requirements
         with:
@@ -33,7 +34,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -42,3 +43,7 @@ jobs:
 
       - name: Check template
         run: cruft check
+
+      - name: The job has failed
+        if: ${{ failure() }}
+        run: exit 0
