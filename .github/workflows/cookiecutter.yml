@@ -51,6 +51,8 @@ jobs:
           git checkout -b cruft/mex-template-${template_ref} origin/main
           cruft update --skip-apply-ask
           git add --all --verbose
+          git config --global user.email "mex@rki.de"
+          git config --global user.name "RKIMetadataExchange"
           git commit --message 'Update cruft template to ${template_ref}'
           gh pr create --title 'Update cruft template to ${template_ref}' --body 'Updates cruft template to ${template_ref}' --label dependencies
         env:
