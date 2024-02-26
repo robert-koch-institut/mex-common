@@ -48,7 +48,7 @@ jobs:
         if: ${{ failure() }}
         run: |
           template_ref=$(git ls-remote https://github.com/robert-koch-institut/mex-template --heads main --exit-code | awk '{print $1;}')
-          git checkout -b cruft/mex-template-${template_ref} origin/main
+          git checkout -b cruft/mex-template-${template_ref} main
           cruft update --skip-apply-ask
           git add --all --verbose
           git config --global user.email "mex@rki.de"
