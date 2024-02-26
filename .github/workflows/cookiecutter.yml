@@ -52,7 +52,7 @@ jobs:
           git checkout -b cruft/mex-template-${template_ref} origin/main
           git branch --set-upstream-to origin/cruft/mex-template-${template_ref}
           cruft update --skip-apply-ask
-          printf '# Changes\n\n  - updated mex-template to $template_ref\n' > .cruft-pr-body
+          printf '# Changes\n\n  - updated mex-template cookiecutter template to %s\n' "$template_ref" > .cruft-pr-body
           if [[ $(git status --porcelain | wc -c) -ne 0 ]]; then
             printf '# Conflicts\n\n' >> .cruft-pr-body
           fi
@@ -64,8 +64,8 @@ jobs:
           git add --all --verbose
           git config --global user.email "mex@rki.de"
           git config --global user.name "RKIMetadataExchange"
-          git commit --message 'Update cruft template to template_ref' --verbose
+          git commit --message 'Update cruft template to $template_ref' --verbose
           git push origin --force --verbose
-          gh pr create --title 'Update cruft template to template_ref' --body-file .cruft-pr-body --label cruft --label dependencies --assignee RKIMetadataExchange
+          gh pr create --title 'Update cookiecutter template to $template_ref' --body-file .cruft-pr-body --label cruft --label dependencies --assignee RKIMetadataExchange
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
