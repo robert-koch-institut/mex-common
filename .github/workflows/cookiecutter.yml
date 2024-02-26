@@ -54,6 +54,7 @@ jobs:
           git config --global user.email "mex@rki.de"
           git config --global user.name "RKIMetadataExchange"
           git commit --message 'Update cruft template to ${template_ref}'
-          gh pr create --head --title 'Update cruft template to ${template_ref}' --body 'Updates cruft template to ${template_ref}' --label dependencies
+          git push --verbose
+          gh pr create --title 'Update cruft template to ${template_ref}' --label dependencies
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
