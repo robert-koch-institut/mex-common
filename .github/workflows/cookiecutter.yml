@@ -57,15 +57,13 @@ jobs:
             printf '# Conflicts\n\n' >> .cruft-pr-body
           fi
           git status --porcelain | grep .rej | awk '{print $2;}' | while read -r line ; do
-            printf '\n```' >> .cruft-pr-body
-            cat ${line} >> .cruft-pr-body
-            printf '```\n' >> .cruft-pr-body
+            printf '\n```%s\n```\n' "$line" >> .cruft-pr-body
           done
           git add --all --verbose
           git config --global user.email "mex@rki.de"
           git config --global user.name "RKIMetadataExchange"
-          git commit --message 'Update cruft template to $template_ref' --verbose
+          git commit --message "Update cruft template to $template_ref" --verbose
           git push origin --force --verbose
-          gh pr create --title 'Update cookiecutter template to $template_ref' --body-file .cruft-pr-body --label cruft --label dependencies --assignee RKIMetadataExchange
+          gh pr create --title "Update cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --label dependencies --assignee RKIMetadataExchange
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
