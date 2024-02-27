@@ -52,7 +52,7 @@ jobs:
             echo template is up to date
             exit 0
           fi
-          if [[ $(gh pr list --label cruft | wc -c) -eq 0 ]]; then
+          if [[ $(gh pr list --label cruft | wc -c) -ne 0 ]]; then
             echo already seeing pull request
             exit 0
           fi
