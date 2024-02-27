@@ -42,6 +42,7 @@ jobs:
         run: make setup
 
       - name: Check template
+        continue-on-error: true
         run: cruft check
 
       - name: Update cruft
