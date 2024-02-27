@@ -74,5 +74,5 @@ jobs:
           git config --global user.email ${bot_email}
           git config --global user.name ${bot_name}
           git commit --message "Bump cookiecutter template to $template_ref" --verbose
-          git push origin --force --verbose
+          git push --set-upstream origin cruft/cookiecutter-template-${template_ref} --force --verbose
           gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${bot_user}
