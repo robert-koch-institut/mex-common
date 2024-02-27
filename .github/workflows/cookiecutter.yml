@@ -70,8 +70,9 @@ jobs:
             printf '```\n' >> .cruft-pr-body
           done
           git add --all --verbose
-          git config --global user.email ${{ env.MEX_BOT_EMAIL }}
-          git config --global user.name ${{ env.MEX_BOT_USER }}
+          git config --global user.email ${{ vars.MEX_BOT_EMAIL }}
+          git config --global user.name ${{ vars.MEX_BOT_USER }}
           git commit --message "Bump cookiecutter template to $template_ref" --verbose
           git push --set-upstream origin cruft/cookiecutter-template-${template_ref} --force --verbose
-          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${{ env.MEX_BOT_USER }}
+          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${{ vars.MEX_BOT_USER }}
+          exit 1
