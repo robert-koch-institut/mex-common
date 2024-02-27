@@ -19,7 +19,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr view ${{ github.event.pull_request.number }}
+          gh pr view ${{ github.event.pull_request.html_url }}
           echo user.login ${{ github.event.pull_request.user.login }}
-          echo assignee ${{ github.event.pull_request.assignee }}
-          echo assignees ${{ github.event.pull_request.assignes }}
+          echo assignee ${{ github.event.pull_request.assignee.login }}
+          if [[ "${{ github.event.pull_request.user.login }}" -eq "${{ github.event.pull_request.assignee.login }}" ]]; then
+            echo samesame
+          fi
+          echo done
