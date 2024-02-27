@@ -8,6 +8,10 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   PIP_NO_OPTION: on
   PIP_NO_CLEAN: on
@@ -54,7 +58,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
-          git checkout -b cruft/cookiecutter-template-${template_ref} origin/main
+          git checkout main
+          git checkout -b cruft/cookiecutter-template-${template_ref}
           cruft update --skip-apply-ask
           printf '# Changes\n\n  - bumped cookiecutter template to %s\n' "$template_ref" > .cruft-pr-body
           if [[ $(git status --porcelain | wc -c) -ne 0 ]]; then
@@ -69,5 +74,5 @@ jobs:
           git config --global user.email ${bot_email}
           git config --global user.name ${bot_name}
           git commit --message "Bump cookiecutter template to $template_ref" --verbose
-          git push origin --set-upstream origin/cruft/cookiecutter-template-${template_ref} --force --verbose
+          git push origin --force --verbose
           gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${bot_user}
