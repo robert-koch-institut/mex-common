@@ -57,7 +57,7 @@ jobs:
           git checkout main
           git checkout -b cruft/cookiecutter-template-${template_ref}
           cruft update --skip-apply-ask
-          printf '# Changes\n\n  - bumped cookiecutter template to %s\n' "$template_ref" > .cruft-pr-body
+          printf '# Changes\n\n  - bumped cookiecutter template to %s/commit/%s\n' "$template_url" "$template_ref" > .cruft-pr-body
           if [[ $(git status --porcelain | wc -c) -ne 0 ]]; then
             printf '# Conflicts\n\n' >> .cruft-pr-body
           fi
