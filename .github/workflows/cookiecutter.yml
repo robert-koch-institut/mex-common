@@ -8,10 +8,6 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 env:
   PIP_NO_OPTION: on
   PIP_NO_CLEAN: on
@@ -75,4 +71,4 @@ jobs:
           git config --global user.name ${bot_name}
           git commit --message "Bump cookiecutter template to $template_ref" --verbose
           git push --set-upstream origin cruft/cookiecutter-template-${template_ref} --force --verbose
-          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${bot_user}
+          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${bot_name}
