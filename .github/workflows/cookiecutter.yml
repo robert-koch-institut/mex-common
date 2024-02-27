@@ -41,20 +41,21 @@ jobs:
       - name: Install requirements
         run: make setup
 
-      - name: Check template
+      - name: Update template
         continue-on-error: true
-        run: cruft check
-
-      - name: Update cruft
         env:
           template_name: mex-template
           template_url: https://github.com/robert-koch-institut/mex-template
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo gh-pr-list
-          gh pr list --label cruft
-          already_has_pr=$(gh pr list --label cruft)
-          exit 0
+          if [[ $(cruft check) -eq 0 ]]; then
+            echo template is up to date
+            exit 0
+          fi
+          if [[ $(gh pr list --label cruft | wc -c) -eq 0 ]]; then
+            echo already seeing pull request
+            exit 0
+          fi
           template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
           git checkout main
           git checkout -b cruft/cookiecutter-template-${template_ref}
