@@ -47,10 +47,8 @@ jobs:
       - name: Update cruft
         if: ${{ failure() }}
         env:
-          template_url: https://github.com/robert-koch-institut/mex-template
           template_name: mex-template
-          bot_email: mex@rki.de
-          bot_name: RKIMetadataExchange
+          template_url: https://github.com/robert-koch-institut/mex-template
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
@@ -67,8 +65,8 @@ jobs:
             printf '```\n' >> .cruft-pr-body
           done
           git add --all --verbose
-          git config --global user.email ${bot_email}
-          git config --global user.name ${bot_name}
+          git config --global user.email ${MEX_BOT_EMAIL}
+          git config --global user.name ${MEX_BOT_USER}
           git commit --message "Bump cookiecutter template to $template_ref" --verbose
           git push --set-upstream origin cruft/cookiecutter-template-${template_ref} --force --verbose
-          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${bot_name}
+          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${MEX_BOT_USER}

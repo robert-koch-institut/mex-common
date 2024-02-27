@@ -6,7 +6,9 @@ updates:
     directory: "/"
     open-pull-requests-limit: 1
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+    labels:
+      - "dependabot"
   - package-ecosystem: "pip"
     allow:
       - dependency-type: "all"
@@ -14,3 +16,5 @@ updates:
     open-pull-requests-limit: 1
     schedule:
       interval: "daily"
+    labels:
+      - "dependabot"
