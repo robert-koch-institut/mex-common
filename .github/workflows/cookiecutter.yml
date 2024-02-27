@@ -53,7 +53,7 @@ jobs:
           bot_name: RKIMetadataExchange
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -f6)
+          template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
           git checkout -b cruft/cookiecutter-template-${template_ref} origin/main
           git branch --set-upstream-to origin/cruft/cookiecutter-template-${template_ref}
           cruft update --skip-apply-ask
