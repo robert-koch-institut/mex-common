@@ -46,12 +46,15 @@ jobs:
         run: cruft check
 
       - name: Update cruft
-        if: ${{ failure() }}
         env:
           template_name: mex-template
           template_url: https://github.com/robert-koch-institut/mex-template
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo gh-pr-list
+          gh pr list --label cruft
+          already_has_pr=$(gh pr list --label cruft)
+          exit 0
           template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
           git checkout main
           git checkout -b cruft/cookiecutter-template-${template_ref}
