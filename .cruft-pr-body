@@ -1,0 +1,24 @@
+# Changes
+
+  - bumped cookiecutter template to 8a99c5
+# Conflicts
+
+
+```diff a/pyproject.toml b/pyproject.toml	(rejected hunks)
+@@ -17,6 +17,7 @@ ipdb = "^0.13.13"
+ mypy = "^1.8.0"
+ pytest = "^8.0.0"
+ pytest-cov = "^4.1.0"
++pytest-random-order = "^1.1.1"
+ ruff = "^0.2.1"
+ sphinx = "^7.2.6"
+ 
+@@ -48,6 +49,7 @@ addopts = [
+     "--cov-fail-under=95",
+     "--cov-branch",
+     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
++    "--random-order-bucket=global",
+ ]
+ markers = "integration: mark a test as integration test"
+ 
+```
