@@ -1,0 +1,25 @@
+name: Review
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+  workflow_dispatch:
+
+jobs:
+  assignee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      github.event.pull_request.user.login != ${{ vars.MEX_BOT_USER }} &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    steps:
+      - name: Add assignee
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr view ${{ github.event.pull_request.number }}
+          echo user.login ${{ github.event.pull_request.user.login }}
+          echo assignee ${{ github.event.pull_request.assignee }}
+          echo assignees ${{ github.event.pull_request.assignes }}
