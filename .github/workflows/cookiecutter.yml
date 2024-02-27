@@ -48,7 +48,7 @@ jobs:
           template_url: https://github.com/robert-koch-institut/mex-template
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [[ $(cruft check) -eq 0 ]]; then
+          if cruft check; then
             echo template is up to date
             exit 0
           fi
