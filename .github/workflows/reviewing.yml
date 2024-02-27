@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [[ "${{ github.event.pull_request.assignee.login }}" -eq "" ]]; then
+          if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
             echo assigning to ${{ github.event.pull_request.user.login }}
             gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login }}
           else
