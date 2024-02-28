@@ -268,7 +268,7 @@ class TemporalEntity:
 
 
 class YearMonth(TemporalEntity):
-    """Partial date pattern that accepts yyyy or yyyy-MM format."""
+    """Parser for temporal entities with year-precision or month-precision."""
 
     def __init__(
         self,
@@ -320,7 +320,7 @@ class YearMonth(TemporalEntity):
 
 
 class YearMonthDay(TemporalEntity):
-    """Date pattern that accepts only yyyy-MM-dd format."""
+    """Parser for temporal entities with day-precision."""
 
     def __init__(
         self,
@@ -370,7 +370,7 @@ class YearMonthDay(TemporalEntity):
 
 
 class YearMonthDayTime(TemporalEntity):
-    """Date pattern that accepts only yyyy-MM-dd HH:mm:ss format."""
+    """Parser for temporal entities with time-precision."""
 
     def __init__(
         self,
