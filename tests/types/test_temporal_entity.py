@@ -167,13 +167,19 @@ def test_timestamp_repr() -> None:
 
 
 def test_invalid_temporal_resolution_throws_error() -> None:
-    with pytest.raises(ValueError, match="Expected time-based precision level"):
+    with pytest.raises(
+        ValueError,
+        match="Expected precision level to be one of "
+        "'hour', 'minute', 'second', 'microsecond'",
+    ):
         YearMonthDayTime("2001-04-24")
 
-    with pytest.raises(ValueError, match="Expected precision level 'DAY'"):
+    with pytest.raises(ValueError, match="Expected precision level to be 'day'"):
         YearMonthDay("1999-02")
 
-    with pytest.raises(ValueError, match="Expected precision level 'YEAR' or 'MONTH'"):
+    with pytest.raises(
+        ValueError, match="Expected precision level to be one of " "'year', 'month'"
+    ):
         YearMonth("1999-02-02")
 
 

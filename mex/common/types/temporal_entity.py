@@ -71,6 +71,9 @@ class TemporalEntity:
     precision: TemporalEntityPrecision
     date_time: datetime
     STR_SCHEMA_PATTERN = TEMPORAL_ENTITY_REGEX
+    ALLOWED_PRECISION_LEVELS = [
+        key for key in TemporalEntityPrecision.__members__.values()
+    ]
 
     @overload
     def __init__(
@@ -139,11 +142,35 @@ class TemporalEntity:
                 "TemporalEntity argument or up to 7 integers"
             )
 
+        self.__validate_precision(precision)
+
         if precision in TIME_PRECISIONS:
             date_time = date_time.astimezone(UTC)
 
         self.date_time = date_time
         self.precision = precision
+
+    @classmethod
+    def __validate_precision(cls, precision: TemporalEntityPrecision) -> None:
+        """Confirm that the temporal entity can handle the given precision.
+
+        Args:
+            precision: a temporal entity precision
+
+        Raises:
+        ValueError: If the given precision is not covered by the temporal entity.
+        """
+        if precision not in cls.ALLOWED_PRECISION_LEVELS:
+            allowed_precision_str = str(
+                [p.value for p in cls.ALLOWED_PRECISION_LEVELS]
+            )[1:-1]
+            if len(cls.ALLOWED_PRECISION_LEVELS) == 1:
+                error_str = f"Expected precision level to be {allowed_precision_str}"
+            else:
+                error_str = (
+                    f"Expected precision level to be one of {allowed_precision_str}"
+                )
+            raise ValueError(error_str)
 
     @classmethod
     def __get_pydantic_core_schema__(
@@ -272,19 +299,10 @@ class YearMonth(TemporalEntity):
     """Parser for temporal entities with year-precision or month-precision."""
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_REGEX
-
-    def __init__(
-        self,
-        *args: Union[int, str, date, datetime, "TemporalEntity"],
-        tzinfo: Optional[tzinfo] = None,
-    ) -> None:
-        """Validate for precision (year or month) after initialization."""
-        super().__init__(*args, tzinfo=tzinfo)  # type: ignore
-        if self.precision not in (
-            TemporalEntityPrecision.YEAR,
-            TemporalEntityPrecision.MONTH,
-        ):
-            raise ValueError("Expected precision level 'YEAR' or 'MONTH'")
+    ALLOWED_PRECISION_LEVELS = [
+        TemporalEntityPrecision.YEAR,
+        TemporalEntityPrecision.MONTH,
+    ]
 
     @classmethod
     def __get_pydantic_json_schema__(
@@ -300,16 +318,7 @@ class YearMonthDay(TemporalEntity):
     """Parser for temporal entities with day-precision."""
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_REGEX
-
-    def __init__(
-        self,
-        *args: Union[int, str, date, datetime, "YearMonthDay"],
-        tzinfo: Optional[tzinfo] = None,
-    ) -> None:
-        """Validate for day precision after initialization."""
-        super().__init__(*args, tzinfo=tzinfo)  # type: ignore
-        if self.precision != TemporalEntityPrecision.DAY:
-            raise ValueError("Expected precision level 'DAY'")
+    ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.DAY]
 
     @classmethod
     def __get_pydantic_json_schema__(
@@ -326,16 +335,7 @@ class YearMonthDayTime(TemporalEntity):
     """Parser for temporal entities with time-precision."""
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_TIME_REGEX
-
-    def __init__(
-        self,
-        *args: Union[int, str, date, datetime, "YearMonthDayTime"],
-        tzinfo: Optional[tzinfo] = None,
-    ) -> None:
-        """Validate for timestamp (up to seconds) precision after initialization."""
-        super().__init__(*args, tzinfo=tzinfo)  # type: ignore
-        if self.precision not in TIME_PRECISIONS:
-            raise ValueError("Expected time-based precision level")
+    ALLOWED_PRECISION_LEVELS = TIME_PRECISIONS
 
     @classmethod
     def __get_pydantic_json_schema__(
