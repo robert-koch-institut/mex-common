@@ -70,6 +70,7 @@ class TemporalEntity:
 
     precision: TemporalEntityPrecision
     date_time: datetime
+    STR_SCHEMA_PATTERN = TEMPORAL_ENTITY_REGEX
 
     @overload
     def __init__(
@@ -151,7 +152,7 @@ class TemporalEntity:
         """Mutate the field schema for temporal entity."""
         from_str_schema = core_schema.chain_schema(
             [
-                core_schema.str_schema(pattern=TEMPORAL_ENTITY_REGEX),
+                core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
                 core_schema.no_info_plain_validator_function(
                     cls.validate,
                 ),
@@ -160,7 +161,7 @@ class TemporalEntity:
         from_anything_schema = core_schema.chain_schema(
             [
                 core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(TemporalEntity),
+                core_schema.is_instance_schema(cls),
             ]
         )
 
@@ -270,6 +271,8 @@ class TemporalEntity:
 class YearMonth(TemporalEntity):
     """Parser for temporal entities with year-precision or month-precision."""
 
+    STR_SCHEMA_PATTERN = YEAR_MONTH_REGEX
+
     def __init__(
         self,
         *args: Union[int, str, date, datetime, "TemporalEntity"],
@@ -284,32 +287,6 @@ class YearMonth(TemporalEntity):
             raise ValueError("Expected precision level 'YEAR' or 'MONTH'")
 
     @classmethod
-    def __get_pydantic_core_schema__(
-        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        """Mutate the field schema for year-month pattern."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=YEAR_MONTH_REGEX),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
-        )
-
-        from_anything_schema = core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(YearMonth),
-            ]
-        )
-
-        return core_schema.json_or_python_schema(
-            json_schema=from_str_schema,
-            python_schema=from_anything_schema,
-        )
-
-    @classmethod
     def __get_pydantic_json_schema__(
         cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
     ) -> JsonSchemaValue:
@@ -321,6 +298,8 @@ class YearMonth(TemporalEntity):
 
 class YearMonthDay(TemporalEntity):
     """Parser for temporal entities with day-precision."""
+
+    STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_REGEX
 
     def __init__(
         self,
@@ -342,35 +321,11 @@ class YearMonthDay(TemporalEntity):
         json_schema["format"] = "date"
         return json_schema
 
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        """Mutate the field schema for date pattern."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=YEAR_MONTH_DAY_REGEX),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
-        )
-
-        from_anything_schema = core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(YearMonthDay),
-            ]
-        )
-
-        return core_schema.json_or_python_schema(
-            json_schema=from_str_schema,
-            python_schema=from_anything_schema,
-        )
-
 
 class YearMonthDayTime(TemporalEntity):
     """Parser for temporal entities with time-precision."""
+
+    STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_TIME_REGEX
 
     def __init__(
         self,
@@ -391,29 +346,3 @@ class YearMonthDayTime(TemporalEntity):
         json_schema["examples"] = ["2022-09-30T20:48:35Z"]
         json_schema["format"] = "date-time"
         return json_schema
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        """Mutate the field schema for timestamp pattern."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=YEAR_MONTH_DAY_TIME_REGEX),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
-        )
-
-        from_anything_schema = core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(YearMonthDayTime),
-            ]
-        )
-
-        return core_schema.json_or_python_schema(
-            json_schema=from_str_schema,
-            python_schema=from_anything_schema,
-        )
