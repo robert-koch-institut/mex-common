@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mex-common"
-version = "0.20.0"
+version = "0.21.0"
 description = "Common library for MEx python projects."
 authors = ["RKI MEx Team <mex@rki.de>"]
 readme = "README.md"
@@ -27,11 +27,11 @@ ipdb = "^0.13.13"
 mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0" }
 mypy = "^1.8.0"
 pandas-stubs = "^2.1.4"
-pytest = "^8.0.0"
+pytest = "^8.0.2"
 pytest-cov = "^4.1.0"
 pytest-random-order = "^1.1.1"
 pytest-xdist = "^3.5.0"
-ruff = "^0.2.1"
+ruff = "^0.2.2"
 sphinx = "^7.2.6"
 types-ldap3 = "^2.9.13"
 types-pytz = "^2024.1.0"

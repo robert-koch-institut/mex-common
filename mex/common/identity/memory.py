@@ -4,7 +4,11 @@ from mex.common.models import (
     MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
 )
-from mex.common.types import Identifier, PrimarySourceID
+from mex.common.types import (
+    AnyMergedIdentifier,
+    Identifier,
+    MergedPrimarySourceIdentifier,
+)
 
 
 class MemoryIdentityProvider(BaseProvider):
@@ -22,7 +26,9 @@ class MemoryIdentityProvider(BaseProvider):
         ]
 
     def assign(
-        self, had_primary_source: PrimarySourceID, identifier_in_primary_source: str
+        self,
+        had_primary_source: MergedPrimarySourceIdentifier,
+        identifier_in_primary_source: str,
     ) -> Identity:
         """Find an Identity in the in-memory database or assign a new one.
 
@@ -52,9 +58,9 @@ class MemoryIdentityProvider(BaseProvider):
     def fetch(
         self,
         *,
-        had_primary_source: Identifier | None = None,
+        had_primary_source: MergedPrimarySourceIdentifier | None = None,
         identifier_in_primary_source: str | None = None,
-        stable_target_id: Identifier | None = None,
+        stable_target_id: AnyMergedIdentifier | None = None,
     ) -> list[Identity]:
         """Find Identity instances in the in-memory database.
 

@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Any
+from typing import Annotated, Any
 
 from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
 from langdetect.lang_detect_exception import LangDetectException
@@ -26,7 +26,7 @@ class Text(BaseModel):
         Text(value="foo") == Text.model_validate("foo")
     """
 
-    value: str = Field(min_length=1)
+    value: Annotated[str, Field(min_length=1)]
     language: TextLanguage | None = None
 
     @model_validator(mode="before")

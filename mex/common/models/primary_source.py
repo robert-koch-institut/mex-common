@@ -6,11 +6,12 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
-    ContactPointID,
+    ExtractedPrimarySourceIdentifier,
     Link,
-    OrganizationalUnitID,
-    PersonID,
-    PrimarySourceID,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     Text,
 )
 
@@ -18,14 +19,17 @@ from mex.common.types import (
 class BasePrimarySource(BaseModel):
     """A collection of information, that is managed and curated by an RKI unit."""
 
-    stableTargetId: PrimarySourceID
     alternativeTitle: list[Text] = []
-    contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
+    contact: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ] = []
     description: list[Text] = []
     documentation: list[Link] = []
     locatedAt: list[Link] = []
     title: list[Text] = []
-    unitInCharge: list[OrganizationalUnitID] = []
+    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
     version: (
         Annotated[
             str,
@@ -40,14 +44,17 @@ class BasePrimarySource(BaseModel):
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     """An automatically extracted metadata set describing a primary source."""
 
-    entityType: Literal["ExtractedPrimarySource"] = Field(
-        "ExtractedPrimarySource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "ExtractedPrimarySource"
+    identifier: Annotated[ExtractedPrimarySourceIdentifier, Field(frozen=True)]
+    stableTargetId: MergedPrimarySourceIdentifier
 
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):
     """The result of merging all extracted data and rules for a primary source."""
 
-    entityType: Literal["MergedPrimarySource"] = Field(
-        "MergedPrimarySource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "MergedPrimarySource"
+    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]

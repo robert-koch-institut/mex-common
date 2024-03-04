@@ -1,7 +1,8 @@
 from enum import Enum
+from typing import Annotated, Literal
 
 import pytest
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 
 from mex.common.identity import get_provider
 from mex.common.models import (
@@ -10,7 +11,7 @@ from mex.common.models import (
     BaseModel,
     ExtractedData,
 )
-from mex.common.types import Identifier, PrimarySourceID
+from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
 
 class Animal(Enum):
@@ -20,14 +21,28 @@ class Animal(Enum):
     DOG = "dog"
 
 
-class BaseThing(BaseModel):
-    """Dummy model defining a generic stableTargetId."""
+class ExtractedThingIdentifier(Identifier):
+    """Identifier for extracted things."""
 
-    stableTargetId: Identifier
+
+class MergedThingIdentifier(Identifier):
+    """Identifier for merged thing."""
+
+
+class BaseThing(BaseModel):
+    """Dummy model defining some arbitrary field."""
+
+    someField: str = "someDefault"
 
 
 class ExtractedThing(BaseThing, ExtractedData):
     """Extracted version of a dummy thing model."""
+
+    entityType: Annotated[
+        Literal["ExtractedThing"], Field(alias="$type", frozen=True)
+    ] = "ExtractedThing"
+    identifier: Annotated[ExtractedThingIdentifier, Field(frozen=True)]
+    stableTargetId: MergedThingIdentifier
 
 
 def test_extracted_data_requires_dict_for_construction() -> None:
@@ -38,7 +53,7 @@ def test_extracted_data_requires_dict_for_construction() -> None:
 def test_extracted_data_requires_identifier_in_primary_source() -> None:
     with pytest.raises(ValidationError, match="identifierInPrimarySource"):
         ExtractedThing(
-            hadPrimarySource=PrimarySourceID.generate(seed=1),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         )
 
 
@@ -53,19 +68,19 @@ def test_extracted_data_does_not_allow_setting_identifier() -> None:
     with pytest.raises(ValidationError, match="Identifier cannot be set manually"):
         ExtractedThing(
             identifier=Identifier.generate(seed=0),
-            hadPrimarySource=PrimarySourceID.generate(seed=1),
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
             identifierInPrimarySource="0",
         )
 
 
 def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
     thing_1 = ExtractedThing(
-        hadPrimarySource=PrimarySourceID.generate(seed=1),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         identifierInPrimarySource="0",
     )
     thing_2 = ExtractedThing(
         identifier=thing_1.identifier,
-        hadPrimarySource=PrimarySourceID.generate(seed=1),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         identifierInPrimarySource="0",
     )
 
@@ -78,14 +93,14 @@ def test_extracted_data_does_not_allow_changing_mex_stable_target_id() -> None:
             identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
             hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
             identifierInPrimarySource=MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
-            stableTargetId=PrimarySourceID.generate(seed=12345),
+            stableTargetId=MergedPrimarySourceIdentifier.generate(seed=12345),
         )
 
 
 def test_extracted_data_stores_identity_in_provider() -> None:
     thing = ExtractedThing(
         identifierInPrimarySource="12345",
-        hadPrimarySource=PrimarySourceID.generate(seed=12345),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=12345),
     )
 
     provider = get_provider()

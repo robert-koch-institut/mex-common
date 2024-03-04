@@ -1,4 +1,3 @@
-from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Optional, TypeVar, Union
 
@@ -8,12 +7,11 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
+from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
-SettingsContext: ContextVar[Optional["BaseSettings"]] = ContextVar(
-    "SettingsContext", default=None
-)
+SettingsContext = ContextStore[Optional["BaseSettings"]](None)
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -182,7 +180,7 @@ class BaseSettings(PydanticBaseSettings):
     wiki_api_url: AnyUrl = Field(
         Url("https://wikidata/"),
         description="URL of Wikidata API, this URL is used to send "
-        "wikidata organizatizion ID to get all the info about the organization, "
+        "wikidata organization ID to get all the info about the organization, "
         "which includes basic info, aliases, labels, descriptions, claims, and "
         "sitelinks",
         validation_alias="MEX_WIKI_API_URL",

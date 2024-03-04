@@ -1,11 +1,11 @@
-from typing import Any, Optional, get_origin
+from typing import Annotated, Any, Optional, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, ExtractedData
 
 
-class GenericRule(BaseModel, extra="forbid"):  # forbid additional fields
+class GenericRule(BaseModel, extra="forbid"):
     """Generic mapping rule model."""
 
     forValues: Optional[list[str]] = None
@@ -13,13 +13,13 @@ class GenericRule(BaseModel, extra="forbid"):  # forbid additional fields
     rule: Optional[str] = None
 
 
-class GenericField(BaseModel, extra="forbid"):  # forbid additional fields
+class GenericField(BaseModel, extra="forbid"):
     """Generic Field model."""
 
     fieldInPrimarySource: str
     locationInPrimarySource: Optional[str] = None
     examplesInPrimarySource: Optional[list[str]] = None
-    mappingRules: list[GenericRule] = Field(..., min_length=1)
+    mappingRules: Annotated[list[GenericRule], Field(min_length=1)]
     comment: Optional[str] = None
 
 

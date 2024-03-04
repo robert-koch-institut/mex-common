@@ -139,7 +139,11 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
         if field in ("identifier", "stableTargetId"):
             obj["$ref"] = "/schema/fields/identifier"
         else:
-            obj["$ref"] = f"/schema/entities/{title.removesuffix('ID')}#/identifier"
+            obj["$ref"] = "/schema/entities/{}#/identifier".format(
+                title.removesuffix("Identifier")
+                .removeprefix("Merged")
+                .removeprefix("Extracted")
+            )
 
     # align concept/enum annotations
     # (spec uses `useScheme` to specify vocabularies and models use enums)

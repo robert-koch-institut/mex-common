@@ -3,7 +3,7 @@ from typing import Generator, Iterable
 from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramUnit
-from mex.common.types import Email, OrganizationalUnitID
+from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 
 
 @watch
@@ -48,7 +48,7 @@ def transform_organigram_units_to_organizational_units(
             if parent_unit := extracted_unit_by_id_in_primary_source.get(
                 parent_identifier_in_primary_source
             ):
-                extracted_unit.parentUnit = OrganizationalUnitID(
+                extracted_unit.parentUnit = MergedOrganizationalUnitIdentifier(
                     parent_unit.stableTargetId
                 )
         yield extracted_unit

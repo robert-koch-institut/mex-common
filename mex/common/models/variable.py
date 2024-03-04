@@ -7,18 +7,18 @@ from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
     DataType,
-    ResourceID,
+    ExtractedVariableIdentifier,
+    MergedResourceIdentifier,
+    MergedVariableGroupIdentifier,
+    MergedVariableIdentifier,
     Text,
-    VariableGroupID,
-    VariableID,
 )
 
 
 class BaseVariable(BaseModel):
     """A single piece of information within a resource."""
 
-    stableTargetId: VariableID
-    belongsTo: list[VariableGroupID] = []
+    belongsTo: list[MergedVariableGroupIdentifier] = []
     codingSystem: (
         Annotated[
             str,
@@ -51,7 +51,7 @@ class BaseVariable(BaseModel):
         ],
         Field(min_length=1),
     ]
-    usedIn: Annotated[list[ResourceID], Field(min_length=1)]
+    usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
     valueSet: list[
         Annotated[
             str,
@@ -69,14 +69,17 @@ class BaseVariable(BaseModel):
 class ExtractedVariable(BaseVariable, ExtractedData):
     """An automatically extracted metadata set describing a variable."""
 
-    entityType: Literal["ExtractedVariable"] = Field(
-        "ExtractedVariable", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedVariable"], Field(alias="$type", frozen=True)
+    ] = "ExtractedVariable"
+    identifier: Annotated[ExtractedVariableIdentifier, Field(frozen=True)]
+    stableTargetId: MergedVariableIdentifier
 
 
 class MergedVariable(BaseVariable, MergedItem):
     """The result of merging all extracted data and rules for a variable."""
 
-    entityType: Literal["MergedVariable"] = Field(
-        "MergedVariable", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedVariable"], Field(alias="$type", frozen=True)
+    ] = "MergedVariable"
+    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]

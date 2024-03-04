@@ -2,25 +2,28 @@ import json
 from datetime import timedelta, timezone
 from enum import Enum
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 
 import pytest
+from pydantic import AnyUrl, Field, SecretStr
 from pydantic import BaseModel as PydanticModel
-from pydantic import Field, SecretStr
 
 from mex.common.transform import (
     MExEncoder,
     dromedary_to_kebab,
     dromedary_to_snake,
+    ensure_prefix,
     kebab_to_camel,
     snake_to_dromedary,
+    to_key_and_values,
 )
 from mex.common.types import Identifier, Timestamp
+from mex.common.types.path import PathWrapper
 
 
 class DummyModel(PydanticModel):
-    string_field: str = Field("foo", alias="strField")
+    string_field: Annotated[str, Field("foo", alias="strField")]
     integer: int = 42
 
 
@@ -33,6 +36,10 @@ class DummyEnum(Enum):
     ("raw", "expected"),
     [
         (DummyModel(strField="bar"), '{"integer": 42, "string_field": "bar"}'),
+        (
+            AnyUrl("http://example:8000/path/?query=test"),
+            '"http://example:8000/path/?query=test"',
+        ),
         (SecretStr("str"), '"str"'),
         (DummyEnum.THAT, '"that"'),
         (UUID(int=4, version=4), '"00000000-0000-4000-8000-000000000004"'),
@@ -48,6 +55,7 @@ class DummyEnum(Enum):
         (PureWindowsPath(r"C:\\System\\Win32\\exe.dll"), '"C:/System/Win32/exe.dll"'),
         (PurePosixPath(r"/dev/sys/etc/launch.ctl"), '"/dev/sys/etc/launch.ctl"'),
         (Path("relative", "path"), '"relative/path"'),
+        (PathWrapper("relative/path"), '"relative/path"'),
     ],
 )
 def test_mex_json_encoder(raw: Any, expected: str) -> None:
@@ -144,4 +152,45 @@ def test_dromedary_to_kebab(string: str, expected: str) -> None:
 )
 def test_kebab_to_camel(string: str, expected: str) -> None:
     result = kebab_to_camel(string)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "prefix", "expected"),
+    [
+        ("", "", ""),
+        ("banana", "ba", "banana"),
+        ("bar", "foo", "foobar"),
+        (
+            -42,
+            UUID("{12345678-1234-5678-1234-567812345678}"),
+            "12345678-1234-5678-1234-567812345678-42",
+        ),
+    ],
+    ids=["empty", "already-prefixed", "prefix-added", "stringified"],
+)
+def test_ensure_prefix(string: Any, prefix: Any, expected: str) -> None:
+    result = ensure_prefix(string, prefix)
+
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("dct", "expected"),
+    [
+        ({}, {}),
+        (
+            {"single": 32, "nested": {"foo": 42}, "empty": None},
+            {"single": [32], "nested": [{"foo": 42}], "empty": []},
+        ),
+        (
+            {"one": [32], "three": [32, 42, 3.1], "empty": []},
+            {"one": [32], "three": [32, 42, 3.1], "empty": []},
+        ),
+    ],
+    ids=["empty", "singles", "lists"],
+)
+def test_to_key_and_values(dct: dict[str, Any], expected: dict[str, list[Any]]) -> None:
+    result = dict(to_key_and_values(dct))
+
     assert result == expected

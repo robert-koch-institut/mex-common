@@ -5,7 +5,7 @@ from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.settings import BaseSettings
-from mex.common.types import OrganizationalUnitID
+from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
 @watch
@@ -47,7 +47,7 @@ def _get_synonyms(
 
 def get_unit_merged_ids_by_synonyms(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, OrganizationalUnitID]:
+) -> dict[str, MergedOrganizationalUnitIdentifier]:
     """Return a mapping from unit alt_label and label to their merged IDs.
 
     There will be multiple entries per unit mapping to the same merged ID.
@@ -59,7 +59,7 @@ def get_unit_merged_ids_by_synonyms(
         Mapping from unit synonyms to stableTargetIds
     """
     return {
-        synonym: OrganizationalUnitID(extracted_unit.stableTargetId)
+        synonym: MergedOrganizationalUnitIdentifier(extracted_unit.stableTargetId)
         for extracted_unit in extracted_units
         for synonym in _get_synonyms(extracted_unit)
     }
@@ -67,7 +67,7 @@ def get_unit_merged_ids_by_synonyms(
 
 def get_unit_merged_ids_by_emails(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, OrganizationalUnitID]:
+) -> dict[str, MergedOrganizationalUnitIdentifier]:
     """Return a mapping from unit emails to their merged IDs.
 
     There may be multiple emails per unit mapping to the same merged ID.
@@ -79,7 +79,7 @@ def get_unit_merged_ids_by_emails(
         Mapping from lowercased `email` to stableTargetIds
     """
     return {
-        email.lower(): OrganizationalUnitID(extracted_unit.stableTargetId)
+        email.lower(): MergedOrganizationalUnitIdentifier(extracted_unit.stableTargetId)
         for extracted_unit in extracted_units
         for email in extracted_unit.email
     }

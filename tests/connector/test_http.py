@@ -138,5 +138,5 @@ def test_request_success(
         "https://www.example.com/things",
         None,
         timeout=DummyConnector.TIMEOUT,
-        **expected_kwargs
+        **expected_kwargs,
     )

@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Annotated, Optional, Union
 
 from pydantic import ConfigDict, Field, model_validator
 
@@ -51,15 +51,15 @@ class Claim(BaseModel):
 class Claims(BaseModel):
     """model class for Claims."""
 
-    website: list[Claim] = Field([], alias="P856")
-    isni_id: list[Claim] = Field([], alias="P213")
-    ror_id: list[Claim] = Field([], alias="P6782")
-    official_name: list[Claim] = Field([], alias="P1448")
-    short_name: list[Claim] = Field([], alias="P1813")
-    native_label: list[Claim] = Field([], alias="P1705")
-    gepris_id: list[Claim] = Field([], alias="P4871")
-    gnd_id: list[Claim] = Field([], alias="P227")
-    viaf_id: list[Claim] = Field([], alias="P214")
+    website: Annotated[list[Claim], Field(alias="P856")] = []
+    isni_id: Annotated[list[Claim], Field(alias="P213")] = []
+    ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
+    official_name: Annotated[list[Claim], Field(alias="P1448")] = []
+    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
+    native_label: Annotated[list[Claim], Field(alias="P1705")] = []
+    gepris_id: Annotated[list[Claim], Field(alias="P4871")] = []
+    gnd_id: Annotated[list[Claim], Field(alias="P227")] = []
+    viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
 
 
 class Label(BaseModel):
@@ -95,7 +95,7 @@ class WikidataOrganization(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    identifier: str = Field(alias="id")
+    identifier: Annotated[str, Field(alias="id")]
     labels: Labels
     claims: Claims
     aliases: Aliases

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Annotated, Any, Optional
 
 from pydantic import BaseModel, Field, create_model
 
@@ -18,7 +18,7 @@ class EntityFilter(BaseModel, extra="forbid"):
     fieldInPrimarySource: str
     locationInPrimarySource: Optional[str] = None
     examplesInPrimarySource: Optional[list[str]] = None
-    mappingRules: list[EntityFilterRule] = Field(..., min_length=1)
+    mappingRules: Annotated[list[EntityFilterRule], Field(min_length=1)]
     comment: Optional[str] = None
 
 
