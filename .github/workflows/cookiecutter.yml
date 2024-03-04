@@ -2,7 +2,8 @@ name: Cookiecutter
 
 on:
   push:
-  pull_request:
+    branches: ["main"]
+    tags: ["**"]
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
@@ -18,12 +19,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          token: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Cache requirements
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-requirements
         with:
@@ -33,12 +35,57 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
       - name: Install requirements
         run: make setup
 
-      - name: Check template
-        run: cruft check
+      - name: Configure git
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
+        run: |
+          eval "$(ssh-agent -s)"
+          install --directory ~/.ssh --mode 700
+          base64 -d <<< '${{ secrets.SIGNING_KEY }}' > ~/.ssh/mex
+          base64 -d <<< '${{ secrets.SIGNING_PUB }}' > ~/.ssh/mex.pub
+          chmod 600 ~/.ssh/*
+          ssh-add ~/.ssh/mex
+          git config --local user.email ${{ vars.MEX_BOT_EMAIL }}
+          git config --local user.name ${{ vars.MEX_BOT_USER }}
+          git config --local gpg.format ssh
+          git config --local user.signingkey ~/.ssh/mex.pub
+          git config --local commit.gpgsign true
+
+      - name: Update template
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if cruft check; then
+            echo template is up to date
+            exit 0
+          fi
+          if [[ $(gh pr list --label cruft | wc -c) -ne 0 ]]; then
+            echo already seeing pull request
+            exit 0
+          fi
+          template_url=$(python -c "print(__import__('json').load(open('.cruft.json'))['template'])")
+          template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
+          git checkout main
+          git checkout -b cruft/cookiecutter-template-${template_ref}
+          cruft update --skip-apply-ask
+          printf '# Changes\n\n- bumped cookiecutter template to %s/commit/%s\n' "$template_url" "$template_ref" > .cruft-pr-body
+          if [[ $(git status --porcelain | grep .rej | wc -c) -ne 0 ]]; then
+            printf '\n# Conflicts\n' > .cruft-pr-body
+          fi
+          git status --porcelain | grep .rej | awk '{print $2;}' | while read -r line ; do
+            printf '\n```' >> .cruft-pr-body
+            cat ${line} >> .cruft-pr-body
+            printf '```\n' >> .cruft-pr-body
+          done
+          git add --all --verbose
+          git commit --message "Bump cookiecutter template to $template_ref" --verbose
+          git push --set-upstream origin cruft/cookiecutter-template-${template_ref} --force --verbose
+          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${{ vars.MEX_BOT_USER }}

@@ -3,14 +3,22 @@ updates:
   - package-ecosystem: "github-actions"
     allow:
       - dependency-type: "all"
+    assignees:
+      - ${{secrets.MEX_BOT_USER}}
     directory: "/"
+    labels:
+      - "dependabot"
     open-pull-requests-limit: 1
     schedule:
-      interval: "monthly"
+      interval: "weekly"
   - package-ecosystem: "pip"
     allow:
       - dependency-type: "all"
+    assignees:
+      - ${{secrets.MEX_BOT_USER}}
     directory: "/"
+    labels:
+      - "dependabot"
     open-pull-requests-limit: 1
     schedule:
       interval: "daily"
