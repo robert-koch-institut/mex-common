@@ -17,5 +17,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
-            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login || vars.MEX_BOT_USER }}
+            pr_user="${{ github.event.pull_request.user.login }}"
+            if [[ $(gh api users/$(pr_user) --jq ".type") -q "BOT" ]]; then
+              pr_user="${{ vars.MEX_BOT_USER }}"
+            fi
+            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee $pr_user
           fi
