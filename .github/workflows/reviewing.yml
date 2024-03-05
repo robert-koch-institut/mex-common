@@ -1,10 +1,10 @@
 name: Reviewing
 
 on:
-  push:
   pull_request:
     types:
       - opened
+      - edited
       - reopened
 
 jobs:
