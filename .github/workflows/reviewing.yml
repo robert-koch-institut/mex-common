@@ -17,11 +17,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
-            if gh api "users/${{ github.event.pull_request.user.login }}" --silent; then
-              echo assigning to author ${{ github.event.pull_request.user.login }}
+            if [[ $(gh api "users/${{ github.event.pull_request.user.login }}" --jq ".type") -eq "User" ]]; then
+              echo assigning to ${{ github.event.pull_request.user.login }}
               gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login }}
             else
-              echo assigning to bot ${{ vars.MEX_BOT_USER }}
+              echo assigning to ${{ vars.MEX_BOT_USER }}
               gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ vars.MEX_BOT_USER }}
             fi
           else
