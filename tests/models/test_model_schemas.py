@@ -12,7 +12,7 @@ from mex.common.transform import dromedary_to_kebab
 from mex.common.types.identifier import MEX_ID_PATTERN
 from mex.common.types.timestamp import TIMESTAMP_REGEX
 
-SPECIFIED_SCHEMA_PATH = files("mex.model").joinpath("entities")
+MEX_MODEL_ENTITIES = files("mex.model.entities")
 
 GENERATED_SCHEMAS = dict(
     sorted(
@@ -28,8 +28,8 @@ SPECIFIED_SCHEMAS = dict(
     sorted(
         {
             schema["title"].replace(" ", ""): schema
-            for file_name in SPECIFIED_SCHEMA_PATH.glob("*.json")
-            if (schema := json.load(open(file_name, encoding="utf-8")))
+            for entity_file in MEX_MODEL_ENTITIES.iterdir()
+            if (schema := json.loads(entity_file.read_text("utf-8")))
             and not schema["title"].startswith("Concept")
         }.items()
     )

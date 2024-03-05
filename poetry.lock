@@ -591,17 +591,17 @@ traitlets = "*"
 [[package]]
 name = "mex-model"
 version = "2.2.0"
-description = "RKI MEx metadata model."
+description = "Conceptual and machine-readable versions of the MEx metadata model."
 optional = false
-python-versions = "*"
+python-versions = "^3.11"
 files = []
 develop = false
 
 [package.source]
 type = "git"
 url = "https://github.com/robert-koch-institut/mex-model.git"
-reference = "2.2.0"
-resolved_reference = "d8ef77aa5a5f3a696e5698969ffa0dae46d5b785"
+reference = "feature/mx-1504-vocabularies"
+resolved_reference = "7f3b98583a7172e066e57569ecfc83e483ce547c"
 
 [[package]]
 name = "mypy"
@@ -1571,4 +1571,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "253993b04dfe967bfa65974cf26b00e8fe9853ddc45c5790bb665242cc161080"
+content-hash = "1f7bb0e9539852ab1cd11904e897eac68fd6d11ae0b25a70f6b8fc0b431f7e47"
