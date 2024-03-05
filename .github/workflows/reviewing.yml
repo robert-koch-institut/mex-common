@@ -17,7 +17,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           user_name="${{ github.event.pull_request.user.login }}"
-          user_type=$(gh api "users/$(user_name)" --jq ".type")
+          user_type=$(gh api "users/${user_name}" --jq ".type")
           if [[ "$user_type" != "User" ]]; then
             user_name="${{ vars.MEX_BOT_USER }}"
           fi
