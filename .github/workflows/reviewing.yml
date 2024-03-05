@@ -24,5 +24,6 @@ jobs:
             echo using $user_name instead
           fi
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
+            echo gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee "${user_name}"
             gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee "${user_name}"
           fi
