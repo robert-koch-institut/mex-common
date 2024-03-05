@@ -19,7 +19,7 @@ jobs:
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
             pr_user="${{ github.event.pull_request.user.login }}"
             user_type=$(gh api users/$(pr_user) --jq ".type")
-            if [[ $user_type -q "BOT" ]]; then
+            if [[ $user_type -eq "BOT" ]]; then
               pr_user="${{ vars.MEX_BOT_USER }}"
             fi
             gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee $pr_user
