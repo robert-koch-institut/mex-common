@@ -10,17 +10,19 @@ jobs:
   assignee:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: >-
-      github.event.pull_request.user.login != ${{ vars.MEX_BOT_USER }} &&
-      github.event.pull_request.user.login != 'dependabot[bot]'
     steps:
       - name: Add assignee
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
-            echo assigning to ${{ github.event.pull_request.user.login }}
-            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login }}
+            if gh api "users/${{ github.event.pull_request.user.login }}"; then
+              echo assigning to author ${{ github.event.pull_request.user.login }}
+              gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login }}
+            else
+              echo assigning to bot ${{ vars.MEX_BOT_USER }}
+              gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ vars.MEX_BOT_USER }}
+            fi
           else
-            echo already assigned
+            echo already assigned to ${{ github.event.pull_request.assignee.login }}
           fi
