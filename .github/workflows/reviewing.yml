@@ -16,11 +16,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          user_name="${{ github.event.pull_request.user.login }}"
+          user_type=$(gh api "users/$(user_name)" --jq ".type")
+          if [[ "$user_type" != "User" ]]; then
+            user_name="${{ vars.MEX_BOT_USER }}"
+          fi
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
-            pr_user="${{ github.event.pull_request.user.login }}"
-            user_type=$(gh api "users/$(pr_user)" --jq ".type")
-            if [[ $user_type -eq "BOT" ]]; then
-              pr_user="${{ vars.MEX_BOT_USER }}"
-            fi
-            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee $pr_user
+            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee $user_name
           fi
