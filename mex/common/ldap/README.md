@@ -23,7 +23,7 @@ The module `ldap.transform` contains functions for transforming LDAP data into M
 models.
 
 The `mex_person.stableTargetId` attribute can be used in any entity that requires a
-`PersonID`.
+`MergedPersonIdentifier`.
 
 # Convenience Functions
 

@@ -6,21 +6,22 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
-    AccessPlatformID,
     AccessRestriction,
-    ActivityID,
     AnonymizationPseudonymization,
-    ContactPointID,
     DataProcessingState,
-    DistributionID,
+    ExtractedResourceIdentifier,
     Frequency,
     Language,
     License,
     Link,
-    OrganizationalUnitID,
-    OrganizationID,
-    PersonID,
-    ResourceID,
+    MergedAccessPlatformIdentifier,
+    MergedActivityIdentifier,
+    MergedContactPointIdentifier,
+    MergedDistributionIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
+    MergedResourceIdentifier,
     ResourceTypeGeneral,
     Text,
     Theme,
@@ -33,8 +34,7 @@ from mex.common.types import (
 class BaseResource(BaseModel):
     """A defined piece or collection of information."""
 
-    stableTargetId: ResourceID
-    accessPlatform: list[AccessPlatformID] = []
+    accessPlatform: list[MergedAccessPlatformIdentifier] = []
     accessRestriction: Annotated[
         AccessRestriction,
         Field(
@@ -55,19 +55,24 @@ class BaseResource(BaseModel):
         ]
     ] = []
     contact: Annotated[
-        list[OrganizationalUnitID | PersonID | ContactPointID], Field(min_length=1)
+        list[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier
+        ],
+        Field(min_length=1),
     ]
-    contributingUnit: list[OrganizationalUnitID] = []
-    contributor: list[PersonID] = []
+    contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
+    contributor: list[MergedPersonIdentifier] = []
     created: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
-    creator: list[PersonID] = []
+    creator: list[MergedPersonIdentifier] = []
     description: list[Text] = []
-    distribution: list[DistributionID] = []
+    distribution: list[MergedDistributionIdentifier] = []
     documentation: list[Link] = []
-    externalPartner: list[OrganizationID] = []
+    externalPartner: list[MergedOrganizationIdentifier] = []
     icd10code: list[str] = []
     instrumentToolOrApparatus: list[Text] = []
-    isPartOf: list[ResourceID] = []
+    isPartOf: list[MergedResourceIdentifier] = []
     keyword: list[Text] = []
     language: list[
         Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
@@ -90,7 +95,7 @@ class BaseResource(BaseModel):
     methodDescription: list[Text] = []
     modified: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
     publication: list[Link] = []
-    publisher: list[OrganizationID] = []
+    publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: list[Text] = []
     resourceTypeGeneral: list[
         Annotated[
@@ -134,21 +139,26 @@ class BaseResource(BaseModel):
         Field(min_length=1),
     ]
     title: Annotated[list[Text], Field(min_length=1)]
-    unitInCharge: Annotated[list[OrganizationalUnitID], Field(min_length=1)]
-    wasGeneratedBy: ActivityID | None = None
+    unitInCharge: Annotated[
+        list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
+    ]
+    wasGeneratedBy: MergedActivityIdentifier | None = None
 
 
 class ExtractedResource(BaseResource, ExtractedData):
     """An automatically extracted metadata set describing a resource."""
 
-    entityType: Literal["ExtractedResource"] = Field(
-        "ExtractedResource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedResource"], Field(alias="$type", frozen=True)
+    ] = "ExtractedResource"
+    identifier: Annotated[ExtractedResourceIdentifier, Field(frozen=True)]
+    stableTargetId: MergedResourceIdentifier
 
 
 class MergedResource(BaseResource, MergedItem):
     """The result of merging all extracted data and rules for a resource."""
 
-    entityType: Literal["MergedResource"] = Field(
-        "MergedResource", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedResource"], Field(alias="$type", frozen=True)
+    ] = "MergedResource"
+    identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]

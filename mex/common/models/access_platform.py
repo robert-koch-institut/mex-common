@@ -6,12 +6,13 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
-    AccessPlatformID,
     APIType,
-    ContactPointID,
+    ExtractedAccessPlatformIdentifier,
     Link,
-    OrganizationalUnitID,
-    PersonID,
+    MergedAccessPlatformIdentifier,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
     TechnicalAccessibility,
     Text,
 )
@@ -20,9 +21,12 @@ from mex.common.types import (
 class BaseAccessPlatform(BaseModel):
     """A way of physically accessing the Resource for re-use."""
 
-    stableTargetId: AccessPlatformID
     alternativeTitle: list[Text] = []
-    contact: list[OrganizationalUnitID | PersonID | ContactPointID] = []
+    contact: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier
+    ] = []
     description: list[Text] = []
     endpointDescription: Link | None = None
     endpointType: (
@@ -36,20 +40,23 @@ class BaseAccessPlatform(BaseModel):
         Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
     ]
     title: list[Text] = []
-    unitInCharge: list[OrganizationalUnitID] = []
+    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
 
 
 class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     """An automatically extracted metadata set describing an access platform."""
 
-    entityType: Literal["ExtractedAccessPlatform"] = Field(
-        "ExtractedAccessPlatform", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "ExtractedAccessPlatform"
+    identifier: Annotated[ExtractedAccessPlatformIdentifier, Field(frozen=True)]
+    stableTargetId: MergedAccessPlatformIdentifier
 
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     """The result of merging all extracted data and rules for an access platform."""
 
-    entityType: Literal["MergedAccessPlatform"] = Field(
-        "MergedAccessPlatform", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "MergedAccessPlatform"
+    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]

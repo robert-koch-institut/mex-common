@@ -21,6 +21,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.21.0] - 2024-03-04
+
+### Added
+
+- add `entityType` type hint to `MExModel` (now `BaseEntity`)
+- add types for `AnyBaseModel`, `AnyExtractedModel` and `AnyMergedModel`
+- create more specific subclasses of `Identifier` (for extracted and merged)
+- expose unions, lists and lookups for `Identifier` subclasses in `mex.common.types`
+
+### Changes
+
+- swap `contextvars.ContextVar` for `mex.common.context.ContextStore`
+- move `stableTargetId` property from base models to extracted models
+- update typing of identifiers to specific subclasses
+- use `Annotated[..., Field(...)]` notation for pydantic field configs
+- split up `mex.common.models.base` and move out `MExModel` and `JsonSchemaGenerator`
+- rename `MExModel` to `BaseEntity` with only type hints an model config
+- declare `hadPrimarySource`, `identifier` and `identifierInPrimarySource` as frozen
+
+### Removed
+
+- absorb unused `BaseExtractedData` into `ExtractedData`
+- remove `stableTargetId` property from merged models
+- drop support for sinks to accept merged items (now only for extracted data)
+
 ## [0.20.0] - 2024-02-22
 
 ### Changes

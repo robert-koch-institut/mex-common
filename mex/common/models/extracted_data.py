@@ -1,36 +1,57 @@
-from typing import Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import Field, model_validator, validate_call
 
-from mex.common.models.base import MExModel
-from mex.common.types import Identifier, PrimarySourceID
+from mex.common.models.entity import BaseEntity
+from mex.common.types import (
+    ExtractedPrimarySourceIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 
-MEX_PRIMARY_SOURCE_IDENTIFIER = Identifier("00000000000000")
+MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000000")
 MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
-MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = PrimarySourceID("00000000000000")
+MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
 
 
-class BaseExtractedData(MExModel):
-    """Base model class definition for all extracted data instances.
+class ExtractedData(BaseEntity):
+    """Base model for all extracted data classes.
 
     This class adds two important attributes for metadata provenance: `hadPrimarySource`
     and `identifierInPrimarySource`, which are used to uniquely identify an
     item in its original primary source. The attribute `stableTargetId` has to be set
     by each concrete subclass, like `ExtractedPerson`, because it needs to have the
-    correct type, e.g. `PersonID`.
+    correct type, e.g. `MergedPersonIdentifier`.
+
+    This class also adds a validator to automatically set identifiers for provenance.
+    See below, for a full description.
     """
 
+    if TYPE_CHECKING:  # pragma: no cover
+        # Sometimes multiple primary sources describe the same activity, resource, etc.
+        # and a complete metadata item can only be created by merging these fragments.
+        # The `stableTargetId` is part of all extracted models to allow MEx to identify
+        # which items describe the same thing and should be merged to create a complete
+        # metadata item. The name `stableTargetId` might be a bit misleading, because
+        # the "stability" is only guaranteed for one "real world" or "digital world"
+        # thing having the same ID in MEx over time. But it is not a guarantee, that the
+        # same metadata sources contribute to the complete metadata item. The naming has
+        # its historical reasons, but we plan to change it in the near future.
+        # Because we anticipate that items have to be merged, the `stableTargetId` is
+        # also used as the foreign key for all fields containing references.
+        stableTargetId: Any
+
     hadPrimarySource: Annotated[
-        PrimarySourceID,
+        MergedPrimarySourceIdentifier,
         Field(
             description=(
-                "The stableTargetID of the primary source, that this item was "
+                "The stableTargetId of the primary source, that this item was "
                 "extracted from. This field is mandatory for all extracted items to "
                 "aid with data provenance. Extracted primary sources also have this "
-                "field and are all extracted from a primary source called MEx, which "
-                "is its own primary source and has the static stableTargetID: "
-                f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+                "field and are all extracted from a static primary source for MEx. "
+                "The extracted primary source for MEx has its own merged item as a "
+                "primary source."
             ),
+            frozen=True,
         ),
     ]
     identifierInPrimarySource: Annotated[
@@ -41,40 +62,24 @@ class BaseExtractedData(MExModel):
                 "It is only unique amongst items coming from the same system, because "
                 "identifier formats are likely to overlap between systems. "
                 "The value for `identifierInPrimarySource` is therefore only unique in "
-                "composition with `hadPrimarySource`. MEx uses this composite key "
-                "to assign a stable and globally unique `identifier` to each item."
+                "composition with `hadPrimarySource`. MEx uses this composite key to "
+                "assign a stable and globally unique `identifier` per extracted item."
             ),
             examples=["123456", "item-501", "D7/x4/zz.final3"],
             min_length=1,
+            frozen=True,
         ),
     ]
-
-    def __str__(self) -> str:
-        """Format this extracted data instance as a string for logging."""
-        return (
-            f"{self.__class__.__name__}: "
-            f"{self.identifierInPrimarySource} "
-            f"{self.identifier} "
-            f"{self.stableTargetId}"
-        )
-
-
-class ExtractedData(BaseExtractedData):
-    """Base model class for extracted data items that ensures identities.
-
-    This base class does not add any attributes. It only adds the functionality
-    to automatically set identifiers for provenance. See below, for description.
-    """
 
     # TODO make stable_target_id and identifier computed fields (MX-1435)
     @model_validator(mode="before")
     @classmethod
     @validate_call
     def set_identifiers(cls, values: dict[str, Any]) -> dict[str, Any]:  # noqa: C901
-        """Ensure identifier and provenance attributes are set for this instance.
+        """Ensure identifiers and provenance attributes are set for this instance.
 
         All extracted data classes have four important identifiers that are defined
-        by `MExModel` and `BaseExtractedData`:
+        by `BaseEntity`, `ExtractedData` and the concrete classes themselves.
 
         - identifierInPrimarySource
         - hadPrimarySource
@@ -88,7 +93,7 @@ class ExtractedData(BaseExtractedData):
         because otherwise we cannot reliably determine the origin of this item.
         These two identifiers are the only two that need to be set during extraction.
 
-        Next we query the configured `IdentityProvider` to determine whether this item
+        Next, we query the configured `IdentityProvider` to determine whether this item
         already has an `identifier` and `stableTargetId`. If not, we let the identity
         provider generate new identifiers.
 
@@ -96,13 +101,13 @@ class ExtractedData(BaseExtractedData):
         with what we got from the identity provider, because we don't allow any system
         to change the association from `identifierInPrimarySource` and
         `hadPrimarySource` to the `identifier`.
-        A use case for passing a matching `identifier` to the constructor would be
+        A use-case for passing a matching `identifier` to the constructor would be
         parsing an already extracted item from an NDJSON file or an API endpoint.
 
         If a `stableTargetId` has been passed to the constructor, we use that as the
         new value, because changes to the stable target ID are generally allowed.
-        A use case for changing the `stableTargetId` will be the matching of
-        multiple extracted items (see `MExModel.stableTargetId` for details).
+        A use-case for changing the `stableTargetId` will be the matching of
+        multiple extracted items (see `BaseEntity.stableTargetId` for details).
 
         Args:
             values: Raw values to validate
@@ -136,14 +141,16 @@ class ExtractedData(BaseExtractedData):
         if had_primary_source := values.get("hadPrimarySource"):
             if isinstance(had_primary_source, list):
                 if len(had_primary_source) == 1:
-                    had_primary_source = PrimarySourceID(had_primary_source[0])
+                    had_primary_source = MergedPrimarySourceIdentifier(
+                        had_primary_source[0]
+                    )
                 else:
                     raise ValueError(
                         f"Expected one value for hadPrimarySource, "
                         f"got {len(had_primary_source)}"
                     )
             else:
-                had_primary_source = PrimarySourceID(had_primary_source)
+                had_primary_source = MergedPrimarySourceIdentifier(had_primary_source)
         else:
             raise ValueError("Missing value for `hadPrimarySource`.")
 

@@ -3,17 +3,18 @@ from uuid import UUID
 
 from pydantic import UUID4
 
-from mex.common.models import MExModel
+from mex.common.models import ExtractedData
 from mex.common.settings import BaseSettings
 from mex.common.sinks.ndjson import write_ndjson
-from mex.common.types import TemporalEntity
+from mex.common.types import Identifier, TemporalEntity
 
 
 class DummyEnum(Enum):
     NAME = "value"
 
 
-class Thing(MExModel):
+class Thing(ExtractedData):
+    identifier: Identifier
     str_attr: str
     enum_attr: DummyEnum | None = None
     uuid_attr: UUID4 | None = None

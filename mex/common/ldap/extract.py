@@ -4,17 +4,17 @@ from typing import Iterable
 from mex.common.identity import get_provider
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
-from mex.common.types import PersonID
+from mex.common.types import MergedPersonIdentifier
 
 
 def _get_merged_ids_by_attribute(
     attribute: str,
     persons: Iterable[LDAPPerson],
     primary_source: ExtractedPrimarySource,
-) -> dict[str, list[PersonID]]:
-    """Return a mapping from a dynamic Person attribute to corresponding PersonIDs.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Return mapping from dynamic Person attribute to corresponding merged person ids.
 
-    PersonIDs are looked up in the identity provider and will be omitted
+    MergedPersonIdentifiers are looked up in the identity provider and will be omitted
     for any person that has not yet been assigned an `Identity` there.
 
     Args:
@@ -23,7 +23,8 @@ def _get_merged_ids_by_attribute(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from a stringified `LDAPPerson[attribute]` to corresponding PersonIDs
+        Mapping from a stringified `LDAPPerson[attribute]` to corresponding
+        MergedPersonIdentifiers
     """
     if attribute not in LDAPPerson.model_fields:
         raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
@@ -35,17 +36,17 @@ def _get_merged_ids_by_attribute(
             identifier_in_primary_source=str(person.objectGUID),
         ):
             merged_ids_by_attribute[str(getattr(person, attribute))].append(
-                PersonID(identities[0].stableTargetId)
+                MergedPersonIdentifier(identities[0].stableTargetId)
             )
     return merged_ids_by_attribute
 
 
 def get_merged_ids_by_employee_ids(
     persons: Iterable[LDAPPerson], primary_source: ExtractedPrimarySource
-) -> dict[str, list[PersonID]]:
-    """Return a mapping from a person's employeeID to their PersonIDs.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Return a mapping from a person's employeeID to their merged person ids.
 
-    PersonIDs are looked up in the identity provider and will be omitted
+    MergedPersonIdentifiers are looked up in the identity provider and will be omitted
     for any person that has not yet been assigned an `Identity` there.
 
     Args:
@@ -53,17 +54,17 @@ def get_merged_ids_by_employee_ids(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPerson.employeeID` to corresponding PersonIDs
+        Mapping from `LDAPPerson.employeeID` to corresponding MergedPersonIdentifiers
     """
     return _get_merged_ids_by_attribute("employeeID", persons, primary_source)
 
 
 def get_merged_ids_by_email(
     persons: Iterable[LDAPPerson], primary_source: ExtractedPrimarySource
-) -> dict[str, list[PersonID]]:
-    """Return a mapping from a person's e-mail to their PersonIDs.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Return a mapping from a person's e-mail to their merged person ids.
 
-    PersonIDs are looked up in the identity provider and will be omitted
+    MergedPersonIdentifiers are looked up in the identity provider and will be omitted
     for any person that has not yet been assigned an `Identity` there.
 
     Args:
@@ -71,7 +72,7 @@ def get_merged_ids_by_email(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPerson.mail` to corresponding PersonIDs
+        Mapping from `LDAPPerson.mail` to corresponding MergedPersonIdentifiers
     """
     return _get_merged_ids_by_attribute("mail", persons, primary_source)
 
@@ -79,10 +80,10 @@ def get_merged_ids_by_email(
 def get_merged_ids_by_query_string(
     persons_with_query: Iterable[LDAPPersonWithQuery],
     primary_source: ExtractedPrimarySource,
-) -> dict[str, list[PersonID]]:
-    """Return a mapping from a person query string to their PersonIDs.
+) -> dict[str, list[MergedPersonIdentifier]]:
+    """Return a mapping from a person query string to their merged person ids.
 
-    PersonIDs are looked up in the identity provider and will be omitted
+    MergedPersonIdentifiers are looked up in the identity provider and will be omitted
     for any person that has not yet been assigned an `Identity` there.
 
     Args:
@@ -90,7 +91,8 @@ def get_merged_ids_by_query_string(
         primary_source: Primary source for LDAP
 
     Returns:
-        Mapping from `LDAPPersonWithQuery.query` to corresponding PersonIDs
+        Mapping from `LDAPPersonWithQuery.query` to corresponding
+        MergedPersonIdentifiers
     """
     merged_ids_by_attribute = defaultdict(list)
     provider = get_provider()
@@ -100,6 +102,6 @@ def get_merged_ids_by_query_string(
             identifier_in_primary_source=str(person_with_query.person.objectGUID),
         ):
             merged_ids_by_attribute[str(person_with_query.query)].append(
-                PersonID(identities[0].stableTargetId)
+                MergedPersonIdentifier(identities[0].stableTargetId)
             )
     return merged_ids_by_attribute

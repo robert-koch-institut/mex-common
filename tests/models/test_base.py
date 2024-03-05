@@ -1,10 +1,11 @@
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
 
 import pytest
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 
-from mex.common.models import BaseModel
+from mex.common.models import BaseModel, MergedItem
+from mex.common.types import Identifier
 
 
 class ComplexDummyModel(BaseModel):
@@ -82,18 +83,30 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
         Shelter(inhabitants="foo")  # type: ignore
 
 
-class DummyModel(BaseModel):
+class DummyBaseModel(BaseModel):
     foo: Optional[str] = None
 
 
-def test_checksum() -> None:
-    model_1 = DummyModel()
-    assert model_1.checksum() == "6a48475b6851bc444c39abec23f8520e"
+def test_base_model_checksum() -> None:
+    model_1 = DummyBaseModel()
+    assert model_1.checksum() == "69d67f58c6948849283e78d7b3f1a51e"
 
-    model_2 = DummyModel(foo="bar")
+    model_2 = DummyBaseModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
 
 
-def test_model_str() -> None:
-    model = DummyModel(foo="bar")
-    assert str(model) == "DummyModel: 68008f92758ef95dd4de3319183c3fef"
+def test_base_model_str() -> None:
+    model = DummyBaseModel(foo="bar")
+    assert str(model) == "DummyBaseModel: ab794a793aad8fa45b0f85ac05ee2126"
+
+
+def test_mex_model_str() -> None:
+    class MergedDummy(MergedItem):
+        entityType: Annotated[
+            Literal["MergedDummy"], Field(alias="$type", frozen=True)
+        ] = "MergedDummy"
+        identifier: Identifier
+
+    model = MergedDummy(identifier=Identifier.generate(seed=99))
+
+    assert str(model) == "MergedDummy: bFQoRhcVH5DHV1"

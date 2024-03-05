@@ -3,8 +3,6 @@ import pickle  # nosec
 from collections.abc import MutableMapping
 from functools import cache
 from typing import (
-    TYPE_CHECKING,
-    Annotated,
     Any,
     TypeVar,
     Union,
@@ -12,41 +10,20 @@ from typing import (
     get_origin,
 )
 
-from pydantic import (
-    BaseModel as PydanticBaseModel,
-)
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import (
     ConfigDict,
-    Field,
     TypeAdapter,
     ValidationError,
     model_validator,
 )
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode, JsonSchemaValue
-from pydantic.json_schema import (
-    GenerateJsonSchema as PydanticJsonSchemaGenerator,
-)
+from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
+from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
-from mex.common.types import Identifier
+from mex.common.models.schema import JsonSchemaGenerator
 
 RawModelDataT = TypeVar("RawModelDataT")
-
-
-class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
-    """Customization of the pydantic class for generating JSON schemas."""
-
-    def handle_ref_overrides(self, json_schema: JsonSchemaValue) -> JsonSchemaValue:
-        """Disable pydantic behavior to wrap top-level `$ref` keys in an `allOf`.
-
-        For example, pydantic would convert
-            {"$ref": "#/$defs/APIType", "examples": ["api-type-1"]}
-        into
-            {"allOf": {"$ref": "#/$defs/APIType"}, "examples": ["api-type-1"]}
-        which is in fact recommended by JSON schema, but we need to disable this
-        to stay compatible with mex-editor and mex-model.
-        """
-        return json_schema
 
 
 class BaseModel(PydanticBaseModel):
@@ -209,37 +186,3 @@ class BaseModel(PydanticBaseModel):
     def __str__(self) -> str:
         """Format this model as a string for logging."""
         return f"{self.__class__.__name__}: {self.checksum()}"
-
-
-class MExModel(BaseModel):
-    """Abstract base model for extracted data and merged item classes.
-
-    This class only defines an `identifier` and gives a type hint for `stableTargetId`.
-    """
-
-    model_config = ConfigDict(extra="forbid")
-
-    if TYPE_CHECKING:
-        # Sometimes multiple primary sources describe the same activity, resource, etc.
-        # and a complete metadata item can only be created by merging these fragments.
-        # The `stableTargetID` is part of all models in `mex.common.models` to allow
-        # MEx to identify which extracted items describe the same thing and should be
-        # merged to create a complete metadata item.
-        # The name might be a bit misleading (also due to historical reasons), but the
-        # "stability" is only guaranteed for one "real world" or "digital world" thing
-        # having the same ID in MEx over time. But not as a guarantee, that the same
-        # metadata sources contribute to the complete metadata item.
-        # Because we anticipate that items have to be merged, the `stableTargetID` is
-        # also used as the foreign key for all fields containing references.
-        stableTargetId: Any
-
-    identifier: Annotated[
-        Identifier,
-        Field(
-            description=(
-                "A globally unique identifier for this item. Regardless of the "
-                "entity-type or whether this item was extracted, merged, etc. "
-                "identifiers will be assigned just once."
-            ),
-        ),
-    ]

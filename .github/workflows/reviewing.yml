@@ -1,0 +1,27 @@
+name: Reviewing
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+
+jobs:
+  assignee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Add assignee
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          user_name="${{ github.event.pull_request.user.login }}"
+          user_type=$(gh api "users/${user_name}" --jq ".type")
+          echo $user_name is a $user_type
+          if [[ "$user_type" != "User" ]]; then
+            user_name="${{ vars.MEX_BOT_USER }}"
+            echo using $user_name instead
+          fi
+          if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
+            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee "${user_name}"
+          fi

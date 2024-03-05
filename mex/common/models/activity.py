@@ -6,13 +6,14 @@ from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.types import (
-    ActivityID,
     ActivityType,
-    ContactPointID,
+    ExtractedActivityIdentifier,
     Link,
-    OrganizationalUnitID,
-    OrganizationID,
-    PersonID,
+    MergedActivityIdentifier,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPersonIdentifier,
     Text,
     Theme,
     YearMonth,
@@ -26,7 +27,6 @@ class BaseActivity(BaseModel):
     This may be a project, an area of work or an administrative procedure.
     """
 
-    stableTargetId: ActivityID
     abstract: list[Text] = []
     activityType: list[
         Annotated[
@@ -35,21 +35,28 @@ class BaseActivity(BaseModel):
     ] = []
     alternativeTitle: list[Text] = []
     contact: Annotated[
-        list[OrganizationalUnitID | PersonID | ContactPointID,], Field(min_length=1)
+        list[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+        ],
+        Field(min_length=1),
     ]
     documentation: list[Link] = []
     end: list[YearMonthDay | YearMonth] = []
-    externalAssociate: list[OrganizationID | PersonID] = []
-    funderOrCommissioner: list[OrganizationID] = []
+    externalAssociate: list[MergedOrganizationIdentifier | MergedPersonIdentifier] = []
+    funderOrCommissioner: list[MergedOrganizationIdentifier] = []
     fundingProgram: list[str] = []
-    involvedPerson: list[PersonID] = []
-    involvedUnit: list[OrganizationalUnitID] = []
-    isPartOfActivity: list[ActivityID] = []
+    involvedPerson: list[MergedPersonIdentifier] = []
+    involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
+    isPartOfActivity: list[MergedActivityIdentifier] = []
     publication: list[Link] = []
-    responsibleUnit: Annotated[list[OrganizationalUnitID], Field(min_length=1)]
+    responsibleUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
+    ]
     shortName: list[Text] = []
     start: list[YearMonthDay | YearMonth] = []
-    succeeds: list[ActivityID] = []
+    succeeds: list[MergedActivityIdentifier] = []
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
     ] = []
@@ -60,14 +67,17 @@ class BaseActivity(BaseModel):
 class ExtractedActivity(BaseActivity, ExtractedData):
     """An automatically extracted metadata set describing an activity."""
 
-    entityType: Literal["ExtractedActivity"] = Field(
-        "ExtractedActivity", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedActivity"], Field(alias="$type", frozen=True)
+    ] = "ExtractedActivity"
+    identifier: Annotated[ExtractedActivityIdentifier, Field(frozen=True)]
+    stableTargetId: MergedActivityIdentifier
 
 
 class MergedActivity(BaseActivity, MergedItem):
     """The result of merging all extracted data and rules for an activity."""
 
-    entityType: Literal["MergedActivity"] = Field(
-        "MergedActivity", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedActivity"], Field(alias="$type", frozen=True)
+    ] = "MergedActivity"
+    identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]

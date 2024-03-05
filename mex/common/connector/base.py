@@ -1,14 +1,12 @@
 from abc import ABCMeta, abstractmethod
 from contextlib import ExitStack
-from contextvars import ContextVar
 from types import TracebackType
 from typing import Optional, TypeVar, cast, final
 
+from mex.common.context import ContextStore
+
 ConnectorType = TypeVar("ConnectorType", bound="BaseConnector")
-ConnectorContextType = dict[type["BaseConnector"], "BaseConnector"]
-ConnectorContext = ContextVar(
-    "ConnectorContext", default=cast(ConnectorContextType, {})
-)
+ConnectorContext = ContextStore[dict[type["BaseConnector"], "BaseConnector"]]({})
 
 
 def reset_connector_context() -> None:

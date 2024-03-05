@@ -5,7 +5,11 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.types import OrganizationID, Text
+from mex.common.types import (
+    ExtractedOrganizationIdentifier,
+    MergedOrganizationIdentifier,
+    Text,
+)
 
 
 class BaseOrganization(BaseModel):
@@ -14,7 +18,6 @@ class BaseOrganization(BaseModel):
     This can be any community or other social, commercial or political structure.
     """
 
-    stableTargetId: OrganizationID
     alternativeName: list[Text] = []
     geprisId: list[
         Annotated[
@@ -83,14 +86,17 @@ class BaseOrganization(BaseModel):
 class ExtractedOrganization(BaseOrganization, ExtractedData):
     """An automatically extracted metadata set describing an organization."""
 
-    entityType: Literal["ExtractedOrganization"] = Field(
-        "ExtractedOrganization", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["ExtractedOrganization"], Field(alias="$type", frozen=True)
+    ] = "ExtractedOrganization"
+    identifier: Annotated[ExtractedOrganizationIdentifier, Field(frozen=True)]
+    stableTargetId: MergedOrganizationIdentifier
 
 
 class MergedOrganization(BaseOrganization, MergedItem):
     """The result of merging all extracted data and rules for an organization."""
 
-    entityType: Literal["MergedOrganization"] = Field(
-        "MergedOrganization", alias="$type", frozen=True
-    )
+    entityType: Annotated[
+        Literal["MergedOrganization"], Field(alias="$type", frozen=True)
+    ] = "MergedOrganization"
+    identifier: Annotated[MergedOrganizationIdentifier, Field(frozen=True)]

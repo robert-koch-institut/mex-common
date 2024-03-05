@@ -1,11 +1,11 @@
 from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.testing import Joker
-from mex.common.types import PrimarySourceID
+from mex.common.types import MergedPrimarySourceIdentifier
 
 
 def test_assign() -> None:
     provider = MemoryIdentityProvider.get()
-    had_primary_source = PrimarySourceID("00000000000000")
+    had_primary_source = MergedPrimarySourceIdentifier("00000000000000")
     identifier_in_primary_source = "thing-1"
 
     new_identity = provider.assign(had_primary_source, identifier_in_primary_source)
@@ -29,7 +29,7 @@ def test_assign() -> None:
 
 def test_fetch_empty() -> None:
     provider = MemoryIdentityProvider.get()
-    had_primary_source = PrimarySourceID("00000000000000")
+    had_primary_source = MergedPrimarySourceIdentifier("00000000000000")
     identifier_in_primary_source = "thing-1"
 
     # fetch something that the provider does not know
@@ -43,7 +43,7 @@ def test_fetch_empty() -> None:
 
 def test_fetch_found() -> None:
     provider = MemoryIdentityProvider.get()
-    had_primary_source = PrimarySourceID("00000000000000")
+    had_primary_source = MergedPrimarySourceIdentifier("00000000000000")
     identifier_in_primary_source = "thing-1"
 
     # assign this identity first
