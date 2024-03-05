@@ -17,6 +17,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${{ github.event.pull_request.assignee.login }}" ]]; then
-            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login }} ||
-            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ vars.MEX_BOT_USER }}
+            gh pr edit ${{ github.event.pull_request.html_url }} --add-assignee ${{ github.event.pull_request.user.login || vars.MEX_BOT_USER }}
           fi
