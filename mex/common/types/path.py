@@ -1,6 +1,6 @@
 from os import PathLike
 from pathlib import Path
-from typing import Any, Type, TypeVar, Union
+from typing import Any, TypeVar, Union
 
 from pydantic_core import core_schema
 
@@ -51,7 +51,7 @@ class PathWrapper(PathLike[str]):
         return not self._path.is_absolute()
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, _source: Type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(cls, _source: type[Any]) -> core_schema.CoreSchema:
         """Set schema to str schema."""
         from_str_schema = core_schema.chain_schema(
             [
@@ -75,7 +75,7 @@ class PathWrapper(PathLike[str]):
     @classmethod
     def validate(cls: type[PathWrapperT], value: Any) -> PathWrapperT:
         """Convert a string value to a Text instance."""
-        if isinstance(value, (str, Path, PathWrapper)):
+        if isinstance(value, str | Path | PathWrapper):
             return cls(value)
         raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 

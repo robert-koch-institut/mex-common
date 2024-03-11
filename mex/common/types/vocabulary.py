@@ -4,7 +4,7 @@ from enum import Enum, EnumMeta
 from functools import cache
 from importlib.resources import files
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Optional, Union
+from typing import TYPE_CHECKING, ClassVar, Optional
 
 from pydantic import AnyUrl, BaseModel
 
@@ -31,8 +31,8 @@ class Concept(BaseModel):
     identifier: AnyUrl
     inScheme: AnyUrl
     prefLabel: BilingualText
-    altLabel: Optional[BilingualText] = None
-    definition: Optional[BilingualText] = None
+    altLabel: BilingualText | None = None
+    definition: BilingualText | None = None
 
 
 @cache
@@ -78,7 +78,7 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
         return f'{self.__class__.__name__}["{self.name}"]'
 
     @classmethod
-    def find(cls, search_term: Union[str, "Text"]) -> Optional["VocabularyEnum"]:
+    def find(cls, search_term: str | Text) -> Optional["VocabularyEnum"]:
         """Get the enum instance that matches a label of the underlying concepts.
 
         The given `search_term` can be string or a Text with an optional language

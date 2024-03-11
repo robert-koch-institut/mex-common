@@ -1,9 +1,10 @@
 import re
+from collections.abc import Container, Iterable, Iterator
 from functools import cache
 from itertools import zip_longest
 from random import random
 from time import sleep
-from typing import Container, Iterable, Iterator, Optional, TypeVar
+from typing import TypeVar
 
 T = TypeVar("T")
 
@@ -16,9 +17,7 @@ def contains_any(base: Container[T], tokens: Iterable[T]) -> bool:
     return False
 
 
-def any_contains_any(
-    bases: Iterable[Optional[Container[T]]], tokens: Iterable[T]
-) -> bool:
+def any_contains_any(bases: Iterable[Container[T] | None], tokens: Iterable[T]) -> bool:
     """Check if any of the given bases contains any of the given tokens."""
     for base in bases:
         if base is None:
@@ -35,7 +34,7 @@ def normalize(string: str) -> str:
     return " ".join(re.sub(r"[^a-z0-9]", " ", string.lower()).split())
 
 
-def grouper(chunk_size: int, iterable: Iterable[T]) -> Iterator[Iterable[Optional[T]]]:
+def grouper(chunk_size: int, iterable: Iterable[T]) -> Iterator[Iterable[T | None]]:
     """Collect data into fixed-length chunks or blocks."""
     # https://docs.python.org/3.9/library/itertools.html#itertools-recipes
     args = [iter(iterable)] * chunk_size

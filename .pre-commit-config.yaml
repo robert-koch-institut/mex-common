@@ -26,16 +26,11 @@ repos:
         name: whitespaces
       - id: fix-byte-order-marker
         name: byte-order
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.8.2
-    hooks:
-      - id: poetry-check
-        name: poetry
   - repo: local
     hooks:
     - id: mypy
       name: mypy
-      entry: poetry run dmypy run --timeout 7200 -- mex
+      entry: pdm run dmypy run --timeout 7200 -- mex
       files: ^mex/
       language: system
       pass_filenames: false
