@@ -24,6 +24,13 @@ def test_get_field_names_allowing_none() -> None:
     ]
 
 
+def test_get_list_field_names() -> None:
+    assert ComplexDummyModel._get_list_field_names() == [
+        "optional_list",
+        "required_list",
+    ]
+
+
 class Animal(Enum):
     """Dummy enum to use in tests."""
 

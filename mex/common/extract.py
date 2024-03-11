@@ -1,7 +1,7 @@
 from collections import defaultdict
 from collections.abc import Generator
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import numpy as np
 import pandas as pd
@@ -22,11 +22,11 @@ PANDAS_DTYPE_MAP = defaultdict(
 )
 
 
-def get_dtypes_for_model(model: type[BaseModel]) -> dict[str, Dtype]:
+def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
     """Get the basic dtypes per field for a model from the `PANDAS_DTYPE_MAP`.
 
     Args:
-        model: Model class for which to get pandas dtypes per field alias
+        model: Model class for which to get pandas data types per field alias
 
     Returns:
         Mapping from field alias to dtype strings
@@ -38,7 +38,7 @@ def get_dtypes_for_model(model: type[BaseModel]) -> dict[str, Dtype]:
 
 
 def parse_csv(
-    path_or_buffer: str | Path | ReadCsvBuffer[Any],
+    path_or_buffer: Union[str, Path, "ReadCsvBuffer[Any]"],
     into: type[ModelT],
     chunksize: int = 10,
     **kwargs: Any,

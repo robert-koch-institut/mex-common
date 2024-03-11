@@ -45,7 +45,7 @@ jobs:
           cache-name: cache-environment
         with:
           path: ~/.cache/pip
-          key: ${{ env.cache-name }}-${{ hashFiles('pdm.lock') }}
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
           restore-keys: |
             ${{ env.cache-name }}-
 

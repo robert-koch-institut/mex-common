@@ -1,10 +1,18 @@
 import re
-from collections.abc import Container, Iterable, Iterator
+from collections.abc import Container, Generator, Iterable, Iterator
 from functools import cache
 from itertools import zip_longest
 from random import random
 from time import sleep
-from typing import TypeVar
+from types import UnionType
+from typing import (
+    Annotated,
+    Any,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
 T = TypeVar("T")
 
@@ -26,6 +34,24 @@ def any_contains_any(bases: Iterable[Container[T] | None], tokens: Iterable[T]) 
             if token in base:
                 return True
     return False
+
+
+def get_inner_types(
+    annotation: Any, unpack: Iterable[Any] = (Union, UnionType, list)
+) -> Generator[type, None, None]:
+    """Yield all inner types from annotations and the types in `unpack`."""
+    origin = get_origin(annotation)
+    if origin == Annotated:
+        yield from get_inner_types(get_args(annotation)[0], unpack)
+    elif origin in unpack:
+        for arg in get_args(annotation):
+            yield from get_inner_types(arg, unpack)
+    elif origin is not None:
+        yield origin
+    elif annotation is None:
+        yield type(None)
+    else:
+        yield annotation
 
 
 @cache
