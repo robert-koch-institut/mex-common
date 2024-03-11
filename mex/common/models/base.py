@@ -83,7 +83,10 @@ class BaseModel(PydanticBaseModel):
             field_types = get_inner_types(
                 field_info.annotation, unpack=(Union, UnionType)
             )
-            if any(issubclass(field_type, list) for field_type in field_types):
+            if any(
+                isinstance(field_type, type) and issubclass(field_type, list)
+                for field_type in field_types
+            ):
                 field_names.append(field_name)
         return field_names
 
