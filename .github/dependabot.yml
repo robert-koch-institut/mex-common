@@ -3,11 +3,6 @@ updates:
   - package-ecosystem: "github-actions"
     allow:
       - dependency-type: "all"
-<<<<<<< ours
-    assignees:
-      - "dependabot[bot]"
-=======
->>>>>>> theirs
     directory: "/"
     labels:
       - "dependabot"
@@ -17,11 +12,6 @@ updates:
   - package-ecosystem: "pip"
     allow:
       - dependency-type: "all"
-<<<<<<< ours
-    assignees:
-      - "dependabot[bot]"
-=======
->>>>>>> theirs
     directory: "/"
     labels:
       - "dependabot"
