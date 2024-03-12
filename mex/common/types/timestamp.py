@@ -3,7 +3,7 @@ from datetime import date, datetime, tzinfo
 from enum import Enum
 from functools import total_ordering
 from itertools import zip_longest
-from typing import Any, Literal, Union, cast, overload
+from typing import Any, Literal, Optional, Type, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
@@ -77,13 +77,13 @@ class Timestamp:
     def __init__(
         self,
         *args: int,
-        tzinfo: tzinfo | None = None,
+        tzinfo: Optional[tzinfo] = None,
     ) -> None: ...  # pragma: no cover
 
     def __init__(
         self,
         *args: Union[int, str, date, datetime, "Timestamp"],
-        tzinfo: tzinfo | None = None,
+        tzinfo: Optional[tzinfo] = None,
     ) -> None:
         """Create a new timestamp instance.
 
@@ -107,7 +107,7 @@ class Timestamp:
         if len(args) > 7:
             raise TypeError(f"Timestamp takes at most 7 arguments ({len(args)} given)")
 
-        if len(args) == 1 and isinstance(args[0], str | date | datetime | Timestamp):
+        if len(args) == 1 and isinstance(args[0], (str, date, datetime, Timestamp)):
             if tzinfo:
                 raise TypeError("Timestamp does not accept tzinfo in parsing mode")
             if isinstance(args[0], Timestamp):
@@ -135,7 +135,7 @@ class Timestamp:
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, _source: type[Any], _handler: GetCoreSchemaHandler
+        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Mutate the field schema for timestamps."""
         from_str_schema = core_schema.chain_schema(
@@ -176,13 +176,13 @@ class Timestamp:
     @classmethod
     def validate(cls, value: Any) -> "Timestamp":
         """Parse any value and try to convert it into a timestamp."""
-        if isinstance(value, cls | date | str):
+        if isinstance(value, (cls, date, str)):
             return cls(value)
         raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @staticmethod
     def _parse_args(
-        *args: int, tzinfo: tzinfo | None = None
+        *args: int, tzinfo: Optional[tzinfo] = None
     ) -> tuple[datetime, TimestampPrecision]:
         """Parse 0-7 integer arguments into a timestamp and deduct the precision."""
         if tzinfo is None:

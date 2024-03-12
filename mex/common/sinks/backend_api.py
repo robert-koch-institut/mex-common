@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from typing import Generator, Iterable
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import watch

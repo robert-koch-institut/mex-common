@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional, TypeVar, Union
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
@@ -142,7 +142,7 @@ class BaseSettings(PydanticBaseSettings):
         description="Backend API key with write access to call POST/PUT endpoints",
         validation_alias="MEX_BACKEND_API_KEY",
     )
-    verify_session: bool | AssetsPath = Field(
+    verify_session: Union[bool, AssetsPath] = Field(
         True,
         description=(
             "Either a boolean that controls whether we verify the server's TLS "

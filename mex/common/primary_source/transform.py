@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from typing import Generator, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import (
@@ -32,7 +32,7 @@ def transform_seed_primary_sources_to_extracted_primary_sources(
             identifierInPrimarySource=primary_source.identifier,
             title=primary_source.title,
             hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-            **set_stable_target_id,
+            **set_stable_target_id
         )
 
 

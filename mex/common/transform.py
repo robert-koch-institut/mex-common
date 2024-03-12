@@ -1,10 +1,9 @@
 import json
 import re
-from collections.abc import Iterable
 from enum import Enum
 from functools import cache
 from pathlib import PurePath
-from typing import Any, cast
+from typing import Any, Iterable, cast
 from uuid import UUID
 
 from pydantic import AnyUrl, SecretStr

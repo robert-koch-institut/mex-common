@@ -1,10 +1,9 @@
 import json
 import re
-from collections.abc import Callable
 from copy import deepcopy
 from importlib.resources import files
 from itertools import zip_longest
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 

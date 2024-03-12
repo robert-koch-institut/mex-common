@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional
 
 from pydantic import BaseModel, Field, create_model
 
@@ -8,18 +8,18 @@ from mex.common.models import EXTRACTED_MODEL_CLASSES
 class EntityFilterRule(BaseModel, extra="forbid"):
     """Entity filter rule model."""
 
-    forValues: list[str] | None = None
-    rule: str | None = None
+    forValues: Optional[list[str]] = None
+    rule: Optional[str] = None
 
 
 class EntityFilter(BaseModel, extra="forbid"):
     """Entity filter model."""
 
     fieldInPrimarySource: str
-    locationInPrimarySource: str | None = None
-    examplesInPrimarySource: list[str] | None = None
+    locationInPrimarySource: Optional[str] = None
+    examplesInPrimarySource: Optional[list[str]] = None
     mappingRules: Annotated[list[EntityFilterRule], Field(min_length=1)]
-    comment: str | None = None
+    comment: Optional[str] = None
 
 
 def generate_entity_filter_schema(

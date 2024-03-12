@@ -1,7 +1,6 @@
 from collections import defaultdict
-from collections.abc import Generator
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generator, TypeVar, Union
 
 import numpy as np
 import pandas as pd
@@ -26,7 +25,7 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
     """Get the basic dtypes per field for a model from the `PANDAS_DTYPE_MAP`.
 
     Args:
-        model: Model class for which to get pandas data types per field alias
+        model: Model class for which to get pandas dtypes per field alias
 
     Returns:
         Mapping from field alias to dtype strings

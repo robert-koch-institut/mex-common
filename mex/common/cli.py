@@ -2,11 +2,10 @@ import json
 import pdb  # noqa: T100
 import sys
 from bdb import BdbQuit
-from collections.abc import Callable
 from functools import partial
 from textwrap import dedent
 from traceback import format_exc
-from typing import Any
+from typing import Any, Callable
 
 import click
 from click import Command, Option
@@ -47,7 +46,7 @@ def _field_to_parameters(name: str, field: FieldInfo) -> list[str]:
     names = [name] + ([field.alias] if field.alias else [])
     names = [n.replace("_", "-") for n in names]
     dashes = ["--" if len(n) > 1 else "-" for n in names]
-    return [f"{d}{n}" for d, n in zip(dashes, names, strict=False)]
+    return [f"{d}{n}" for d, n in zip(dashes, names)]
 
 
 def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:

@@ -1,7 +1,6 @@
 import json
 import time
-from collections.abc import Iterable
-from typing import Any
+from typing import Any, Iterable
 
 import pytest
 

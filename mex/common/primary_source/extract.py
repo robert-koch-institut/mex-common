@@ -1,5 +1,5 @@
 import json
-from collections.abc import Generator
+from typing import Generator
 
 from mex.common.logging import watch
 from mex.common.primary_source.models import SeedPrimarySource
