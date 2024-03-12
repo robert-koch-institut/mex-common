@@ -52,7 +52,7 @@ def generate_mapping_schema_for_mex_class(
             f"{field_name.capitalize()}MappingRule",
             __base__=(GenericRule,),
             setValues=(
-                Optional[rule_type],  # noqa: UP007
+                Optional[rule_type],
                 None,
             ),
         )
