@@ -20,9 +20,9 @@ if "%CI%"=="" (
     if %errorlevel% neq 0 exit /b %errorlevel%
 )
 
-@REM install packages from lock file in local virtual environment
+@REM run the poetry installation with embedded virtual environment
 echo installing package
-pdm sync --clean --group dev
+poetry install --no-interaction --sync
 exit /b %errorlevel%
 
 
@@ -34,14 +34,14 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 @REM run pytest unit and integration tests distributed across available cores
 echo running all tests
-pdm run pytest --numprocesses=auto --dist=worksteal
+poetry run pytest --numprocesses=auto --dist=worksteal
 exit /b %errorlevel%
 
 
 :docs
 @REM use sphinx to auto-generate html docs from code
 echo generating api docs
-pdm run sphinx-apidoc -f -o docs\source mex
+poetry run sphinx-apidoc -f -o docs\source mex
 if %errorlevel% neq 0 exit /b %errorlevel%
-pdm run sphinx-build -aE -b dirhtml docs docs\dist
+poetry run sphinx-build -aE -b dirhtml docs docs\dist
 exit /b %errorlevel%

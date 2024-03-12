@@ -54,12 +54,13 @@ components of the MEx project are open-sourced under the same license as well.
 - on unix, consider using pyenv https://github.com/pyenv/pyenv
   - get pyenv `curl https://pyenv.run | bash`
   - install 3.11 `pyenv install 3.11`
-  - switch version `pyenv global 3.11`
+  - create env `pyenv virtualenv 3.11 mex`
+  - go to repo root
+  - use env `pyenv local mex`
   - run `make install`
-- on windows, consider using pyenv-win https://pyenv-win.github.io/pyenv-win/
-  - follow https://pyenv-win.github.io/pyenv-win/#quick-start
-  - install 3.11 `pyenv install 3.11`
-  - switch version `pyenv global 3.11`
+- on windows, see https://python-poetry.org/docs/managing-environments
+  - install `python3.11` in your preferred way
+  - go to repo root
   - run `.\mex.bat install`
 
 ### linting and testing
@@ -68,20 +69,21 @@ components of the MEx project are open-sourced under the same license as well.
 - on windows run `.\mex.bat test`
 - or run manually
   - linter checks via `pre-commit run --all-files`
-  - all tests via `pdm run pytest`
-  - just unit tests via `pdm run pytest -m "not integration"`
+  - all tests via `poetry run pytest`
+  - just unit tests via `poetry run pytest -m "not integration"`
 
 ### updating dependencies
 
 - update boilerplate files with `cruft update`
-- update global requirements in `requirements.txt` manually
+- update global dependencies in `requirements.txt` manually
 - update git hooks with `pre-commit autoupdate`
-- update package dependencies using `pdm autoupdate`
-- update github actions in `.github/workflows/*.yml` manually
+- show outdated dependencies with `poetry show --outdated`
+- update dependencies in poetry using `poetry update --lock`
+- update github actions manually in `.github/workflows/*.yml`
 
 ### creating release
 
-- update version in `pyproject.toml` and `CHANGELOG.md`
-- commit update `git commit --message "..."`
+- update version, eg `poetry version minor`
+- commit update `git commit --message "..." pyproject.toml`
 - create a tag `git tag ...`
 - push `git push --follow-tags`

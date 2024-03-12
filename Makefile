@@ -14,9 +14,9 @@ hooks:
 	fi; \
 
 install: setup hooks
-	# install packages from lock file in local virtual environment
+	# run the poetry installation with embedded virtual environment
 	@ echo installing package; \
-	pdm sync --clean --group dev; \
+	poetry install --no-interaction --sync; \
 
 linter:
 	# run the linter hooks from pre-commit on all files
@@ -26,15 +26,15 @@ linter:
 pytest:
 	# run the pytest test suite with all unit tests
 	@ echo running unit tests; \
-	pdm run pytest -m "not integration"; \
+	poetry run pytest -m "not integration"; \
 
 wheel:
 	# build the python package
 	@ echo building wheel; \
-	pdm build --no-sdist; \
+	poetry build --no-interaction --format wheel; \
 
 docs:
 	# use sphinx to auto-generate html docs from code
 	@ echo generating api docs; \
-	pdm run sphinx-apidoc -f -o docs/source mex; \
-	pdm run sphinx-build -aE -b dirhtml docs docs/dist; \
+	poetry run sphinx-apidoc -f -o docs/source mex; \
+	poetry run sphinx-build -aE -b dirhtml docs docs/dist; \
