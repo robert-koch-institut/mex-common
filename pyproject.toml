@@ -1,11 +1,21 @@
 [project]
 name = "mex-common"
 version = "0.21.0"
-authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 description = "Common library for MEx python projects."
-license = { file = "LICENSE" }
+authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
 requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Pydantic :: 2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries",
+    "Typing :: Typed",
+]
 dependencies = [
     "backoff>=2.2.1",
     "click>=8.1.7",
@@ -18,9 +28,7 @@ dependencies = [
     "pydantic-settings>=2.2.1",
     "requests>=2.31.0",
 ]
-
-[project.optional-dependencies]
-dev = [
+optional-dependencies.dev = [
     "black>=24.2.0",
     "ipdb>=0.13.13",
     "mex-model@git+https://github.com/robert-koch-institut/mex-model.git@2.2.0",
