@@ -4,7 +4,7 @@ updates:
     allow:
       - dependency-type: "all"
     assignees:
-      - dependabot[bot]
+      - "dependabot[bot]"
     directory: "/"
     labels:
       - "dependabot"
@@ -15,7 +15,7 @@ updates:
     allow:
       - dependency-type: "all"
     assignees:
-      - dependabot[bot]
+      - "dependabot[bot]"
     directory: "/"
     labels:
       - "dependabot"
