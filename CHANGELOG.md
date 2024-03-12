@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update cruft and minor dependencies
+- prepare switch from poetry to pdm
 
 ### Removed
 
