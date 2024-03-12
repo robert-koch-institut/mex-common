@@ -74,15 +74,15 @@ components of the MEx project are open-sourced under the same license as well.
 ### updating dependencies
 
 - update boilerplate files with `cruft update`
-- update global dependencies in `requirements.txt` manually
+- update global requirements in `requirements.txt` manually
 - update git hooks with `pre-commit autoupdate`
 - show outdated dependencies with `poetry show --outdated`
 - update dependencies in poetry using `poetry update --lock`
-- update github actions manually in `.github/workflows/*.yml`
+- update github actions in `.github/workflows/*.yml` manually
 
 ### creating release
 
-- update version, eg `poetry version minor`
-- commit update `git commit --message "..." pyproject.toml`
+- update version in `pyproject.toml` and `CHANGELOG.md`
+- commit update `git commit --message "..."`
 - create a tag `git tag ...`
 - push `git push --follow-tags`
