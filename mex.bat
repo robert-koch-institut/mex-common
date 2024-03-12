@@ -20,7 +20,7 @@ if "%CI%"=="" (
     if %errorlevel% neq 0 exit /b %errorlevel%
 )
 
-@REM install packages from lock file in local virtual environment
+@REM run the poetry installation with embedded virtual environment
 echo installing package
 pdm sync --clean --group dev
 exit /b %errorlevel%

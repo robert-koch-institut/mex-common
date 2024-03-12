@@ -14,7 +14,7 @@ hooks:
 	fi; \
 
 install: setup hooks
-	# install packages from lock file in local virtual environment
+	# run the poetry installation with embedded virtual environment
 	@ echo installing package; \
 	pdm sync --clean --group dev; \
 
