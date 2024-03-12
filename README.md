@@ -54,13 +54,12 @@ components of the MEx project are open-sourced under the same license as well.
 - on unix, consider using pyenv https://github.com/pyenv/pyenv
   - get pyenv `curl https://pyenv.run | bash`
   - install 3.11 `pyenv install 3.11`
-  - create env `pyenv virtualenv 3.11 mex`
-  - go to repo root
-  - use env `pyenv local mex`
+  - switch version `pyenv global 3.11`
   - run `make install`
-- on windows, see https://python-poetry.org/docs/managing-environments
-  - install `python3.11` in your preferred way
-  - go to repo root
+- on windows, consider using pyenv-win https://pyenv-win.github.io/pyenv-win/
+  - follow https://pyenv-win.github.io/pyenv-win/#quick-start
+  - install 3.11 `pyenv install 3.11`
+  - switch version `pyenv global 3.11`
   - run `.\mex.bat install`
 
 ### linting and testing
