@@ -26,6 +26,11 @@ repos:
         name: whitespaces
       - id: fix-byte-order-marker
         name: byte-order
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.12.4
+    hooks:
+      - id: pdm-lock-check
+        name: pdm
   - repo: local
     hooks:
     - id: mypy

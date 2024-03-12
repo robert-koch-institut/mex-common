@@ -12,10 +12,10 @@ dependencies = [
     "langdetect>=1.0.9",
     "ldap3>=2.9.1",
     "numpy>=1.26.4",
-    "pandas>=2.2.0",
-    "pyarrow>=15.0.0",
-    "pydantic>=2.6.1",
-    "pydantic-settings>=2.1.0",
+    "pandas>=2.2.1",
+    "pyarrow>=15.0.1",
+    "pydantic>=2.6.3",
+    "pydantic-settings>=2.2.1",
     "requests>=2.31.0",
 ]
 
@@ -24,18 +24,17 @@ dev = [
     "black>=24.2.0",
     "ipdb>=0.13.13",
     "mex-model@git+https://github.com/robert-koch-institut/mex-model.git@2.2.0",
-    "mypy>=1.8.0",
-    "pandas-stubs>=2.1.4",
+    "mypy>=1.9.0",
+    "pandas-stubs>=2.2.0",
     "pytest-cov>=4.1.0",
     "pytest-random-order>=1.1.1",
     "pytest-xdist>=3.5.0",
-    "pytest>=8.0.2",
-    "ruff>=0.3.0",
+    "pytest>=8.1.1",
+    "ruff>=0.3.2",
     "sphinx>=7.2.6",
     "types-ldap3>=2.9.13",
     "types-pytz>=2024.1.0",
     "types-requests>=2.31.0",
-    "types-setuptools>=69.1.0",
 ]
 
 [tool.cruft]
@@ -135,5 +134,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend"]
+requires = ["pdm-backend>=2.1.8"]
 build-backend = "pdm.backend"

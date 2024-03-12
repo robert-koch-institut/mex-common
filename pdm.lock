@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:1e00707762721161b4ff019d585cc37dd49eca3b2b5d52271ac8768fe4fa8d75"
+content_hash = "sha256:9f0212e97bbed094a30468aeefc9139da57f02e0d68de7fe3909e87b932ec488"
 
 [[package]]
 name = "alabaster"
@@ -1144,17 +1144,6 @@ dependencies = [
 files = [
     {file = "types-requests-2.31.0.20240311.tar.gz", hash = "sha256:b1c1b66abfb7fa79aae09097a811c4aa97130eb8831c60e47aee4ca344731ca5"},
     {file = "types_requests-2.31.0.20240311-py3-none-any.whl", hash = "sha256:47872893d65a38e282ee9f277a4ee50d1b28bd592040df7d1fdaffdf3779937d"},
-]
-
-[[package]]
-name = "types-setuptools"
-version = "69.1.0.20240310"
-requires_python = ">=3.8"
-summary = "Typing stubs for setuptools"
-groups = ["dev"]
-files = [
-    {file = "types-setuptools-69.1.0.20240310.tar.gz", hash = "sha256:fc0e1082f55c974611bce844b1e5beb2d1a895501f4a464e48305592a4268100"},
-    {file = "types_setuptools-69.1.0.20240310-py3-none-any.whl", hash = "sha256:7801245ecaf371d24f1154924c8f1f0efdc53977339bf79886b5b10890af6478"},
 ]
 
 [[package]]
