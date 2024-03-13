@@ -34,13 +34,13 @@ jobs:
           restore-keys: |
             ${{ env.cache-name }}-
 
-      - name: Cache poetry
+      - name: Cache environment
         uses: actions/cache@v4
         env:
-          cache-name: cache-poetry
+          cache-name: cache-environment
         with:
           path: ~/.cache/pip
-          key: ${{ env.cache-name }}-${{ hashFiles('poetry.lock') }}
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
           restore-keys: |
             ${{ env.cache-name }}-
 

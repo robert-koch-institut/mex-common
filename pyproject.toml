@@ -7,15 +7,6 @@ readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
 requires-python = ">=3.11"
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Framework :: Pydantic :: 2",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.11",
-    "Topic :: Software Development :: Libraries",
-    "Typing :: Typed",
-]
 dependencies = [
     "backoff>=2.2.1",
     "click>=8.1.7",
