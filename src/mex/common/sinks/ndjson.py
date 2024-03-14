@@ -1,7 +1,8 @@
 import json
+from collections.abc import Generator, Iterable
 from contextlib import ExitStack
 from pathlib import Path
-from typing import IO, Any, Generator, Iterable
+from typing import IO, Any
 
 from mex.common.logging import echo, watch
 from mex.common.models import AnyExtractedModel

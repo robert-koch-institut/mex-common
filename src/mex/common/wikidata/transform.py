@@ -1,4 +1,4 @@
-from typing import Generator, Iterable
+from collections.abc import Generator, Iterable
 
 from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.types import Text, TextLanguage

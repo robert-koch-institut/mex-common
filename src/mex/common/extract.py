@@ -1,6 +1,7 @@
 from collections import defaultdict
+from collections.abc import Generator
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Generator, TypeVar, Union
+from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import numpy as np
 import pandas as pd

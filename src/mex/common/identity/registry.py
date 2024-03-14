@@ -1,4 +1,5 @@
-from typing import Final, Hashable
+from collections.abc import Hashable
+from typing import Final
 
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.memory import MemoryIdentityProvider
