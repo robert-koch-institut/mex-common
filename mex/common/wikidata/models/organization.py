@@ -1,4 +1,4 @@
-from typing import Annotated, Optional, Union
+from typing import Annotated
 
 from pydantic import ConfigDict, Field, model_validator
 
@@ -20,8 +20,8 @@ class DataValue(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def transform_strings_to_dict(
-        cls, values: dict[str, Union[str, dict[str, str]]]
-    ) -> Union[dict[str, dict[str, str | None]], dict[str, Union[str, dict[str, str]]]]:
+        cls, values: dict[str, str | dict[str, str]]
+    ) -> dict[str, dict[str, str | None]] | dict[str, str | dict[str, str]]:
         """Transform string and null value to a dict for parsing.
 
         Args:
@@ -72,8 +72,8 @@ class Label(BaseModel):
 class Labels(BaseModel):
     """Model class for Labels."""
 
-    de: Optional[Label] = None
-    en: Optional[Label] = None
+    de: Label | None = None
+    en: Label | None = None
 
 
 class Alias(BaseModel):
