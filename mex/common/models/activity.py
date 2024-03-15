@@ -20,11 +20,8 @@ from mex.common.types import (
 )
 
 
-class BaseActivity(BaseModel):
-    """The context a resource was generated in.
-
-    This may be a project, an area of work or an administrative procedure.
-    """
+class OptionalActivity(BaseModel):
+    """Activity model where all fields are optional."""
 
     abstract: list[Text] = []
     activityType: list[
@@ -33,14 +30,11 @@ class BaseActivity(BaseModel):
         ]
     ] = []
     alternativeTitle: list[Text] = []
-    contact: Annotated[
-        list[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
-        ],
-        Field(min_length=1),
-    ]
+    contact: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier,
+    ] = []
     documentation: list[Link] = []
     end: list[
         Annotated[Timestamp, Field(examples=["2024-01-17", "2024", "2024-01"])]
@@ -52,9 +46,7 @@ class BaseActivity(BaseModel):
     involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
     isPartOfActivity: list[MergedActivityIdentifier] = []
     publication: list[Link] = []
-    responsibleUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
-    ]
+    responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
     shortName: list[Text] = []
     start: list[
         Annotated[Timestamp, Field(examples=["2023-01-16", "2023", "2023-02"])]
@@ -63,8 +55,28 @@ class BaseActivity(BaseModel):
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
     ] = []
-    title: Annotated[list[Text], Field(min_length=1)]
+    title: list[Text] = []
     website: list[Link] = []
+
+
+class BaseActivity(OptionalActivity):
+    """The context a resource was generated in.
+
+    This may be a project, an area of work or an administrative procedure.
+    """
+
+    contact: Annotated[
+        list[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+        ],
+        Field(min_length=1),
+    ]
+    responsibleUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
+    ]
+    title: Annotated[list[Text], Field(min_length=1)]
 
 
 class ExtractedActivity(BaseActivity, ExtractedData):
