@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.22.0] - 2024-03-18
+
+### Added
+
 - port `get_inner_types` from `mex-backend` to `mex.common.utils`
 
 ### Changes
@@ -18,15 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - modernize typing with syntactic sugar
 - simplify `BaseModel._get_list_field_names` using `get_inner_types`
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - date and time validation working and harmonized with mex-model
-
-### Security
 
 ## [0.21.0] - 2024-03-04
 
