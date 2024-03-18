@@ -1,7 +1,7 @@
 import re
+from collections.abc import Generator, Iterable
 from dataclasses import dataclass
 from functools import cache
-from typing import Generator, Iterable
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.models.actor import LDAPActor

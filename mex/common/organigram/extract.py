@@ -1,5 +1,5 @@
 import json
-from typing import Generator, Iterable
+from collections.abc import Generator, Iterable
 
 from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit

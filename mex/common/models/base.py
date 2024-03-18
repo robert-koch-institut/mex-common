@@ -2,12 +2,11 @@ import hashlib
 import pickle  # nosec
 from collections.abc import MutableMapping
 from functools import cache
+from types import UnionType
 from typing import (
     Any,
     TypeVar,
     Union,
-    get_args,
-    get_origin,
 )
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -17,11 +16,11 @@ from pydantic import (
     ValidationError,
     model_validator,
 )
-from pydantic.fields import FieldInfo
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
 from mex.common.models.schema import JsonSchemaGenerator
+from mex.common.utils import get_inner_types
 
 RawModelDataT = TypeVar("RawModelDataT")
 
@@ -70,52 +69,46 @@ class BaseModel(PydanticBaseModel):
     @cache
     def _get_alias_lookup(cls) -> dict[str, str]:
         """Build a cached mapping from field alias to field names."""
-        return {field.alias or name: name for name, field in cls.model_fields.items()}
+        return {
+            field_info.alias or field_name: field_name
+            for field_name, field_info in cls.model_fields.items()
+        }
 
     @classmethod
     @cache
     def _get_list_field_names(cls) -> list[str]:
         """Build a cached list of fields that look like lists."""
-
-        def is_object_subclass_of_list(obj: Any) -> bool:
-            try:
-                return issubclass(obj, list)
-            except TypeError:
-                return False
-
-        list_fields = []
-        for name, field in cls.model_fields.items():
-            origin = get_origin(field.annotation)
-            if is_object_subclass_of_list(origin):
-                list_fields.append(name)
-            elif origin is Union:
-                for arg in get_args(field.annotation):
-                    if is_object_subclass_of_list(get_origin(arg)):
-                        list_fields.append(name)
-                        break
-        return list_fields
+        field_names = []
+        for field_name, field_info in cls.model_fields.items():
+            field_types = get_inner_types(
+                field_info.annotation, unpack=(Union, UnionType)
+            )
+            if any(
+                isinstance(field_type, type) and issubclass(field_type, list)
+                for field_type in field_types
+            ):
+                field_names.append(field_name)
+        return field_names
 
     @classmethod
     @cache
     def _get_field_names_allowing_none(cls) -> list[str]:
         """Build a cached list of fields can be set to None."""
-        fields: list[str] = []
-        for name, field_info in cls.model_fields.items():
+        field_names: list[str] = []
+        for field_name, field_info in cls.model_fields.items():
             validator = TypeAdapter(field_info.annotation)
             try:
                 validator.validate_python(None)
             except ValidationError:
                 continue
-            fields.append(name)
-        return fields
+            field_names.append(field_name)
+        return field_names
 
     @classmethod
-    def _convert_non_list_to_list(
-        cls, name: str, field: FieldInfo, value: Any
-    ) -> list[Any] | None:
+    def _convert_non_list_to_list(cls, field_name: str, value: Any) -> list[Any] | None:
         """Convert a non-list value to a list value by wrapping it in a list."""
         if value is None:
-            if name in cls._get_field_names_allowing_none():
+            if field_name in cls._get_field_names_allowing_none():
                 return None
             # if a list is required, we interpret None as an empty list
             return []
@@ -123,7 +116,7 @@ class BaseModel(PydanticBaseModel):
         return [value]
 
     @classmethod
-    def _convert_list_to_non_list(cls, name: str, value: list[Any]) -> Any:
+    def _convert_list_to_non_list(cls, field_name: str, value: list[Any]) -> Any:
         """Convert a list value to a non-list value by unpacking it if possible."""
         length = len(value)
         if length == 0:
@@ -133,19 +126,17 @@ class BaseModel(PydanticBaseModel):
             # if we have just one entry, we can safely unpack it
             return value[0]
         # we cannot unambiguously unpack more than one value
-        raise ValueError(f"got multiple values for {name}")
+        raise ValueError(f"got multiple values for {field_name}")
 
     @classmethod
-    def _fix_value_listyness_for_field(
-        cls, name: str, field: FieldInfo, value: Any
-    ) -> Any:
+    def _fix_value_listyness_for_field(cls, field_name: str, value: Any) -> Any:
         """Check actual and desired shape of a value and fix it if necessary."""
-        should_be_list = name in cls._get_list_field_names()
+        should_be_list = field_name in cls._get_list_field_names()
         is_list = isinstance(value, list)
         if not is_list and should_be_list:
-            return cls._convert_non_list_to_list(name, field, value)
+            return cls._convert_non_list_to_list(field_name, value)
         if is_list and not should_be_list:
-            return cls._convert_list_to_non_list(name, value)
+            return cls._convert_list_to_non_list(field_name, value)
         # already desired shape
         return value
 
@@ -173,10 +164,8 @@ class BaseModel(PydanticBaseModel):
         if isinstance(data, MutableMapping):
             for name, value in data.items():
                 field_name = cls._get_alias_lookup().get(name, name)
-                if field := cls.model_fields.get(field_name):
-                    data[name] = cls._fix_value_listyness_for_field(
-                        field_name, field, value
-                    )
+                if field_name in cls.model_fields:
+                    data[name] = cls._fix_value_listyness_for_field(field_name, value)
         return data
 
     def checksum(self) -> str:
