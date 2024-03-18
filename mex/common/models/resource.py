@@ -1,4 +1,4 @@
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Union
 
 from pydantic import Field
 
@@ -25,7 +25,9 @@ from mex.common.types import (
     ResourceTypeGeneral,
     Text,
     Theme,
-    Timestamp,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
 
 
@@ -62,7 +64,7 @@ class BaseResource(BaseModel):
     ]
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     contributor: list[MergedPersonIdentifier] = []
-    created: Timestamp | None = None
+    created: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
     creator: list[MergedPersonIdentifier] = []
     description: list[Text] = []
     distribution: list[MergedDistributionIdentifier] = []
@@ -91,7 +93,7 @@ class BaseResource(BaseModel):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: Timestamp | None = None
+    modified: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
     publication: list[Link] = []
     publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: list[Text] = []
@@ -115,9 +117,11 @@ class BaseResource(BaseModel):
             ),
         ]
     ] = []
-    temporal: (
-        Timestamp
-        | Annotated[
+    temporal: Union[
+        YearMonthDayTime,
+        YearMonthDay,
+        YearMonth,
+        Annotated[
             str,
             Field(
                 examples=[
@@ -127,9 +131,9 @@ class BaseResource(BaseModel):
                     "1998-2008",
                 ]
             ),
-        ]
-        | None
-    ) = None
+        ],
+        None,
+    ] = None
     theme: Annotated[
         list[Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]],
         Field(min_length=1),
