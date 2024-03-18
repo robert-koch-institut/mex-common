@@ -26,7 +26,7 @@ black = "^24.2.0"
 ipdb = "^0.13.13"
 mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0" }
 mypy = "^1.9.0"
-pandas-stubs = "^2.2.0"
+pandas-stubs = "^2.2.1"
 pytest = "^8.1.1"
 pytest-cov = "^4.1.0"
 pytest-random-order = "^1.1.1"
