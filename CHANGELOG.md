@@ -12,8 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - port `get_inner_types` from `mex-backend` to `mex.common.utils`
 
 ### Changes
-- Renamed Timestamp class to TemporalEntity and created three subclasses with specific resolution YearMonth, YearMonthDay, YearMonthDayTime
 
+- rename Timestamp class to TemporalEntity
+- added subclasses with specific resolution YearMonth, YearMonthDay, YearMonthDayTime
 - modernize typing with syntactic sugar
 - simplify `BaseModel._get_list_field_names` using `get_inner_types`
 
@@ -22,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
-- date and time validation working and harmonized with mex-model; removed exception from tests.models.test_model_schemas.py
+
+- date and time validation working and harmonized with mex-model
 
 ### Security
 
