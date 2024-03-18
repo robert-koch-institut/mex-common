@@ -1,4 +1,4 @@
-from typing import Annotated, Any, Optional, get_origin
+from typing import Annotated, Any, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
@@ -52,7 +52,7 @@ def generate_mapping_schema_for_mex_class(
             f"{field_name.capitalize()}MappingRule",
             __base__=(GenericRule,),
             setValues=(
-                Optional[rule_type],
+                rule_type | None,
                 None,
             ),
         )

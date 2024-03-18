@@ -3,7 +3,7 @@ from datetime import date, datetime, tzinfo
 from enum import Enum
 from functools import total_ordering
 from itertools import zip_longest
-from typing import Any, Literal, Optional, Type, Union, cast, overload
+from typing import Any, Literal, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
@@ -86,13 +86,13 @@ class TemporalEntity:
     def __init__(
         self,
         *args: int,
-        tzinfo: Optional[tzinfo] = None,
+        tzinfo: tzinfo | None = None,
     ) -> None: ...  # pragma: no cover
 
     def __init__(
         self,
         *args: Union[int, str, date, datetime, "TemporalEntity"],
-        tzinfo: Optional[tzinfo] = None,
+        tzinfo: tzinfo | None = None,
     ) -> None:
         """Create a new temporal entity instance.
 
@@ -119,7 +119,7 @@ class TemporalEntity:
             )
 
         if len(args) == 1 and isinstance(
-            args[0], (str, date, datetime, TemporalEntity)
+            args[0], str | date | datetime | TemporalEntity
         ):
             if tzinfo:
                 raise TypeError(
@@ -174,7 +174,7 @@ class TemporalEntity:
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, _source: Type[Any], _handler: GetCoreSchemaHandler
+        cls, _source: type[Any], _handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Mutate the field schema for temporal entity."""
         from_str_schema = core_schema.chain_schema(
@@ -215,13 +215,13 @@ class TemporalEntity:
     @classmethod
     def validate(cls, value: Any) -> "TemporalEntity":
         """Parse any value and try to convert it into a temporal entity."""
-        if isinstance(value, (cls, date, str, TemporalEntity)):
+        if isinstance(value, cls | date | str | TemporalEntity):
             return cls(value)
         raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @staticmethod
     def _parse_args(
-        *args: int, tzinfo: Optional[tzinfo] = None
+        *args: int, tzinfo: tzinfo | None = None
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse 0-7 integer arguments into a timestamp and deduct the precision."""
         if tzinfo is None:
