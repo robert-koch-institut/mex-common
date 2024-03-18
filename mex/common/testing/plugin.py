@@ -5,9 +5,10 @@ to the `conftest.py` in your root test folder.
 """
 
 import os
+from collections.abc import Generator
 from enum import Enum
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 from unittest.mock import MagicMock
 
 from langdetect import DetectorFactory

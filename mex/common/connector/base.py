@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from contextlib import ExitStack
 from types import TracebackType
-from typing import Optional, TypeVar, cast, final
+from typing import TypeVar, cast, final
 
 from mex.common.context import ContextStore
 
@@ -46,9 +46,9 @@ class BaseConnector(metaclass=ABCMeta):
     @final
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Exit connector by calling `close` method and removing it from context."""
         self.close()

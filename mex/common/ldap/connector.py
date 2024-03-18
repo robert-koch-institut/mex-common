@@ -1,5 +1,6 @@
+from collections.abc import Generator
 from functools import cache
-from typing import Generator, TypeVar
+from typing import TypeVar
 from urllib.parse import urlsplit
 
 from ldap3 import AUTO_BIND_NO_TLS, Connection, Server

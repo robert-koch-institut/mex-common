@@ -1,6 +1,6 @@
 import re
 import string
-from typing import Any, Type, TypeVar
+from typing import Any, TypeVar
 from uuid import UUID, uuid4
 
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
@@ -35,7 +35,7 @@ class Identifier(str):
     @classmethod
     def validate(cls: type[IdentifierT], value: Any) -> IdentifierT:
         """Validate a string, UUID or Identifier."""
-        if isinstance(value, (str, UUID, Identifier)):
+        if isinstance(value, str | UUID | Identifier):
             value = str(value)
             if re.match(MEX_ID_PATTERN, value):
                 return cls(value)
@@ -46,7 +46,7 @@ class Identifier(str):
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, source: Type[Any], handler: GetCoreSchemaHandler
+        cls, source: type[Any], handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the schema to add the ID regex."""
         identifier_schema = {
