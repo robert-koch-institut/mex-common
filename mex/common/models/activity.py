@@ -16,7 +16,8 @@ from mex.common.types import (
     MergedPersonIdentifier,
     Text,
     Theme,
-    Timestamp,
+    YearMonth,
+    YearMonthDay,
 )
 
 
@@ -42,9 +43,7 @@ class BaseActivity(BaseModel):
         Field(min_length=1),
     ]
     documentation: list[Link] = []
-    end: list[
-        Annotated[Timestamp, Field(examples=["2024-01-17", "2024", "2024-01"])]
-    ] = []
+    end: list[YearMonthDay | YearMonth] = []
     externalAssociate: list[MergedOrganizationIdentifier | MergedPersonIdentifier] = []
     funderOrCommissioner: list[MergedOrganizationIdentifier] = []
     fundingProgram: list[str] = []
@@ -56,9 +55,7 @@ class BaseActivity(BaseModel):
         list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
     ]
     shortName: list[Text] = []
-    start: list[
-        Annotated[Timestamp, Field(examples=["2023-01-16", "2023", "2023-02"])]
-    ] = []
+    start: list[YearMonthDay | YearMonth] = []
     succeeds: list[MergedActivityIdentifier] = []
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]

@@ -15,7 +15,9 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MIMEType,
-    Timestamp,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
 
 
@@ -33,7 +35,7 @@ class BaseDistribution(BaseModel):
     dataCurator: list[MergedPersonIdentifier] = []
     dataManager: list[MergedPersonIdentifier] = []
     downloadURL: Link | None = None
-    issued: Timestamp
+    issued: YearMonthDayTime | YearMonthDay | YearMonth
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -46,7 +48,7 @@ class BaseDistribution(BaseModel):
         ]
         | None
     ) = None
-    modified: Timestamp | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     otherContributor: list[MergedPersonIdentifier] = []
     projectLeader: list[MergedPersonIdentifier] = []
     projectManager: list[MergedPersonIdentifier] = []
