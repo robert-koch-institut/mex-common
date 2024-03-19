@@ -22,7 +22,7 @@ if "%CI%"=="" (
 
 @REM install packages from lock file in local virtual environment
 echo installing package
-poetry install --no-interaction --sync
+pdm sync --clean --group dev
 exit /b %errorlevel%
 
 
