@@ -1,4 +1,4 @@
-from typing import Annotated, Literal, Union
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -64,7 +64,7 @@ class BaseResource(BaseModel):
     ]
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     contributor: list[MergedPersonIdentifier] = []
-    created: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
+    created: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     creator: list[MergedPersonIdentifier] = []
     description: list[Text] = []
     distribution: list[MergedDistributionIdentifier] = []
@@ -93,7 +93,7 @@ class BaseResource(BaseModel):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    modified: Union[YearMonthDayTime, YearMonthDay, YearMonth, None] = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     publication: list[Link] = []
     publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: list[Text] = []
@@ -117,11 +117,11 @@ class BaseResource(BaseModel):
             ),
         ]
     ] = []
-    temporal: Union[
-        YearMonthDayTime,
-        YearMonthDay,
-        YearMonth,
-        Annotated[
+    temporal: (
+        YearMonthDayTime
+        | YearMonthDay
+        | YearMonth
+        | Annotated[
             str,
             Field(
                 examples=[
@@ -131,9 +131,9 @@ class BaseResource(BaseModel):
                     "1998-2008",
                 ]
             ),
-        ],
-        None,
-    ] = None
+        ]
+        | None
+    ) = None
     theme: Annotated[
         list[Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]],
         Field(min_length=1),
