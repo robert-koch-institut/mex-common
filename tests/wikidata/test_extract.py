@@ -18,12 +18,21 @@ from tests.wikidata.conftest import TESTDATA_DIR
 @pytest.mark.integration
 def test_search_organization_by_label() -> None:
     """Test organization search in wikidata."""
-    expected = "Q26678"
+    expected = "Q679041"
 
-    search_results = list(search_organization_by_label(item_label="BMW"))
+    search_results = search_organization_by_label(item_label="Robert Koch Institute")
+    if search_results:
+        assert len(search_results) == 1
+        assert search_results[0].identifier == expected
+    else:
+        pytest.fail(f"No organizations were found for id: {expected}")
 
-    assert len(search_results) == 2
-    assert search_results[0].identifier == expected
+
+@pytest.mark.integration
+def test_search_organization_by_label_for_none() -> None:
+    """Test organization search in wikidata."""
+    search_results = search_organization_by_label(item_label="BMW")
+    assert search_results is None
 
 
 @pytest.mark.usefixtures("mocked_session_wikidata_query_service")
@@ -48,7 +57,7 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
     )
 
     with pytest.raises(MExError):
-        _ = list(search_organization_by_label(item_label="BMW"))
+        _ = search_organization_by_label(item_label="BMW")
 
 
 @pytest.mark.usefixtures(
@@ -160,6 +169,48 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
         {
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
         },
+    ]
+
+    def mocked_query_response():
+        return expected_query_response
+
+    monkeypatch.setattr(
+        WikidataQueryServiceConnector,
+        "get_data_by_query",
+        lambda self, _: mocked_query_response(),
+    )
+
+    def mocked_item_details_response():
+        with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
+            data = json.load(f)
+            return data[0]
+
+    monkeypatch.setattr(
+        WikidataAPIConnector,
+        "get_wikidata_item_details_by_id",
+        lambda self, _: mocked_item_details_response(),
+    )
+
+    search_results = search_organization_by_label(item_label="TEST")
+
+    if search_results:
+        assert len(search_results) == 1
+        assert search_results[0].model_dump() == expected_item_details_response
+    else:
+        pytest.fail(
+            f"No organizations were found for id: {expected_item_details_response['identifier']}"
+        )
+
+
+@pytest.mark.usefixtures(
+    "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
+)
+def test_search_organization_by_label_for_none_mocked(monkeypatch: MonkeyPatch) -> None:
+    """Test(mock) organization search in wikidata."""
+    expected_query_response = [
+        {
+            "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
+        },
         {
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q821937"},
         },
@@ -185,10 +236,9 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
         lambda self, _: mocked_item_details_response(),
     )
 
-    search_results = list(search_organization_by_label(item_label="TEST"))
+    search_results = search_organization_by_label(item_label="TEST")
 
-    assert len(search_results) == 2
-    assert search_results[0].model_dump() == expected_item_details_response
+    assert search_results is None
 
 
 @pytest.mark.integration
