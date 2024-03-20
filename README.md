@@ -68,16 +68,15 @@ components of the MEx project are open-sourced under the same license as well.
 - on windows run `.\mex.bat test`
 - or run manually
   - linter checks via `pre-commit run --all-files`
-  - all tests via `poetry run pytest`
-  - just unit tests via `poetry run pytest -m "not integration"`
+  - all tests via `pdm run pytest`
+  - just unit tests via `pdm run pytest -m "not integration"`
 
 ### updating dependencies
 
 - update boilerplate files with `cruft update`
 - update global requirements in `requirements.txt` manually
 - update git hooks with `pre-commit autoupdate`
-- show outdated dependencies with `poetry show --outdated`
-- update dependencies in poetry using `poetry update --lock`
+- update package dependencies using `pdm autoupdate`
 - update github actions in `.github/workflows/*.yml` manually
 
 ### creating release
