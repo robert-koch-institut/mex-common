@@ -10,7 +10,7 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 
 def search_organization_by_label(
     item_label: str,
-) -> list[WikidataOrganization] | None:
+) -> WikidataOrganization | None:
     """Search for an item in wikidata. Only organizations are fetched.
 
     Args:
@@ -56,7 +56,7 @@ def search_organization_by_label(
         resolved_organizations.append(_get_organization_details(wd_item_id))
 
     if len(resolved_organizations) == 1:
-        return resolved_organizations
+        return resolved_organizations[0]
 
     return None
 

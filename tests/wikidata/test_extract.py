@@ -22,8 +22,7 @@ def test_search_organization_by_label() -> None:
 
     search_results = search_organization_by_label(item_label="Robert Koch Institute")
     if search_results:
-        assert len(search_results) == 1
-        assert search_results[0].identifier == expected
+        assert search_results.identifier == expected
     else:
         pytest.fail(f"No organizations were found for id: {expected}")
 
@@ -194,8 +193,7 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
     search_results = search_organization_by_label(item_label="TEST")
 
     if search_results:
-        assert len(search_results) == 1
-        assert search_results[0].model_dump() == expected_item_details_response
+        assert search_results.model_dump() == expected_item_details_response
     else:
         pytest.fail(
             f"No organizations were found for id: {expected_item_details_response['identifier']}"
