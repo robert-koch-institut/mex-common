@@ -1,5 +1,3 @@
-from collections.abc import Generator
-
 import requests
 
 from mex.common.exceptions import MExError
@@ -12,7 +10,7 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 
 def search_organization_by_label(
     item_label: str,
-) -> Generator[WikidataOrganization, None, None]:
+) -> list[WikidataOrganization] | None:
     """Search for an item in wikidata. Only organizations are fetched.
 
     Args:
@@ -33,6 +31,7 @@ def search_organization_by_label(
     )
 
     results = connector.get_data_by_query(query_string)
+    resolved_organizations = []
 
     for item in results:
         try:
@@ -54,7 +53,12 @@ def search_organization_by_label(
                 f"IndexError: Error processing results for {item_label}"
             ) from exc
 
-        yield _get_organization_details(wd_item_id)
+        resolved_organizations.append(_get_organization_details(wd_item_id))
+
+    if len(resolved_organizations) == 1:
+        return resolved_organizations
+
+    return None
 
 
 def _get_organization_details(item_id: str) -> WikidataOrganization:
