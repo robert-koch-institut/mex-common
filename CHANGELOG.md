@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.22.0] - 2024-03-19
+
+### Added
+
 - port `get_inner_types` from `mex-backend` to `mex.common.utils`
 
 ### Changes
@@ -17,17 +31,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added subclasses with specific resolution YearMonth, YearMonthDay, YearMonthDayTime
 - modernize typing with syntactic sugar
 - simplify `BaseModel._get_list_field_names` using `get_inner_types`
-- switch to pdm
-
-### Deprecated
+- switch from poetry to pdm
+- use vocabulary JSON files from mex-model
 
 ### Removed
+
+- remove vocabulary JSON files
 
 ### Fixed
 
 - date and time validation working and harmonized with mex-model
-
-### Security
 
 ## [0.21.0] - 2024-03-04
 

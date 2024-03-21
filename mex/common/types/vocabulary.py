@@ -3,7 +3,6 @@ import re
 from enum import Enum, EnumMeta
 from functools import cache
 from importlib.resources import files
-from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Optional, Union
 
 from pydantic import AnyUrl, BaseModel
@@ -15,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from mex.common.types import Text
 
-VOCABULARY_DIR = Path(str(files("mex.common")), "resources", "vocabularies")
+MODEL_VOCABULARIES = files("mex.model.vocabularies")
 
 
 class BilingualText(BaseModel):
@@ -49,18 +48,17 @@ class VocabularyLoader(EnumMeta):
     ) -> "VocabularyLoader":
         """Create a new enum class by loading the configured vocabulary JSON."""
         if vocabulary_name := dct.get("__vocabulary__"):
-            dct["__concepts__"] = cls.parse_file(
-                VOCABULARY_DIR / f"{vocabulary_name}.json"
-            )
+            dct["__concepts__"] = cls.parse_file(f"{vocabulary_name}.json")
             for concept in dct["__concepts__"]:
                 dct[split_to_caps(concept.prefLabel.en)] = str(concept.identifier)
         return super().__new__(cls, name, bases, dct)
 
     @classmethod
-    def parse_file(cls, path: Path) -> list[Concept]:
+    def parse_file(cls, file_name: str) -> list[Concept]:
         """Parse vocabulary file and return concepts as list."""
-        with open(path) as handle:
-            raw_vocabularies = json.load(handle)
+        raw_vocabularies = json.loads(
+            MODEL_VOCABULARIES.joinpath(file_name).read_text("utf-8")
+        )
         return [
             Concept.model_validate(raw_vocabulary)
             for raw_vocabulary in raw_vocabularies
