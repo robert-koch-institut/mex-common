@@ -58,16 +58,16 @@ def test_transform_wikidata_organization_to_organization(
             WikidataOrganization.model_validate(item) for item in json.load(f)
         ]
 
-    extracted_organizations = (
+    extracted_organizations = list(
         transform_wikidata_organizations_to_extracted_organizations(
-            wikidata_organizations[0], extracted_primary_sources["wikidata"]
+            wikidata_organizations, extracted_primary_sources["wikidata"]
         )
     )
 
     if not extracted_organizations:
         pytest.fail("No extracted organization.")
 
-    extracted_organization_dict = extracted_organizations.model_dump()
+    extracted_organization_dict = extracted_organizations[0].model_dump()
 
     assert sorted(
         extracted_organization_dict["alternativeName"],

@@ -1,3 +1,5 @@
+from collections.abc import Generator, Iterable
+
 from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.types import Text, TextLanguage
 from mex.common.wikidata.models.organization import (
@@ -9,51 +11,51 @@ from mex.common.wikidata.models.organization import (
 
 
 def transform_wikidata_organizations_to_extracted_organizations(
-    wikidata_organization: WikidataOrganization,
+    wikidata_organizations: Iterable[WikidataOrganization],
     wikidata_primary_source: ExtractedPrimarySource,
-) -> ExtractedOrganization | None:
+) -> Generator[ExtractedOrganization, None, None]:
     """Transform wikidata organizations into ExtractedOrganizations.
 
     Args:
-        wikidata_organization: wikidata organization to be transformed
+        wikidata_organizations: Iterable of wikidata organization to be transformed
         wikidata_primary_source: Extracted primary source for wikidata
 
     Returns:
         Generator of ExtractedOrganizations
     """
-    labels = _get_clean_labels(wikidata_organization.labels)
-    if not labels:
-        return None
-
-    return ExtractedOrganization(  # type: ignore[call-arg]
-        wikidataId=f"https://www.wikidata.org/entity/{wikidata_organization.identifier}",
-        officialName=labels,
-        shortName=_get_clean_short_names(wikidata_organization.claims.short_name),
-        geprisId=[],
-        isniId=[
-            f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
-                " ", ""
-            )
-            for claim in wikidata_organization.claims.isni_id
-        ],
-        gndId=[
-            f"https://d-nb.info/gnd/{claim.mainsnak.datavalue.value.text}"
-            for claim in wikidata_organization.claims.gnd_id
-        ],
-        viafId=[
-            f"https://viaf.org/viaf/{claim.mainsnak.datavalue.value.text}"
-            for claim in wikidata_organization.claims.viaf_id
-        ],
-        rorId=[
-            f"https://ror.org/{claim.mainsnak.datavalue.value.text}"
-            for claim in wikidata_organization.claims.ror_id
-        ],
-        identifierInPrimarySource=wikidata_organization.identifier,
-        hadPrimarySource=wikidata_primary_source.stableTargetId,
-        alternativeName=_get_alternative_names(
-            wikidata_organization.claims.native_label, wikidata_organization.aliases
-        ),
-    )
+    for organization in wikidata_organizations:
+        labels = _get_clean_labels(organization.labels)
+        if not labels:
+            continue
+        yield ExtractedOrganization(  # type: ignore[call-arg]
+            wikidataId=f"https://www.wikidata.org/entity/{organization.identifier}",
+            officialName=labels,
+            shortName=_get_clean_short_names(organization.claims.short_name),
+            geprisId=[],
+            isniId=[
+                f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
+                    " ", ""
+                )
+                for claim in organization.claims.isni_id
+            ],
+            gndId=[
+                f"https://d-nb.info/gnd/{claim.mainsnak.datavalue.value.text}"
+                for claim in organization.claims.gnd_id
+            ],
+            viafId=[
+                f"https://viaf.org/viaf/{claim.mainsnak.datavalue.value.text}"
+                for claim in organization.claims.viaf_id
+            ],
+            rorId=[
+                f"https://ror.org/{claim.mainsnak.datavalue.value.text}"
+                for claim in organization.claims.ror_id
+            ],
+            identifierInPrimarySource=organization.identifier,
+            hadPrimarySource=wikidata_primary_source.stableTargetId,
+            alternativeName=_get_alternative_names(
+                organization.claims.native_label, organization.aliases
+            ),
+        )
 
 
 def _get_alternative_names(
