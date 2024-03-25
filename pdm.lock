@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:60ba00dffef31d5e23a9ad9ad175998d3d0b1b0804375eee8cd1a6c992676687"
+content_hash = "sha256:e3b0ac6e67c79c6d2c361ab23eef9000c42b7ea1d9aa328a736dd9f6832515ef"
 
 [[package]]
 name = "alabaster"
@@ -459,7 +459,7 @@ git = "https://github.com/robert-koch-institut/mex-model.git"
 ref = "2.3.0"
 revision = "d4aba623fc54f9b0f1b412408a21e62b6913f875"
 summary = "Conceptual and machine-readable versions of the MEx metadata model."
-groups = ["dev"]
+groups = ["default"]
 
 [[package]]
 name = "mypy"
