@@ -5,6 +5,7 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rule_set import create_blocking_rule
 from mex.common.types import (
     DataType,
     ExtractedVariableIdentifier,
@@ -15,8 +16,8 @@ from mex.common.types import (
 )
 
 
-class BaseVariable(BaseModel):
-    """A single piece of information within a resource."""
+class SparseVariable(BaseModel):
+    """Variable model where all fields are optional."""
 
     belongsTo: list[MergedVariableGroupIdentifier] = []
     codingSystem: (
@@ -38,6 +39,34 @@ class BaseVariable(BaseModel):
         | None
     ) = None
     description: list[Text] = []
+    label: list[
+        Annotated[
+            Text,
+            Field(
+                examples=[
+                    {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
+                ],
+            ),
+        ]
+    ] = []
+    usedIn: list[MergedResourceIdentifier] = []
+    valueSet: list[
+        Annotated[
+            str,
+            Field(
+                examples=[
+                    "Ja, stark eingeschränkt",
+                    "Ja, etwas eingeschränkt",
+                    "Nein, überhaupt nicht eingeschränkt",
+                ],
+            ),
+        ]
+    ] = []
+
+
+class BaseVariable(SparseVariable):
+    """A single piece of information within a resource."""
+
     label: Annotated[
         list[
             Annotated[
@@ -52,18 +81,6 @@ class BaseVariable(BaseModel):
         Field(min_length=1),
     ]
     usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
-    valueSet: list[
-        Annotated[
-            str,
-            Field(
-                examples=[
-                    "Ja, stark eingeschränkt",
-                    "Ja, etwas eingeschränkt",
-                    "Nein, überhaupt nicht eingeschränkt",
-                ],
-            ),
-        ]
-    ] = []
 
 
 class ExtractedVariable(BaseVariable, ExtractedData):
@@ -83,3 +100,26 @@ class MergedVariable(BaseVariable, MergedItem):
         Literal["MergedVariable"], Field(alias="$type", frozen=True)
     ] = "MergedVariable"
     identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+
+
+class AdditiveVariable(SparseVariable):
+    """Rule to add values to merged variable items."""
+
+    entityType: Annotated[
+        Literal["AdditiveVariable"], Field(alias="$type", frozen=True)
+    ] = "AdditiveVariable"
+
+
+class SubtractiveVariable(SparseVariable):
+    """Rule to subtract values from merged variable items."""
+
+    entityType: Annotated[
+        Literal["SubtractiveVariable"], Field(alias="$type", frozen=True)
+    ] = "SubtractiveVariable"
+
+
+BlockingVariable = create_blocking_rule(
+    Literal["BlockingVariable"],
+    SparseVariable,
+    "Rule to block primary sources for fields of merged variable items.",
+)

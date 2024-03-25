@@ -5,7 +5,14 @@ from mex.common.models.access_platform import (
     ExtractedAccessPlatform,
     MergedAccessPlatform,
 )
-from mex.common.models.activity import BaseActivity, ExtractedActivity, MergedActivity
+from mex.common.models.activity import (
+    AdditiveActivity,
+    BaseActivity,
+    BlockingActivity,
+    ExtractedActivity,
+    MergedActivity,
+    SubtractiveActivity,
+)
 from mex.common.models.base import BaseModel
 from mex.common.models.contact_point import (
     BaseContactPoint,
@@ -41,7 +48,14 @@ from mex.common.models.primary_source import (
     MergedPrimarySource,
 )
 from mex.common.models.resource import BaseResource, ExtractedResource, MergedResource
-from mex.common.models.variable import BaseVariable, ExtractedVariable, MergedVariable
+from mex.common.models.variable import (
+    AdditiveVariable,
+    BaseVariable,
+    BlockingVariable,
+    ExtractedVariable,
+    MergedVariable,
+    SubtractiveVariable,
+)
 from mex.common.models.variable_group import (
     BaseVariableGroup,
     ExtractedVariableGroup,
@@ -49,6 +63,12 @@ from mex.common.models.variable_group import (
 )
 
 __all__ = (
+    "AdditiveVariable",
+    "SubtractiveVariable",
+    "BlockingVariable",
+    "AdditiveActivity",
+    "SubtractiveActivity",
+    "BlockingActivity",
     "AnyBaseModel",
     "AnyExtractedModel",
     "AnyMergedModel",
@@ -153,4 +173,20 @@ AnyMergedModel = Union[
 MERGED_MODEL_CLASSES: Final[list[type[AnyMergedModel]]] = list(get_args(AnyMergedModel))
 MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
     cls.__name__: cls for cls in MERGED_MODEL_CLASSES
+}
+
+AnyAdditiveModel = AdditiveActivity | AdditiveVariable
+ADDITIVE_MODEL_CLASSES: Final[list[type[AnyAdditiveModel]]] = list(
+    get_args(AnyAdditiveModel)
+)
+ADDITIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyAdditiveModel]]] = {
+    cls.__name__: cls for cls in ADDITIVE_MODEL_CLASSES
+}
+
+AnySubtractiveModel = SubtractiveActivity | SubtractiveVariable
+SUBTRACTIVE_MODEL_CLASSES: Final[list[type[AnySubtractiveModel]]] = list(
+    get_args(AnySubtractiveModel)
+)
+SUBTRACTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnySubtractiveModel]]] = {
+    cls.__name__: cls for cls in SUBTRACTIVE_MODEL_CLASSES
 }

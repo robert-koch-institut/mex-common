@@ -5,6 +5,11 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rule_set import (
+    AdditiveRule,
+    SubtractiveRule,
+    create_blocking_rule,
+)
 from mex.common.types import (
     ActivityType,
     ExtractedActivityIdentifier,
@@ -20,7 +25,7 @@ from mex.common.types import (
 )
 
 
-class OptionalActivity(BaseModel):
+class SparseActivity(BaseModel):
     """Activity model where all fields are optional."""
 
     abstract: list[Text] = []
@@ -59,7 +64,7 @@ class OptionalActivity(BaseModel):
     website: list[Link] = []
 
 
-class BaseActivity(OptionalActivity):
+class BaseActivity(SparseActivity):
     """The context a resource was generated in.
 
     This may be a project, an area of work or an administrative procedure.
@@ -96,3 +101,26 @@ class MergedActivity(BaseActivity, MergedItem):
         Literal["MergedActivity"], Field(alias="$type", frozen=True)
     ] = "MergedActivity"
     identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
+
+
+class AdditiveActivity(SparseActivity, AdditiveRule):
+    """Rule to add values to merged activity items."""
+
+    entityType: Annotated[
+        Literal["AdditiveActivity"], Field(alias="$type", frozen=True)
+    ] = "AdditiveActivity"
+
+
+class SubtractiveActivity(SparseActivity, SubtractiveRule):
+    """Rule to subtract values from merged activity items."""
+
+    entityType: Annotated[
+        Literal["SubtractiveActivity"], Field(alias="$type", frozen=True)
+    ] = "SubtractiveActivity"
+
+
+BlockingActivity = create_blocking_rule(
+    Literal["BlockingActivity"],
+    SparseActivity,
+    "Rule to block primary sources for fields of merged activity items.",
+)
