@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 from unittest.mock import MagicMock, Mock, call
 
 import pytest
@@ -115,7 +115,7 @@ def test_connector_reset_context() -> None:
 )
 def test_request_success(
     monkeypatch: MonkeyPatch,
-    sent_payload: Optional[dict[str, Any]],
+    sent_payload: dict[str, Any] | None,
     mocked_response: Response,
     expected_response: dict[str, Any],
     expected_kwargs: dict[str, Any],

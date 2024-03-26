@@ -1,10 +1,17 @@
 import json
 import time
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Annotated, Any
 
 import pytest
 
-from mex.common.utils import any_contains_any, contains_any, grouper, jitter_sleep
+from mex.common.utils import (
+    any_contains_any,
+    contains_any,
+    get_inner_types,
+    grouper,
+    jitter_sleep,
+)
 
 
 @pytest.mark.parametrize(
@@ -33,6 +40,21 @@ def test_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> None:
 )
 def test_any_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> None:
     assert any_contains_any(base, tokens) == expected
+
+
+@pytest.mark.parametrize(
+    ("annotation", "expected_types"),
+    (
+        (str, [str]),
+        (None, [type(None)]),
+        (str | None, [str, type(None)]),
+        (list[str] | None, [str, type(None)]),
+        (list[str | int | list[str]], [str, int, str]),
+        (Annotated[str | int, "This is a string or integer"], [str, int]),
+    ),
+)
+def test_get_inner_types(annotation: Any, expected_types: list[type]) -> None:
+    assert list(get_inner_types(annotation)) == expected_types
 
 
 def test_grouper() -> None:

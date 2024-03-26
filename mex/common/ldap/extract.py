@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Iterable
+from collections.abc import Iterable
 
 from mex.common.identity import get_provider
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery

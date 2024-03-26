@@ -1,4 +1,4 @@
 cruft==2.15.0
-poetry==1.8.2
-pre-commit==3.6.2
+pdm==2.12.4
+pre-commit==3.7.0
 wheel==0.43.0

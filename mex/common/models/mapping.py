@@ -1,4 +1,4 @@
-from typing import Annotated, Any, Optional, get_origin
+from typing import Annotated, Any, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
@@ -8,19 +8,19 @@ from mex.common.models import EXTRACTED_MODEL_CLASSES, ExtractedData
 class GenericRule(BaseModel, extra="forbid"):
     """Generic mapping rule model."""
 
-    forValues: Optional[list[str]] = None
-    setValues: Optional[list[Any]] = None
-    rule: Optional[str] = None
+    forValues: list[str] | None = None
+    setValues: list[Any] | None = None
+    rule: str | None = None
 
 
 class GenericField(BaseModel, extra="forbid"):
     """Generic Field model."""
 
     fieldInPrimarySource: str
-    locationInPrimarySource: Optional[str] = None
-    examplesInPrimarySource: Optional[list[str]] = None
+    locationInPrimarySource: str | None = None
+    examplesInPrimarySource: list[str] | None = None
     mappingRules: Annotated[list[GenericRule], Field(min_length=1)]
-    comment: Optional[str] = None
+    comment: str | None = None
 
 
 def generate_mapping_schema_for_mex_class(
@@ -44,15 +44,15 @@ def generate_mapping_schema_for_mex_class(
             continue
         # first create dynamic rule model
         if get_origin(field_info.annotation) is list:
-            rule_type: object = Optional[field_info.annotation]
+            rule_type: Any = field_info.annotation
         else:
-            rule_type = Optional[list[field_info.annotation]]  # type: ignore[name-defined]
+            rule_type = list[field_info.annotation]  # type: ignore[name-defined]
 
         rule_model: type[GenericRule] = create_model(
             f"{field_name.capitalize()}MappingRule",
             __base__=(GenericRule,),
             setValues=(
-                rule_type,
+                rule_type | None,
                 None,
             ),
         )

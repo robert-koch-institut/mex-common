@@ -1,7 +1,7 @@
 import logging
 import re
 from enum import Enum
-from typing import Any, Union
+from typing import Any
 
 import pytest
 from click.testing import CliRunner
@@ -168,7 +168,7 @@ class MyEnum(Enum):
                 "UnionFieldSettings",
                 __base__=BaseSettings,
                 union_field=(
-                    Union[bool, str],
+                    bool | str,
                     Field(True, description="String or boolean"),
                 ),
             ),

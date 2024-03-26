@@ -22,7 +22,9 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MIMEType,
-    Timestamp,
+    YearMonth,
+    YearMonthDay,
+    YearMonthDayTime,
 )
 
 
@@ -40,7 +42,7 @@ class SparseDistribution(BaseModel):
     dataCurator: list[MergedPersonIdentifier] = []
     dataManager: list[MergedPersonIdentifier] = []
     downloadURL: Link | None = None
-    issued: Timestamp | None = None
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -53,7 +55,7 @@ class SparseDistribution(BaseModel):
         ]
         | None
     ) = None
-    modified: Timestamp | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     otherContributor: list[MergedPersonIdentifier] = []
     projectLeader: list[MergedPersonIdentifier] = []
     projectManager: list[MergedPersonIdentifier] = []
@@ -68,7 +70,7 @@ class SparseDistribution(BaseModel):
 class BaseDistribution(SparseDistribution):
     """Distribution model where some fields may be required."""
 
-    issued: Timestamp
+    issued: YearMonthDayTime | YearMonthDay | YearMonth
     publisher: Annotated[list[MergedOrganizationIdentifier], Field(min_length=1)]
     title: Annotated[
         str,

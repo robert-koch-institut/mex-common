@@ -18,7 +18,7 @@ from mex.common.transform import (
     snake_to_dromedary,
     to_key_and_values,
 )
-from mex.common.types import Identifier, Timestamp
+from mex.common.types import Identifier, TemporalEntity
 from mex.common.types.path import PathWrapper
 
 
@@ -44,12 +44,14 @@ class DummyEnum(Enum):
         (DummyEnum.THAT, '"that"'),
         (UUID(int=4, version=4), '"00000000-0000-4000-8000-000000000004"'),
         (Identifier.generate(seed=4), '"bFQoRhcVH5DHUu"'),
-        (Timestamp(2012), '"2012"'),
-        (Timestamp(2010, 12), '"2010-12"'),
-        (Timestamp(2010, 12, 24), '"2010-12-24"'),
-        (Timestamp(2010, 12, 24, 23, 59, 59), '"2010-12-24T22:59:59Z"'),
+        (TemporalEntity(2012), '"2012"'),
+        (TemporalEntity(2010, 12), '"2010-12"'),
+        (TemporalEntity(2010, 12, 24), '"2010-12-24"'),
+        (TemporalEntity(2010, 12, 24, 23, 59, 59), '"2010-12-24T22:59:59Z"'),
         (
-            Timestamp(2010, 12, 24, 23, 59, 59, tzinfo=timezone(timedelta(hours=-2))),
+            TemporalEntity(
+                2010, 12, 24, 23, 59, 59, tzinfo=timezone(timedelta(hours=-2))
+            ),
             '"2010-12-25T01:59:59Z"',
         ),
         (PureWindowsPath(r"C:\\System\\Win32\\exe.dll"), '"C:/System/Win32/exe.dll"'),

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Annotated, Any, Literal, Optional, Union
+from typing import Annotated, Any, Literal
 
 import pytest
 from pydantic import Field, ValidationError
@@ -11,9 +11,9 @@ from mex.common.types import Identifier
 class ComplexDummyModel(BaseModel):
     """Dummy Model with multiple attributes."""
 
-    optional_str: Optional[str] = None
+    optional_str: str | None = None
     required_str: str = "default"
-    optional_list: Optional[list[str]] = None
+    optional_list: list[str] | None = None
     required_list: list[str] = []
 
 
@@ -21,6 +21,13 @@ def test_get_field_names_allowing_none() -> None:
     assert ComplexDummyModel._get_field_names_allowing_none() == [
         "optional_str",
         "optional_list",
+    ]
+
+
+def test_get_list_field_names() -> None:
+    assert ComplexDummyModel._get_list_field_names() == [
+        "optional_list",
+        "required_list",
     ]
 
 
@@ -59,7 +66,7 @@ class Animal(Enum):
     ],
 )
 def test_base_model_listyness_fix(
-    data: dict[str, Any], expected: Union[str, dict[str, Any]]
+    data: dict[str, Any], expected: str | dict[str, Any]
 ) -> None:
     try:
         model = ComplexDummyModel.model_validate(data)
@@ -84,7 +91,7 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
 
 
 class DummyBaseModel(BaseModel):
-    foo: Optional[str] = None
+    foo: str | None = None
 
 
 def test_base_model_checksum() -> None:

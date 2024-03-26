@@ -1,42 +1,40 @@
-[tool.poetry]
+[project]
 name = "mex-common"
-version = "0.21.0"
+version = "0.22.0"
 description = "Common library for MEx python projects."
-authors = ["RKI MEx Team <mex@rki.de>"]
-readme = "README.md"
-license = "MIT"
-repository = "https://github.com/robert-koch-institut/mex-common"
-packages = [{ include = "mex" }]
-
-[tool.poetry.dependencies]
-python = "^3.11"
-backoff = "^2.2.1"
-click = "^8.1.7"
-langdetect = "^1.0.9"
-ldap3 = "^2.9.1"
-numpy = "^1.26.4"
-pandas = "^2.2.0"
-pyarrow = "^15.0.1"
-pydantic = "^2.6.4"
-pydantic-settings = "^2.1.0"
-requests = "^2.31.0"
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.2.0"
-ipdb = "^0.13.13"
-mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "2.2.0" }
-mypy = "^1.8.0"
-pandas-stubs = "^2.1.4"
-pytest = "^8.1.1"
-pytest-cov = "^4.1.0"
-pytest-random-order = "^1.1.1"
-pytest-xdist = "^3.5.0"
-ruff = "^0.3.2"
-sphinx = "^7.2.6"
-types-ldap3 = "^2.9.13"
-types-pytz = "^2024.1.0"
-types-requests = "^2.31.0"
-types-setuptools = "^69.1.0"
+authors = [{ name = "MEx Team", email = "mex@rki.de" }]
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
+requires-python = ">=3.11"
+dependencies = [
+    "backoff>=2.2.1",
+    "click>=8.1.7",
+    "langdetect>=1.0.9",
+    "ldap3>=2.9.1",
+    "mex-model@git+https://github.com/robert-koch-institut/mex-model.git@2.3.0",
+    "numpy>=1.26.4",
+    "pandas>=2.2.1",
+    "pyarrow>=15.0.1",
+    "pydantic>=2.6.4",
+    "pydantic-settings>=2.2.1",
+    "requests>=2.31.0",
+]
+optional-dependencies.dev = [
+    "black>=24.3.0",
+    "ipdb>=0.13.13",
+    "mypy>=1.9.0",
+    "pandas-stubs>=2.2.1",
+    "pytest-cov>=4.1.0",
+    "pytest-random-order>=1.1.1",
+    "pytest-xdist>=3.5.0",
+    "pytest>=8.1.1",
+    "ruff>=0.3.3",
+    "sphinx>=7.2.6",
+    "types-ldap3>=2.9.13",
+    "types-pytz>=2024.1.0",
+    "types-requests>=2.31.0",
+]
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
@@ -54,6 +52,14 @@ plugins = ["pydantic.mypy"]
 [[tool.mypy.overrides]]
 module = 'langdetect.*'
 ignore_missing_imports = true
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+autoupdate = { cmd = "pdm update --group :all --update-eager --save-minimum" }
+lint = { cmd = "pre-commit run --all-files" }
+test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
 
 [tool.pydantic-mypy]
 warn_untyped_fields = true
@@ -127,5 +133,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["poetry-core>=1.9.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend>=2.1.8"]
+build-backend = "pdm.backend"
