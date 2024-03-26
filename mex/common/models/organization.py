@@ -10,15 +10,16 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rule_set import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     ExtractedOrganizationIdentifier,
     MergedOrganizationIdentifier,
+    MergedPrimarySourceIdentifier,
     Text,
 )
 
 
-class BaseOrganization(BaseModel):
-
+class _OptionalLists(BaseModel):
     alternativeName: list[Text] = []
     geprisId: list[
         Annotated[
@@ -50,7 +51,6 @@ class BaseOrganization(BaseModel):
             ),
         ]
     ] = []
-    officialName: Annotated[list[Text], Field(min_length=1)]
     rorId: list[
         Annotated[
             str,
@@ -84,6 +84,18 @@ class BaseOrganization(BaseModel):
     ] = []
 
 
+class _RequiredLists(BaseModel):
+    officialName: Annotated[list[Text], Field(min_length=1)]
+
+
+class _SparseLists(BaseModel):
+    officialName: list[Text] = []
+
+
+class BaseOrganization(_OptionalLists, _RequiredLists):
+    """Base model."""
+
+
 class ExtractedOrganization(BaseOrganization, ExtractedData):
     """An automatically extracted metadata set describing an organization."""
 
@@ -101,3 +113,36 @@ class MergedOrganization(BaseOrganization, MergedItem):
         Literal["MergedOrganization"], Field(alias="$type", frozen=True)
     ] = "MergedOrganization"
     identifier: Annotated[MergedOrganizationIdentifier, Field(frozen=True)]
+
+
+class AdditiveOrganization(_OptionalLists, _SparseLists, AdditiveRule):
+    """Rule to add values to merged organization items."""
+
+    entityType: Annotated[
+        Literal["AdditiveOrganization"], Field(alias="$type", frozen=True)
+    ] = "AdditiveOrganization"
+
+
+class SubtractiveOrganization(_OptionalLists, _SparseLists, SubtractiveRule):
+    """Rule to subtract values from merged organization items."""
+
+    entityType: Annotated[
+        Literal["SubtractiveOrganization"], Field(alias="$type", frozen=True)
+    ] = "SubtractiveOrganization"
+
+
+class PreventiveOrganization(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged organization items."""
+
+    entityType: Annotated[
+        Literal["PreventiveOrganization"], Field(alias="$type", frozen=True)
+    ] = "PreventiveOrganization"
+    alternativeName: list[MergedPrimarySourceIdentifier] = []
+    geprisId: list[MergedPrimarySourceIdentifier] = []
+    gndId: list[MergedPrimarySourceIdentifier] = []
+    isniId: list[MergedPrimarySourceIdentifier] = []
+    officialName: list[MergedPrimarySourceIdentifier] = []
+    rorId: list[MergedPrimarySourceIdentifier] = []
+    shortName: list[MergedPrimarySourceIdentifier] = []
+    viafId: list[MergedPrimarySourceIdentifier] = []
+    wikidataId: list[MergedPrimarySourceIdentifier] = []

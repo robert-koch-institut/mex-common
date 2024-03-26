@@ -27,6 +27,8 @@ from mex.common.types.identifier import MergedPrimarySourceIdentifier
 
 
 class _OptionalLists(BaseModel):
+    """All list fields of an access platform that allow empty lists."""
+
     alternativeTitle: list[Text] = []
     contact: list[
         MergedOrganizationalUnitIdentifier
@@ -76,10 +78,12 @@ class _VariadicValues(BaseModel):
     ] = []
 
 
-class ExtractedAccessPlatform(
-    _OptionalLists, _OptionalValues, _RequiredValues, ExtractedData
-):
-    """An automatically extracted metadata set describing an access platform."""
+class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
+    """Base model."""
+
+
+class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
+    """An automatically extracted metadata item describing an access platform."""
 
     entityType: Annotated[
         Literal["ExtractedAccessPlatform"], Field(alias="$type", frozen=True)
@@ -88,9 +92,7 @@ class ExtractedAccessPlatform(
     stableTargetId: MergedAccessPlatformIdentifier
 
 
-class MergedAccessPlatform(
-    _OptionalLists, _OptionalValues, _RequiredValues, MergedItem
-):
+class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     """The result of merging all extracted data and rules for an access platform."""
 
     entityType: Annotated[

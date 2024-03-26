@@ -7,17 +7,18 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rule_set import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     Email,
     ExtractedPersonIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
 )
 
 
-class BasePerson(BaseModel):
-
+class _OptionalLists(BaseModel):
     affiliation: list[MergedOrganizationIdentifier] = []
     email: list[Email] = []
     familyName: list[
@@ -67,6 +68,10 @@ class BasePerson(BaseModel):
     ] = []
 
 
+class BasePerson(_OptionalLists):
+    """Base model."""
+
+
 class ExtractedPerson(BasePerson, ExtractedData):
     """An automatically extracted metadata set describing a person."""
 
@@ -84,3 +89,35 @@ class MergedPerson(BasePerson, MergedItem):
         Literal["MergedPerson"], Field(alias="$type", frozen=True)
     ] = "MergedPerson"
     identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+
+
+class AdditivePerson(_OptionalLists, AdditiveRule):
+    """Rule to add values to merged person items."""
+
+    entityType: Annotated[
+        Literal["AdditivePerson"], Field(alias="$type", frozen=True)
+    ] = "AdditivePerson"
+
+
+class SubtractivePerson(_OptionalLists, SubtractiveRule):
+    """Rule to subtract values from merged person items."""
+
+    entityType: Annotated[
+        Literal["SubtractivePerson"], Field(alias="$type", frozen=True)
+    ] = "SubtractivePerson"
+
+
+class PreventivePerson(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged person items."""
+
+    entityType: Annotated[
+        Literal["PreventivePerson"], Field(alias="$type", frozen=True)
+    ] = "PreventivePerson"
+    affiliation: list[MergedPrimarySourceIdentifier] = []
+    email: list[MergedPrimarySourceIdentifier] = []
+    familyName: list[MergedPrimarySourceIdentifier] = []
+    fullName: list[MergedPrimarySourceIdentifier] = []
+    givenName: list[MergedPrimarySourceIdentifier] = []
+    isniId: list[MergedPrimarySourceIdentifier] = []
+    memberOf: list[MergedPrimarySourceIdentifier] = []
+    orcidId: list[MergedPrimarySourceIdentifier] = []

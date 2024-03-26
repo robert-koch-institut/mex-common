@@ -84,7 +84,11 @@ class _SparseLists(BaseModel):
     title: list[Text] = []
 
 
-class ExtractedActivity(_OptionalLists, _RequiredLists, ExtractedData):
+class BaseActivity(_OptionalLists, _RequiredLists):
+    """Base model."""
+
+
+class ExtractedActivity(BaseActivity, ExtractedData):
     """An automatically extracted metadata set describing an activity."""
 
     entityType: Annotated[
@@ -94,7 +98,7 @@ class ExtractedActivity(_OptionalLists, _RequiredLists, ExtractedData):
     stableTargetId: MergedActivityIdentifier
 
 
-class MergedActivity(_OptionalLists, _RequiredLists, MergedItem):
+class MergedActivity(BaseActivity, MergedItem):
     """The result of merging all extracted data and rules for an activity."""
 
     entityType: Annotated[
@@ -119,13 +123,12 @@ class SubtractiveActivity(_OptionalLists, _SparseLists, SubtractiveRule):
     ] = "SubtractiveActivity"
 
 
-class PreventiveAccessPlatform(PreventiveRule):
-    """Rule to prevent primary sources for fields of merged access platform items."""
+class PreventiveActivity(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged activity items."""
 
     entityType: Annotated[
-        Literal["PreventiveAccessPlatform"], Field(alias="$type", frozen=True)
-    ] = "PreventiveAccessPlatform"
-
+        Literal["PreventiveActivity"], Field(alias="$type", frozen=True)
+    ] = "PreventiveActivity"
     abstract: list[MergedPrimarySourceIdentifier] = []
     activityType: list[MergedPrimarySourceIdentifier] = []
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []

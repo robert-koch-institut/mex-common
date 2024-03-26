@@ -25,7 +25,7 @@ class _RequiredLists(BaseModel):
 
 
 class _SparseLists(BaseModel):
-    email: list[Email]
+    email: list[Email] = []
 
 
 class BaseContactPoint(_RequiredLists):
@@ -73,5 +73,4 @@ class PreventiveContactPoint(PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveContactPoint"], Field(alias="$type", frozen=True)
     ] = "PreventiveContactPoint"
-
     email: list[MergedPrimarySourceIdentifier] = []
