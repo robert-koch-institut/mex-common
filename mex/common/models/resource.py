@@ -1,3 +1,5 @@
+"""A defined piece or collection of information."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field

@@ -1,3 +1,5 @@
+"""A contact point - for example, an interdepartmental project."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -5,17 +7,29 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rule_set import (
+    AdditiveRule,
+    PreventiveRule,
+    SubtractiveRule,
+)
 from mex.common.types import (
     Email,
     ExtractedContactPointIdentifier,
     MergedContactPointIdentifier,
+    MergedPrimarySourceIdentifier,
 )
 
 
-class BaseContactPoint(BaseModel):
-    """A contact point - for example, an interdepartmental project."""
-
+class _RequiredLists(BaseModel):
     email: Annotated[list[Email], Field(min_length=1)]
+
+
+class _SparseLists(BaseModel):
+    email: list[Email]
+
+
+class BaseContactPoint(_RequiredLists):
+    """All fields for a valid contact point except for provenance."""
 
 
 class ExtractedContactPoint(BaseContactPoint, ExtractedData):
@@ -35,3 +49,29 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
     identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+
+
+class AdditiveContactPoint(_SparseLists, AdditiveRule):
+    """Rule to add values to merged contact point items."""
+
+    entityType: Annotated[
+        Literal["AdditiveContactPoint"], Field(alias="$type", frozen=True)
+    ] = "AdditiveContactPoint"
+
+
+class SubtractiveContactPoint(_SparseLists, SubtractiveRule):
+    """Rule to subtract values from merged contact point items."""
+
+    entityType: Annotated[
+        Literal["SubtractiveContactPoint"], Field(alias="$type", frozen=True)
+    ] = "SubtractiveContactPoint"
+
+
+class PreventiveContactPoint(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged contact point items."""
+
+    entityType: Annotated[
+        Literal["PreventiveContactPoint"], Field(alias="$type", frozen=True)
+    ] = "PreventiveContactPoint"
+
+    email: list[MergedPrimarySourceIdentifier] = []

@@ -1,3 +1,5 @@
+"""A collection of information, that is managed and curated by an RKI unit."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -17,7 +19,6 @@ from mex.common.types import (
 
 
 class BasePrimarySource(BaseModel):
-    """A collection of information, that is managed and curated by an RKI unit."""
 
     alternativeTitle: list[Text] = []
     contact: list[

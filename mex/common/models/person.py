@@ -1,3 +1,5 @@
+"""A person related to a source and/or resource, i.e. a project leader."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -15,7 +17,6 @@ from mex.common.types import (
 
 
 class BasePerson(BaseModel):
-    """A person related to a source and/or resource, i.e. a project leader."""
 
     affiliation: list[MergedOrganizationIdentifier] = []
     email: list[Email] = []

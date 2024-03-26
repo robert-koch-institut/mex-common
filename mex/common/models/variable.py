@@ -1,3 +1,5 @@
+"""A single piece of information within a resource."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -5,7 +7,9 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rule_set import create_blocking_rule
+from mex.common.models.rule_set import (
+    create_blocking_rule,
+)
 from mex.common.types import (
     DataType,
     ExtractedVariableIdentifier,
@@ -65,7 +69,6 @@ class SparseVariable(BaseModel):
 
 
 class BaseVariable(SparseVariable):
-    """A single piece of information within a resource."""
 
     label: Annotated[
         list[
@@ -118,8 +121,8 @@ class SubtractiveVariable(SparseVariable):
     ] = "SubtractiveVariable"
 
 
-BlockingVariable = create_blocking_rule(
-    Literal["BlockingVariable"],
+PreventiveVariable = create_blocking_rule(
+    Literal["PreventiveVariable"],
     SparseVariable,
     "Rule to block primary sources for fields of merged variable items.",
 )

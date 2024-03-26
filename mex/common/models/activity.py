@@ -1,3 +1,8 @@
+"""The context a resource was generated in.
+
+This may be a project, an area of work or an administrative procedure.
+"""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -7,8 +12,8 @@ from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
 from mex.common.models.rule_set import (
     AdditiveRule,
+    PreventiveRule,
     SubtractiveRule,
-    create_blocking_rule,
 )
 from mex.common.types import (
     ActivityType,
@@ -19,14 +24,14 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     Text,
     Theme,
     Timestamp,
 )
 
 
-class SparseActivity(BaseModel):
-    """Activity model where all fields are optional."""
+class _OptionalLists(BaseModel):
 
     abstract: list[Text] = []
     activityType: list[
@@ -35,11 +40,6 @@ class SparseActivity(BaseModel):
         ]
     ] = []
     alternativeTitle: list[Text] = []
-    contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier,
-    ] = []
     documentation: list[Link] = []
     end: list[
         Annotated[Timestamp, Field(examples=["2024-01-17", "2024", "2024-01"])]
@@ -51,7 +51,6 @@ class SparseActivity(BaseModel):
     involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
     isPartOfActivity: list[MergedActivityIdentifier] = []
     publication: list[Link] = []
-    responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
     shortName: list[Text] = []
     start: list[
         Annotated[Timestamp, Field(examples=["2023-01-16", "2023", "2023-02"])]
@@ -60,16 +59,10 @@ class SparseActivity(BaseModel):
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
     ] = []
-    title: list[Text] = []
     website: list[Link] = []
 
 
-class BaseActivity(SparseActivity):
-    """The context a resource was generated in.
-
-    This may be a project, an area of work or an administrative procedure.
-    """
-
+class _RequiredLists(BaseModel):
     contact: Annotated[
         list[
             MergedOrganizationalUnitIdentifier
@@ -84,7 +77,17 @@ class BaseActivity(SparseActivity):
     title: Annotated[list[Text], Field(min_length=1)]
 
 
-class ExtractedActivity(BaseActivity, ExtractedData):
+class _SparseLists(BaseModel):
+    contact: list[
+        MergedOrganizationalUnitIdentifier
+        | MergedPersonIdentifier
+        | MergedContactPointIdentifier,
+    ] = []
+    responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
+    title: list[Text] = []
+
+
+class ExtractedActivity(_OptionalLists, _RequiredLists, ExtractedData):
     """An automatically extracted metadata set describing an activity."""
 
     entityType: Annotated[
@@ -94,7 +97,7 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     stableTargetId: MergedActivityIdentifier
 
 
-class MergedActivity(BaseActivity, MergedItem):
+class MergedActivity(_OptionalLists, _RequiredLists, MergedItem):
     """The result of merging all extracted data and rules for an activity."""
 
     entityType: Annotated[
@@ -103,7 +106,7 @@ class MergedActivity(BaseActivity, MergedItem):
     identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
 
 
-class AdditiveActivity(SparseActivity, AdditiveRule):
+class AdditiveActivity(_OptionalLists, _SparseLists, AdditiveRule):
     """Rule to add values to merged activity items."""
 
     entityType: Annotated[
@@ -111,7 +114,7 @@ class AdditiveActivity(SparseActivity, AdditiveRule):
     ] = "AdditiveActivity"
 
 
-class SubtractiveActivity(SparseActivity, SubtractiveRule):
+class SubtractiveActivity(_OptionalLists, _SparseLists, SubtractiveRule):
     """Rule to subtract values from merged activity items."""
 
     entityType: Annotated[
@@ -119,8 +122,30 @@ class SubtractiveActivity(SparseActivity, SubtractiveRule):
     ] = "SubtractiveActivity"
 
 
-BlockingActivity = create_blocking_rule(
-    Literal["BlockingActivity"],
-    SparseActivity,
-    "Rule to block primary sources for fields of merged activity items.",
-)
+class PreventiveAccessPlatform(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged access platform items."""
+
+    entityType: Annotated[
+        Literal["PreventiveAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "PreventiveAccessPlatform"
+
+    abstract: list[MergedPrimarySourceIdentifier] = []
+    activityType: list[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
+    contact: list[MergedPrimarySourceIdentifier] = []
+    documentation: list[MergedPrimarySourceIdentifier] = []
+    end: list[MergedPrimarySourceIdentifier] = []
+    externalAssociate: list[MergedPrimarySourceIdentifier] = []
+    funderOrCommissioner: list[MergedPrimarySourceIdentifier] = []
+    fundingProgram: list[MergedPrimarySourceIdentifier] = []
+    involvedPerson: list[MergedPrimarySourceIdentifier] = []
+    involvedUnit: list[MergedPrimarySourceIdentifier] = []
+    isPartOfActivity: list[MergedPrimarySourceIdentifier] = []
+    publication: list[MergedPrimarySourceIdentifier] = []
+    responsibleUnit: list[MergedPrimarySourceIdentifier] = []
+    shortName: list[MergedPrimarySourceIdentifier] = []
+    start: list[MergedPrimarySourceIdentifier] = []
+    succeeds: list[MergedPrimarySourceIdentifier] = []
+    theme: list[MergedPrimarySourceIdentifier] = []
+    title: list[MergedPrimarySourceIdentifier] = []
+    website: list[MergedPrimarySourceIdentifier] = []

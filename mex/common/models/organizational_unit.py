@@ -1,3 +1,5 @@
+"""An organizational unit which is part of some larger organization."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -16,7 +18,6 @@ from mex.common.types import (
 
 
 class BaseOrganizationalUnit(BaseModel):
-    """An organizational unit which is part of some larger organization."""
 
     alternativeName: list[Text] = []
     email: list[Email] = []

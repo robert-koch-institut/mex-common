@@ -1,3 +1,5 @@
+"""The grouping of variables according to a certain aspect."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field

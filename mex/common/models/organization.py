@@ -1,3 +1,8 @@
+"""Represents a collection of people organized together.
+
+This can be any community or other social, commercial or political structure.
+"""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -13,10 +18,6 @@ from mex.common.types import (
 
 
 class BaseOrganization(BaseModel):
-    """Represents a collection of people organized together.
-
-    This can be any community or other social, commercial or political structure.
-    """
 
     alternativeName: list[Text] = []
     geprisId: list[
