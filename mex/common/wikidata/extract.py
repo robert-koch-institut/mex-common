@@ -20,6 +20,7 @@ def search_organization_by_label(
         Generator for WikidataOrganization items
     """
     connector = WikidataQueryServiceConnector.get()
+    item_label = item_label.replace('"', "")
     query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
         "WHERE{"

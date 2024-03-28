@@ -20,7 +20,7 @@ def test_search_organization_by_label() -> None:
     """Test organization search in wikidata."""
     expected = "Q679041"
 
-    search_results = search_organization_by_label(item_label="Robert Koch Institute")
+    search_results = search_organization_by_label(item_label='Robert Koch Institute"')
     if search_results:
         assert search_results.identifier == expected
     else:
