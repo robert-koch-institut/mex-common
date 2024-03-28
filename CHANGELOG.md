@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - switch from poetry to pdm
 - use vocabulary JSON files from mex-model
 - return only one organization from wikidata. If multiple or no organization is found then return None
+- filter quotation marks (") from requested wikidata label
 
 ### Removed
 
