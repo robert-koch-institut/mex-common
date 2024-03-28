@@ -73,7 +73,7 @@ def settings() -> BaseSettings:
 def isolate_settings_context() -> Generator[None, None, None]:
     """Automatically reset the settings context variable."""
     yield
-    SettingsContext.set(None)
+    SettingsContext.set({})
 
 
 @pytest.fixture(autouse=True)

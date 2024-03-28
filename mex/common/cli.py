@@ -125,7 +125,7 @@ def _callback(
             if context.get_parameter_source(key) == ParameterSource.COMMANDLINE
         }
     )
-    SettingsContext.set(settings)
+    SettingsContext.set({settings_cls:settings})
 
     # otherwise print loaded settings in pretty way and continue.
     logger.info(click.style(dedent(f"    {func.__doc__}"), fg="green"))

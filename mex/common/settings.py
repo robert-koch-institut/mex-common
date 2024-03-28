@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, TypeVar
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
@@ -11,7 +11,7 @@ from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SettingsType = TypeVar("SettingsType", bound="BaseSettings")
-SettingsContext = ContextStore[Optional["BaseSettings"]](None)
+SettingsContext = ContextStore[dict[type["BaseSettings"], "BaseSettings"]]({})
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -79,19 +79,19 @@ class BaseSettings(PydanticBaseSettings):
         Returns:
             Settings: An instance of Settings or a subclass thereof
         """
-        settings = SettingsContext.get()
-        if isinstance(settings, cls):
+        settings_dict = SettingsContext.get()
+        breakpoint()
+        settings = settings_dict.get(cls)
+        if settings is not None:
             return settings
-        if settings is None:
+        base_settings = settings_dict.get(BaseSettings)
+        if base_settings is None:
             base = {}
-        elif issubclass(cls, type(settings)):
-            base = settings.model_dump(exclude_unset=True)
         else:
-            raise RuntimeError(
-                f"Requested {cls.__name__} but already loaded {type(settings).__name__}"
-            )
+            base = base_settings.model_dump(exclude_unset=True)
         settings = cls.model_validate(base)
-        SettingsContext.set(settings)
+
+        settings_dict[cls] = settings
         return settings
 
     # Note: We need to hardcode the environment variable names for base settings here,
