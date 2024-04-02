@@ -1,0 +1,27 @@
+{
+  "branchPrefix": "test-renovate/",
+  "dryRun": "full",
+  "forkProcessing": "disabled",
+  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+  "onboarding": false,
+  "packageRules": [
+    {
+      "dependencyDashboardApproval": false,
+      "description": "lockFileMaintenance",
+      "matchUpdateTypes": [
+        "pin",
+        "digest",
+        "patch",
+        "minor",
+        "major",
+        "lockFileMaintenance"
+      ],
+      "minimumReleaseAge": null
+    }
+  ],
+  "platform": "github",
+  "repositories": [
+    "robert-koch-institut/mex-common"
+  ],
+  "username": "renovate-release"
+}
