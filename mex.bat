@@ -32,9 +32,9 @@ echo linting all files
 pre-commit run --all-files
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-@REM run pytest unit and integration tests distributed across available cores
+@REM run the pytest test suite with unit and integration tests
 echo running all tests
-pdm run pytest --numprocesses=auto --dist=worksteal
+pdm run pytest
 exit /b %errorlevel%
 
 
