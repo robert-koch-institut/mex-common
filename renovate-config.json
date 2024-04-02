@@ -1,6 +1,5 @@
 {
-  "branchPrefix": "test-renovate/",
-  "dryRun": "full",
+  "branchPrefix": "feature/mx-1579-switch-dependabot-to-renovatebot",
   "forkProcessing": "disabled",
   "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
   "onboarding": false,
