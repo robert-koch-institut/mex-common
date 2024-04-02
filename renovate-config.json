@@ -1,5 +1,4 @@
 {
-  "branchPrefix": "feature/mx-1579-switch-dependabot-to-renovatebot",
   "forkProcessing": "disabled",
   "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
   "onboarding": true,
