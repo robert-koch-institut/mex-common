@@ -2,6 +2,8 @@
 all: install test
 test: linter pytest
 
+LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
+
 setup:
 	# install meta requirements system-wide
 	@ echo installing requirements; \
