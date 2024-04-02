@@ -16,8 +16,8 @@ dependencies = [
     "numpy>=1.26.4",
     "pandas>=2.2.1",
     "pyarrow>=15.0.1",
-    "pydantic>=2.6.4",
     "pydantic-settings>=2.2.1",
+    "pydantic>=2.6.4",
     "requests>=2.31.0",
 ]
 optional-dependencies.dev = [
