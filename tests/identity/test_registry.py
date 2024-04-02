@@ -60,7 +60,7 @@ def test_get_provider_error(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_get_provider() -> None:
-    settings = BaseSettings.get()
+    settings = DummySettings.get()
     settings.identity_provider = DummyIdentityProvider.DUMMY
 
     register_provider(DummyIdentityProvider.DUMMY, DummyProvider)

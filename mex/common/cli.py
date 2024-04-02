@@ -16,7 +16,7 @@ from pydantic.fields import FieldInfo
 
 from mex.common.connector import reset_connector_context
 from mex.common.logging import echo, logger
-from mex.common.settings import SettingsContext, SettingsType
+from mex.common.settings import BaseSettings, SettingsContext
 from mex.common.transform import MExEncoder
 
 HELP_TEMPLATE = """
@@ -50,7 +50,7 @@ def _field_to_parameters(name: str, field: FieldInfo) -> list[str]:
     return [f"{d}{n}" for d, n in zip(dashes, names, strict=False)]
 
 
-def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
+def _field_to_option(name: str, settings_cls: type[BaseSettings]) -> Option:
     """Convert a field of a pydantic settings class into a click option.
 
     Args:
@@ -94,7 +94,7 @@ def _field_to_option(name: str, settings_cls: type[SettingsType]) -> Option:
 
 def _callback(
     func: Callable[[], None],
-    settings_cls: type[SettingsType],
+    settings_cls: type[BaseSettings],
     **cli_settings: str,
 ) -> None:
     """Run the decorated function in the current click context.
@@ -125,7 +125,7 @@ def _callback(
             if context.get_parameter_source(key) == ParameterSource.COMMANDLINE
         }
     )
-    SettingsContext.set({settings_cls:settings})
+    SettingsContext.set({settings_cls: settings})
 
     # otherwise print loaded settings in pretty way and continue.
     logger.info(click.style(dedent(f"    {func.__doc__}"), fg="green"))
@@ -153,7 +153,7 @@ def _callback(
 
 
 def entrypoint(
-    settings_cls: type[SettingsType],
+    settings_cls: type[BaseSettings],
 ) -> Callable[[Callable[[], None]], Command]:
     """Decorate given function to mark it as a cli entrypoint.
 

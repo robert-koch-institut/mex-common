@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, Self, cast
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
@@ -10,7 +10,6 @@ from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettings
 from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
-SettingsType = TypeVar("SettingsType", bound="BaseSettings")
 SettingsContext = ContextStore[dict[type["BaseSettings"], "BaseSettings"]]({})
 
 
@@ -73,25 +72,23 @@ class BaseSettings(PydanticBaseSettings):
         )
 
     @classmethod
-    def get(cls: type[SettingsType]) -> SettingsType:
+    def get(cls: type[Self]) -> Self:
         """Get the current settings instance from the active context.
 
         Returns:
-            Settings: An instance of Settings or a subclass thereof
+            Settings: An instance of BaseSettings or a subclass thereof
         """
-        settings_dict = SettingsContext.get()
-        breakpoint()
-        settings = settings_dict.get(cls)
-        if settings is not None:
-            return settings
-        base_settings = settings_dict.get(BaseSettings)
-        if base_settings is None:
-            base = {}
-        else:
+        context = SettingsContext.get()
+        settings = context.get(cls)
+        if settings:
+            return cast(Self, settings)
+        base_settings = context.get(BaseSettings)
+        if base_settings:
             base = base_settings.model_dump(exclude_unset=True)
+        else:
+            base = {}
         settings = cls.model_validate(base)
-
-        settings_dict[cls] = settings
+        context[cls] = cls.model_validate(base)
         return settings
 
     # Note: We need to hardcode the environment variable names for base settings here,
@@ -218,7 +215,12 @@ class BaseSettings(PydanticBaseSettings):
         return env_info[0][1].upper()
 
     @model_validator(mode="after")
-    def resolve_paths(self) -> "BaseSettings":
+    def sync_settings(self) -> Self:
+        # TODO: on updates to base fields: sync values to all other settings in context
+        return self
+
+    @model_validator(mode="after")
+    def resolve_paths(self) -> Self:
         """Resolve AssetPath and WorkPath."""
         for name in self.model_fields:
             value = getattr(self, name)
