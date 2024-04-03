@@ -32,34 +32,25 @@ def search_organization_by_label(
     )
 
     results = connector.get_data_by_query(query_string)
-    resolved_organizations = []
+    if len(results) > 1:
+        return None
 
-    for item in results:
-        try:
-            wd_item_id = item["item"]["value"].split("/")[-1]
-        except requests.exceptions.HTTPError as exc:
-            raise MExError(
-                f"HTTPError: Error processing results for {item_label}"
-            ) from exc
-        except requests.exceptions.RetryError as exc:
-            raise MExError(
-                f"RetryError: Max retries exceeded processing results for {item_label}"
-            ) from exc
-        except KeyError as exc:
-            raise MExError(
-                f"KeyError: Error processing results for {item_label}"
-            ) from exc
-        except IndexError as exc:
-            raise MExError(
-                f"IndexError: Error processing results for {item_label}"
-            ) from exc
+    try:
+        wd_item_id = results[0]["item"]["value"].split("/")[-1]
+    except requests.exceptions.HTTPError as exc:
+        raise MExError(f"HTTPError: Error processing results for {item_label}") from exc
+    except requests.exceptions.RetryError as exc:
+        raise MExError(
+            f"RetryError: Max retries exceeded processing results for {item_label}"
+        ) from exc
+    except KeyError as exc:
+        raise MExError(f"KeyError: Error processing results for {item_label}") from exc
+    except IndexError as exc:
+        raise MExError(
+            f"IndexError: Error processing results for {item_label}"
+        ) from exc
 
-        resolved_organizations.append(_get_organization_details(wd_item_id))
-
-    if len(resolved_organizations) == 1:
-        return resolved_organizations[0]
-
-    return None
+    return _get_organization_details(wd_item_id)
 
 
 def _get_organization_details(item_id: str) -> WikidataOrganization:
