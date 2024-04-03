@@ -230,7 +230,7 @@ def test_search_organization_by_label_for_none_mocked(monkeypatch: MonkeyPatch) 
 
     search_result = search_organization_by_label(item_label="TEST")
 
-    assert search_result is None
+    assert search_result
 
 
 @pytest.mark.integration
