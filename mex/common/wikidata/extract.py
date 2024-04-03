@@ -17,7 +17,7 @@ def search_organization_by_label(
         item_label: Item title or label to be searched
 
     Returns:
-        Generator for WikidataOrganization items
+        WikidataOrganization or None
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
