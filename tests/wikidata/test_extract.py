@@ -17,21 +17,19 @@ from tests.wikidata.conftest import TESTDATA_DIR
 
 @pytest.mark.integration
 def test_search_organization_by_label() -> None:
-    """Test organization search in wikidata."""
     expected = "Q679041"
 
-    search_results = search_organization_by_label(item_label='Robert Koch Institute"')
-    if search_results:
-        assert search_results.identifier == expected
-    else:
-        pytest.fail(f"No organizations were found for id: {expected}")
+    search_result = search_organization_by_label(item_label='Robert Koch Institute"')
+    if search_result:
+        assert search_result.identifier == expected
+
+    assert search_result
 
 
 @pytest.mark.integration
 def test_search_organization_by_label_for_none() -> None:
-    """Test organization search in wikidata."""
-    search_results = search_organization_by_label(item_label="BMW")
-    assert search_results is None
+    search_result = search_organization_by_label(item_label="BMW")
+    assert search_result is None
 
 
 @pytest.mark.usefixtures("mocked_session_wikidata_query_service")
@@ -63,7 +61,6 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
     "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
 )
 def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
-    """Test(mock) organization search in wikidata."""
     expected_item_details_response = {
         "identifier": "Q26678",
         "labels": {
@@ -190,21 +187,18 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
         lambda self, _: mocked_item_details_response(),
     )
 
-    search_results = search_organization_by_label(item_label="TEST")
+    search_result = search_organization_by_label(item_label="TEST")
 
-    if search_results:
-        assert search_results.model_dump() == expected_item_details_response
-    else:
-        pytest.fail(
-            f"No organizations were found for id: {expected_item_details_response['identifier']}"
-        )
+    if search_result:
+        assert search_result.model_dump() == expected_item_details_response
+
+    assert search_result
 
 
 @pytest.mark.usefixtures(
     "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
 )
 def test_search_organization_by_label_for_none_mocked(monkeypatch: MonkeyPatch) -> None:
-    """Test(mock) organization search in wikidata."""
     expected_query_response = [
         {
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
@@ -234,14 +228,13 @@ def test_search_organization_by_label_for_none_mocked(monkeypatch: MonkeyPatch) 
         lambda self, _: mocked_item_details_response(),
     )
 
-    search_results = search_organization_by_label(item_label="TEST")
+    search_result = search_organization_by_label(item_label="TEST")
 
-    assert search_results is None
+    assert search_result is None
 
 
 @pytest.mark.integration
 def test_get_organization_details() -> None:
-    """Test organization details fetching from wikidata."""
     expected = {
         "identifier": "Q679041",
         "labels": {
@@ -342,7 +335,6 @@ def test_get_organization_details() -> None:
     "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
 )
 def test_get_organization_details_mocked(monkeypatch: MonkeyPatch) -> None:
-    """Test(mock) organization details fetching from wikidata."""
     expected = {
         "identifier": "Q26678",
         "labels": {

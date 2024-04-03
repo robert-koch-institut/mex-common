@@ -1,8 +1,6 @@
 import json
 from operator import attrgetter, itemgetter
 
-import pytest
-
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import Text, TextLanguage
@@ -64,8 +62,7 @@ def test_transform_wikidata_organization_to_organization(
         )
     )
 
-    if not extracted_organizations:
-        pytest.fail("No extracted organization.")
+    assert extracted_organizations
 
     extracted_organization_dict = extracted_organizations[0].model_dump()
 
