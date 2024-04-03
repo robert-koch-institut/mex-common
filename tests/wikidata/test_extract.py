@@ -39,9 +39,6 @@ def test_search_organization_by_label_mocked_error(monkeypatch: MonkeyPatch) -> 
         {
             "item": {"foo": "uri", "bar": "http://www.wikidata.org/entity/Q26678"},
         },
-        {
-            "item": {"foo": "uri", "bar": "http://www.wikidata.org/entity/Q821937"},
-        },
     ]
 
     def mocked_query_response():
@@ -230,7 +227,7 @@ def test_search_organization_by_label_for_none_mocked(monkeypatch: MonkeyPatch) 
 
     search_result = search_organization_by_label(item_label="TEST")
 
-    assert search_result
+    assert search_result is None
 
 
 @pytest.mark.integration
