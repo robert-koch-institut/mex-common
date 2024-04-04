@@ -16,10 +16,11 @@ repos:
     hooks:
       - id: pretty-format-json
         name: json
-        args: [--autofix]
+        args: [--autofix, --indent=4, --no-ensure-ascii]
         exclude: .cruft.json
       - id: check-yaml
         name: yaml
+        exclude: templates\/[a-z_-]+.yaml
       - id: end-of-file-fixer
         name: eof
       - id: trailing-whitespace
@@ -35,7 +36,7 @@ repos:
     hooks:
     - id: mypy
       name: mypy
-      entry: pdm run dmypy run --timeout 7200 -- mex
+      entry: pdm mypy-daemon
       files: ^mex/
       language: system
       pass_filenames: false
