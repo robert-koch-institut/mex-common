@@ -62,7 +62,7 @@ def test_transform_wikidata_organization_to_organization(
         )
     )
 
-    assert extracted_organizations
+    assert len(extracted_organizations) == 1
 
     extracted_organization_dict = extracted_organizations[0].model_dump()
 

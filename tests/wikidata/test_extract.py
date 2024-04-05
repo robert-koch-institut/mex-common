@@ -186,10 +186,8 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
 
     search_result = search_organization_by_label(item_label="TEST")
 
-    if search_result:
-        assert search_result.model_dump() == expected_item_details_response
-
     assert search_result
+    assert search_result.model_dump() == expected_item_details_response
 
 
 @pytest.mark.usefixtures(
