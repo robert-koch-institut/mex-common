@@ -17,7 +17,8 @@ def search_organization_by_label(
         item_label: Item title or label to be searched
 
     Returns:
-        WikidataOrganization or None
+        WikidataOrganization if only one organization is found
+        None if no or multiple organizations are found
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
