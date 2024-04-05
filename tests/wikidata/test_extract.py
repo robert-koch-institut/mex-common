@@ -20,10 +20,8 @@ def test_search_organization_by_label() -> None:
     expected = "Q679041"
 
     search_result = search_organization_by_label(item_label='Robert Koch Institute"')
-    if search_result:
-        assert search_result.identifier == expected
-
     assert search_result
+    assert search_result.identifier == expected
 
 
 @pytest.mark.integration
