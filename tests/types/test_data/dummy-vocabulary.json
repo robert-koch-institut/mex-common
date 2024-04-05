@@ -1,27 +1,27 @@
 [
-  {
-    "altLabel": {
-      "de": "alt-de-one",
-      "en": "alt-en-one"
+    {
+        "altLabel": {
+            "de": "alt-de-one",
+            "en": "alt-en-one"
+        },
+        "definition": {
+            "de": "desc-de-one",
+            "en": "desc-en-one"
+        },
+        "identifier": "https://dummy/concept-one",
+        "inScheme": "https://dummy/concept",
+        "prefLabel": {
+            "de": "pref-de-one",
+            "en": "pref-en-one"
+        }
     },
-    "definition": {
-      "de": "desc-de-one",
-      "en": "desc-en-one"
-    },
-    "identifier": "https://dummy/concept-one",
-    "inScheme": "https://dummy/concept",
-    "prefLabel": {
-      "de": "pref-de-one",
-      "en": "pref-en-one"
+    {
+        "definition": null,
+        "identifier": "https://dummy/concept-two",
+        "inScheme": "https://dummy/concept",
+        "prefLabel": {
+            "de": "pref-de-two",
+            "en": "pref-en-two"
+        }
     }
-  },
-  {
-    "definition": null,
-    "identifier": "https://dummy/concept-two",
-    "inScheme": "https://dummy/concept",
-    "prefLabel": {
-      "de": "pref-de-two",
-      "en": "pref-en-two"
-    }
-  }
 ]

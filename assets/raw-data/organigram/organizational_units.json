@@ -1,69 +1,69 @@
 [
-  {
-    "alternativeName": [
-      {
-        "value": "CHLD"
-      },
-      {
-        "value": "C1 Sub-Unit"
-      },
-      {
-        "value": "C1 Unterabteilung"
-      }
-    ],
-    "identifier": "child-unit",
-    "name": [
-      {
-        "language": "de",
-        "value": "CHLD Unterabteilung"
-      },
-      {
-        "language": "en",
-        "value": "C1: Sub Unit"
-      }
-    ],
-    "parentUnit": "parent-unit",
-    "shortName": [
-      {
-        "value": "C1"
-      }
-    ]
-  },
-  {
-    "alternativeName": [
-      {
-        "value": "PRNT Abteilung"
-      },
-      {
-        "value": "PARENT Dept."
-      }
-    ],
-    "email": [
-      "pu@example.com",
-      "PARENT@example.com"
-    ],
-    "identifier": "parent-unit",
-    "name": [
-      {
-        "language": "de",
-        "value": "Abteilung"
-      },
-      {
-        "language": "en",
-        "value": "Department"
-      }
-    ],
-    "shortName": [
-      {
-        "value": "PRNT"
-      }
-    ],
-    "website": [
-      {
-        "language": "en",
-        "title": "Example | Parent Department",
-        "url": "https://www.example.com/departments/parent.html"
-      }
-    ]
-  }
+    {
+        "alternativeName": [
+            {
+                "value": "CHLD"
+            },
+            {
+                "value": "C1 Sub-Unit"
+            },
+            {
+                "value": "C1 Unterabteilung"
+            }
+        ],
+        "identifier": "child-unit",
+        "name": [
+            {
+                "language": "de",
+                "value": "CHLD Unterabteilung"
+            },
+            {
+                "language": "en",
+                "value": "C1: Sub Unit"
+            }
+        ],
+        "parentUnit": "parent-unit",
+        "shortName": [
+            {
+                "value": "C1"
+            }
+        ]
+    },
+    {
+        "alternativeName": [
+            {
+                "value": "PRNT Abteilung"
+            },
+            {
+                "value": "PARENT Dept."
+            }
+        ],
+        "email": [
+            "pu@example.com",
+            "PARENT@example.com"
+        ],
+        "identifier": "parent-unit",
+        "name": [
+            {
+                "language": "de",
+                "value": "Abteilung"
+            },
+            {
+                "language": "en",
+                "value": "Department"
+            }
+        ],
+        "shortName": [
+            {
+                "value": "PRNT"
+            }
+        ],
+        "website": [
+            {
+                "language": "en",
+                "title": "Example | Parent Department",
+                "url": "https://www.example.com/departments/parent.html"
+            }
+        ]
+    }
 ]
