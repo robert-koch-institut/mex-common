@@ -87,3 +87,51 @@ def test_resolve_paths() -> None:
     assert settings_dict["assets_path"] == AssetsPath(
         absolute / "assets_dir" / relative
     )
+
+
+class BlueSettings(BaseSettings):
+    color: str = "blue"
+
+
+class RedSettings(BaseSettings):
+    color: str = "red"
+
+
+def test_sync_settings_from_base(tmp_path: Path) -> None:
+    # GIVEN an instance of the base settings and a subclass
+    base_settings = BaseSettings.get()
+    blue_settings = BlueSettings.get()
+
+    # GIVEN a field that belongs to the `BaseSettings` scope
+    assert "work_dir" in BaseSettings.model_fields
+
+    # GIVEN the two settings start out with the same `work_dir`
+    assert base_settings.work_dir == blue_settings.work_dir
+
+    # WHEN we change the `work_dir` on the `BaseSetting`
+    print(">>> setting base")
+    base_settings.work_dir = tmp_path / "base-update"
+    print("<<< setting base")
+
+    # THEN the changes should be synced to the `BlueSettings`
+    assert blue_settings.work_dir == tmp_path / "base-update"
+
+
+def test_sync_settings_from_subclasses(tmp_path: Path) -> None:
+    # GIVEN an instance of the base settings and two subclasses
+    base_settings = BaseSettings.get()
+    blue_settings = BlueSettings.get()
+    red_settings = RedSettings.get()
+
+    # GIVEN all settings start out with the same `work_dir`
+    assert base_settings.work_dir == blue_settings.work_dir == red_settings.work_dir
+
+    # WHEN we change the `work_dir` on the `BlueSetting`
+    blue_settings.work_dir = tmp_path / "blue-update"
+
+    # THEN the changes should be synced to the `BaseSettings` and the `RedSettings`
+    assert blue_settings.work_dir == tmp_path / "blue-update"
+    assert red_settings.work_dir == tmp_path / "blue-update"
+
+
+test_sync_settings_from_base(Path.cwd())

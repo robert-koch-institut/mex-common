@@ -1,3 +1,4 @@
+from multiprocessing import Lock
 from pathlib import Path
 from typing import Any, Self, cast
 
@@ -11,6 +12,7 @@ from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SettingsContext = ContextStore[dict[type["BaseSettings"], "BaseSettings"]]({})
+_SettingsSyncLock = Lock()
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -79,17 +81,9 @@ class BaseSettings(PydanticBaseSettings):
             Settings: An instance of BaseSettings or a subclass thereof
         """
         context = SettingsContext.get()
-        settings = context.get(cls)
-        if settings:
-            return cast(Self, settings)
-        base_settings = context.get(BaseSettings)
-        if base_settings:
-            base = base_settings.model_dump(exclude_unset=True)
-        else:
-            base = {}
-        settings = cls.model_validate(base)
-        context[cls] = cls.model_validate(base)
-        return settings
+        if cls not in context:
+            context[cls] = cls()
+        return cast(Self,  context[cls])
 
     # Note: We need to hardcode the environment variable names for base settings here,
     # otherwise their prefix will get overwritten with those of a specific subclass.
@@ -214,9 +208,37 @@ class BaseSettings(PydanticBaseSettings):
         env_info = env_settings._extract_field_info(field, name)
         return env_info[0][1].upper()
 
+    def __str__(self) -> str:
+        return f"{type(self).__name__}(id='{id(self)}')"
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(id='{id(self)}')"
+
     @model_validator(mode="after")
     def sync_settings(self) -> Self:
-        # TODO: on updates to base fields: sync values to all other settings in context
+        """Sync updates to settings in the `BaseSettings` scope to other settings."""
+        context = SettingsContext.get()
+        if _SettingsSyncLock.acquire(timeout=0):
+            print("acquired", self)
+            base_scope_patch = {
+                field: getattr(self, field)
+                for field in self.model_fields_set
+                if field in BaseSettings.model_fields
+            }
+            settings_not_me = [s for s in context.values() if s is not self]
+            try:
+                if settings_not_me:
+                    for setting in context.values():
+                        if setting is not self:
+                            for field, value in base_scope_patch.items():
+                                setattr(self, field, value)
+                                print("setattr", self, field, value)
+            finally:
+                _SettingsSyncLock.release()
+                print("released", self)
+        else:
+            print("noop", self)
+        print("")
         return self
 
     @model_validator(mode="after")
