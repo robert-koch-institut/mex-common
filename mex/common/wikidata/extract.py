@@ -31,7 +31,8 @@ def search_organization_by_label(
     )
 
     results = connector.get_data_by_query(query_string)
-    if len(results) > 1:
+
+    if len(results) != 1:
         return None
 
     try:
