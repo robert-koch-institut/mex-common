@@ -1,5 +1,3 @@
-import requests
-
 from mex.common.exceptions import MExError
 from mex.common.wikidata.connector import (
     WikidataAPIConnector,
@@ -38,12 +36,6 @@ def search_organization_by_label(
 
     try:
         wd_item_id = results[0]["item"]["value"].split("/")[-1]
-    except requests.exceptions.HTTPError as exc:
-        raise MExError(f"HTTPError: Error processing results for {item_label}") from exc
-    except requests.exceptions.RetryError as exc:
-        raise MExError(
-            f"RetryError: Max retries exceeded processing results for {item_label}"
-        ) from exc
     except KeyError as exc:
         raise MExError(f"KeyError: Error processing results for {item_label}") from exc
     except IndexError as exc:

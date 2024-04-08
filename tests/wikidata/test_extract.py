@@ -26,6 +26,12 @@ def test_search_organization_by_label() -> None:
 
 
 @pytest.mark.integration
+def test_search_organization_by_label_error() -> None:
+    with pytest.raises(MExError):
+        _ = search_organization_by_label(item_label='Robert Koch Institute Test Alpha"')
+
+
+@pytest.mark.integration
 def test_search_organization_by_label_for_none() -> None:
     search_result = search_organization_by_label(item_label="BMW")
     assert search_result is None
