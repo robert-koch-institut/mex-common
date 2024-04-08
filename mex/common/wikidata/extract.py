@@ -39,10 +39,6 @@ def search_organization_by_label(
         wd_item_id = results[0]["item"]["value"].split("/")[-1]
     except KeyError as exc:
         raise MExError(f"KeyError: Error processing results for {item_label}") from exc
-    except IndexError as exc:
-        raise MExError(
-            f"IndexError: Error processing results for {item_label}"
-        ) from exc
 
     return _get_organization_details(wd_item_id)
 
