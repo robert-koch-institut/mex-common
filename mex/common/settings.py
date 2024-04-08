@@ -1,4 +1,3 @@
-from multiprocessing import Lock
 from pathlib import Path
 from typing import Any, Self, cast
 
@@ -12,7 +11,6 @@ from mex.common.context import ContextStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SettingsContext = ContextStore[dict[type["BaseSettings"], "BaseSettings"]]({})
-_SettingsSyncLock = Lock()
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -83,7 +81,7 @@ class BaseSettings(PydanticBaseSettings):
         context = SettingsContext.get()
         if cls not in context:
             context[cls] = cls()
-        return cast(Self,  context[cls])
+        return cast(Self, context[cls])
 
     # Note: We need to hardcode the environment variable names for base settings here,
     # otherwise their prefix will get overwritten with those of a specific subclass.
@@ -208,39 +206,6 @@ class BaseSettings(PydanticBaseSettings):
         env_info = env_settings._extract_field_info(field, name)
         return env_info[0][1].upper()
 
-    def __str__(self) -> str:
-        return f"{type(self).__name__}(id='{id(self)}')"
-
-    def __repr__(self) -> str:
-        return f"{type(self).__name__}(id='{id(self)}')"
-
-    @model_validator(mode="after")
-    def sync_settings(self) -> Self:
-        """Sync updates to settings in the `BaseSettings` scope to other settings."""
-        context = SettingsContext.get()
-        if _SettingsSyncLock.acquire(timeout=0):
-            print("acquired", self)
-            base_scope_patch = {
-                field: getattr(self, field)
-                for field in self.model_fields_set
-                if field in BaseSettings.model_fields
-            }
-            settings_not_me = [s for s in context.values() if s is not self]
-            try:
-                if settings_not_me:
-                    for setting in context.values():
-                        if setting is not self:
-                            for field, value in base_scope_patch.items():
-                                setattr(self, field, value)
-                                print("setattr", self, field, value)
-            finally:
-                _SettingsSyncLock.release()
-                print("released", self)
-        else:
-            print("noop", self)
-        print("")
-        return self
-
     @model_validator(mode="after")
     def resolve_paths(self) -> Self:
         """Resolve AssetPath and WorkPath."""
@@ -251,3 +216,27 @@ class BaseSettings(PydanticBaseSettings):
             elif isinstance(value, WorkPath) and value.is_relative():
                 setattr(self, name, self.work_dir.resolve() / value)
         return self
+
+    @model_validator(mode="after")
+    def sync_settings(self) -> Self:
+        """Sync updates to settings in the `BaseSettings` scope to other settings.
+
+        Caveat: Updating in instance in one place, does not instantly update the fields
+        on another instance instantly. Only after "refreshing", by calling `.get()`.
+        """
+        context = SettingsContext.get()
+        # ensure the instance is in the context
+        context[type(self)] = self
+        # collect the changes to fields in the `BaseSettings` scope
+        base_scope = {
+            field: value
+            for field, value in self.model_dump(exclude_unset=True).items()
+            if field in BaseSettings.model_fields
+        }
+        # iterate over all active setting instances and swap them out
+        for cls, instance in list(context.items()):
+            # create a new setting instance with `BaseSettings` fields are overwritten
+            context[cls] = cls.model_construct(
+                **{**instance.model_dump(), **base_scope}
+            )
+        return cast(Self, context[type(self)])

@@ -62,28 +62,30 @@ def test_parse_env_file() -> None:
 def test_resolve_paths() -> None:
     class DummySettings(BaseSettings):
         non_path: str
-        abs_path: WorkPath
-        work_path: WorkPath
+        abs_work_path: WorkPath
+        rel_work_path: WorkPath
         assets_path: AssetsPath
 
     if platform.system() == "Windows":  # pragma: no cover
         absolute = WorkPath(r"C:\absolute\path")
     else:  # pragma: no cover
         absolute = WorkPath("/absolute/path")
-    relative = Path("relative", "path")
+
+    relative = WorkPath(Path("relative", "path"))
 
     settings = DummySettings(
         non_path="blablabla",
-        abs_path=absolute,
-        work_path=WorkPath(relative),
+        abs_work_path=absolute,
+        rel_work_path=relative,
         assets_path=AssetsPath(relative),
         assets_dir=Path(absolute / "assets_dir"),
+        work_dir=Path(absolute / "work_dir"),
     )
 
-    settings_dict = settings.model_dump(exclude_defaults=True)
+    settings_dict = DummySettings.get().model_dump(exclude_defaults=True)
     assert settings_dict["non_path"] == "blablabla"
-    assert settings_dict["abs_path"] == absolute
-    assert settings_dict["work_path"] == WorkPath(settings.work_dir / relative)
+    assert settings_dict["abs_work_path"] == absolute
+    assert settings_dict["rel_work_path"] == WorkPath(settings.work_dir / relative)
     assert settings_dict["assets_path"] == AssetsPath(
         absolute / "assets_dir" / relative
     )
@@ -109,11 +111,10 @@ def test_sync_settings_from_base(tmp_path: Path) -> None:
     assert base_settings.work_dir == blue_settings.work_dir
 
     # WHEN we change the `work_dir` on the `BaseSetting`
-    print(">>> setting base")
     base_settings.work_dir = tmp_path / "base-update"
-    print("<<< setting base")
 
-    # THEN the changes should be synced to the `BlueSettings`
+    # THEN the changes should be synced to new `BlueSettings`
+    blue_settings = BlueSettings.get()
     assert blue_settings.work_dir == tmp_path / "base-update"
 
 
@@ -129,9 +130,8 @@ def test_sync_settings_from_subclasses(tmp_path: Path) -> None:
     # WHEN we change the `work_dir` on the `BlueSetting`
     blue_settings.work_dir = tmp_path / "blue-update"
 
-    # THEN the changes should be synced to the `BaseSettings` and the `RedSettings`
+    # THEN the changes should be synced to new `BaseSettings` and `RedSettings`
+    base_settings = BaseSettings.get()
+    red_settings = RedSettings.get()
     assert blue_settings.work_dir == tmp_path / "blue-update"
     assert red_settings.work_dir == tmp_path / "blue-update"
-
-
-test_sync_settings_from_base(Path.cwd())
