@@ -1,11 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from contextlib import ExitStack
 from types import TracebackType
-from typing import TypeVar, cast, final
+from typing import Self, cast, final
 
 from mex.common.context import ContextStore
 
-ConnectorType = TypeVar("ConnectorType", bound="BaseConnector")
 ConnectorContext = ContextStore[dict[type["BaseConnector"], "BaseConnector"]]({})
 
 
@@ -21,7 +20,7 @@ class BaseConnector(metaclass=ABCMeta):
 
     @final
     @classmethod
-    def get(cls: type[ConnectorType]) -> ConnectorType:
+    def get(cls: type[Self]) -> Self:
         """Create or retrieve a connector singleton from the context variable.
 
         Returns:
@@ -29,7 +28,7 @@ class BaseConnector(metaclass=ABCMeta):
         """
         context = ConnectorContext.get()
         try:
-            connector = cast(ConnectorType, context[cls])
+            connector = cast(Self, context[cls])
         except KeyError:
             context[cls] = connector = cls()
         return connector
@@ -39,7 +38,7 @@ class BaseConnector(metaclass=ABCMeta):
         """Create a new connector instance."""
 
     @final
-    def __enter__(self: ConnectorType) -> ConnectorType:
+    def __enter__(self: Self) -> Self:
         """Make connector available as context manager target."""
         return self
 

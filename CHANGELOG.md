@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- synchronize changes to fields in `BaseSettings` to all active settings subclasses
+
 ### Changes
+
+- change type of `SettingsContext` to a dictionary, just like `ConnectorContext`
+- allow requesting different settings subclasses in the same entrypoint
 
 ### Deprecated
 
 ### Removed
+
+- removed types `IdentifierT`, `SettingsType`, `ConnectorType` in favor of `typing.Self`
 
 ### Fixed
 
