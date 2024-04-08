@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
-- return only one organization from wikidata. If multiple or no organization is found then return None
-- filter quotation marks (") from requested wikidata label
 
 ### Deprecated
 
@@ -20,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.23.0] - 2024-04-08
+
+### Changes
+
+- return only one organization from wikidata, if multiple or no organization is found then return None
+- filter quotation marks (") from requested wikidata label
 
 ## [0.22.0] - 2024-03-19
 
