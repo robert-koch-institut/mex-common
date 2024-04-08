@@ -1,7 +1,3 @@
-from collections.abc import Generator
-
-import requests
-
 from mex.common.exceptions import MExError
 from mex.common.wikidata.connector import (
     WikidataAPIConnector,
@@ -12,16 +8,18 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 
 def search_organization_by_label(
     item_label: str,
-) -> Generator[WikidataOrganization, None, None]:
+) -> WikidataOrganization | None:
     """Search for an item in wikidata. Only organizations are fetched.
 
     Args:
         item_label: Item title or label to be searched
 
     Returns:
-        Generator for WikidataOrganization items
+        WikidataOrganization if only one organization is found
+        None if no or multiple organizations are found
     """
     connector = WikidataQueryServiceConnector.get()
+    item_label = item_label.replace('"', "")
     query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
         "WHERE{"
@@ -34,27 +32,15 @@ def search_organization_by_label(
 
     results = connector.get_data_by_query(query_string)
 
-    for item in results:
-        try:
-            wd_item_id = item["item"]["value"].split("/")[-1]
-        except requests.exceptions.HTTPError as exc:
-            raise MExError(
-                f"HTTPError: Error processing results for {item_label}"
-            ) from exc
-        except requests.exceptions.RetryError as exc:
-            raise MExError(
-                f"RetryError: Max retries exceeded processing results for {item_label}"
-            ) from exc
-        except KeyError as exc:
-            raise MExError(
-                f"KeyError: Error processing results for {item_label}"
-            ) from exc
-        except IndexError as exc:
-            raise MExError(
-                f"IndexError: Error processing results for {item_label}"
-            ) from exc
+    if len(results) != 1:
+        return None
 
-        yield _get_organization_details(wd_item_id)
+    try:
+        wd_item_id = results[0]["item"]["value"].split("/")[-1]
+    except KeyError as exc:
+        raise MExError(f"KeyError: Error processing results for {item_label}") from exc
+
+    return _get_organization_details(wd_item_id)
 
 
 def _get_organization_details(item_id: str) -> WikidataOrganization:

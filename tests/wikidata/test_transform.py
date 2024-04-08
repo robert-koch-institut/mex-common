@@ -65,6 +65,7 @@ def test_transform_wikidata_organization_to_organization(
     assert len(extracted_organizations) == 1
 
     extracted_organization_dict = extracted_organizations[0].model_dump()
+
     assert sorted(
         extracted_organization_dict["alternativeName"],
         key=itemgetter("value"),
