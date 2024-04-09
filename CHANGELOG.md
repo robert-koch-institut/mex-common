@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- make memory identity provider deterministic (same input args results in same stableTargetId and Identifier)
 
 ### Deprecated
 
