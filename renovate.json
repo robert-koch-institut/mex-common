@@ -1,29 +1,29 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "forkProcessing": "disabled",
-  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
-  "lockFileMaintenance": {
-    "enabled": true
-  },
-  "onboarding": true,
-  "packageRules": [
-    {
-      "dependencyDashboardApproval": false,
-      "description": "lockFileMaintenance",
-      "matchUpdateTypes": [
-        "pin",
-        "digest",
-        "patch",
-        "minor",
-        "major",
-        "lockFileMaintenance"
-      ],
-      "minimumReleaseAge": null
-    }
-  ],
-  "platform": "github",
-  "repositories": [
-    "robert-koch-institut/mex-common"
-  ],
-  "username": "renovate-release"
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "forkProcessing": "disabled",
+    "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "onboarding": true,
+    "packageRules": [
+        {
+            "dependencyDashboardApproval": false,
+            "description": "lockFileMaintenance",
+            "matchUpdateTypes": [
+                "pin",
+                "digest",
+                "patch",
+                "minor",
+                "major",
+                "lockFileMaintenance"
+            ],
+            "minimumReleaseAge": null
+        }
+    ],
+    "platform": "github",
+    "repositories": [
+        "robert-koch-institut/mex-common"
+    ],
+    "username": "renovate-release"
 }
