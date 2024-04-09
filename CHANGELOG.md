@@ -26,6 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.23.0] - 2024-04-08
+
+### Changes
+
+- return only one organization from wikidata, if multiple or no organization is found then return None
+- filter quotation marks (") from requested wikidata label
+
 ## [0.22.0] - 2024-03-19
 
 ### Added
