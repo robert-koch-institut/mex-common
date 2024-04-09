@@ -26,6 +26,17 @@ def test_assign() -> None:
         identifier=new_identity.identifier,
     )
 
+    provider.__exit__(None, None, None)
+    provider = MemoryIdentityProvider.get()
+    fresh_identity = provider.assign(had_primary_source, identifier_in_primary_source)
+
+    assert fresh_identity.model_dump() == dict(
+        hadPrimarySource=had_primary_source,
+        identifierInPrimarySource=identifier_in_primary_source,
+        stableTargetId=new_identity.stableTargetId,
+        identifier=new_identity.identifier,
+    )
+
 
 def test_fetch_empty() -> None:
     provider = MemoryIdentityProvider.get()
