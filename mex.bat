@@ -11,7 +11,8 @@ exit /b 1
 
 :install
 @REM install meta requirements system-wide
-Python -m pip --quiet --disable-pip-version-check install --force-reinstall -r requirements.txt
+echo installing requirements
+pip --disable-pip-version-check install --force-reinstall -r requirements.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 @REM install pre-commit hooks when not in CI
@@ -22,26 +23,24 @@ if "%CI%"=="" (
 
 @REM install packages from lock file in local virtual environment
 echo installing package
-pdm sync --clean --group dev
+pdm install-all
 exit /b %errorlevel%
 
 
 :test
 @REM run the linter hooks from pre-commit on all files
 echo linting all files
-pre-commit run --all-files
+pdm lint
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 @REM run the pytest test suite with unit and integration tests
 echo running all tests
-pdm run pytest
+pdm test
 exit /b %errorlevel%
 
 
 :docs
 @REM use sphinx to auto-generate html docs from code
-echo generating api docs
-pdm run sphinx-apidoc -f -o docs\source mex
-if %errorlevel% neq 0 exit /b %errorlevel%
-pdm run sphinx-build -aE -b dirhtml docs docs\dist
+echo generating docs
+pdm doc
 exit /b %errorlevel%
