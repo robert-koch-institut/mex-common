@@ -27,6 +27,17 @@ class MemoryIdentityProvider(BaseProvider):
             )
         ]
 
+    @staticmethod
+    def _get_identifier(*args: str) -> Identifier:
+        """Get deterministic identifier based on args."""
+        seed_string = "\n".join(args)
+        hash_ = hashlib.md5(  # noqa: S324 identifier generation is not security related
+            seed_string.encode()
+        )
+        seed_hex = hash_.hexdigest()
+        seed_int = int(seed_hex, 16)
+        return Identifier.generate(seed=seed_int)
+
     def assign(
         self,
         had_primary_source: MergedPrimarySourceIdentifier,
@@ -60,17 +71,6 @@ class MemoryIdentityProvider(BaseProvider):
         )
         self._database.append(identity)
         return identity
-
-    @staticmethod
-    def _get_identifier(*args: str) -> Identifier:
-        """Get deterministic identifier based on args."""
-        seed_string = "\n".join(args)
-        hash_ = hashlib.md5(  # noqa: S324 identifier generation is not security related
-            seed_string.encode()
-        )
-        seed_hex = hash_.hexdigest()
-        seed_int = int(seed_hex, 16)
-        return Identifier.generate(seed=seed_int)
 
     def fetch(
         self,
