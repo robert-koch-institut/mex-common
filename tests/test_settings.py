@@ -39,7 +39,7 @@ class BarSettings(BaseSettings):
 
 def test_settings_getting_caches_singleton() -> None:
     # clear cache
-    SETTINGS_STORE.clear()
+    SETTINGS_STORE.reset()
 
     # first get
     settings = FooSettings.get()
