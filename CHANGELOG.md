@@ -13,8 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- change type of `SettingsContext` to a dictionary, just like `ConnectorContext`
-- allow requesting different settings subclasses in the same entrypoint
+- rework `ContextStore` into `SingletonStore` with more intuitive API
+- phase out ambiguous "context" naming in favor of more descriptive "singleton store"
+- rename `SettingsContext` to `SETTINGS_STORE` and allow multiple active subclasses
+- rename `ConnectorContext` to `CONNECTOR_STORE` removing its context manager functions
+- replace `reset_connector_context()` with more consistent `CONNECTOR_STORE.reset()`
 
 ### Deprecated
 

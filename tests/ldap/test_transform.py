@@ -120,7 +120,8 @@ def test_transform_ldap_persons_to_mex_persons_with_unknown_department_raises_er
         _ = list(extracted_persons)
 
     assert all(
-        error.match(d) for d in [ldap_person.department, ldap_person.departmentNumber]
+        error.match(d) if d else False
+        for d in [ldap_person.department, ldap_person.departmentNumber]
     )
 
 

@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from mex.common.settings import BaseSettings, SettingsContext
+from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.types import AssetsPath, WorkPath
 
 
 def test_debug_setting() -> None:
     # Test settings can be instantiated as basic sanity check
-    settings = BaseSettings(debug=True)  # type: ignore
+    settings = BaseSettings(debug=True)
 
     assert settings.debug is True
 
@@ -39,11 +39,11 @@ class BarSettings(BaseSettings):
 
 def test_settings_getting_caches_singleton() -> None:
     # clear cache
-    SettingsContext.set({})  # clear cache
+    SETTINGS_STORE.clear()
 
     # first get
     settings = FooSettings.get()
-    cached_settings = SettingsContext.get().get(FooSettings)
+    cached_settings = SETTINGS_STORE.load(FooSettings)
     assert settings is cached_settings
 
     # repeated get

@@ -7,10 +7,10 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
-from mex.common.context import ContextStore
+from mex.common.context import SingletonStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
-SettingsContext = ContextStore[dict[type["BaseSettings"], "BaseSettings"]]({})
+SETTINGS_STORE = SingletonStore["BaseSettings"]()
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -73,15 +73,12 @@ class BaseSettings(PydanticBaseSettings):
 
     @classmethod
     def get(cls: type[Self]) -> Self:
-        """Get the current settings instance from the active context.
+        """Get the current settings instance from singleton store.
 
         Returns:
-            Settings: An instance of BaseSettings or a subclass thereof
+            An instance of BaseSettings or a subclass thereof
         """
-        context = SettingsContext.get()
-        if cls not in context:
-            context[cls] = cls()
-        return cast(Self, context[cls])
+        return cast(Self, SETTINGS_STORE.load(cls))
 
     # Note: We need to hardcode the environment variable names for base settings here,
     # otherwise their prefix will get overwritten with those of a specific subclass.
@@ -224,9 +221,8 @@ class BaseSettings(PydanticBaseSettings):
         Caveat: Updating in instance in one place, does not instantly update the fields
         on another instance instantly. Only after "refreshing", by calling `.get()`.
         """
-        context = SettingsContext.get()
-        # ensure the instance is in the context
-        context[type(self)] = self
+        # ensure the settings singled instance is stored
+        SETTINGS_STORE.push(self)
         # collect the changes to fields in the `BaseSettings` scope
         base_scope = {
             field: value
@@ -234,9 +230,9 @@ class BaseSettings(PydanticBaseSettings):
             if field in BaseSettings.model_fields
         }
         # iterate over all active setting instances and swap them out
-        for cls, instance in list(context.items()):
+        for settings in SETTINGS_STORE:
             # create a new setting instance with `BaseSettings` fields are overwritten
-            context[cls] = cls.model_construct(
-                **{**instance.model_dump(), **base_scope}
+            SETTINGS_STORE.push(
+                settings.model_construct(**{**settings.model_dump(), **base_scope})
             )
-        return cast(Self, context[type(self)])
+        return cast(Self, SETTINGS_STORE.load(type(self)))

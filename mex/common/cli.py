@@ -14,9 +14,9 @@ from click.core import ParameterSource
 from click.exceptions import Abort, Exit
 from pydantic.fields import FieldInfo
 
-from mex.common.connector import reset_connector_context
+from mex.common.connector import CONNECTOR_STORE
 from mex.common.logging import echo, logger
-from mex.common.settings import BaseSettings, SettingsContext
+from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.transform import MExEncoder
 
 HELP_TEMPLATE = """
@@ -114,8 +114,9 @@ def _callback(
     # get current click context.
     context = click.get_current_context()
 
-    # ensure connectors are closed on exit.
-    context.call_on_close(reset_connector_context)
+    # ensure all singletons are reset.
+    context.call_on_close(CONNECTOR_STORE.reset)
+    context.call_on_close(SETTINGS_STORE.reset)
 
     # load settings from parameters and store it globally.
     settings = settings_cls.model_validate(
@@ -125,7 +126,7 @@ def _callback(
             if context.get_parameter_source(key) == ParameterSource.COMMANDLINE
         }
     )
-    SettingsContext.set({settings_cls: settings})
+    SETTINGS_STORE.push(settings)
 
     # otherwise print loaded settings in pretty way and continue.
     logger.info(click.style(dedent(f"    {func.__doc__}"), fg="green"))
