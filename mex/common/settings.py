@@ -218,8 +218,8 @@ class BaseSettings(PydanticBaseSettings):
     def sync_settings(self) -> Self:
         """Sync updates to settings in the `BaseSettings` scope to other settings.
 
-        Caveat: Updating in instance in one place, does not instantly update the fields
-        on another instance instantly. Only after "refreshing", by calling `.get()`.
+        Caveat: Updating fields of one class does not automatically update other
+        classes. To update another class, call any settings `.get()` method.
         """
         # ensure the settings singled instance is stored
         SETTINGS_STORE.push(self)
