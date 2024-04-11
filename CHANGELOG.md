@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - synchronize changes to fields in `BaseSettings` to all active settings subclasses
+- added github action for renovatebot
 
 ### Changes
 - make memory identity provider deterministic (same input args results in same stableTargetId and Identifier)
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - removed types `IdentifierT`, `SettingsType`, `ConnectorType` in favor of `typing.Self`
+- remove github dependabot configuration
 
 ### Fixed
 
