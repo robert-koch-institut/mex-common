@@ -14,13 +14,13 @@ from unittest.mock import MagicMock
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
 
-from mex.common.connector import reset_connector_context
+from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
-from mex.common.settings import BaseSettings, SettingsContext
+from mex.common.settings import SETTINGS_STORE, BaseSettings
 
 
 class NoOpPytest:
@@ -70,17 +70,17 @@ def settings() -> BaseSettings:
 
 
 @pytest.fixture(autouse=True)
-def isolate_settings_context() -> Generator[None, None, None]:
-    """Automatically reset the settings context variable."""
+def isolate_settings() -> Generator[None, None, None]:
+    """Automatically reset the settings singleton store."""
     yield
-    SettingsContext.set(None)
+    SETTINGS_STORE.reset()
 
 
 @pytest.fixture(autouse=True)
-def isolate_connector_context() -> Generator[None, None, None]:
-    """Automatically close all connectors and remove from context variable."""
+def isolate_connectors() -> Generator[None, None, None]:
+    """Automatically close all connectors and remove from singleton store."""
     yield
-    reset_connector_context()
+    CONNECTOR_STORE.reset()
 
 
 @pytest.fixture()

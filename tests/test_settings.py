@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from mex.common.settings import BaseSettings, SettingsContext
+from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.types import AssetsPath, WorkPath
 
 
 def test_debug_setting() -> None:
     # Test settings can be instantiated as basic sanity check
-    settings = BaseSettings(debug=True)  # type: ignore
+    settings = BaseSettings(debug=True)
 
     assert settings.debug is True
 
@@ -39,11 +39,11 @@ class BarSettings(BaseSettings):
 
 def test_settings_getting_caches_singleton() -> None:
     # clear cache
-    SettingsContext.set(None)  # clear cache
+    SETTINGS_STORE.reset()
 
     # first get
     settings = FooSettings.get()
-    cached_settings = SettingsContext.get()
+    cached_settings = SETTINGS_STORE.load(FooSettings)
     assert settings is cached_settings
 
     # repeated get
@@ -59,41 +59,79 @@ def test_parse_env_file() -> None:
     assert settings.model_fields_set != {"work_dir", "assets_dir"}
 
 
-def test_settings_getting_wrong_class_raises_error() -> None:
-    # first get foo settings
-    FooSettings.get()
-    assert isinstance(SettingsContext.get(), FooSettings)
-
-    # then try to get another, non-related settings class
-    with pytest.raises(RuntimeError, match="already loaded"):
-        BarSettings.get()
-
-
 def test_resolve_paths() -> None:
     class DummySettings(BaseSettings):
         non_path: str
-        abs_path: WorkPath
-        work_path: WorkPath
+        abs_work_path: WorkPath
+        rel_work_path: WorkPath
         assets_path: AssetsPath
 
     if platform.system() == "Windows":  # pragma: no cover
         absolute = WorkPath(r"C:\absolute\path")
     else:  # pragma: no cover
         absolute = WorkPath("/absolute/path")
-    relative = Path("relative", "path")
+
+    relative = WorkPath(Path("relative", "path"))
 
     settings = DummySettings(
         non_path="blablabla",
-        abs_path=absolute,
-        work_path=WorkPath(relative),
+        abs_work_path=absolute,
+        rel_work_path=relative,
         assets_path=AssetsPath(relative),
         assets_dir=Path(absolute / "assets_dir"),
+        work_dir=Path(absolute / "work_dir"),
     )
 
-    settings_dict = settings.model_dump(exclude_defaults=True)
+    settings_dict = DummySettings.get().model_dump(exclude_defaults=True)
     assert settings_dict["non_path"] == "blablabla"
-    assert settings_dict["abs_path"] == absolute
-    assert settings_dict["work_path"] == WorkPath(settings.work_dir / relative)
+    assert settings_dict["abs_work_path"] == absolute
+    assert settings_dict["rel_work_path"] == WorkPath(settings.work_dir / relative)
     assert settings_dict["assets_path"] == AssetsPath(
         absolute / "assets_dir" / relative
     )
+
+
+class BlueSettings(BaseSettings):
+    color: str = "blue"
+
+
+class RedSettings(BaseSettings):
+    color: str = "red"
+
+
+def test_sync_settings_from_base(tmp_path: Path) -> None:
+    # GIVEN an instance of the base settings and a subclass
+    base_settings = BaseSettings.get()
+    blue_settings = BlueSettings.get()
+
+    # GIVEN a field that belongs to the `BaseSettings` scope
+    assert "work_dir" in BaseSettings.model_fields
+
+    # GIVEN the two settings start out with the same `work_dir`
+    assert base_settings.work_dir == blue_settings.work_dir
+
+    # WHEN we change the `work_dir` on the `BaseSetting`
+    base_settings.work_dir = tmp_path / "base-update"
+
+    # THEN the changes should be synced to new `BlueSettings`
+    blue_settings = BlueSettings.get()
+    assert blue_settings.work_dir == tmp_path / "base-update"
+
+
+def test_sync_settings_from_subclasses(tmp_path: Path) -> None:
+    # GIVEN an instance of the base settings and two subclasses
+    base_settings = BaseSettings.get()
+    blue_settings = BlueSettings.get()
+    red_settings = RedSettings.get()
+
+    # GIVEN all settings start out with the same `work_dir`
+    assert base_settings.work_dir == blue_settings.work_dir == red_settings.work_dir
+
+    # WHEN we change the `work_dir` on the `BlueSetting`
+    blue_settings.work_dir = tmp_path / "blue-update"
+
+    # THEN the changes should be synced to new `BaseSettings` and `RedSettings`
+    base_settings = BaseSettings.get()
+    red_settings = RedSettings.get()
+    assert blue_settings.work_dir == tmp_path / "blue-update"
+    assert red_settings.work_dir == tmp_path / "blue-update"

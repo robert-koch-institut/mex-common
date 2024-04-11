@@ -1,59 +1,36 @@
 from abc import ABCMeta, abstractmethod
-from contextlib import ExitStack
-from types import TracebackType
-from typing import TypeVar, cast, final
+from contextlib import ExitStack, closing
+from typing import Self, cast, final
 
-from mex.common.context import ContextStore
-
-ConnectorType = TypeVar("ConnectorType", bound="BaseConnector")
-ConnectorContext = ContextStore[dict[type["BaseConnector"], "BaseConnector"]]({})
+from mex.common.context import SingletonStore
 
 
-def reset_connector_context() -> None:
-    """Close all connectors and remove them from current context."""
-    with ExitStack() as stack:
-        for connector in ConnectorContext.get().values():
-            stack.push(connector)
+class _ConnectorStore(SingletonStore["BaseConnector"]):
+    """Thin wrapper for storing thread-local singletons of connectors."""
+
+    def reset(self) -> None:
+        """Close all connectors and remove them from the singleton store."""
+        with ExitStack() as stack:
+            for connector in self:
+                stack.push(closing(connector))
+        super().reset()
+
+
+CONNECTOR_STORE = _ConnectorStore()
 
 
 class BaseConnector(metaclass=ABCMeta):
-    """Base class for connectors that are handled as a context manager."""
+    """Base class for connectors that are handled as singletons."""
 
     @final
     @classmethod
-    def get(cls: type[ConnectorType]) -> ConnectorType:
-        """Create or retrieve a connector singleton from the context variable.
-
-        Returns:
-            Instance of the connector
-        """
-        context = ConnectorContext.get()
-        try:
-            connector = cast(ConnectorType, context[cls])
-        except KeyError:
-            context[cls] = connector = cls()
-        return connector
+    def get(cls: type[Self]) -> Self:
+        """Get the singleton instance for this class from the store."""
+        return cast(Self, CONNECTOR_STORE.load(cls))
 
     @abstractmethod
     def __init__(self) -> None:  # pragma: no cover
         """Create a new connector instance."""
-
-    @final
-    def __enter__(self: ConnectorType) -> ConnectorType:
-        """Make connector available as context manager target."""
-        return self
-
-    @final
-    def __exit__(
-        self,
-        exc_type: type[BaseException] | None,
-        exc_val: BaseException | None,
-        exc_tb: TracebackType | None,
-    ) -> None:
-        """Exit connector by calling `close` method and removing it from context."""
-        self.close()
-        context = ConnectorContext.get()
-        context.pop(type(self))
 
     @abstractmethod
     def close(self) -> None:  # pragma: no cover
