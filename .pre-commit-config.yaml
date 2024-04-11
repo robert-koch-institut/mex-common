@@ -2,24 +2,25 @@ fail_fast: false
 default_language_version:
   python: python3.11
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.3
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/psf/black
     rev: 24.3.0
     hooks:
       - id: black
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.5
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
       - id: pretty-format-json
         name: json
-        args: [--autofix]
+        args: [--autofix, --indent=4, --no-ensure-ascii]
         exclude: .cruft.json
       - id: check-yaml
         name: yaml
+        exclude: templates\/[a-z_-]+.yaml
       - id: end-of-file-fixer
         name: eof
       - id: trailing-whitespace
@@ -27,7 +28,7 @@ repos:
       - id: fix-byte-order-marker
         name: byte-order
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.12.4
+    rev: 2.13.2
     hooks:
       - id: pdm-lock-check
         name: pdm
@@ -35,7 +36,7 @@ repos:
     hooks:
     - id: mypy
       name: mypy
-      entry: pdm run dmypy run --timeout 7200 -- mex
+      entry: pdm mypy-daemon
       files: ^mex/
       language: system
       pass_filenames: false

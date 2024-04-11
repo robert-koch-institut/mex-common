@@ -41,13 +41,13 @@ def test_post_models_mocked(
                 "identifierInPrimarySource": "00000000-0000-4000-8000-0000000003de",
                 "stableTargetId": "bFQoRhcVH5DH8y",
                 "affiliation": ["bFQoRhcVH5DHZg"],
-                "email": "TintzmannM@rki.de",
+                "email": ["TintzmannM@rki.de"],
                 "familyName": ["Tintzmann"],
                 "fullName": ["Meinrad I. Tintzmann"],
                 "givenName": ["Meinrad"],
-                "isniId": "https://isni.org/isni/0000000109403744",
+                "isniId": ["https://isni.org/isni/0000000109403744"],
                 "memberOf": ["bFQoRhcVH5DHV2", "bFQoRhcVH5DHV3"],
-                "orcidId": "https://orcid.org/0000-0002-9079-593X",
+                "orcidId": ["https://orcid.org/0000-0002-9079-593X"],
                 "entityType": "ExtractedPerson",
             }
         ]
