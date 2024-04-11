@@ -11,11 +11,15 @@ on:
 jobs:
   renovate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Run renovatebot
-        uses: renovatebot/github-action@v40
+        uses: renovatebot/github-action@v40.1.7
         env:
           RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.SIGNING_KEY }}
         with:
