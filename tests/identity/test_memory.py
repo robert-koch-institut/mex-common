@@ -42,7 +42,7 @@ def test_assign() -> None:
         identifier=new_identity.identifier,
     )
 
-    provider.__exit__(None, None, None)
+    provider.close()
     provider = MemoryIdentityProvider.get()
     fresh_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
