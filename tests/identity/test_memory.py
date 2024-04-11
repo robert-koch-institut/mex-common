@@ -3,6 +3,22 @@ from mex.common.testing import Joker
 from mex.common.types import MergedPrimarySourceIdentifier
 
 
+def test_get_identifier() -> None:
+    assert MemoryIdentityProvider._get_identifier(
+        "foo"
+    ) == MemoryIdentityProvider._get_identifier("foo")
+    assert MemoryIdentityProvider._get_identifier(
+        "foo"
+    ) != MemoryIdentityProvider._get_identifier("bar")
+    identifiers = [
+        MemoryIdentityProvider._get_identifier(arg1, arg2)
+        for arg1 in ["foo", "bar"]
+        for arg2 in ["a", "b", "c"]
+    ]
+    # make sure each combination of args results in a unique identifier
+    assert len(set(identifiers)) == len(identifiers)
+
+
 def test_assign() -> None:
     provider = MemoryIdentityProvider.get()
     had_primary_source = MergedPrimarySourceIdentifier("00000000000000")
@@ -20,6 +36,17 @@ def test_assign() -> None:
     found_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
     assert found_identity.model_dump() == dict(
+        hadPrimarySource=had_primary_source,
+        identifierInPrimarySource=identifier_in_primary_source,
+        stableTargetId=new_identity.stableTargetId,
+        identifier=new_identity.identifier,
+    )
+
+    provider.close()
+    provider = MemoryIdentityProvider.get()
+    fresh_identity = provider.assign(had_primary_source, identifier_in_primary_source)
+
+    assert fresh_identity.model_dump() == dict(
         hadPrimarySource=had_primary_source,
         identifierInPrimarySource=identifier_in_primary_source,
         stableTargetId=new_identity.stableTargetId,

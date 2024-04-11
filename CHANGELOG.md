@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - synchronize changes to fields in `BaseSettings` to all active settings subclasses
 
 ### Changes
+- make memory identity provider deterministic (same input args results in same stableTargetId and Identifier)
 
 - rework `ContextStore` into `SingletonStore` with more intuitive API
 - phase out ambiguous "context" naming in favor of more descriptive "singleton store"
