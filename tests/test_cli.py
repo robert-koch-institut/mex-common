@@ -10,7 +10,7 @@ from pydantic.fields import Field
 from pytest import LogCaptureFixture
 
 from mex.common.cli import _field_to_option, entrypoint
-from mex.common.settings import BaseSettings, SettingsType
+from mex.common.settings import BaseSettings
 
 
 class MyStr(str):
@@ -202,7 +202,7 @@ class MyEnum(Enum):
     ],
 )
 def test_field_to_option(
-    name: str, settings_cls: type[SettingsType], info_dict: dict[str, Any]
+    name: str, settings_cls: type[BaseSettings], info_dict: dict[str, Any]
 ) -> None:
     option = _field_to_option(name, settings_cls)
     assert option.to_info_dict() == info_dict

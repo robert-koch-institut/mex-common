@@ -1,0 +1,20 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "gitAuthor": "RKIMetadataExchange <mex@rki.de>",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "packageRules": [
+        {
+            "matchUpdateTypes": [
+                "pin",
+                "digest",
+                "patch",
+                "minor",
+                "major",
+                "lockFileMaintenance"
+            ],
+            "minimumReleaseAge": null
+        }
+    ]
+}

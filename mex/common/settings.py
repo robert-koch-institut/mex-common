@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, Self, cast
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic_core import Url
@@ -7,11 +7,10 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
-from mex.common.context import ContextStore
+from mex.common.context import SingletonStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
-SettingsType = TypeVar("SettingsType", bound="BaseSettings")
-SettingsContext = ContextStore[Optional["BaseSettings"]](None)
+SETTINGS_STORE = SingletonStore["BaseSettings"]()
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -73,26 +72,13 @@ class BaseSettings(PydanticBaseSettings):
         )
 
     @classmethod
-    def get(cls: type[SettingsType]) -> SettingsType:
-        """Get the current settings instance from the active context.
+    def get(cls: type[Self]) -> Self:
+        """Get the current settings instance from singleton store.
 
         Returns:
-            Settings: An instance of Settings or a subclass thereof
+            An instance of BaseSettings or a subclass thereof
         """
-        settings = SettingsContext.get()
-        if isinstance(settings, cls):
-            return settings
-        if settings is None:
-            base = {}
-        elif issubclass(cls, type(settings)):
-            base = settings.model_dump(exclude_unset=True)
-        else:
-            raise RuntimeError(
-                f"Requested {cls.__name__} but already loaded {type(settings).__name__}"
-            )
-        settings = cls.model_validate(base)
-        SettingsContext.set(settings)
-        return settings
+        return cast(Self, SETTINGS_STORE.load(cls))
 
     # Note: We need to hardcode the environment variable names for base settings here,
     # otherwise their prefix will get overwritten with those of a specific subclass.
@@ -218,7 +204,7 @@ class BaseSettings(PydanticBaseSettings):
         return env_info[0][1].upper()
 
     @model_validator(mode="after")
-    def resolve_paths(self) -> "BaseSettings":
+    def resolve_paths(self) -> Self:
         """Resolve AssetPath and WorkPath."""
         for name in self.model_fields:
             value = getattr(self, name)
@@ -227,3 +213,26 @@ class BaseSettings(PydanticBaseSettings):
             elif isinstance(value, WorkPath) and value.is_relative():
                 setattr(self, name, self.work_dir.resolve() / value)
         return self
+
+    @model_validator(mode="after")
+    def sync_settings(self) -> Self:
+        """Sync updates to settings in the `BaseSettings` scope to other settings.
+
+        Caveat: Updating fields of one class does not automatically update other
+        classes. To update another class, call any settings `.get()` method.
+        """
+        # ensure the settings singled instance is stored
+        SETTINGS_STORE.push(self)
+        # collect the changes to fields in the `BaseSettings` scope
+        base_scope = {
+            field: value
+            for field, value in self.model_dump(exclude_unset=True).items()
+            if field in BaseSettings.model_fields
+        }
+        # iterate over all active setting instances and swap them out
+        for settings in SETTINGS_STORE:
+            # create a new setting instance with `BaseSettings` fields are overwritten
+            SETTINGS_STORE.push(
+                settings.model_construct(**{**settings.model_dump(), **base_scope})
+            )
+        return cast(Self, SETTINGS_STORE.load(type(self)))

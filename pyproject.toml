@@ -1,12 +1,12 @@
 [project]
 name = "mex-common"
-version = "0.22.0"
+version = "0.23.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
-requires-python = ">=3.11"
+requires-python = "<3.13,>=3.11"
 dependencies = [
     "backoff>=2.2.1",
     "click>=8.1.7",
@@ -16,8 +16,8 @@ dependencies = [
     "numpy>=1.26.4",
     "pandas>=2.2.1",
     "pyarrow>=15.0.1",
-    "pydantic>=2.6.4",
     "pydantic-settings>=2.2.1",
+    "pydantic>=2.6.4",
     "requests>=2.31.0",
 ]
 optional-dependencies.dev = [
@@ -29,7 +29,7 @@ optional-dependencies.dev = [
     "pytest-random-order>=1.1.1",
     "pytest-xdist>=3.5.0",
     "pytest>=8.1.1",
-    "ruff>=0.3.3",
+    "ruff>=0.3.5",
     "sphinx>=7.2.6",
     "types-ldap3>=2.9.13",
     "types-pytz>=2024.1.0",
@@ -38,7 +38,7 @@ optional-dependencies.dev = [
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
-skip = ["tests/conftest.py"]
+skip = ["CHANGELOG.md", "mex", "tests"]
 
 [tool.ipdb]
 context = 5
@@ -57,9 +57,20 @@ ignore_missing_imports = true
 distribution = true
 
 [tool.pdm.scripts]
-autoupdate = { cmd = "pdm update --group :all --update-eager --save-minimum" }
+update-all = { cmd = "pdm update --group :all --update-eager --save-minimum" }
+lock-all = { cmd = "pdm lock --group :all" }
+install-all = { cmd = "pdm install --group :all" }
+export-all = { cmd = "pdm export --group :all -f requirements" }
+apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
+sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
+doc = { composite = ["apidoc", "sphinx"] }
+wheel = { cmd = "pdm build --no-sdist" }
+mypy-daemon = { cmd = "pdm run dmypy run --timeout 7200 -- mex" }
 lint = { cmd = "pre-commit run --all-files" }
+unit = { cmd = "pdm run pytest -m 'not integration'" }
 test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
+all = { composite = ["install-all", "lint", "test", "doc"] }
+
 
 [tool.pydantic-mypy]
 warn_untyped_fields = true

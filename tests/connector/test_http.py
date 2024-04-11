@@ -7,47 +7,36 @@ from pytest import MonkeyPatch
 from requests import JSONDecodeError, Response
 
 from mex.common.connector import (
-    ConnectorContext,
+    CONNECTOR_STORE,
     HTTPConnector,
-    reset_connector_context,
 )
 
 
-class DummyConnector(HTTPConnector):
+class DummyHTTPConnector(HTTPConnector):
     def _set_url(self) -> None:
         self.url = "https://www.example.com"
 
     def _check_availability(self) -> None:
         self.request("GET", "_system/check")
 
-    def close(self) -> None:
-        self.closed = True
-
 
 @pytest.fixture
 def mocked_dummy_session(monkeypatch: MonkeyPatch) -> MagicMock:
-    """Mock the DummyConnector with a MagicMock session and return that."""
+    """Mock the DummyHTTPConnector with a MagicMock session and return that."""
     mocked_session = MagicMock(spec=requests.Session, name="dummy_session")
     mocked_session.request = MagicMock(
         return_value=Mock(spec=requests.Response, status_code=200)
     )
 
-    def set_mocked_session(self: DummyConnector) -> None:
+    def set_mocked_session(self: DummyHTTPConnector) -> None:
         self.session = mocked_session
 
-    monkeypatch.setattr(DummyConnector, "_set_session", set_mocked_session)
+    monkeypatch.setattr(DummyHTTPConnector, "_set_session", set_mocked_session)
     return mocked_session
 
 
-@pytest.mark.usefixtures("mocked_dummy_session")
-def test_connector_enter_returns_self_mocked() -> None:
-    dummy = DummyConnector.get()
-    with dummy as entered_dummy:
-        assert dummy is entered_dummy
-
-
 def test_init_mocked(mocked_dummy_session: MagicMock) -> None:
-    connector = DummyConnector.get()
+    connector = DummyHTTPConnector.get()
     connector.request("GET", "_system/check")
     assert connector.url == "https://www.example.com"
     assert mocked_dummy_session.request.call_args_list[-1] == call(
@@ -60,23 +49,14 @@ def test_init_mocked(mocked_dummy_session: MagicMock) -> None:
 
 
 @pytest.mark.usefixtures("mocked_dummy_session")
-def test_connector_exit_closes_itself_and_removes_from_context() -> None:
-    dummy = DummyConnector.get()
-    assert DummyConnector in ConnectorContext.get()
-    with dummy:
-        pass
-    assert dummy.closed
-    assert DummyConnector not in ConnectorContext.get()
+def test_reset_all_connectors(mocked_dummy_session: MagicMock) -> None:
+    DummyHTTPConnector.get()
+    assert len(list(CONNECTOR_STORE)) == 1
 
+    CONNECTOR_STORE.reset()
+    mocked_dummy_session.close.assert_called_once_with()
 
-@pytest.mark.usefixtures("mocked_dummy_session")
-def test_connector_reset_context() -> None:
-    DummyConnector.get()
-    assert len(ConnectorContext.get()) == 1
-
-    reset_connector_context()
-
-    assert len(ConnectorContext.get()) == 0
+    assert len(list(CONNECTOR_STORE)) == 0
 
 
 @pytest.mark.parametrize(
@@ -123,12 +103,12 @@ def test_request_success(
     mocked_session = MagicMock(spec=requests.Session, name="dummy_session")
     mocked_session.request = MagicMock(return_value=mocked_response)
 
-    def set_mocked_session(self: DummyConnector) -> None:
+    def set_mocked_session(self: DummyHTTPConnector) -> None:
         self.session = mocked_session
 
-    monkeypatch.setattr(DummyConnector, "_set_session", set_mocked_session)
+    monkeypatch.setattr(DummyHTTPConnector, "_set_session", set_mocked_session)
 
-    connector = DummyConnector.get()
+    connector = DummyHTTPConnector.get()
 
     actual_response = connector.request("POST", "things", payload=sent_payload)
 
@@ -137,6 +117,6 @@ def test_request_success(
         "POST",
         "https://www.example.com/things",
         None,
-        timeout=DummyConnector.TIMEOUT,
+        timeout=DummyHTTPConnector.TIMEOUT,
         **expected_kwargs,
     )
