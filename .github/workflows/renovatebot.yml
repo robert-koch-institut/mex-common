@@ -21,7 +21,7 @@ jobs:
       - name: Run renovatebot
         uses: renovatebot/github-action@v40.1.7
         env:
-          RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.SIGNING_KEY }}
+          RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_KEY }}
           RENOVATE_REPOSITORIES: "robert-koch-institut/mex-common"
         with:
           configurationFile: renovate.json
