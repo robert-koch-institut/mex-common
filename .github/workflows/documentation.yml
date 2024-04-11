@@ -55,7 +55,7 @@ jobs:
           python-version: 3.11
 
       - name: Setup pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Install requirements
         run: make install
