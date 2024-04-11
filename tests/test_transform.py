@@ -23,7 +23,7 @@ from mex.common.types.path import PathWrapper
 
 
 class DummyModel(PydanticModel):
-    string_field: Annotated[str, Field("foo", alias="strField")]
+    string_field: Annotated[str, Field(alias="strField")] = "bar"
     integer: int = 42
 
 

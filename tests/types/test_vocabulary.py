@@ -20,7 +20,7 @@ def test_split_to_caps(string: str, expected: str) -> None:
 @pytest.fixture
 def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
     dummy_vocabulary = VocabularyLoader.parse_file(
-        TESTDATA_DIR / "dummy-vocabulary.json"
+        str(TESTDATA_DIR / "dummy-vocabulary.json")
     )
     monkeypatch.setattr(VocabularyLoader, "parse_file", lambda *_: dummy_vocabulary)
 

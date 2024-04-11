@@ -1,3 +1,5 @@
+import hashlib
+
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
 from mex.common.models import (
@@ -25,6 +27,17 @@ class MemoryIdentityProvider(BaseProvider):
             )
         ]
 
+    @staticmethod
+    def _get_identifier(*args: str) -> Identifier:
+        """Get deterministic identifier based on args."""
+        seed_string = "\n".join(args)
+        hash_ = hashlib.md5(  # noqa: S324 identifier generation is not security related
+            seed_string.encode()
+        )
+        seed_hex = hash_.hexdigest()
+        seed_int = int(seed_hex, 16)
+        return Identifier.generate(seed=seed_int)
+
     def assign(
         self,
         had_primary_source: MergedPrimarySourceIdentifier,
@@ -49,8 +62,12 @@ class MemoryIdentityProvider(BaseProvider):
         identity = Identity(
             hadPrimarySource=had_primary_source,
             identifierInPrimarySource=identifier_in_primary_source,
-            stableTargetId=Identifier.generate(),
-            identifier=Identifier.generate(),
+            stableTargetId=self._get_identifier(
+                "stableTargetId", had_primary_source, identifier_in_primary_source
+            ),
+            identifier=self._get_identifier(
+                "identifier", had_primary_source, identifier_in_primary_source
+            ),
         )
         self._database.append(identity)
         return identity
