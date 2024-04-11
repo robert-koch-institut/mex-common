@@ -9,12 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- synchronize changes to fields in `BaseSettings` to all active settings subclasses
+
 ### Changes
 - make memory identity provider deterministic (same input args results in same stableTargetId and Identifier)
+
+- rework `ContextStore` into `SingletonStore` with more intuitive API
+- phase out ambiguous "context" naming in favor of more descriptive "singleton store"
+- rename `SettingsContext` to `SETTINGS_STORE` and allow multiple active subclasses
+- rename `ConnectorContext` to `CONNECTOR_STORE` removing its context manager functions
+- replace `reset_connector_context()` with more consistent `CONNECTOR_STORE.reset()`
 
 ### Deprecated
 
 ### Removed
+
+- removed types `IdentifierT`, `SettingsType`, `ConnectorType` in favor of `typing.Self`
 
 ### Fixed
 

@@ -1,6 +1,6 @@
 import re
 import string
-from typing import Any, TypeVar
+from typing import Any, Self
 from uuid import UUID, uuid4
 
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
@@ -11,14 +11,12 @@ ALPHABET = string.ascii_letters + string.digits
 MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
 UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
-IdentifierT = TypeVar("IdentifierT", bound="Identifier")
-
 
 class Identifier(str):
     """Common identifier class based on UUID version 4."""
 
     @classmethod
-    def generate(cls: type[IdentifierT], seed: int | None = None) -> IdentifierT:
+    def generate(cls: type[Self], seed: int | None = None) -> Self:
         """Generate a new identifier from a seed or random UUID version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
@@ -33,7 +31,7 @@ class Identifier(str):
         return cls(output[::-1])
 
     @classmethod
-    def validate(cls: type[IdentifierT], value: Any) -> IdentifierT:
+    def validate(cls: type[Self], value: Any) -> Self:
         """Validate a string, UUID or Identifier."""
         if isinstance(value, str | UUID | Identifier):
             value = str(value)
