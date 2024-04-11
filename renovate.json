@@ -14,11 +14,7 @@
                 "major",
                 "lockFileMaintenance"
             ],
-            "minimumReleaseAge": "7 days"
+            "minimumReleaseAge": null
         }
-    ],
-    "platform": "github",
-    "repositories": [
-        "robert-koch-institut/mex-common"
     ]
 }
