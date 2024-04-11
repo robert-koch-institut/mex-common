@@ -1,15 +1,11 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "forkProcessing": "disabled",
-    "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+    "gitAuthor": "RKIMetadataExchange <mex@rki.de>",
     "lockFileMaintenance": {
         "enabled": true
     },
-    "onboarding": true,
     "packageRules": [
         {
-            "dependencyDashboardApproval": false,
-            "description": "lockFileMaintenance",
             "matchUpdateTypes": [
                 "pin",
                 "digest",
@@ -18,12 +14,11 @@
                 "major",
                 "lockFileMaintenance"
             ],
-            "minimumReleaseAge": null
+            "minimumReleaseAge": "7 days"
         }
     ],
     "platform": "github",
     "repositories": [
         "robert-koch-institut/mex-common"
-    ],
-    "username": "renovate-release"
+    ]
 }
