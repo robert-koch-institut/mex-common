@@ -294,6 +294,19 @@ class TemporalEntity:
         """Render a presentation showing this is not just a datetime."""
         return f'{self.__class__.__name__}("{self}")'
 
+    def apply_precision(self, precision: TemporalEntityPrecision) -> Any:
+        """Apply precision on a temporal entity.
+
+        When precision is set to Day, timezone info will be stripped.
+        """
+        if precision not in TIME_PRECISIONS:
+            datetime_tz_stripped = self.date_time.replace(tzinfo=None)
+            temporal_entity = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision](
+                datetime_tz_stripped.date()
+            )
+        temporal_entity.precision = precision
+        return temporal_entity
+
 
 class YearMonth(TemporalEntity):
     """Parser for temporal entities with year-precision or month-precision."""
@@ -346,3 +359,14 @@ class YearMonthDayTime(TemporalEntity):
         json_schema["examples"] = ["2022-09-30T20:48:35Z"]
         json_schema["format"] = "date-time"
         return json_schema
+
+
+TEMPORAL_ENTITY_CLASSES_BY_PRECISION = {
+    TemporalEntityPrecision.YEAR: YearMonth,
+    TemporalEntityPrecision.MONTH: YearMonth,
+    TemporalEntityPrecision.DAY: YearMonthDay,
+    TemporalEntityPrecision.HOUR: YearMonthDayTime,
+    TemporalEntityPrecision.MINUTE: YearMonthDayTime,
+    TemporalEntityPrecision.SECOND: YearMonthDayTime,
+    TemporalEntityPrecision.MICROSECOND: YearMonthDayTime,
+}
