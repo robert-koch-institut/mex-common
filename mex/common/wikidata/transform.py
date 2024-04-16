@@ -69,7 +69,7 @@ def transform_wikidata_organization_to_extracted_organization(
         wikidata_primary_source: Extracted primary source for wikidata
 
     Returns:
-        Generator of ExtractedOrganizations
+        ExtractedOrganization or None
     """
     labels = _get_clean_labels(wikidata_organization.labels)
     if not labels:
