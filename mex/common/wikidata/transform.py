@@ -58,6 +58,54 @@ def transform_wikidata_organizations_to_extracted_organizations(
         )
 
 
+def transform_wikidata_organization_to_extracted_organization(
+    wikidata_organization: WikidataOrganization,
+    wikidata_primary_source: ExtractedPrimarySource,
+) -> ExtractedOrganization | None:
+    """Transform one wikidata organization into ExtractedOrganizations.
+
+    Args:
+        wikidata_organization: wikidata organization to be transformed
+        wikidata_primary_source: Extracted primary source for wikidata
+
+    Returns:
+        Generator of ExtractedOrganizations
+    """
+    labels = _get_clean_labels(wikidata_organization.labels)
+    if not labels:
+        return None
+
+    return ExtractedOrganization(  # type: ignore[call-arg]
+        wikidataId=f"https://www.wikidata.org/entity/{wikidata_organization.identifier}",
+        officialName=labels,
+        shortName=_get_clean_short_names(wikidata_organization.claims.short_name),
+        geprisId=[],
+        isniId=[
+            f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
+                " ", ""
+            )
+            for claim in wikidata_organization.claims.isni_id
+        ],
+        gndId=[
+            f"https://d-nb.info/gnd/{claim.mainsnak.datavalue.value.text}"
+            for claim in wikidata_organization.claims.gnd_id
+        ],
+        viafId=[
+            f"https://viaf.org/viaf/{claim.mainsnak.datavalue.value.text}"
+            for claim in wikidata_organization.claims.viaf_id
+        ],
+        rorId=[
+            f"https://ror.org/{claim.mainsnak.datavalue.value.text}"
+            for claim in wikidata_organization.claims.ror_id
+        ],
+        identifierInPrimarySource=wikidata_organization.identifier,
+        hadPrimarySource=wikidata_primary_source.stableTargetId,
+        alternativeName=_get_alternative_names(
+            wikidata_organization.claims.native_label, wikidata_organization.aliases
+        ),
+    )
+
+
 def _get_alternative_names(
     native_labels: list[Claim], all_aliases: Aliases
 ) -> list[Text]:
