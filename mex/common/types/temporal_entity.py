@@ -294,7 +294,9 @@ class TemporalEntity:
         """Render a presentation showing this is not just a datetime."""
         return f'{self.__class__.__name__}("{self}")'
 
-    def apply_precision(self, precision: TemporalEntityPrecision) -> Any:
+    def apply_precision(
+        self, precision: TemporalEntityPrecision
+    ) -> "YearMonthDay | TemporalEntity | YearMonth | YearMonthDayTime":
         """Apply precision on a temporal entity.
 
         When precision is set to Day, timezone info will be stripped.
@@ -303,6 +305,10 @@ class TemporalEntity:
             datetime_tz_stripped = self.date_time.replace(tzinfo=None)
             temporal_entity = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision](
                 datetime_tz_stripped.date()
+            )
+        else:
+            temporal_entity = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision](
+                self.date_time
             )
         temporal_entity.precision = precision
         return temporal_entity

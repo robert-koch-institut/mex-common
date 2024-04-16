@@ -9,6 +9,7 @@ from mex.common.types import (
     CET,
     UTC,
     TemporalEntity,
+    TemporalEntityPrecision,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
@@ -195,3 +196,11 @@ def test_invalid_dates_throw_error() -> None:
 
     with pytest.raises(DateParseError):
         YearMonthDayTime("2018-03-02T12:61:01Z")
+
+
+def test_apply_precision() -> None:
+    temporal_entity = TemporalEntity(date(2022, 12, 25))
+    temporal_entity.apply_precision(TemporalEntityPrecision.DAY)
+
+    assert temporal_entity.date_time == datetime(2022, 12, 25, 0, 0)
+    assert temporal_entity.precision == TemporalEntityPrecision.DAY
