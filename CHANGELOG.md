@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- isolate settings context before first test
-
 ### Security
+
+## [0.24.1] - 2024-04-17
+
+### Fixed
+
+- isolate settings context before first test
 
 ## [0.24.0] - 2024-04-12
 
