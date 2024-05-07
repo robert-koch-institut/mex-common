@@ -70,6 +70,7 @@ def merged_id_of_person_with_identity(
 def test_get_merged_ids_by_attribute(
     ldap_persons: list[LDAPPerson],
     ldap_primary_source: ExtractedPrimarySource,
+    ldap_person_with_identity: LDAPPerson,
     merged_id_of_person_with_identity: Identifier,
 ) -> None:
     merged_ids_by_attribute = _get_merged_ids_by_attribute(
@@ -78,7 +79,7 @@ def test_get_merged_ids_by_attribute(
         ldap_primary_source,
     )
     assert merged_ids_by_attribute == {
-        "Has Identity": [merged_id_of_person_with_identity]
+        ldap_person_with_identity.sn: [merged_id_of_person_with_identity]
     }
 
     with pytest.raises(RuntimeError):
