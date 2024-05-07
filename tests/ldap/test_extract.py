@@ -1,29 +1,35 @@
-import pytest
+from uuid import UUID
 
+from mex.common.identity import get_provider
 from mex.common.ldap.extract import _get_merged_ids_by_attribute
 from mex.common.ldap.models.person import LDAPPerson
 from mex.common.models import ExtractedPrimarySource
-from mex.common.types import MergedPersonIdentifier
+from mex.common.testing import Joker
 
 
-@pytest.mark.parametrize(
-    ("attribute", "expected"), [("sAMAccountName", {})], ids=["person not found"]
-)
 def test_get_merged_ids_by_attribute(
-    attribute: str,
-    expected: dict[str, list[MergedPersonIdentifier]],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
+    persons = [
+        LDAPPerson(
+            objectGUID=UUID(int=1, version=4),
+            employeeID="1",
+            givenName=["Anna"],
+            sn="Has Identity",
+        ),
+        LDAPPerson(
+            objectGUID=UUID(int=2, version=4),
+            employeeID="2",
+            givenName=["Berta"],
+            sn="Without Identity",
+        ),
+    ]
+    ldap_primary_source = extracted_primary_sources["ldap"]
+    provider = get_provider()
+    provider.assign(ldap_primary_source.stableTargetId, str(persons[0].objectGUID))
     merged_ids_by_attribute = _get_merged_ids_by_attribute(
-        attribute,
-        [
-            LDAPPerson(
-                objectGUID="3f5a722d-e7c1-4c7c-ac40-23ce7753ce40",
-                employeeID="foo",
-                givenName=["Anna"],
-                sn="bar",
-            )
-        ],
-        extracted_primary_sources["ldap"],
+        "sn",
+        persons,
+        ldap_primary_source,
     )
-    assert merged_ids_by_attribute == expected
+    assert merged_ids_by_attribute == {"Has Identity": [Joker()]}
