@@ -1,5 +1,7 @@
 from uuid import UUID
 
+import pytest
+
 from mex.common.identity import get_provider
 from mex.common.ldap.extract import _get_merged_ids_by_attribute
 from mex.common.ldap.models.person import LDAPPerson
@@ -33,3 +35,10 @@ def test_get_merged_ids_by_attribute(
         ldap_primary_source,
     )
     assert merged_ids_by_attribute == {"Has Identity": [Joker()]}
+
+    with pytest.raises(RuntimeError):
+        _get_merged_ids_by_attribute(
+            "foo",
+            persons,
+            ldap_primary_source,
+        )
