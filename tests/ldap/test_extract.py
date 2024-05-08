@@ -5,6 +5,7 @@ import pytest
 from mex.common.identity import get_provider
 from mex.common.ldap.extract import (
     _get_merged_ids_by_attribute,
+    get_merged_ids_by_email,
     get_merged_ids_by_employee_ids,
 )
 from mex.common.ldap.models.person import LDAPPerson
@@ -27,6 +28,7 @@ def ldap_person_with_identity(
         objectGUID=UUID(int=1, version=4),
         employeeID="1",
         givenName=["Anna"],
+        mail=["annaWithIdentity@example.com", "annaWithIdentity@test.com"],
         sn="Has Identity",
     )
     provider = get_provider()
@@ -40,6 +42,7 @@ def ldap_person_without_identity() -> LDAPPerson:
         objectGUID=UUID(int=2, version=4),
         employeeID="2",
         givenName=["Berta"],
+        mail=["bertaWithoutIdentity@example.com"],
         sn="Without Identity",
     )
 
@@ -73,6 +76,7 @@ def test_get_merged_ids_by_attribute(
     ldap_person_with_identity: LDAPPerson,
     merged_id_of_person_with_identity: Identifier,
 ) -> None:
+    # single attribute
     merged_ids_by_attribute = _get_merged_ids_by_attribute(
         "sn",
         ldap_persons,
@@ -80,6 +84,17 @@ def test_get_merged_ids_by_attribute(
     )
     assert merged_ids_by_attribute == {
         ldap_person_with_identity.sn: [merged_id_of_person_with_identity]
+    }
+
+    # nested attribute
+    merged_ids_by_attribute = _get_merged_ids_by_attribute(
+        "mail",
+        ldap_persons,
+        ldap_primary_source,
+    )
+    assert merged_ids_by_attribute == {
+        str(mail): [merged_id_of_person_with_identity]
+        for mail in ldap_person_with_identity.mail
     }
 
     with pytest.raises(RuntimeError):
@@ -103,3 +118,17 @@ def test_get_merged_ids_by_employee_ids(
         ldap_persons, ldap_primary_source
     )
     assert merged_ids_by_employee_ids == expected
+
+
+def test_get_merged_ids_by_email(
+    ldap_persons: list[LDAPPerson],
+    ldap_primary_source: ExtractedPrimarySource,
+    merged_id_of_person_with_identity: Identifier,
+    ldap_person_with_identity: LDAPPerson,
+) -> None:
+    expected = {
+        mail: [merged_id_of_person_with_identity]
+        for mail in ldap_person_with_identity.mail
+    }
+    merged_ids_by_email = get_merged_ids_by_email(ldap_persons, ldap_primary_source)
+    assert merged_ids_by_email == expected
