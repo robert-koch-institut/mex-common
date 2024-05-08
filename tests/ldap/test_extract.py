@@ -7,8 +7,9 @@ from mex.common.ldap.extract import (
     _get_merged_ids_by_attribute,
     get_merged_ids_by_email,
     get_merged_ids_by_employee_ids,
+    get_merged_ids_by_query_string,
 )
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
 
@@ -37,6 +38,13 @@ def ldap_person_with_identity(
 
 
 @pytest.fixture
+def ldap_person_with_identity_with_query(
+    ldap_person_with_identity: LDAPPerson,
+) -> LDAPPersonWithQuery:
+    return LDAPPersonWithQuery(person=ldap_person_with_identity, query="foo")
+
+
+@pytest.fixture
 def ldap_person_without_identity() -> LDAPPerson:
     return LDAPPerson(
         objectGUID=UUID(int=2, version=4),
@@ -48,12 +56,30 @@ def ldap_person_without_identity() -> LDAPPerson:
 
 
 @pytest.fixture
+def ldap_person_without_identity_with_query(
+    ldap_person_without_identity: LDAPPerson,
+) -> LDAPPersonWithQuery:
+    return LDAPPersonWithQuery(person=ldap_person_without_identity, query="foo")
+
+
+@pytest.fixture
 def ldap_persons(
     ldap_person_with_identity: LDAPPerson, ldap_person_without_identity: LDAPPerson
 ) -> list[LDAPPerson]:
     return [
         ldap_person_with_identity,
         ldap_person_without_identity,
+    ]
+
+
+@pytest.fixture
+def ldap_persons_with_query(
+    ldap_person_with_identity_with_query: LDAPPersonWithQuery,
+    ldap_person_without_identity_with_query: LDAPPersonWithQuery,
+) -> list[LDAPPersonWithQuery]:
+    return [
+        ldap_person_with_identity_with_query,
+        ldap_person_without_identity_with_query,
     ]
 
 
@@ -132,3 +158,18 @@ def test_get_merged_ids_by_email(
     }
     merged_ids_by_email = get_merged_ids_by_email(ldap_persons, ldap_primary_source)
     assert merged_ids_by_email == expected
+
+
+def test_get_merged_ids_by_query_string(
+    ldap_person_with_identity_with_query: LDAPPersonWithQuery,
+    ldap_persons_with_query: list[LDAPPersonWithQuery],
+    ldap_primary_source: ExtractedPrimarySource,
+    merged_id_of_person_with_identity: Identifier,
+) -> None:
+    expected = {
+        ldap_person_with_identity_with_query.query: [merged_id_of_person_with_identity]
+    }
+    merged_ids_by_query_string = get_merged_ids_by_query_string(
+        ldap_persons_with_query, ldap_primary_source
+    )
+    assert merged_ids_by_query_string == expected
