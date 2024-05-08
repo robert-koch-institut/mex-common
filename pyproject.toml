@@ -31,7 +31,7 @@ optional-dependencies.dev = [
     "pytest==8.1.1",
     "ruff==0.3.5",
     "sphinx==7.2.6",
-    "types-ldap3==2.9.13",
+    "types-ldap3==2.9.13.20240205",
     "types-pytz==2024.1.0.20240417",
     "types-requests==2.31.0",
 ]
