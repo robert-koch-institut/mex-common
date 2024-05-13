@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:d992ad6e5b7796e83509831ff28a6ca2ec0bc0b060b81f51eeed53ccbbadcc10"
+content_hash = "sha256:d30311bb2637a5d57dbb485027b00556c15b8abeacf3e7a25474a65c164bff8e"
 
 [[package]]
 name = "alabaster"
@@ -1136,25 +1136,16 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.0"
+version = "2.31.0.20240406"
+requires_python = ">=3.8"
 summary = "Typing stubs for requests"
 groups = ["dev"]
 dependencies = [
-    "types-urllib3",
+    "urllib3>=2",
 ]
 files = [
-    {file = "types-requests-2.31.0.0.tar.gz", hash = "sha256:c1c29d20ab8d84dff468d7febfe8e0cb0b4664543221b386605e14672b44ea25"},
-    {file = "types_requests-2.31.0.0-py3-none-any.whl", hash = "sha256:7c5cea7940f8e92ec560bbc468f65bf684aa3dcf0554a6f8c4710f5f708dc598"},
-]
-
-[[package]]
-name = "types-urllib3"
-version = "1.26.25.14"
-summary = "Typing stubs for urllib3"
-groups = ["dev"]
-files = [
-    {file = "types-urllib3-1.26.25.14.tar.gz", hash = "sha256:229b7f577c951b8c1b92c1bc2b2fdb0b49847bd2af6d1cc2a2e3dd340f3bda8f"},
-    {file = "types_urllib3-1.26.25.14-py3-none-any.whl", hash = "sha256:9683bbb7fb72e32bfe9d2be6e04875fbe1b3eeec3cbb4ea231435aa7fd6b4f0e"},
+    {file = "types-requests-2.31.0.20240406.tar.gz", hash = "sha256:4428df33c5503945c74b3f42e82b181e86ec7b724620419a2966e2de604ce1a1"},
+    {file = "types_requests-2.31.0.20240406-py3-none-any.whl", hash = "sha256:6216cdac377c6b9a040ac1c0404f7284bd13199c0e1bb235f4324627e8898cf5"},
 ]
 
 [[package]]
