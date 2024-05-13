@@ -23,7 +23,7 @@ dependencies = [
 optional-dependencies.dev = [
     "black==24.3.0",
     "ipdb==0.13.13",
-    "mypy==1.9.0",
+    "mypy==1.10.0",
     "pandas-stubs==2.2.1.240316",
     "pytest-cov==4.1.0",
     "pytest-random-order==1.1.1",
