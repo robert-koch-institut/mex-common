@@ -21,7 +21,7 @@ dependencies = [
     "requests==2.31.0",
 ]
 optional-dependencies.dev = [
-    "black==24.3.0",
+    "black==24.4.2",
     "ipdb==0.13.13",
     "mypy==1.10.0",
     "pandas-stubs==2.2.1.240316",
