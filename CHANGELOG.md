@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- add tests for ldap.extract
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix ldap.extract.get_merged_ids_by_email
 
 ### Security
 
