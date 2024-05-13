@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:ea7ac7dda4b61331b32cb4547bba8fd3c58a720ab30926b39fa5d8972f2de5dc"
+content_hash = "sha256:9c97274f167828ad0ccd377651e825a43162d32da4cad467444ce8cb4f73e6d9"
 
 [[package]]
 name = "alabaster"
@@ -863,17 +863,17 @@ files = [
 
 [[package]]
 name = "pytest-xdist"
-version = "3.5.0"
-requires_python = ">=3.7"
+version = "3.6.1"
+requires_python = ">=3.8"
 summary = "pytest xdist plugin for distributed testing, most importantly across multiple CPUs"
 groups = ["dev"]
 dependencies = [
-    "execnet>=1.1",
-    "pytest>=6.2.0",
+    "execnet>=2.1",
+    "pytest>=7.0.0",
 ]
 files = [
-    {file = "pytest-xdist-3.5.0.tar.gz", hash = "sha256:cbb36f3d67e0c478baa57fa4edc8843887e0f6cfc42d677530a36d7472b32d8a"},
-    {file = "pytest_xdist-3.5.0-py3-none-any.whl", hash = "sha256:d075629c7e00b611df89f490a5063944bee7a4362a5ff11c7cc7824a03dfce24"},
+    {file = "pytest_xdist-3.6.1-py3-none-any.whl", hash = "sha256:9ed4adfb68a016610848639bb7e02c9352d5d9f03d04809919e2dafc3be4cca7"},
+    {file = "pytest_xdist-3.6.1.tar.gz", hash = "sha256:ead156a4db231eec769737f57668ef58a2084a34b2e55c4a8fa20d861107300d"},
 ]
 
 [[package]]
@@ -977,17 +977,17 @@ files = [
 
 [[package]]
 name = "sphinx"
-version = "7.2.6"
+version = "7.3.7"
 requires_python = ">=3.9"
 summary = "Python documentation generator"
 groups = ["dev"]
 dependencies = [
     "Jinja2>=3.0",
     "Pygments>=2.14",
-    "alabaster<0.8,>=0.7",
+    "alabaster~=0.7.14",
     "babel>=2.9",
     "colorama>=0.4.5; sys_platform == \"win32\"",
-    "docutils<0.21,>=0.18.1",
+    "docutils<0.22,>=0.18.1",
     "imagesize>=1.3",
     "packaging>=21.0",
     "requests>=2.25.0",
@@ -1000,8 +1000,8 @@ dependencies = [
     "sphinxcontrib-serializinghtml>=1.1.9",
 ]
 files = [
-    {file = "sphinx-7.2.6-py3-none-any.whl", hash = "sha256:1e09160a40b956dc623c910118fa636da93bd3ca0b9876a7b3df90f07d691560"},
-    {file = "sphinx-7.2.6.tar.gz", hash = "sha256:9a5160e1ea90688d5963ba09a2dcd8bdd526620edbb65c328728f1b2228d5ab5"},
+    {file = "sphinx-7.3.7-py3-none-any.whl", hash = "sha256:413f75440be4cacf328f580b4274ada4565fb2187d696a84970c23f77b64d8c3"},
+    {file = "sphinx-7.3.7.tar.gz", hash = "sha256:a4a7db75ed37531c05002d56ed6948d4c42f473a36f46e1382b0bd76ca9627bc"},
 ]
 
 [[package]]
@@ -1100,12 +1100,27 @@ files = [
 
 [[package]]
 name = "types-ldap3"
-version = "2.9.13"
+version = "2.9.13.20240205"
+requires_python = ">=3.8"
 summary = "Typing stubs for ldap3"
 groups = ["dev"]
+dependencies = [
+    "types-pyasn1",
+]
 files = [
-    {file = "types-ldap3-2.9.13.tar.gz", hash = "sha256:ba73916209dc0f3c9ca1851f8dc9753cf5d07fc5cc47e3f43f708937da0d9793"},
-    {file = "types_ldap3-2.9.13-py3-none-any.whl", hash = "sha256:b5c5a59be500489f47be4e677279fcdb946bf3c93e4927879065999cd9f4ecf8"},
+    {file = "types-ldap3-2.9.13.20240205.tar.gz", hash = "sha256:3b2cdaf071171fb37e79c6dab0d682aa65f2268ea25c749dc96fc2f041adb6b9"},
+    {file = "types_ldap3-2.9.13.20240205-py3-none-any.whl", hash = "sha256:0f3310883d26a386562877791b46f96041eebbd50cc945a5ad935e7fde876cc1"},
+]
+
+[[package]]
+name = "types-pyasn1"
+version = "0.6.0.20240402"
+requires_python = ">=3.8"
+summary = "Typing stubs for pyasn1"
+groups = ["dev"]
+files = [
+    {file = "types-pyasn1-0.6.0.20240402.tar.gz", hash = "sha256:5d54dcb33f69dd269071ca098e923ac20c5f03c814631fa7f3ed9ee035a5da3a"},
+    {file = "types_pyasn1-0.6.0.20240402-py3-none-any.whl", hash = "sha256:848d01e7313c200acc035a8b3d377fe7b2aecbe77f2be49eb160a7f82835aaaf"},
 ]
 
 [[package]]
