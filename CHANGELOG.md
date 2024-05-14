@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `precision` keyword to TemporalEntity constructor
+- add transform function for single wikidata organization to extracted organization
+
 ### Changes
 
 - add tests for ldap.extract
@@ -22,13 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix ldap.extract.get_merged_ids_by_email
 
 ### Security
-
-## [0.25.0] - 2024-05-14
-
-### Added
-
-- add `precision` keyword to TemporalEntity constructor
-- add transform function for single wikidata organization to extracted organization
 
 ## [0.24.0] - 2024-04-12
 
