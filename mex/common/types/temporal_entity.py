@@ -74,11 +74,20 @@ class TemporalEntity:
     ALLOWED_PRECISION_LEVELS = [
         key for key in TemporalEntityPrecision.__members__.values()
     ]
+    JSON_SCHEMA_CONFIG: dict[str, str | list[str]] = {
+        "examples": [
+            "2011",
+            "2019-03",
+            "2014-08-24",
+            "2022-09-30T20:48:35Z",
+        ]
+    }
 
     @overload
     def __init__(
         self,
         *args: Union[str, date, datetime, "TemporalEntity"],
+        precision: TemporalEntityPrecision | None = None,
         tzinfo: Literal[None] = None,
     ) -> None: ...  # pragma: no cover
 
@@ -86,12 +95,14 @@ class TemporalEntity:
     def __init__(
         self,
         *args: int,
+        precision: TemporalEntityPrecision | None = None,
         tzinfo: tzinfo | None = None,
     ) -> None: ...  # pragma: no cover
 
     def __init__(
         self,
         *args: Union[int, str, date, datetime, "TemporalEntity"],
+        precision: TemporalEntityPrecision | None = None,
         tzinfo: tzinfo | None = None,
     ) -> None:
         """Create a new temporal entity instance.
@@ -126,39 +137,45 @@ class TemporalEntity:
                     "Temporal entity does not accept tzinfo in parsing mode"
                 )
             if isinstance(args[0], TemporalEntity):
-                date_time, precision = self._parse_timestamp(args[0])
+                date_time, parsed_precision = self._parse_temporal_entity(args[0])
             elif isinstance(args[0], datetime):
-                date_time, precision = self._parse_datetime(args[0])
+                date_time, parsed_precision = self._parse_datetime(args[0])
             elif isinstance(args[0], date):
-                date_time, precision = self._parse_date(args[0])
+                date_time, parsed_precision = self._parse_date(args[0])
             else:
-                date_time, precision = self._parse_string(args[0])
+                date_time, parsed_precision = self._parse_string(args[0])
         elif all(isinstance(a, int) for a in args):
             args = cast(tuple[int, ...], args)
-            date_time, precision = self._parse_args(*args, tzinfo=tzinfo)
+            date_time, parsed_precision = self._parse_integers(*args, tzinfo=tzinfo)
         else:
             raise TypeError(
                 "Temporal entity takes a single str, date, datetime or "
                 "TemporalEntity argument or up to 7 integers"
             )
 
-        self.__validate_precision(precision)
+        if precision:
+            self._validate_precision(precision)
+        else:
+            self._validate_precision(parsed_precision)
+            precision = parsed_precision
 
         if precision in TIME_PRECISIONS:
             date_time = date_time.astimezone(UTC)
+        else:
+            date_time = date_time.replace(tzinfo=None)
 
         self.date_time = date_time
         self.precision = precision
 
     @classmethod
-    def __validate_precision(cls, precision: TemporalEntityPrecision) -> None:
+    def _validate_precision(cls, precision: TemporalEntityPrecision) -> None:
         """Confirm that the temporal entity can handle the given precision.
 
         Args:
             precision: a temporal entity precision
 
         Raises:
-        ValueError: If the given precision is not covered by the temporal entity.
+            ValueError: If the given precision is not covered by the temporal entity.
         """
         if precision not in cls.ALLOWED_PRECISION_LEVELS:
             allowed_precision_str = str(
@@ -191,7 +208,6 @@ class TemporalEntity:
                 core_schema.is_instance_schema(cls),
             ]
         )
-
         return core_schema.json_or_python_schema(
             json_schema=from_str_schema,
             python_schema=from_anything_schema,
@@ -204,12 +220,7 @@ class TemporalEntity:
         """Modify the schema to add the class name as title and examples."""
         json_schema = handler(core_schema_)
         json_schema["title"] = cls.__name__
-        json_schema["examples"] = [
-            "2011",
-            "2019-03",
-            "2014-08-24",
-            "2022-09-30T20:48:35Z",
-        ]
+        json_schema.update(cls.JSON_SCHEMA_CONFIG)
         return json_schema
 
     @classmethod
@@ -220,7 +231,7 @@ class TemporalEntity:
         raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @staticmethod
-    def _parse_args(
+    def _parse_integers(
         *args: int, tzinfo: tzinfo | None = None
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse 0-7 integer arguments into a timestamp and deduct the precision."""
@@ -232,7 +243,7 @@ class TemporalEntity:
         return date_time, precision
 
     @staticmethod
-    def _parse_timestamp(
+    def _parse_temporal_entity(
         value: "TemporalEntity",
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a temporal entity into a new one by copying its attributes."""
@@ -241,13 +252,16 @@ class TemporalEntity:
     @staticmethod
     def _parse_string(value: str) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a string containing a temporal entity using pandas' tslibs."""
-        parsed, precision = parsing.parse_datetime_string_with_reso(  # type: ignore[attr-defined]
-            str(value), freq=None, dayfirst=False, yearfirst=True
-        )
+        try:
+            parsed, precision = parsing.parse_datetime_string_with_reso(  # type: ignore[attr-defined]
+                str(value), freq=None, dayfirst=False, yearfirst=True
+            )
+        except parsing.DateParseError as error:
+            raise ValueError(*error.args) from error
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=CET)
         if precision in ("millisecond", "nanosecond"):
-            precision = "microsecond"
+            precision = TemporalEntityPrecision.MICROSECOND.value
         return parsed, TemporalEntityPrecision(precision)
 
     @staticmethod
@@ -294,25 +308,6 @@ class TemporalEntity:
         """Render a presentation showing this is not just a datetime."""
         return f'{self.__class__.__name__}("{self}")'
 
-    def apply_precision(
-        self, precision: TemporalEntityPrecision
-    ) -> "YearMonthDay | TemporalEntity | YearMonth | YearMonthDayTime":
-        """Apply precision on a temporal entity.
-
-        When precision is set to Day, timezone info will be stripped.
-        """
-        if precision not in TIME_PRECISIONS:
-            datetime_tz_stripped = self.date_time.replace(tzinfo=None)
-            temporal_entity = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision](
-                datetime_tz_stripped.date()
-            )
-        else:
-            temporal_entity = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision](
-                self.date_time
-            )
-        temporal_entity.precision = precision
-        return temporal_entity
-
 
 class YearMonth(TemporalEntity):
     """Parser for temporal entities with year-precision or month-precision."""
@@ -322,15 +317,7 @@ class YearMonth(TemporalEntity):
         TemporalEntityPrecision.YEAR,
         TemporalEntityPrecision.MONTH,
     ]
-
-    @classmethod
-    def __get_pydantic_json_schema__(
-        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
-        """Modify the schema to add the class name as title and examples."""
-        json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
-        json_schema["examples"] = ["2011", "2019-03"]
-        return json_schema
+    JSON_SCHEMA_CONFIG = {"examples": ["2011", "2019-03"]}
 
 
 class YearMonthDay(TemporalEntity):
@@ -338,16 +325,7 @@ class YearMonthDay(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_REGEX
     ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.DAY]
-
-    @classmethod
-    def __get_pydantic_json_schema__(
-        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
-        """Modify the schema to add the class name as title and examples."""
-        json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
-        json_schema["examples"] = ["2014-08-24"]
-        json_schema["format"] = "date"
-        return json_schema
+    JSON_SCHEMA_CONFIG = {"examples": ["2014-08-24"], "format": "date"}
 
 
 class YearMonthDayTime(TemporalEntity):
@@ -355,19 +333,12 @@ class YearMonthDayTime(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_TIME_REGEX
     ALLOWED_PRECISION_LEVELS = TIME_PRECISIONS
-
-    @classmethod
-    def __get_pydantic_json_schema__(
-        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
-        """Modify the schema to add the class name as title and examples."""
-        json_schema = super().__get_pydantic_json_schema__(core_schema_, handler)
-        json_schema["examples"] = ["2022-09-30T20:48:35Z"]
-        json_schema["format"] = "date-time"
-        return json_schema
+    JSON_SCHEMA_CONFIG = {"examples": ["2022-09-30T20:48:35Z"], "format": "date-time"}
 
 
-TEMPORAL_ENTITY_CLASSES_BY_PRECISION = {
+TEMPORAL_ENTITY_CLASSES_BY_PRECISION: dict[
+    TemporalEntityPrecision, type[YearMonth | YearMonthDay | YearMonthDayTime]
+] = {
     TemporalEntityPrecision.YEAR: YearMonth,
     TemporalEntityPrecision.MONTH: YearMonth,
     TemporalEntityPrecision.DAY: YearMonthDay,

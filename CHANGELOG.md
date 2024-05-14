@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- apply_precision method for TemporalEntity
-- transform single wikidata organization to extracted organization
-
 ### Changes
 
 ### Deprecated
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.25.0] - 2024-05-14
+
+### Added
+
+- add `precision` keyword to TemporalEntity constructor
+- add transform function for single wikidata organization to extracted organization
 
 ## [0.24.0] - 2024-04-12
 

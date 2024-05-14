@@ -16,6 +16,8 @@ def transform_wikidata_organizations_to_extracted_organizations(
 ) -> Generator[ExtractedOrganization, None, None]:
     """Transform wikidata organizations into ExtractedOrganizations.
 
+    Wikidata organizations without labels are skipped.
+
     Args:
         wikidata_organizations: Iterable of wikidata organization to be transformed
         wikidata_primary_source: Extracted primary source for wikidata
@@ -23,39 +25,13 @@ def transform_wikidata_organizations_to_extracted_organizations(
     Returns:
         Generator of ExtractedOrganizations
     """
-    for organization in wikidata_organizations:
-        labels = _get_clean_labels(organization.labels)
-        if not labels:
-            continue
-        yield ExtractedOrganization(  # type: ignore[call-arg]
-            wikidataId=f"https://www.wikidata.org/entity/{organization.identifier}",
-            officialName=labels,
-            shortName=_get_clean_short_names(organization.claims.short_name),
-            geprisId=[],
-            isniId=[
-                f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
-                    " ", ""
-                )
-                for claim in organization.claims.isni_id
-            ],
-            gndId=[
-                f"https://d-nb.info/gnd/{claim.mainsnak.datavalue.value.text}"
-                for claim in organization.claims.gnd_id
-            ],
-            viafId=[
-                f"https://viaf.org/viaf/{claim.mainsnak.datavalue.value.text}"
-                for claim in organization.claims.viaf_id
-            ],
-            rorId=[
-                f"https://ror.org/{claim.mainsnak.datavalue.value.text}"
-                for claim in organization.claims.ror_id
-            ],
-            identifierInPrimarySource=organization.identifier,
-            hadPrimarySource=wikidata_primary_source.stableTargetId,
-            alternativeName=_get_alternative_names(
-                organization.claims.native_label, organization.aliases
-            ),
-        )
+    for wikidata_organization in wikidata_organizations:
+        if extracted_organization := (
+            transform_wikidata_organization_to_extracted_organization(
+                wikidata_organization, wikidata_primary_source
+            )
+        ):
+            yield extracted_organization
 
 
 def transform_wikidata_organization_to_extracted_organization(
@@ -63,6 +39,8 @@ def transform_wikidata_organization_to_extracted_organization(
     wikidata_primary_source: ExtractedPrimarySource,
 ) -> ExtractedOrganization | None:
     """Transform one wikidata organization into ExtractedOrganizations.
+
+    If no labels are found on the wikidata organization, `None` is returned instead.
 
     Args:
         wikidata_organization: wikidata organization to be transformed
@@ -74,7 +52,6 @@ def transform_wikidata_organization_to_extracted_organization(
     labels = _get_clean_labels(wikidata_organization.labels)
     if not labels:
         return None
-
     return ExtractedOrganization(  # type: ignore[call-arg]
         wikidataId=f"https://www.wikidata.org/entity/{wikidata_organization.identifier}",
         officialName=labels,
