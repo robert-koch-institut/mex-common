@@ -35,9 +35,15 @@ def _get_merged_ids_by_attribute(
             had_primary_source=primary_source.stableTargetId,
             identifier_in_primary_source=str(person.objectGUID),
         ):
-            merged_ids_by_attribute[str(getattr(person, attribute))].append(
-                MergedPersonIdentifier(identities[0].stableTargetId)
-            )
+            attribute_values = getattr(person, attribute)
+            merged_id = MergedPersonIdentifier(identities[0].stableTargetId)
+            if isinstance(attribute_values, Iterable) and not isinstance(
+                attribute_values, str
+            ):
+                for value in attribute_values:
+                    merged_ids_by_attribute[str(value)].append(merged_id)
+            else:
+                merged_ids_by_attribute[str(attribute_values)].append(merged_id)
     return merged_ids_by_attribute
 
 

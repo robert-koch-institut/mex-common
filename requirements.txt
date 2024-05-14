@@ -1,4 +1,4 @@
 cruft==2.15.0
-pdm==2.13.2
+pdm==2.15.1
 pre-commit==3.7.0
 wheel==0.43.0
