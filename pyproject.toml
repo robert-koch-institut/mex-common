@@ -71,7 +71,6 @@ unit = { cmd = "pdm run pytest -m 'not integration'" }
 test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
 all = { composite = ["install-all", "lint", "test", "doc"] }
 
-
 [tool.pydantic-mypy]
 warn_untyped_fields = true
 
