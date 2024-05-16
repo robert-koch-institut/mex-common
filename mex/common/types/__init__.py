@@ -32,6 +32,7 @@ from mex.common.types.path import AssetsPath, PathWrapper, WorkPath
 from mex.common.types.sink import Sink
 from mex.common.types.temporal_entity import (
     CET,
+    TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
     TEMPORAL_ENTITY_FORMATS_BY_PRECISION,
     UTC,
     TemporalEntity,
@@ -112,6 +113,7 @@ __all__ = (
     "Text",
     "TextLanguage",
     "Theme",
+    "TEMPORAL_ENTITY_CLASSES_BY_PRECISION",
     "TEMPORAL_ENTITY_FORMATS_BY_PRECISION",
     "TemporalEntity",
     "YearMonth",
