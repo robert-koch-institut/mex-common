@@ -14,9 +14,65 @@ from mex.common.wikidata.transform import (
     _get_alternative_names,
     _get_clean_labels,
     _get_clean_short_names,
+    transform_wikidata_organization_to_extracted_organization,
     transform_wikidata_organizations_to_extracted_organizations,
 )
 from tests.wikidata.conftest import TESTDATA_DIR
+
+
+def test_transform_wikidata_organization_to_extracted_organization(
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+) -> None:
+    expected = {
+        "identifier": Joker(),
+        "hadPrimarySource": Joker(),
+        "identifierInPrimarySource": "Q26678",
+        "stableTargetId": Joker(),
+        "alternativeName": [
+            {"value": "alias_en_3", "language": None},
+            {"value": "alias_de_2", "language": None},
+            {"value": "alias_en_1", "language": None},
+            {"value": "alias_en_2", "language": None},
+            {"value": "alias_de_1", "language": None},
+            {"value": "test_native_name", "language": TextLanguage.DE},
+            {"value": "alias_de_3", "language": None},
+            {"value": "alias_en_4", "language": None},
+        ],
+        "geprisId": [],
+        "gndId": ["https://d-nb.info/gnd/2005475-0"],
+        "isniId": ["https://isni.org/isni/000000012308257X"],
+        "officialName": [
+            Text(value="TEST", language=TextLanguage.EN),
+            Text(value="TEST", language=TextLanguage.DE),
+        ],
+        "rorId": ["https://ror.org/05vs9tj88", "https://ror.org/044kkbh92"],
+        "shortName": [],
+        "viafId": ["https://viaf.org/viaf/129013645"],
+        "wikidataId": ["https://www.wikidata.org/entity/Q26678"],
+    }
+    with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
+        wikidata_organization = WikidataOrganization.model_validate(json.load(f)[0])
+
+    extracted_organization = transform_wikidata_organization_to_extracted_organization(
+        wikidata_organization, extracted_primary_sources["wikidata"]
+    )
+
+    assert extracted_organization
+
+    assert sorted(
+        extracted_organization.model_dump()["alternativeName"],
+        key=itemgetter("value"),
+    ) == sorted(expected["alternativeName"], key=itemgetter("value"))
+
+    assert (
+        extracted_organization.model_dump()["identifierInPrimarySource"]
+        == expected["identifierInPrimarySource"]
+    )
+    assert extracted_organization.model_dump()["rorId"] == expected["rorId"]
+    assert extracted_organization.model_dump()["wikidataId"] == expected["wikidataId"]
+    assert extracted_organization.model_dump()["gndId"] == expected["gndId"]
+    assert extracted_organization.model_dump()["isniId"] == expected["isniId"]
+    assert extracted_organization.model_dump()["viafId"] == expected["viafId"]
 
 
 def test_transform_wikidata_organization_to_organization(
