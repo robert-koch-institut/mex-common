@@ -18,7 +18,7 @@ dependencies = [
     "pyarrow==16.0.0",
     "pydantic-settings==2.2.1",
     "pydantic==2.7.1",
-    "requests==2.31.0",
+    "requests==2.32.0",
 ]
 optional-dependencies.dev = [
     "black==24.4.2",
