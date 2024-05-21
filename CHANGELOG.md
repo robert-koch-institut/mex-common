@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.25.1] - 2024-05-21
+
+### Fixed
+
+- isolate settings context before first test
+
 ## [0.25.0] - 2024-05-14
 
 ### Added
