@@ -70,8 +70,11 @@ def settings() -> BaseSettings:
 
 
 @pytest.fixture(autouse=True)
-def isolate_settings() -> Generator[None, None, None]:
+def isolate_settings(
+    isolate_assets_dir: None, isolate_work_dir: None
+) -> Generator[None, None, None]:
     """Automatically reset the settings singleton store."""
+    SETTINGS_STORE.reset()
     yield
     SETTINGS_STORE.reset()
 
