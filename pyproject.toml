@@ -18,13 +18,13 @@ dependencies = [
     "pyarrow==16.1.0",
     "pydantic-settings==2.2.1",
     "pydantic==2.7.1",
-    "requests==2.31.0",
+    "requests==2.32.0",
 ]
 optional-dependencies.dev = [
     "black==24.4.2",
     "ipdb==0.13.13",
     "mypy==1.10.0",
-    "pandas-stubs==2.2.1.240316",
+    "pandas-stubs==2.2.2.240514",
     "pytest-cov==5.0.0",
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
