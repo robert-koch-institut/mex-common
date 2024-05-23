@@ -219,7 +219,7 @@ class _VariadicValues(BaseModel):
 
 
 class BaseResource(_OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues):
-    """Base information."""
+    """All fields for a valid resource except for provenance."""
 
 
 class ExtractedResource(BaseResource, ExtractedData):

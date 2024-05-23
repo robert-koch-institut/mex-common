@@ -93,7 +93,7 @@ class _SparseLists(BaseModel):
 
 
 class BaseOrganization(_OptionalLists, _RequiredLists):
-    """Base model."""
+    """All fields for a valid organization except for provenance."""
 
 
 class ExtractedOrganization(BaseOrganization, ExtractedData):

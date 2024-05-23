@@ -108,7 +108,7 @@ class _VariadicValues(BaseModel):
 
 
 class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
-    """Base var."""
+    """All fields for a valid variable except for provenance."""
 
 
 class ExtractedVariable(BaseVariable, ExtractedData):

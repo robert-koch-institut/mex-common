@@ -57,7 +57,7 @@ class _VariadicValues(BaseModel):
 
 
 class BasePrimarySource(_OptionalLists, _OptionalValues):
-    """Base model."""
+    """All fields for a valid primary source except for provenance."""
 
 
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):

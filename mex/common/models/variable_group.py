@@ -28,7 +28,7 @@ class _SparseLists(BaseModel):
 
 
 class BaseVariableGroup(_RequiredLists):
-    """Base group."""
+    """All fields for a valid variable group except for provenance."""
 
 
 class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):

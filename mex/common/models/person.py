@@ -69,7 +69,7 @@ class _OptionalLists(BaseModel):
 
 
 class BasePerson(_OptionalLists):
-    """Base model."""
+    """All fields for a valid person except for provenance."""
 
 
 class ExtractedPerson(BasePerson, ExtractedData):

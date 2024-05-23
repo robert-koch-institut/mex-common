@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - move `BaseModel` specific descriptions from class to model to avoid duplication
 - BREAKING: move `FILTER_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
 - BREAKING: move `MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
+- BREAKING: change `MEX_PRIMARY_SOURCE_IDENTIFIER` to end in `1`,
+  so that it differs from `MEX_PRIMARY_SOURCE_STABLE_TARGET_ID`
 
 ### Deprecated
 

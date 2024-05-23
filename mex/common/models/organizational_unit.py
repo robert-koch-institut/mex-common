@@ -44,7 +44,7 @@ class _VariadicValues(BaseModel):
 
 
 class BaseOrganizationalUnit(_OptionalLists, _RequiredLists, _OptionalValues):
-    """Base model."""
+    """All fields for a valid organizational unit except for provenance."""
 
 
 class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):

@@ -121,7 +121,7 @@ class _VariadicValues(BaseModel):
 class BaseDistribution(
     _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
 ):
-    """Base model."""
+    """All fields for a valid distribution except for provenance."""
 
 
 class ExtractedDistribution(BaseDistribution, ExtractedData):

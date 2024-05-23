@@ -79,7 +79,7 @@ class _VariadicValues(BaseModel):
 
 
 class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
-    """Base model."""
+    """All fields for a valid access platform except for provenance."""
 
 
 class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):

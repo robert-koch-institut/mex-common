@@ -85,7 +85,7 @@ class _SparseLists(BaseModel):
 
 
 class BaseActivity(_OptionalLists, _RequiredLists):
-    """Base model."""
+    """All fields for a valid activity except for provenance."""
 
 
 class ExtractedActivity(BaseActivity, ExtractedData):
