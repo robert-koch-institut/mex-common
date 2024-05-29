@@ -2,7 +2,7 @@ from typing import Annotated, Any, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import EXTRACTED_MODEL_CLASSES, ExtractedData
+from mex.common.models import ExtractedData
 
 
 class GenericRule(BaseModel, extra="forbid"):
@@ -79,11 +79,3 @@ def generate_mapping_schema_for_mex_class(
         f"Schema for mapping the properties of the entity type {name}."
     )
     return class_model
-
-
-MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME = {
-    cls.__name__: generate_mapping_schema_for_mex_class(
-        mex_model_class=cls,
-    )
-    for cls in EXTRACTED_MODEL_CLASSES
-}

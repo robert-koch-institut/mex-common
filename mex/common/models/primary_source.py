@@ -1,3 +1,5 @@
+"""A collection of information, that is managed and curated by an RKI unit."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -5,6 +7,7 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
     Link,
@@ -16,9 +19,7 @@ from mex.common.types import (
 )
 
 
-class BasePrimarySource(BaseModel):
-    """A collection of information, that is managed and curated by an RKI unit."""
-
+class _OptionalLists(BaseModel):
     alternativeTitle: list[Text] = []
     contact: list[
         MergedOrganizationalUnitIdentifier
@@ -30,6 +31,9 @@ class BasePrimarySource(BaseModel):
     locatedAt: list[Link] = []
     title: list[Text] = []
     unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
+
+
+class _OptionalValues(BaseModel):
     version: (
         Annotated[
             str,
@@ -39,6 +43,21 @@ class BasePrimarySource(BaseModel):
         ]
         | None
     ) = None
+
+
+class _VariadicValues(BaseModel):
+    version: list[
+        Annotated[
+            str,
+            Field(
+                examples=["v1", "2023-01-16", "Schema 9"],
+            ),
+        ]
+    ] = []
+
+
+class BasePrimarySource(_OptionalLists, _OptionalValues):
+    """All fields for a valid primary source except for provenance."""
 
 
 class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
@@ -58,3 +77,35 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
         Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "MergedPrimarySource"
     identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+
+
+class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
+    """Rule to add values to merged primary source items."""
+
+    entityType: Annotated[
+        Literal["AdditivePrimarySource"], Field(alias="$type", frozen=True)
+    ] = "AdditivePrimarySource"
+
+
+class SubtractivePrimarySource(_OptionalLists, _VariadicValues, SubtractiveRule):
+    """Rule to subtract values from merged primary source items."""
+
+    entityType: Annotated[
+        Literal["SubtractivePrimarySource"], Field(alias="$type", frozen=True)
+    ] = "SubtractivePrimarySource"
+
+
+class PreventivePrimarySource(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged primary source items."""
+
+    entityType: Annotated[
+        Literal["PreventivePrimarySource"], Field(alias="$type", frozen=True)
+    ] = "PreventivePrimarySource"
+    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
+    contact: list[MergedPrimarySourceIdentifier] = []
+    description: list[MergedPrimarySourceIdentifier] = []
+    documentation: list[MergedPrimarySourceIdentifier] = []
+    locatedAt: list[MergedPrimarySourceIdentifier] = []
+    title: list[MergedPrimarySourceIdentifier] = []
+    unitInCharge: list[MergedPrimarySourceIdentifier] = []
+    version: list[MergedPrimarySourceIdentifier] = []

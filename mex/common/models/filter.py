@@ -2,8 +2,6 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import EXTRACTED_MODEL_CLASSES
-
 
 class EntityFilterRule(BaseModel, extra="forbid"):
     """Entity filter rule model."""
@@ -44,11 +42,3 @@ def generate_entity_filter_schema(
         **filters,
     )
     return entity_filter_model
-
-
-FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {
-    cls.__name__: generate_entity_filter_schema(
-        mex_model_class=cls,
-    )
-    for cls in EXTRACTED_MODEL_CLASSES
-}

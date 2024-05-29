@@ -1,3 +1,5 @@
+"""A single piece of information within a resource."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -5,9 +7,11 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     DataType,
     ExtractedVariableIdentifier,
+    MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
@@ -15,10 +19,55 @@ from mex.common.types import (
 )
 
 
-class BaseVariable(BaseModel):
-    """A single piece of information within a resource."""
-
+class _OptionalLists(BaseModel):
     belongsTo: list[MergedVariableGroupIdentifier] = []
+    description: list[Text] = []
+    valueSet: list[
+        Annotated[
+            str,
+            Field(
+                examples=[
+                    "Ja, stark eingeschränkt",
+                    "Ja, etwas eingeschränkt",
+                    "Nein, überhaupt nicht eingeschränkt",
+                ],
+            ),
+        ]
+    ] = []
+
+
+class _RequiredLists(BaseModel):
+    label: Annotated[
+        list[
+            Annotated[
+                Text,
+                Field(
+                    examples=[
+                        {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
+                    ],
+                ),
+            ]
+        ],
+        Field(min_length=1),
+    ]
+    usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
+
+
+class _SparseLists(BaseModel):
+    label: list[
+        Annotated[
+            Text,
+            Field(
+                examples=[
+                    {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
+                ],
+            ),
+        ]
+    ] = []
+    usedIn: list[MergedResourceIdentifier] = []
+
+
+class _OptionalValues(BaseModel):
     codingSystem: (
         Annotated[
             str,
@@ -37,33 +86,29 @@ class BaseVariable(BaseModel):
         ]
         | None
     ) = None
-    description: list[Text] = []
-    label: Annotated[
-        list[
-            Annotated[
-                Text,
-                Field(
-                    examples=[
-                        {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
-                    ],
-                ),
-            ]
-        ],
-        Field(min_length=1),
-    ]
-    usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
-    valueSet: list[
+
+
+class _VariadicValues(BaseModel):
+    codingSystem: list[
         Annotated[
             str,
             Field(
-                examples=[
-                    "Ja, stark eingeschränkt",
-                    "Ja, etwas eingeschränkt",
-                    "Nein, überhaupt nicht eingeschränkt",
-                ],
+                examples=["SF-36 Version 1"],
             ),
         ]
     ] = []
+    dataType: list[
+        Annotated[
+            DataType,
+            Field(
+                examples=["https://mex.rki.de/item/data-type-1"],
+            ),
+        ]
+    ] = []
+
+
+class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
+    """All fields for a valid variable except for provenance."""
 
 
 class ExtractedVariable(BaseVariable, ExtractedData):
@@ -83,3 +128,36 @@ class MergedVariable(BaseVariable, MergedItem):
         Literal["MergedVariable"], Field(alias="$type", frozen=True)
     ] = "MergedVariable"
     identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+
+
+class AdditiveVariable(_OptionalLists, _SparseLists, _OptionalValues, AdditiveRule):
+    """Rule to add values to merged variable items."""
+
+    entityType: Annotated[
+        Literal["AdditiveVariable"], Field(alias="$type", frozen=True)
+    ] = "AdditiveVariable"
+
+
+class SubtractiveVariable(
+    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
+):
+    """Rule to subtract values from merged variable items."""
+
+    entityType: Annotated[
+        Literal["SubtractiveVariable"], Field(alias="$type", frozen=True)
+    ] = "SubtractiveVariable"
+
+
+class PreventiveVariable(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged variable items."""
+
+    entityType: Annotated[
+        Literal["PreventiveVariable"], Field(alias="$type", frozen=True)
+    ] = "PreventiveVariable"
+    belongsTo: list[MergedPrimarySourceIdentifier] = []
+    codingSystem: list[MergedPrimarySourceIdentifier] = []
+    dataType: list[MergedPrimarySourceIdentifier] = []
+    description: list[MergedPrimarySourceIdentifier] = []
+    label: list[MergedPrimarySourceIdentifier] = []
+    usedIn: list[MergedPrimarySourceIdentifier] = []
+    valueSet: list[MergedPrimarySourceIdentifier] = []
