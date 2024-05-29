@@ -28,12 +28,12 @@ optional-dependencies.dev = [
     "pytest-cov==5.0.0",
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
-    "pytest==8.2.0",
+    "pytest==8.2.1",
     "ruff==0.4.4",
     "sphinx==7.3.7",
     "types-ldap3==2.9.13.20240205",
     "types-pytz==2024.1.0.20240417",
-    "types-requests==2.31.0.20240406",
+    "types-requests==2.32.0.20240521",
 ]
 
 [tool.cruft]

@@ -80,7 +80,5 @@ components of the MEx project are open-sourced under the same license as well.
 
 ### creating release
 
-- update version in `pyproject.toml` and `CHANGELOG.md`
-- commit update `git commit --message "..."`
-- create a tag `git tag ...`
-- push `git push --follow-tags`
+- run `pdm release RULE` to release a new version where RULE determines which part of
+  the version to update and is one of `major`, `minor`, `patch`.
