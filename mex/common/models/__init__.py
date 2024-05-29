@@ -38,7 +38,7 @@ we use a number of intermediate private classes to compose the public classes:
 
 - `_OptionalValues` defines all fields with optional values (arity of 0-1)
 - `_RequiredValues` defines all fields with required values (arity of 1)
-- `_SparseValues` re-defines all fields from `_RequiredValues` with an arity of 1
+- `_SparseValues` re-defines all fields from `_RequiredValues` with an arity of 0-1
 - `_VariadicValues` re-defines all fields from `_OptionalValues` and `_RequiredValues`
   as list fields with an arity of 0-n
 
