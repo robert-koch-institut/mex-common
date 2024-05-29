@@ -1,3 +1,5 @@
+"""A specific representation of a dataset."""
+
 from typing import Annotated, Literal
 
 from pydantic import Field
@@ -5,6 +7,7 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
+from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     AccessRestriction,
     ExtractedDistributionIdentifier,
@@ -14,6 +17,7 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     MIMEType,
     YearMonth,
     YearMonthDay,
@@ -21,21 +25,29 @@ from mex.common.types import (
 )
 
 
-class BaseDistribution(BaseModel):
-    """A specific representation of a dataset."""
-
-    accessService: MergedAccessPlatformIdentifier | None = None
-    accessRestriction: Annotated[
-        AccessRestriction,
-        Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-    ]
-    accessURL: Link | None = None
+class _OptionalLists(BaseModel):
     author: list[MergedPersonIdentifier] = []
     contactPerson: list[MergedPersonIdentifier] = []
     dataCurator: list[MergedPersonIdentifier] = []
     dataManager: list[MergedPersonIdentifier] = []
+    otherContributor: list[MergedPersonIdentifier] = []
+    projectLeader: list[MergedPersonIdentifier] = []
+    projectManager: list[MergedPersonIdentifier] = []
+    researcher: list[MergedPersonIdentifier] = []
+
+
+class _RequiredLists(BaseModel):
+    publisher: Annotated[list[MergedOrganizationIdentifier], Field(min_length=1)]
+
+
+class _SparseLists(BaseModel):
+    publisher: list[MergedOrganizationIdentifier] = []
+
+
+class _OptionalValues(BaseModel):
+    accessService: MergedAccessPlatformIdentifier | None = None
+    accessURL: Link | None = None
     downloadURL: Link | None = None
-    issued: YearMonthDayTime | YearMonthDay | YearMonth
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -49,11 +61,14 @@ class BaseDistribution(BaseModel):
         | None
     ) = None
     modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
-    otherContributor: list[MergedPersonIdentifier] = []
-    projectLeader: list[MergedPersonIdentifier] = []
-    projectManager: list[MergedPersonIdentifier] = []
-    publisher: Annotated[list[MergedOrganizationIdentifier], Field(min_length=1)]
-    researcher: list[MergedPersonIdentifier] = []
+
+
+class _RequiredValues(BaseModel):
+    accessRestriction: Annotated[
+        AccessRestriction,
+        Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
+    ]
+    issued: YearMonthDayTime | YearMonthDay | YearMonth
     title: Annotated[
         str,
         Field(
@@ -61,6 +76,52 @@ class BaseDistribution(BaseModel):
             min_length=1,
         ),
     ]
+
+
+class _SparseValues(BaseModel):
+    accessRestriction: (
+        Annotated[
+            AccessRestriction,
+            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
+        ]
+        | None
+    ) = None
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    title: (
+        Annotated[
+            str,
+            Field(
+                examples=["theNameOfTheFile"],
+                min_length=1,
+            ),
+        ]
+        | None
+    ) = None
+
+
+class _VariadicValues(BaseModel):
+    accessRestriction: list[
+        Annotated[
+            AccessRestriction,
+            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
+        ]
+    ] = []
+    issued: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    title: list[
+        Annotated[
+            str,
+            Field(
+                examples=["theNameOfTheFile"],
+                min_length=1,
+            ),
+        ]
+    ] = []
+
+
+class BaseDistribution(
+    _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
+):
+    """All fields for a valid distribution except for provenance."""
 
 
 class ExtractedDistribution(BaseDistribution, ExtractedData):
@@ -80,3 +141,49 @@ class MergedDistribution(BaseDistribution, MergedItem):
         Literal["MergedDistribution"], Field(alias="$type", frozen=True)
     ] = "MergedDistribution"
     identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
+
+
+class AdditiveDistribution(
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
+):
+    """Rule to add values to merged distribution items."""
+
+    entityType: Annotated[
+        Literal["AdditiveDistribution"], Field(alias="$type", frozen=True)
+    ] = "AdditiveDistribution"
+
+
+class SubtractiveDistribution(
+    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
+):
+    """Rule to subtract values from merged distribution items."""
+
+    entityType: Annotated[
+        Literal["SubtractiveDistribution"], Field(alias="$type", frozen=True)
+    ] = "SubtractiveDistribution"
+
+
+class PreventiveDistribution(PreventiveRule):
+    """Rule to prevent primary sources for fields of merged distribution items."""
+
+    entityType: Annotated[
+        Literal["PreventiveDistribution"], Field(alias="$type", frozen=True)
+    ] = "PreventiveDistribution"
+    accessRestriction: list[MergedPrimarySourceIdentifier] = []
+    accessService: list[MergedPrimarySourceIdentifier] = []
+    accessURL: list[MergedPrimarySourceIdentifier] = []
+    author: list[MergedPrimarySourceIdentifier] = []
+    contactPerson: list[MergedPrimarySourceIdentifier] = []
+    dataCurator: list[MergedPrimarySourceIdentifier] = []
+    dataManager: list[MergedPrimarySourceIdentifier] = []
+    downloadURL: list[MergedPrimarySourceIdentifier] = []
+    issued: list[MergedPrimarySourceIdentifier] = []
+    license: list[MergedPrimarySourceIdentifier] = []
+    mediaType: list[MergedPrimarySourceIdentifier] = []
+    modified: list[MergedPrimarySourceIdentifier] = []
+    otherContributor: list[MergedPrimarySourceIdentifier] = []
+    projectLeader: list[MergedPrimarySourceIdentifier] = []
+    projectManager: list[MergedPrimarySourceIdentifier] = []
+    publisher: list[MergedPrimarySourceIdentifier] = []
+    researcher: list[MergedPrimarySourceIdentifier] = []
+    title: list[MergedPrimarySourceIdentifier] = []
