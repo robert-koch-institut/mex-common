@@ -143,7 +143,7 @@ from mex.common.models.resource import (
     PreventiveResource,
     SubtractiveResource,
 )
-from mex.common.models.rule_set import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.models.variable import (
     AdditiveVariable,
     BaseVariable,

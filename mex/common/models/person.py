@@ -7,7 +7,7 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rule_set import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     Email,
     ExtractedPersonIdentifier,
