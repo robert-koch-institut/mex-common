@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix memory identity provider seeding
-
 ### Security
+
+## [0.26.1] - 2024-05-29
+
+### Fixed
+
+- fix memory identity provider seeding
 
 ## [0.26.0] - 2024-05-29
 
