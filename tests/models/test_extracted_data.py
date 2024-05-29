@@ -6,6 +6,7 @@ from pydantic import Field, ValidationError
 
 from mex.common.identity import get_provider
 from mex.common.models import (
+    MEX_PRIMARY_SOURCE_IDENTIFIER,
     MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     BaseModel,
@@ -90,7 +91,7 @@ def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
 def test_extracted_data_does_not_allow_changing_mex_stable_target_id() -> None:
     with pytest.raises(ValidationError, match="Cannot change `stableTargetId` of MEx"):
         ExtractedThing(
-            identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            identifier=MEX_PRIMARY_SOURCE_IDENTIFIER,
             hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
             identifierInPrimarySource=MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
             stableTargetId=MergedPrimarySourceIdentifier.generate(seed=12345),
