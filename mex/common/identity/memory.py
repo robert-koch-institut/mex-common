@@ -3,6 +3,7 @@ import hashlib
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
 from mex.common.models import (
+    MEX_PRIMARY_SOURCE_IDENTIFIER,
     MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
 )
@@ -20,7 +21,7 @@ class MemoryIdentityProvider(BaseProvider):
         """Initialize an in-memory database with the identity of MEx itself."""
         self._database: list[Identity] = [
             Identity(
-                identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                identifier=MEX_PRIMARY_SOURCE_IDENTIFIER,
                 hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
                 identifierInPrimarySource=MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
                 stableTargetId=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
