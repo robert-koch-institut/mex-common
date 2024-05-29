@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.26.0] - 2024-05-29
+
+### Added
+
 - add classes for Additive, Preventive and Subtractive rules for all entity types
 - add types, lists and lookups for all three rule types to `mex.common.models`
 
@@ -20,14 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: move `MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
 - BREAKING: change `MEX_PRIMARY_SOURCE_IDENTIFIER` to end in `1`,
   so that it differs from `MEX_PRIMARY_SOURCE_STABLE_TARGET_ID`
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.25.1] - 2024-05-21
 
