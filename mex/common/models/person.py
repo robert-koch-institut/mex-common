@@ -1,6 +1,6 @@
 """A person related to a source and/or resource, i.e. a project leader."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -18,7 +18,11 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["Person"], Field(frozen=True)]] = "Person"
+
+
+class _OptionalLists(_Stem):
     affiliation: list[MergedOrganizationIdentifier] = []
     email: list[Email] = []
     familyName: list[
@@ -107,7 +111,7 @@ class SubtractivePerson(_OptionalLists, SubtractiveRule):
     ] = "SubtractivePerson"
 
 
-class PreventivePerson(PreventiveRule):
+class PreventivePerson(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged person items."""
 
     entityType: Annotated[

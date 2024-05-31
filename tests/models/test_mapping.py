@@ -4,7 +4,7 @@ from pydantic import Field
 
 from mex.common.models import ExtractedData
 from mex.common.models.mapping import (
-    generate_mapping_schema_for_mex_class,
+    generate_mapping_schema,
 )
 from mex.common.types import Email, Identifier, MergedOrganizationalUnitIdentifier
 
@@ -32,7 +32,7 @@ class ExtractedDummyClass(ExtractedData):
 
 
 def test_generate_mapping_schema() -> None:
-    schema_model = generate_mapping_schema_for_mex_class(ExtractedDummyClass)
+    schema_model = generate_mapping_schema(ExtractedDummyClass)
 
     expected = {
         "$defs": {

@@ -3,7 +3,7 @@
 This may be a project, an area of work or an administrative procedure.
 """
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -32,8 +32,11 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["Activity"], Field(frozen=True)]] = "Activity"
 
+
+class _OptionalLists(_Stem):
     abstract: list[Text] = []
     activityType: list[
         Annotated[
@@ -59,7 +62,7 @@ class _OptionalLists(BaseModel):
     website: list[Link] = []
 
 
-class _RequiredLists(BaseModel):
+class _RequiredLists(_Stem):
     contact: Annotated[
         list[
             MergedOrganizationalUnitIdentifier
@@ -74,7 +77,7 @@ class _RequiredLists(BaseModel):
     title: Annotated[list[Text], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     contact: list[
         MergedOrganizationalUnitIdentifier
         | MergedPersonIdentifier
@@ -123,7 +126,7 @@ class SubtractiveActivity(_OptionalLists, _SparseLists, SubtractiveRule):
     ] = "SubtractiveActivity"
 
 
-class PreventiveActivity(PreventiveRule):
+class PreventiveActivity(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged activity items."""
 
     entityType: Annotated[

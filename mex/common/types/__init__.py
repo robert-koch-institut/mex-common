@@ -106,24 +106,25 @@ __all__ = (
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",
     "PathWrapper",
+    "PrimitiveTypes",
     "ResourceTypeGeneral",
     "Sink",
     "split_to_caps",
     "TechnicalAccessibility",
-    "Text",
-    "TextLanguage",
-    "Theme",
     "TEMPORAL_ENTITY_CLASSES_BY_PRECISION",
     "TEMPORAL_ENTITY_FORMATS_BY_PRECISION",
     "TemporalEntity",
-    "YearMonth",
-    "YearMonthDay",
-    "YearMonthDayTime",
     "TemporalEntityPrecision",
+    "Text",
+    "TextLanguage",
+    "Theme",
     "UTC",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
+    "YearMonth",
+    "YearMonthDay",
+    "YearMonthDayTime",
 )
 
 AnyNestedModel = Link | Text
@@ -171,3 +172,5 @@ EXTRACTED_IDENTIFIER_CLASSES: Final[list[type[AnyExtractedIdentifier]]] = list(
 EXTRACTED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedIdentifier]]] = {
     cls.__name__: cls for cls in EXTRACTED_IDENTIFIER_CLASSES
 }
+
+PrimitiveTypes = str | int | float | None | bool

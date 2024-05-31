@@ -3,7 +3,7 @@
 This can be any community or other social, commercial or political structure.
 """
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -19,7 +19,13 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["Organization"], Field(frozen=True)]] = (
+        "Organization"
+    )
+
+
+class _OptionalLists(_Stem):
     alternativeName: list[Text] = []
     geprisId: list[
         Annotated[
@@ -84,11 +90,11 @@ class _OptionalLists(BaseModel):
     ] = []
 
 
-class _RequiredLists(BaseModel):
+class _RequiredLists(_Stem):
     officialName: Annotated[list[Text], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     officialName: list[Text] = []
 
 
@@ -131,7 +137,7 @@ class SubtractiveOrganization(_OptionalLists, _SparseLists, SubtractiveRule):
     ] = "SubtractiveOrganization"
 
 
-class PreventiveOrganization(PreventiveRule):
+class PreventiveOrganization(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged organization items."""
 
     entityType: Annotated[

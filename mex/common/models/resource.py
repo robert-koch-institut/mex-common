@@ -1,6 +1,6 @@
 """A defined piece or collection of information."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -35,7 +35,11 @@ from mex.common.types import (
 from mex.common.types.identifier import MergedPrimarySourceIdentifier
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["Resource"], Field(frozen=True)]] = "Resource"
+
+
+class _OptionalLists(_Stem):
     accessPlatform: list[MergedAccessPlatformIdentifier] = []
     alternativeTitle: list[Text] = []
     anonymizationPseudonymization: list[
@@ -97,7 +101,7 @@ class _OptionalLists(BaseModel):
     ] = []
 
 
-class _RequiredLists(BaseModel):
+class _RequiredLists(_Stem):
     contact: Annotated[
         list[
             MergedOrganizationalUnitIdentifier
@@ -116,7 +120,7 @@ class _RequiredLists(BaseModel):
     ]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     contact: list[
         MergedOrganizationalUnitIdentifier
         | MergedPersonIdentifier
@@ -129,7 +133,7 @@ class _SparseLists(BaseModel):
     unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
 
 
-class _OptionalValues(BaseModel):
+class _OptionalValues(_Stem):
     accrualPeriodicity: (
         Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
         | None
@@ -160,7 +164,7 @@ class _OptionalValues(BaseModel):
     wasGeneratedBy: MergedActivityIdentifier | None = None
 
 
-class _RequiredValues(BaseModel):
+class _RequiredValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction,
         Field(
@@ -169,7 +173,7 @@ class _RequiredValues(BaseModel):
     ]
 
 
-class _SparseValues(BaseModel):
+class _SparseValues(_Stem):
     accessRestriction: (
         Annotated[
             AccessRestriction,
@@ -181,7 +185,7 @@ class _SparseValues(BaseModel):
     ) = None
 
 
-class _VariadicValues(BaseModel):
+class _VariadicValues(_Stem):
     accessRestriction: list[
         Annotated[
             AccessRestriction,
@@ -261,7 +265,7 @@ class SubtractiveResource(
     ] = "SubtractiveResource"
 
 
-class PreventiveResource(PreventiveRule):
+class PreventiveResource(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged resource items."""
 
     entityType: Annotated[

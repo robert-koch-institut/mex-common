@@ -1,6 +1,6 @@
 """The grouping of variables according to a certain aspect."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -17,12 +17,18 @@ from mex.common.types import (
 )
 
 
-class _RequiredLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["VariableGroup"], Field(frozen=True)]] = (
+        "VariableGroup"
+    )
+
+
+class _RequiredLists(_Stem):
     containedBy: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
     label: Annotated[list[Text], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     containedBy: list[MergedResourceIdentifier] = []
     label: list[Text] = []
 
@@ -66,7 +72,7 @@ class SubtractiveVariableGroup(_SparseLists, SubtractiveRule):
     ] = "SubtractiveVariableGroup"
 
 
-class PreventiveVariableGroup(PreventiveRule):
+class PreventiveVariableGroup(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged variable group items."""
 
     entityType: Annotated[

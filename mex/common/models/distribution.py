@@ -1,6 +1,6 @@
 """A specific representation of a dataset."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -25,7 +25,13 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["Distribution"], Field(frozen=True)]] = (
+        "Distribution"
+    )
+
+
+class _OptionalLists(_Stem):
     author: list[MergedPersonIdentifier] = []
     contactPerson: list[MergedPersonIdentifier] = []
     dataCurator: list[MergedPersonIdentifier] = []
@@ -36,15 +42,15 @@ class _OptionalLists(BaseModel):
     researcher: list[MergedPersonIdentifier] = []
 
 
-class _RequiredLists(BaseModel):
+class _RequiredLists(_Stem):
     publisher: Annotated[list[MergedOrganizationIdentifier], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     publisher: list[MergedOrganizationIdentifier] = []
 
 
-class _OptionalValues(BaseModel):
+class _OptionalValues(_Stem):
     accessService: MergedAccessPlatformIdentifier | None = None
     accessURL: Link | None = None
     downloadURL: Link | None = None
@@ -63,7 +69,7 @@ class _OptionalValues(BaseModel):
     modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
 
 
-class _RequiredValues(BaseModel):
+class _RequiredValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction,
         Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
@@ -78,7 +84,7 @@ class _RequiredValues(BaseModel):
     ]
 
 
-class _SparseValues(BaseModel):
+class _SparseValues(_Stem):
     accessRestriction: (
         Annotated[
             AccessRestriction,
@@ -99,7 +105,7 @@ class _SparseValues(BaseModel):
     ) = None
 
 
-class _VariadicValues(BaseModel):
+class _VariadicValues(_Stem):
     accessRestriction: list[
         Annotated[
             AccessRestriction,
@@ -163,7 +169,7 @@ class SubtractiveDistribution(
     ] = "SubtractiveDistribution"
 
 
-class PreventiveDistribution(PreventiveRule):
+class PreventiveDistribution(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged distribution items."""
 
     entityType: Annotated[
