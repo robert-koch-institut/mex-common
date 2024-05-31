@@ -67,6 +67,7 @@ __all__ = (
     "AnonymizationPseudonymization",
     "AnyMergedIdentifier",
     "AnyNestedModel",
+    "AnyPrimitiveType",
     "APIType",
     "AssetsPath",
     "CET",
@@ -106,7 +107,6 @@ __all__ = (
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",
     "PathWrapper",
-    "PrimitiveTypes",
     "ResourceTypeGeneral",
     "Sink",
     "split_to_caps",
@@ -173,4 +173,4 @@ EXTRACTED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedIdentifie
     cls.__name__: cls for cls in EXTRACTED_IDENTIFIER_CLASSES
 }
 
-PrimitiveTypes = str | int | float | None | bool
+AnyPrimitiveType = str | int | float | None | bool
