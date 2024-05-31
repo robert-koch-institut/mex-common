@@ -1,4 +1,4 @@
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -17,10 +17,11 @@ class MergedDummyIdentifier(Identifier):
     pass
 
 
-class ExtractedDummyClass(ExtractedData):
+class ExtractedDummy(ExtractedData):
+    stemType: ClassVar[Annotated[Literal["Dummy"], Field(frozen=True)]] = "Dummy"
     entityType: Annotated[
-        Literal["ExtractedDummyClass"], Field(alias="$type", frozen=True)
-    ] = "ExtractedDummyClass"
+        Literal["ExtractedDummy"], Field(alias="$type", frozen=True)
+    ] = "ExtractedDummy"
     identifier: Annotated[ExtractedDummyIdentifier, Field(frozen=True)]
     stableTargetId: MergedDummyIdentifier
     dummy_unit: MergedOrganizationalUnitIdentifier | None = None  # not required
@@ -32,7 +33,7 @@ class ExtractedDummyClass(ExtractedData):
 
 
 def test_generate_mapping_schema() -> None:
-    schema_model = generate_mapping_schema(ExtractedDummyClass)
+    schema_model = generate_mapping_schema(ExtractedDummy)
 
     expected = {
         "$defs": {
@@ -746,7 +747,7 @@ def test_generate_mapping_schema() -> None:
                 "type": "object",
             },
         },
-        "description": "Schema for mapping the properties of the entity type ExtractedDummyClass.",
+        "description": "Schema for mapping the properties of the entity type ExtractedDummy.",
         "properties": {
             "hadPrimarySource": {
                 "items": {"$ref": "#/$defs/HadprimarysourceFieldsInPrimarySource"},
@@ -813,7 +814,7 @@ def test_generate_mapping_schema() -> None:
             "dummy_email",
             "dummy_min_length_list",
         ],
-        "title": "DummyClassMapping",
+        "title": "DummyMapping",
         "type": "object",
     }
 

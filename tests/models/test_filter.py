@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -10,7 +10,11 @@ from mex.common.types import MergedOrganizationalUnitIdentifier
 from mex.common.types.email import Email
 
 
-class DummyClass(ExtractedData):
+class ExtractedDummy(ExtractedData):
+    stemType: ClassVar[Annotated[Literal["Dummy"], Field(frozen=True)]] = "Dummy"
+    entityType: Annotated[
+        Literal["ExtractedDummy"], Field(alias="$type", frozen=True)
+    ] = "ExtractedDummy"
     dummy_identifier: MergedOrganizationalUnitIdentifier | None = None  # not required
     dummy_str: str
     dummy_int: int | None = None  # not required
@@ -20,7 +24,7 @@ class DummyClass(ExtractedData):
 
 
 def test_entity_filter_schema() -> None:
-    schema_model = generate_entity_filter_schema(DummyClass)
+    schema_model = generate_entity_filter_schema(ExtractedDummy)
 
     expected = {
         "$defs": {
@@ -83,15 +87,16 @@ def test_entity_filter_schema() -> None:
                 "type": "object",
             },
         },
+        "description": "Schema for entity filters for the entity type ExtractedDummy.",
         "properties": {
-            "DummyClass": {
+            "ExtractedDummy": {
                 "default": None,
                 "items": {"$ref": "#/$defs/EntityFilter"},
-                "title": "Dummyclass",
+                "title": "Extracteddummy",
                 "type": "array",
             }
         },
-        "title": "DummyClass",
+        "title": "DummyEntityFilter",
         "type": "object",
     }
 

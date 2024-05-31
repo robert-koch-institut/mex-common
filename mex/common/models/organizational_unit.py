@@ -20,8 +20,8 @@ from mex.common.types import (
 
 
 class _Stem(BaseModel):
-    stemType: ClassVar[Annotated[Literal["OrganizationUnit"], Field(frozen=True)]] = (
-        "OrganizationUnit"
+    stemType: ClassVar[Annotated[Literal["OrganizationalUnit"], Field(frozen=True)]] = (
+        "OrganizationalUnit"
     )
 
 

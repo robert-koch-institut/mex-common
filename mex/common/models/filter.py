@@ -1,9 +1,11 @@
-from typing import Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import AnyExtractedModel
 from mex.common.transform import ensure_postfix
+
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.models import AnyExtractedModel
 
 
 class EntityFilterRule(BaseModel, extra="forbid"):
@@ -24,7 +26,7 @@ class EntityFilter(BaseModel, extra="forbid"):
 
 
 def generate_entity_filter_schema(
-    extracted_model: type[AnyExtractedModel],
+    extracted_model: type["AnyExtractedModel"],
 ) -> type[BaseModel]:
     """Create a mapping schema for an entity filter for an extracted model class.
 

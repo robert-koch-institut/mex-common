@@ -1,9 +1,11 @@
-from typing import Annotated, Any, get_origin
+from typing import TYPE_CHECKING, Annotated, Any, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import AnyExtractedModel
 from mex.common.transform import ensure_postfix
+
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.models import AnyExtractedModel
 
 
 class GenericRule(BaseModel, extra="forbid"):
@@ -25,7 +27,7 @@ class GenericField(BaseModel, extra="forbid"):
 
 
 def generate_mapping_schema(
-    extracted_model: type[AnyExtractedModel],
+    extracted_model: type["AnyExtractedModel"],
 ) -> type[BaseModel]:
     """Create a mapping schema the MEx extracted model class.
 
