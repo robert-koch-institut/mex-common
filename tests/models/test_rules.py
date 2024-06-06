@@ -5,7 +5,7 @@ from mex.common.types import MergedPrimarySourceIdentifier
 
 def test_preventive_models_define_same_fields_as_base_model() -> None:
     for preventive_rule in PREVENTIVE_MODEL_CLASSES:
-        base_model_name = ensure_prefix(preventive_rule.stemType, "Base")
+        base_model_name = "Base" + preventive_rule.stemType
         base_model = BASE_MODEL_CLASSES_BY_NAME[base_model_name]
         expected_fields = {"entityType", *base_model.model_fields}
         assert set(preventive_rule.model_fields) == expected_fields
