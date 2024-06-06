@@ -88,14 +88,12 @@ class BaseActivity(_OptionalLists, _RequiredLists):
     """All fields for a valid activity except for provenance."""
 
 
-class ExtractedActivity(BaseActivity, ExtractedData):
+class ExtractedActivity(BaseActivity, ExtractedData[ExtractedActivityIdentifier,MergedActivityIdentifier]):
     """An automatically extracted metadata set describing an activity."""
 
     entityType: Annotated[
         Literal["ExtractedActivity"], Field(alias="$type", frozen=True)
     ] = "ExtractedActivity"
-    identifier: Annotated[ExtractedActivityIdentifier, Field(frozen=True)]
-    stableTargetId: MergedActivityIdentifier
 
 
 class MergedActivity(BaseActivity, MergedItem):

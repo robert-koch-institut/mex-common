@@ -24,7 +24,7 @@ class BaseEntity(BaseModel, extra="forbid"):
         # should be typed to the correct identifier type. Regardless of the entity-type
         # or whether this item was extracted, merged, etc., identifiers will be assigned
         # just once and should be declared as `frozen` on subclasses.
-        identifier: Identifier
+
 
     def __str__(self) -> str:
         """Format this instance as a string for logging."""

@@ -18,6 +18,7 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedPrimarySourceIdentifier,
 )
+from mex.common.types.identifier import Identifier
 
 
 class _RequiredLists(BaseModel):
@@ -32,14 +33,15 @@ class BaseContactPoint(_RequiredLists):
     """All fields for a valid contact point except for provenance."""
 
 
-class ExtractedContactPoint(BaseContactPoint, ExtractedData):
+class ExtractedContactPoint(
+    BaseContactPoint,
+    ExtractedData[ExtractedContactPointIdentifier, MergedContactPointIdentifier],
+):
     """An automatically extracted metadata set describing a contact point."""
 
     entityType: Annotated[
         Literal["ExtractedContactPoint"], Field(alias="$type", frozen=True)
     ] = "ExtractedContactPoint"
-    identifier: Annotated[ExtractedContactPointIdentifier, Field(frozen=True)]
-    stableTargetId: MergedContactPointIdentifier
 
 
 class MergedContactPoint(BaseContactPoint, MergedItem):
