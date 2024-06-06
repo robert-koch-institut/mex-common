@@ -1,5 +1,4 @@
 from mex.common.models import BASE_MODEL_CLASSES_BY_NAME, PREVENTIVE_MODEL_CLASSES
-from mex.common.transform import ensure_prefix
 from mex.common.types import MergedPrimarySourceIdentifier
 
 
