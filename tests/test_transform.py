@@ -13,6 +13,7 @@ from mex.common.transform import (
     MExEncoder,
     dromedary_to_kebab,
     dromedary_to_snake,
+    ensure_postfix,
     ensure_prefix,
     kebab_to_camel,
     snake_to_dromedary,
@@ -173,6 +174,26 @@ def test_kebab_to_camel(string: str, expected: str) -> None:
 )
 def test_ensure_prefix(string: Any, prefix: Any, expected: str) -> None:
     result = ensure_prefix(string, prefix)
+
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "postfix", "expected"),
+    [
+        ("", "", ""),
+        ("banana", "na", "banana"),
+        ("foo", "bar", "foobar"),
+        (
+            UUID("{12345678-1234-5678-1234-567812345678}"),
+            -42,
+            "12345678-1234-5678-1234-567812345678-42",
+        ),
+    ],
+    ids=["empty", "already-postfixed", "postfix-added", "stringified"],
+)
+def test_ensure_postfix(string: Any, postfix: Any, expected: str) -> None:
+    result = ensure_postfix(string, postfix)
 
     assert result == expected
 

@@ -1,6 +1,6 @@
 """A single piece of information within a resource."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -19,7 +19,11 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["Variable"], Field(frozen=True)]] = "Variable"
+
+
+class _OptionalLists(_Stem):
     belongsTo: list[MergedVariableGroupIdentifier] = []
     description: list[Text] = []
     valueSet: list[
@@ -36,7 +40,7 @@ class _OptionalLists(BaseModel):
     ] = []
 
 
-class _RequiredLists(BaseModel):
+class _RequiredLists(_Stem):
     label: Annotated[
         list[
             Annotated[
@@ -53,7 +57,7 @@ class _RequiredLists(BaseModel):
     usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     label: list[
         Annotated[
             Text,
@@ -67,7 +71,7 @@ class _SparseLists(BaseModel):
     usedIn: list[MergedResourceIdentifier] = []
 
 
-class _OptionalValues(BaseModel):
+class _OptionalValues(_Stem):
     codingSystem: (
         Annotated[
             str,
@@ -88,7 +92,7 @@ class _OptionalValues(BaseModel):
     ) = None
 
 
-class _VariadicValues(BaseModel):
+class _VariadicValues(_Stem):
     codingSystem: list[
         Annotated[
             str,
@@ -148,7 +152,7 @@ class SubtractiveVariable(
     ] = "SubtractiveVariable"
 
 
-class PreventiveVariable(PreventiveRule):
+class PreventiveVariable(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged variable items."""
 
     entityType: Annotated[

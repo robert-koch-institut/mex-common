@@ -1,6 +1,6 @@
 """A collection of information, that is managed and curated by an RKI unit."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -19,7 +19,13 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["PrimarySource"], Field(frozen=True)]] = (
+        "PrimarySource"
+    )
+
+
+class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
     contact: list[
         MergedOrganizationalUnitIdentifier
@@ -33,7 +39,7 @@ class _OptionalLists(BaseModel):
     unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
 
 
-class _OptionalValues(BaseModel):
+class _OptionalValues(_Stem):
     version: (
         Annotated[
             str,
@@ -45,7 +51,7 @@ class _OptionalValues(BaseModel):
     ) = None
 
 
-class _VariadicValues(BaseModel):
+class _VariadicValues(_Stem):
     version: list[
         Annotated[
             str,
@@ -95,7 +101,7 @@ class SubtractivePrimarySource(_OptionalLists, _VariadicValues, SubtractiveRule)
     ] = "SubtractivePrimarySource"
 
 
-class PreventivePrimarySource(PreventiveRule):
+class PreventivePrimarySource(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged primary source items."""
 
     entityType: Annotated[

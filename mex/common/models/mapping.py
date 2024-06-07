@@ -1,8 +1,11 @@
-from typing import Annotated, Any, get_origin
+from typing import TYPE_CHECKING, Annotated, Any, get_origin
 
 from pydantic import BaseModel, Field, create_model
 
-from mex.common.models import ExtractedData
+from mex.common.transform import ensure_postfix
+
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.models import AnyExtractedModel
 
 
 class GenericRule(BaseModel, extra="forbid"):
@@ -23,8 +26,8 @@ class GenericField(BaseModel, extra="forbid"):
     comment: str | None = None
 
 
-def generate_mapping_schema_for_mex_class(
-    mex_model_class: type[ExtractedData],
+def generate_mapping_schema(
+    extracted_model: type["AnyExtractedModel"],
 ) -> type[BaseModel]:
     """Create a mapping schema the MEx extracted model class.
 
@@ -32,14 +35,14 @@ def generate_mapping_schema_for_mex_class(
     depending on the respective fields and their types.
 
     Args:
-        mex_model_class: a pydantic model (type) of a MEx model class/entity
+        extracted_model: a pydantic model for an extracted model class
 
     Returns:
         dynamic mapping model for the provided extracted model class
     """
     # dicts for create_model() must be declared as dict[str, Any] to silence mypy
-    field_models: dict[str, Any] = {}
-    for field_name, field_info in mex_model_class.model_fields.items():
+    fields: dict[str, Any] = {}
+    for field_name, field_info in extracted_model.model_fields.items():
         if field_name == "entityType":
             continue
         # first create dynamic rule model
@@ -69,13 +72,13 @@ def generate_mapping_schema_for_mex_class(
             f"Mapping schema for {field_name.capitalize()} fields in primary source."
         )
         if field_info.is_required():
-            field_models[field_name] = (list[field_model], ...)  # type: ignore[valid-type]
+            fields[field_name] = (list[field_model], ...)  # type: ignore[valid-type]
         else:
-            field_models[field_name] = (list[field_model], None)  # type: ignore[valid-type]
-    mapping_name = f"{mex_model_class.__name__}Mapping".removeprefix("Extracted")
-    class_model: type[BaseModel] = create_model(mapping_name, **field_models)
-    name = mex_model_class.__name__
-    class_model.__doc__ = str(
-        f"Schema for mapping the properties of the entity type {name}."
+            fields[field_name] = (list[field_model], None)  # type: ignore[valid-type]
+    mapping_name = ensure_postfix(extracted_model.stemType, "Mapping")
+    mapping_model: type[BaseModel] = create_model(mapping_name, **fields)
+    mapping_model.__doc__ = (
+        "Schema for mapping the properties of the entity type "
+        f"{extracted_model.__name__}."
     )
-    return class_model
+    return mapping_model
