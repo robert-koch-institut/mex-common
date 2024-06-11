@@ -37,23 +37,23 @@ class BaseVariableGroup(_RequiredLists):
     """All fields for a valid variable group except for provenance."""
 
 
-class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
+class ExtractedVariableGroup(
+    BaseVariableGroup,
+    ExtractedData[ExtractedVariableGroupIdentifier, MergedVariableGroupIdentifier],
+):
     """An automatically extracted metadata set describing a variable group."""
 
     entityType: Annotated[
         Literal["ExtractedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "ExtractedVariableGroup"
-    identifier: Annotated[ExtractedVariableGroupIdentifier, Field(frozen=True)]
-    stableTargetId: MergedVariableGroupIdentifier
 
 
-class MergedVariableGroup(BaseVariableGroup, MergedItem):
+class MergedVariableGroup(BaseVariableGroup, MergedItem[MergedVariableGroupIdentifier]):
     """The result of merging all extracted data and rules for a variable group."""
 
     entityType: Annotated[
         Literal["MergedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "MergedVariableGroup"
-    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
 
 
 class AdditiveVariableGroup(_SparseLists, AdditiveRule):

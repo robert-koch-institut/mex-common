@@ -226,23 +226,22 @@ class BaseResource(_OptionalLists, _RequiredLists, _OptionalValues, _RequiredVal
     """All fields for a valid resource except for provenance."""
 
 
-class ExtractedResource(BaseResource, ExtractedData):
+class ExtractedResource(
+    BaseResource, ExtractedData[ExtractedResourceIdentifier, MergedResourceIdentifier]
+):
     """An automatically extracted metadata set describing a resource."""
 
     entityType: Annotated[
         Literal["ExtractedResource"], Field(alias="$type", frozen=True)
     ] = "ExtractedResource"
-    identifier: Annotated[ExtractedResourceIdentifier, Field(frozen=True)]
-    stableTargetId: MergedResourceIdentifier
 
 
-class MergedResource(BaseResource, MergedItem):
+class MergedResource(BaseResource, MergedItem[MergedResourceIdentifier]):
     """The result of merging all extracted data and rules for a resource."""
 
     entityType: Annotated[
         Literal["MergedResource"], Field(alias="$type", frozen=True)
     ] = "MergedResource"
-    identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]
 
 
 class AdditiveResource(

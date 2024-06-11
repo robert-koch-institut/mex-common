@@ -52,7 +52,7 @@ def transform_wikidata_organization_to_extracted_organization(
     labels = _get_clean_labels(wikidata_organization.labels)
     if not labels:
         return None
-    return ExtractedOrganization(  # type: ignore[call-arg]
+    return ExtractedOrganization(
         wikidataId=f"https://www.wikidata.org/entity/{wikidata_organization.identifier}",
         officialName=labels,
         shortName=_get_clean_short_names(wikidata_organization.claims.short_name),

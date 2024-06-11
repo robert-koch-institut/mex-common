@@ -76,23 +76,22 @@ class BasePerson(_OptionalLists):
     """All fields for a valid person except for provenance."""
 
 
-class ExtractedPerson(BasePerson, ExtractedData):
+class ExtractedPerson(
+    BasePerson, ExtractedData[ExtractedPersonIdentifier, MergedPersonIdentifier]
+):
     """An automatically extracted metadata set describing a person."""
 
     entityType: Annotated[
         Literal["ExtractedPerson"], Field(alias="$type", frozen=True)
     ] = "ExtractedPerson"
-    identifier: Annotated[ExtractedPersonIdentifier, Field(frozen=True)]
-    stableTargetId: MergedPersonIdentifier
 
 
-class MergedPerson(BasePerson, MergedItem):
+class MergedPerson(BasePerson, MergedItem[MergedPersonIdentifier]):
     """The result of merging all extracted data and rules for a person."""
 
     entityType: Annotated[
         Literal["MergedPerson"], Field(alias="$type", frozen=True)
     ] = "MergedPerson"
-    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
 
 
 class AdditivePerson(_OptionalLists, AdditiveRule):

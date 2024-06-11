@@ -1,4 +1,5 @@
 import hashlib
+from typing import TypeVar, cast
 
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
@@ -8,10 +9,14 @@ from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
 )
 from mex.common.types import (
+    AnyExtractedIdentifier,
     AnyMergedIdentifier,
     Identifier,
+    MergedIdentifier,
     MergedPrimarySourceIdentifier,
 )
+
+MergedIdentifierT = TypeVar("MergedIdentifierT", bound=MergedIdentifier)
 
 
 class MemoryIdentityProvider(BaseProvider):
@@ -19,7 +24,7 @@ class MemoryIdentityProvider(BaseProvider):
 
     def __init__(self) -> None:
         """Initialize an in-memory database with the identity of MEx itself."""
-        self._database: list[Identity] = [
+        self._database: list[Identity[AnyExtractedIdentifier, AnyMergedIdentifier]] = [
             Identity(
                 identifier=MEX_PRIMARY_SOURCE_IDENTIFIER,
                 hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -43,7 +48,7 @@ class MemoryIdentityProvider(BaseProvider):
         self,
         had_primary_source: MergedPrimarySourceIdentifier,
         identifier_in_primary_source: str,
-    ) -> Identity:
+    ) -> Identity[AnyExtractedIdentifier, AnyMergedIdentifier]:
         """Find an Identity in the in-memory database or assign a new one.
 
         Args:
@@ -53,14 +58,16 @@ class MemoryIdentityProvider(BaseProvider):
         Returns:
             Newly created or updated Identity instance
         """
-        identities = self.fetch(
-            had_primary_source=had_primary_source,
-            identifier_in_primary_source=identifier_in_primary_source,
+        identities: list[Identity[AnyExtractedIdentifier, AnyMergedIdentifier]] = (
+            self.fetch(
+                had_primary_source=had_primary_source,
+                identifier_in_primary_source=identifier_in_primary_source,
+            )
         )
         if identities:
             return identities[0]
 
-        identity = Identity(
+        identity: Identity[AnyExtractedIdentifier, AnyMergedIdentifier] = Identity(
             hadPrimarySource=had_primary_source,
             identifierInPrimarySource=identifier_in_primary_source,
             stableTargetId=self._get_identifier(
@@ -78,8 +85,8 @@ class MemoryIdentityProvider(BaseProvider):
         *,
         had_primary_source: MergedPrimarySourceIdentifier | None = None,
         identifier_in_primary_source: str | None = None,
-        stable_target_id: AnyMergedIdentifier | None = None,
-    ) -> list[Identity]:
+        stable_target_id: MergedIdentifierT | None = None,
+    ) -> list[Identity[AnyExtractedIdentifier, MergedIdentifierT]]:
         """Find Identity instances in the in-memory database.
 
         Args:
@@ -106,7 +113,9 @@ class MemoryIdentityProvider(BaseProvider):
                 lambda i: i.stableTargetId == stable_target_id, identities
             )
 
-        return list(identities)
+        return cast(
+            list[Identity[AnyExtractedIdentifier, MergedIdentifierT]], list(identities)
+        )
 
     def close(self) -> None:
         """Trash the in-memory identity database."""

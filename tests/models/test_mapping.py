@@ -17,13 +17,11 @@ class MergedDummyIdentifier(Identifier):
     pass
 
 
-class ExtractedDummy(ExtractedData):
+class ExtractedDummy(ExtractedData[ExtractedDummyIdentifier, MergedDummyIdentifier]):
     stemType: ClassVar[Annotated[Literal["Dummy"], Field(frozen=True)]] = "Dummy"
     entityType: Annotated[
         Literal["ExtractedDummy"], Field(alias="$type", frozen=True)
     ] = "ExtractedDummy"
-    identifier: Annotated[ExtractedDummyIdentifier, Field(frozen=True)]
-    stableTargetId: MergedDummyIdentifier
     dummy_unit: MergedOrganizationalUnitIdentifier | None = None  # not required
     dummy_str: str
     dummy_int: int | None = None  # not required

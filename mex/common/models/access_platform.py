@@ -86,7 +86,10 @@ class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
     """All fields for a valid access platform except for provenance."""
 
 
-class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData[ExtractedAccessPlatformIdentifier,ExtractedAccessPlatformIdentifier]):
+class ExtractedAccessPlatform(
+    BaseAccessPlatform,
+    ExtractedData[ExtractedAccessPlatformIdentifier, MergedAccessPlatformIdentifier],
+):
     """An automatically extracted metadata item describing an access platform."""
 
     entityType: Annotated[
@@ -94,14 +97,14 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData[ExtractedAccessP
     ] = "ExtractedAccessPlatform"
 
 
-
-class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
+class MergedAccessPlatform(
+    BaseAccessPlatform, MergedItem[MergedAccessPlatformIdentifier]
+):
     """The result of merging all extracted data and rules for an access platform."""
 
     entityType: Annotated[
         Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "MergedAccessPlatform"
-    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
 
 
 class AdditiveAccessPlatform(

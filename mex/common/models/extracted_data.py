@@ -1,23 +1,23 @@
-from functools import cached_property
-from typing import Annotated, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Annotated, Generic, TypeVar, cast
 
 from pydantic import Field, computed_field
 
+from mex.common.models.entity import BaseEntity
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
     MergedPrimarySourceIdentifier,
 )
-from mex.common.types.identifier import Identifier, MergedContactPointIdentifier
+from mex.common.types.identifier import ExtractedIdentifier, MergedIdentifier
 
 MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")
 MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
 MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
 
-IdentifierT = TypeVar("IdentifierT", bound=Identifier)
-MergedIdentifierT = TypeVar("MergedIdentifierT", bound=Identifier)
+ExtractedIdentifierT = TypeVar("ExtractedIdentifierT", bound=ExtractedIdentifier)
+MergedIdentifierT = TypeVar("MergedIdentifierT", bound=MergedIdentifier)
 
 
-class ExtractedData(Generic[IdentifierT, MergedIdentifierT]):
+class ExtractedData(Generic[ExtractedIdentifierT, MergedIdentifierT], BaseEntity):
     """Base model for all extracted data classes.
 
     This class adds two important attributes for metadata provenance: `hadPrimarySource`
@@ -61,26 +61,28 @@ class ExtractedData(Generic[IdentifierT, MergedIdentifierT]):
         ),
     ]
 
-    @computed_field
-    @cached_property
-    def identifier(self) -> IdentifierT:  # type: ignore[override]
-        # break import cycle, sigh
-        from mex.common.identity import get_provider
+    if TYPE_CHECKING:  # pragma: no cover
 
-        provider = get_provider()
-        identity = provider.assign(
-            self.hadPrimarySource, self.identifierInPrimarySource
-        )
-        return cast(IdentifierT, identity.identifier)
+        @property
+        def identifier(self) -> ExtractedIdentifierT:  # noqa: D102
+            ...
 
-    @computed_field
-    @cached_property
-    def stableTargetId(self) -> MergedContactPointIdentifier:
-        # break import cycle, sigh
-        from mex.common.identity import get_provider
+        @property
+        def stableTargetId(self) -> MergedIdentifierT:  # noqa: D102, N802
+            ...
 
-        provider = get_provider()
-        identity = provider.assign(
-            self.hadPrimarySource, self.identifierInPrimarySource
-        )
-        return cast(MergedContactPointIdentifier, identity.stableTargetId)
+    else:
+
+        @computed_field
+        def identifier(self) -> ExtractedIdentifierT:
+            """Return the computed identifier for this extracted data item."""
+            from mex.common.identity import assign_identity  # break import cycle, sigh
+
+            return cast(ExtractedIdentifierT, assign_identity(self).identifier)
+
+        @computed_field
+        def stableTargetId(self) -> MergedIdentifierT:  # noqa: N802
+            """Return the computed stableTargetId for this extracted data item."""
+            from mex.common.identity import assign_identity  # break import cycle, sigh
+
+            return cast(MergedIdentifierT, assign_identity(self).stableTargetId)

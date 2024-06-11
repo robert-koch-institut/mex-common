@@ -18,7 +18,6 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedPrimarySourceIdentifier,
 )
-from mex.common.types.identifier import Identifier
 
 
 class _Stem(BaseModel):
@@ -50,13 +49,12 @@ class ExtractedContactPoint(
     ] = "ExtractedContactPoint"
 
 
-class MergedContactPoint(BaseContactPoint, MergedItem):
+class MergedContactPoint(BaseContactPoint, MergedItem[MergedContactPointIdentifier]):
     """The result of merging all extracted data and rules for a contact point."""
 
     entityType: Annotated[
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
-    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
 
 
 class AdditiveContactPoint(_SparseLists, AdditiveRule):

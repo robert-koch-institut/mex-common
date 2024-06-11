@@ -36,14 +36,14 @@ class BaseThing(BaseModel):
     someField: str = "someDefault"
 
 
-class ExtractedThing(BaseThing, ExtractedData):
+class ExtractedThing(
+    BaseThing, ExtractedData[ExtractedThingIdentifier, MergedThingIdentifier]
+):
     """Extracted version of a dummy thing model."""
 
     entityType: Annotated[
         Literal["ExtractedThing"], Field(alias="$type", frozen=True)
     ] = "ExtractedThing"
-    identifier: Annotated[ExtractedThingIdentifier, Field(frozen=True)]
-    stableTargetId: MergedThingIdentifier
 
 
 def test_extracted_data_requires_dict_for_construction() -> None:

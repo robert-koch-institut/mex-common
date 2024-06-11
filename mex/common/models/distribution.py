@@ -130,23 +130,23 @@ class BaseDistribution(
     """All fields for a valid distribution except for provenance."""
 
 
-class ExtractedDistribution(BaseDistribution, ExtractedData):
+class ExtractedDistribution(
+    BaseDistribution,
+    ExtractedData[ExtractedDistributionIdentifier, MergedDistributionIdentifier],
+):
     """An automatically extracted metadata set describing a distribution."""
 
     entityType: Annotated[
         Literal["ExtractedDistribution"], Field(alias="$type", frozen=True)
     ] = "ExtractedDistribution"
-    identifier: Annotated[ExtractedDistributionIdentifier, Field(frozen=True)]
-    stableTargetId: MergedDistributionIdentifier
 
 
-class MergedDistribution(BaseDistribution, MergedItem):
+class MergedDistribution(BaseDistribution, MergedItem[MergedDistributionIdentifier]):
     """The result of merging all extracted data and rules for a distribution."""
 
     entityType: Annotated[
         Literal["MergedDistribution"], Field(alias="$type", frozen=True)
     ] = "MergedDistribution"
-    identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
 
 
 class AdditiveDistribution(

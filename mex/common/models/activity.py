@@ -91,7 +91,9 @@ class BaseActivity(_OptionalLists, _RequiredLists):
     """All fields for a valid activity except for provenance."""
 
 
-class ExtractedActivity(BaseActivity, ExtractedData[ExtractedActivityIdentifier,MergedActivityIdentifier]):
+class ExtractedActivity(
+    BaseActivity, ExtractedData[ExtractedActivityIdentifier, MergedActivityIdentifier]
+):
     """An automatically extracted metadata set describing an activity."""
 
     entityType: Annotated[
@@ -99,13 +101,12 @@ class ExtractedActivity(BaseActivity, ExtractedData[ExtractedActivityIdentifier,
     ] = "ExtractedActivity"
 
 
-class MergedActivity(BaseActivity, MergedItem):
+class MergedActivity(BaseActivity, MergedItem[MergedActivityIdentifier]):
     """The result of merging all extracted data and rules for an activity."""
 
     entityType: Annotated[
         Literal["MergedActivity"], Field(alias="$type", frozen=True)
     ] = "MergedActivity"
-    identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
 
 
 class AdditiveActivity(_OptionalLists, _SparseLists, AdditiveRule):

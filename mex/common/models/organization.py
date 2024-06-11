@@ -102,23 +102,23 @@ class BaseOrganization(_OptionalLists, _RequiredLists):
     """All fields for a valid organization except for provenance."""
 
 
-class ExtractedOrganization(BaseOrganization, ExtractedData):
+class ExtractedOrganization(
+    BaseOrganization,
+    ExtractedData[ExtractedOrganizationIdentifier, MergedOrganizationIdentifier],
+):
     """An automatically extracted metadata set describing an organization."""
 
     entityType: Annotated[
         Literal["ExtractedOrganization"], Field(alias="$type", frozen=True)
     ] = "ExtractedOrganization"
-    identifier: Annotated[ExtractedOrganizationIdentifier, Field(frozen=True)]
-    stableTargetId: MergedOrganizationIdentifier
 
 
-class MergedOrganization(BaseOrganization, MergedItem):
+class MergedOrganization(BaseOrganization, MergedItem[MergedOrganizationIdentifier]):
     """The result of merging all extracted data and rules for an organization."""
 
     entityType: Annotated[
         Literal["MergedOrganization"], Field(alias="$type", frozen=True)
     ] = "MergedOrganization"
-    identifier: Annotated[MergedOrganizationIdentifier, Field(frozen=True)]
 
 
 class AdditiveOrganization(_OptionalLists, _SparseLists, AdditiveRule):

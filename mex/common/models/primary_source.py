@@ -66,23 +66,23 @@ class BasePrimarySource(_OptionalLists, _OptionalValues):
     """All fields for a valid primary source except for provenance."""
 
 
-class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
+class ExtractedPrimarySource(
+    BasePrimarySource,
+    ExtractedData[ExtractedPrimarySourceIdentifier, MergedPrimarySourceIdentifier],
+):
     """An automatically extracted metadata set describing a primary source."""
 
     entityType: Annotated[
         Literal["ExtractedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "ExtractedPrimarySource"
-    identifier: Annotated[ExtractedPrimarySourceIdentifier, Field(frozen=True)]
-    stableTargetId: MergedPrimarySourceIdentifier
 
 
-class MergedPrimarySource(BasePrimarySource, MergedItem):
+class MergedPrimarySource(BasePrimarySource, MergedItem[MergedPrimarySourceIdentifier]):
     """The result of merging all extracted data and rules for a primary source."""
 
     entityType: Annotated[
         Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "MergedPrimarySource"
-    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
 
 
 class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):

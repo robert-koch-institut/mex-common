@@ -80,89 +80,97 @@ class Identifier(str):
 # precise JSON schema definitions and to derive database queries from the models.
 
 
-class ExtractedAccessPlatformIdentifier(Identifier):
+class ExtractedIdentifier(Identifier):
+    """Base class for all extracted identifiers."""
+
+
+class ExtractedAccessPlatformIdentifier(ExtractedIdentifier):
     """Identifier for extracted access platforms."""
 
 
-class ExtractedActivityIdentifier(Identifier):
+class ExtractedActivityIdentifier(ExtractedIdentifier):
     """Identifier for extracted activities."""
 
 
-class ExtractedContactPointIdentifier(Identifier):
+class ExtractedContactPointIdentifier(ExtractedIdentifier):
     """Identifier for extracted contact points."""
 
 
-class ExtractedDistributionIdentifier(Identifier):
+class ExtractedDistributionIdentifier(ExtractedIdentifier):
     """Identifier for extracted distributions."""
 
 
-class ExtractedOrganizationIdentifier(Identifier):
+class ExtractedOrganizationIdentifier(ExtractedIdentifier):
     """Identifier for extracted organizations."""
 
 
-class ExtractedOrganizationalUnitIdentifier(Identifier):
+class ExtractedOrganizationalUnitIdentifier(ExtractedIdentifier):
     """Identifier for extracted organizational units."""
 
 
-class ExtractedPersonIdentifier(Identifier):
+class ExtractedPersonIdentifier(ExtractedIdentifier):
     """Identifier for extracted persons."""
 
 
-class ExtractedPrimarySourceIdentifier(Identifier):
+class ExtractedPrimarySourceIdentifier(ExtractedIdentifier):
     """Identifier for extracted primary sources."""
 
 
-class ExtractedResourceIdentifier(Identifier):
+class ExtractedResourceIdentifier(ExtractedIdentifier):
     """Identifier for extracted resources."""
 
 
-class ExtractedVariableIdentifier(Identifier):
+class ExtractedVariableIdentifier(ExtractedIdentifier):
     """Identifier for extracted variables."""
 
 
-class ExtractedVariableGroupIdentifier(Identifier):
+class ExtractedVariableGroupIdentifier(ExtractedIdentifier):
     """Identifier for extracted variable groups."""
 
 
-class MergedAccessPlatformIdentifier(Identifier):
+class MergedIdentifier(Identifier):
+    """Base class for all merged identifiers."""
+
+
+class MergedAccessPlatformIdentifier(MergedIdentifier):
     """Identifier for merged access platforms."""
 
 
-class MergedActivityIdentifier(Identifier):
+class MergedActivityIdentifier(MergedIdentifier):
     """Identifier for merged activities."""
 
 
-class MergedContactPointIdentifier(Identifier):
+class MergedContactPointIdentifier(MergedIdentifier):
     """Identifier for merged contact points."""
 
 
-class MergedDistributionIdentifier(Identifier):
+class MergedDistributionIdentifier(MergedIdentifier):
     """Identifier for merged distributions."""
 
 
-class MergedOrganizationIdentifier(Identifier):
+class MergedOrganizationIdentifier(MergedIdentifier):
     """Identifier for merged organizations."""
 
 
-class MergedOrganizationalUnitIdentifier(Identifier):
+class MergedOrganizationalUnitIdentifier(MergedIdentifier):
     """Identifier for merged organizational units."""
 
 
-class MergedPersonIdentifier(Identifier):
+class MergedPersonIdentifier(MergedIdentifier):
     """Identifier for merged persons."""
 
 
-class MergedPrimarySourceIdentifier(Identifier):
+class MergedPrimarySourceIdentifier(MergedIdentifier):
     """Identifier for merged primary sources."""
 
 
-class MergedResourceIdentifier(Identifier):
+class MergedResourceIdentifier(MergedIdentifier):
     """Identifier for merged resources."""
 
 
-class MergedVariableIdentifier(Identifier):
+class MergedVariableIdentifier(MergedIdentifier):
     """Identifier for merged variables."""
 
 
-class MergedVariableGroupIdentifier(Identifier):
+class MergedVariableGroupIdentifier(MergedIdentifier):
     """Identifier for merged variable groups."""

@@ -53,23 +53,27 @@ class BaseOrganizationalUnit(_OptionalLists, _RequiredLists, _OptionalValues):
     """All fields for a valid organizational unit except for provenance."""
 
 
-class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
+class ExtractedOrganizationalUnit(
+    BaseOrganizationalUnit,
+    ExtractedData[
+        ExtractedOrganizationalUnitIdentifier, MergedOrganizationalUnitIdentifier
+    ],
+):
     """An automatically extracted metadata set describing an organizational unit."""
 
     entityType: Annotated[
         Literal["ExtractedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "ExtractedOrganizationalUnit"
-    identifier: Annotated[ExtractedOrganizationalUnitIdentifier, Field(frozen=True)]
-    stableTargetId: MergedOrganizationalUnitIdentifier
 
 
-class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
+class MergedOrganizationalUnit(
+    BaseOrganizationalUnit, MergedItem[MergedOrganizationalUnitIdentifier]
+):
     """The result of merging all extracted data and rules for an organizational unit."""
 
     entityType: Annotated[
         Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "MergedOrganizationalUnit"
-    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
 
 
 class AdditiveOrganizationalUnit(

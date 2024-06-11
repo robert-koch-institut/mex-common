@@ -25,7 +25,7 @@ def transform_organigram_units_to_organizational_units(
     parent_id_in_primary_source_by_id_in_primary_source: dict[str, str] = {}
 
     for unit in units:
-        extracted_unit = ExtractedOrganizationalUnit(  # type: ignore[call-arg]
+        extracted_unit = ExtractedOrganizationalUnit(
             identifierInPrimarySource=unit.identifier,
             hadPrimarySource=primary_source.stableTargetId,
             alternativeName=unit.alternativeName if unit.alternativeName else [],
