@@ -12,7 +12,7 @@ MergedIdentifierT = TypeVar("MergedIdentifierT", bound=MergedIdentifier)
 def assign_identity(
     model: ExtractedData[ExtractedIdentifierT, MergedIdentifierT]
 ) -> Identity[ExtractedIdentifierT, MergedIdentifierT]:
-    """Find an Identity in a database or assign a new one."""
+    """Find an Identity for a given extracted item or assign a new one."""
     provider = get_provider()
     return cast(
         Identity[ExtractedIdentifierT, MergedIdentifierT],

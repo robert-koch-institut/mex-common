@@ -62,6 +62,8 @@ class ExtractedData(Generic[ExtractedIdentifierT, MergedIdentifierT], BaseEntity
     ]
 
     if TYPE_CHECKING:  # pragma: no cover
+        # avoiding mypy issues here by typing the computed fields as property stubs
+        # https://docs.pydantic.dev/latest/api/fields/#pydantic.fields.computed_field
 
         @property
         def identifier(self) -> ExtractedIdentifierT:  # noqa: D102
