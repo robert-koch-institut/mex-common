@@ -1,6 +1,6 @@
 """A contact point - for example, an interdepartmental project."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -21,11 +21,17 @@ from mex.common.types import (
 from mex.common.types.identifier import Identifier
 
 
-class _RequiredLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["ContactPoint"], Field(frozen=True)]] = (
+        "ContactPoint"
+    )
+
+
+class _RequiredLists(_Stem):
     email: Annotated[list[Email], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     email: list[Email] = []
 
 
@@ -69,7 +75,7 @@ class SubtractiveContactPoint(_SparseLists, SubtractiveRule):
     ] = "SubtractiveContactPoint"
 
 
-class PreventiveContactPoint(PreventiveRule):
+class PreventiveContactPoint(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged contact point items."""
 
     entityType: Annotated[

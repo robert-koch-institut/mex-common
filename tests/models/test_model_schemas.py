@@ -8,7 +8,7 @@ from typing import Any
 
 import pytest
 
-from mex.common.models import EXTRACTED_MODEL_CLASSES_BY_NAME
+from mex.common.models import EXTRACTED_MODEL_CLASSES
 from mex.common.transform import dromedary_to_kebab
 from mex.common.types.identifier import MEX_ID_PATTERN
 
@@ -17,10 +17,10 @@ MEX_MODEL_ENTITIES = files("mex.model.entities")
 GENERATED_SCHEMAS = dict(
     sorted(
         {
-            name.removeprefix("Extracted"): model.model_json_schema(
+            model.stemType: model.model_json_schema(
                 ref_template="/schema/fields/{model}"
             )
-            for name, model in EXTRACTED_MODEL_CLASSES_BY_NAME.items()
+            for model in EXTRACTED_MODEL_CLASSES
         }.items()
     )
 )

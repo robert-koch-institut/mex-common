@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from enum import Enum
 from functools import cache
 from pathlib import PurePath
-from typing import Any, cast
+from typing import Any
 from uuid import UUID
 
 from pydantic import AnyUrl, SecretStr
@@ -76,17 +76,30 @@ def kebab_to_camel(string: str) -> str:
     return string[:1].upper() + string[1:]
 
 
-def ensure_prefix(string: Any, prefix: Any) -> str:
-    """Return a str with the given prefix prepended if it is not present yet.
+def ensure_prefix(string_like: Any, prefix: Any) -> str:
+    """Return a string with the given prefix prepended if it is not present yet.
 
-    If the string already starts with the prefix, return a copy.
+    If `string_like` already starts with the prefix, return a stringified copy.
     This method is the inverse of `str.removeprefix`.
     """
-    string = str(string)
+    string = str(string_like)
     prefix = str(prefix)
     if string.startswith(prefix):
-        return cast(str, string)
+        return string
     return f"{prefix}{string}"
+
+
+def ensure_postfix(string_like: Any, postfix: Any) -> str:
+    """Return a string with the given postfix appended if it is not present yet.
+
+    If `string_like` already ends with the postfix, return a stringified copy.
+    This method is the inverse of `str.removepostfix`.
+    """
+    string = str(string_like)
+    postfix = str(postfix)
+    if string.endswith(postfix):
+        return string
+    return f"{string}{postfix}"
 
 
 def to_key_and_values(dct: dict[str, Any]) -> Iterable[tuple[str, list[Any]]]:

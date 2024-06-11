@@ -32,6 +32,8 @@ Each entity type `T` is modelled for the following use cases:
 Since these models for different use cases have a lot of overlapping attributes,
 we use a number of intermediate private classes to compose the public classes:
 
+- `_Stem` defines a static class attribute `stemType`, e.g. `Person` or `PrimarySource`,
+  which is added to all intermediate and exported classes
 - `_OptionalLists` defines all fields typed as lists with an arity of 0-n
 - `_RequiredLists` defines all fields typed as lists with an arity of 1-n
 - `_SparseLists` re-defines all fields from `_RequiredLists` with an arity of 0-n
@@ -101,7 +103,7 @@ from mex.common.models.extracted_data import (
     ExtractedData,
 )
 from mex.common.models.filter import generate_entity_filter_schema
-from mex.common.models.mapping import generate_mapping_schema_for_mex_class
+from mex.common.models.mapping import generate_mapping_schema
 from mex.common.models.merged_item import MergedItem
 from mex.common.models.organization import (
     AdditiveOrganization,
@@ -180,6 +182,7 @@ __all__ = (
     "AnyExtractedModel",
     "AnyMergedModel",
     "AnyPreventiveModel",
+    "AnyRuleModel",
     "AnySubtractiveModel",
     "BaseModel",
     "EXTRACTED_MODEL_CLASSES_BY_NAME",
@@ -227,6 +230,8 @@ __all__ = (
     "PreventiveRule",
     "PreventiveVariable",
     "PreventiveVariableGroup",
+    "RULE_MODEL_CLASSES_BY_NAME",
+    "RULE_MODEL_CLASSES",
     "SUBTRACTIVE_MODEL_CLASSES_BY_NAME",
     "SUBTRACTIVE_MODEL_CLASSES",
     "SubtractiveAccessPlatform",
@@ -359,12 +364,16 @@ PREVENTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPreventiveModel]]] = {
     cls.__name__: cls for cls in PREVENTIVE_MODEL_CLASSES
 }
 
+AnyRuleModel = AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel
+RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel))
+RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
+    cls.__name__: cls for cls in RULE_MODEL_CLASSES
+}
+
 FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {
-    cls.__name__: generate_entity_filter_schema(mex_model_class=cls)
-    for cls in EXTRACTED_MODEL_CLASSES
+    cls.__name__: generate_entity_filter_schema(cls) for cls in EXTRACTED_MODEL_CLASSES
 }
 
 MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME = {
-    cls.__name__: generate_mapping_schema_for_mex_class(mex_model_class=cls)
-    for cls in EXTRACTED_MODEL_CLASSES
+    cls.__name__: generate_mapping_schema(cls) for cls in EXTRACTED_MODEL_CLASSES
 }

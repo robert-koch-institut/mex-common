@@ -1,6 +1,11 @@
-from typing import Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
 from pydantic import BaseModel, Field, create_model
+
+from mex.common.transform import ensure_postfix
+
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.models import AnyExtractedModel
 
 
 class EntityFilterRule(BaseModel, extra="forbid"):
@@ -21,24 +26,27 @@ class EntityFilter(BaseModel, extra="forbid"):
 
 
 def generate_entity_filter_schema(
-    mex_model_class: type[BaseModel],
+    extracted_model: type["AnyExtractedModel"],
 ) -> type[BaseModel]:
-    """Create a mapping schema for an entity filter for a Mex model class.
+    """Create a mapping schema for an entity filter for an extracted model class.
 
     Example entity filter: If activity starts before 2016: do not extract.
 
     Args:
-        mex_model_class: a pydantic model (type) of a MEx model class/entity.
+        extracted_model: a pydantic model for an extracted model class
 
     Returns:
-        model of the mapping schema for an entity filter for a Mex model class.
+        model of the mapping schema for an entity filter
     """
-    filters: dict[str, Any] = {
-        f"{mex_model_class.__name__}": (list[EntityFilter], None)
+    fields: dict[str, Any] = {
+        extracted_model.__name__: (list[EntityFilter], None),
     }
-
+    entity_filter_name = ensure_postfix(extracted_model.stemType, "EntityFilter")
     entity_filter_model: type[BaseModel] = create_model(
-        f"{mex_model_class.__name__}",
-        **filters,
+        entity_filter_name,
+        **fields,
+    )
+    entity_filter_model.__doc__ = (
+        f"Schema for entity filters for the entity type {extracted_model.__name__}."
     )
     return entity_filter_model

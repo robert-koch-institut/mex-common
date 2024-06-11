@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 1
 
       - name: Run renovatebot
-        uses: renovatebot/github-action@v40.1.11
+        uses: renovatebot/github-action@v40.1.12
         env:
           RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_KEY }}
           RENOVATE_REPOSITORIES: "robert-koch-institut/mex-common"

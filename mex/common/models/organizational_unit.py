@@ -1,6 +1,6 @@
 """An organizational unit which is part of some larger organization."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -19,7 +19,13 @@ from mex.common.types import (
 )
 
 
-class _OptionalLists(BaseModel):
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["OrganizationalUnit"], Field(frozen=True)]] = (
+        "OrganizationalUnit"
+    )
+
+
+class _OptionalLists(_Stem):
     alternativeName: list[Text] = []
     email: list[Email] = []
     shortName: list[Text] = []
@@ -27,19 +33,19 @@ class _OptionalLists(BaseModel):
     website: list[Link] = []
 
 
-class _RequiredLists(BaseModel):
+class _RequiredLists(_Stem):
     name: Annotated[list[Text], Field(min_length=1)]
 
 
-class _SparseLists(BaseModel):
+class _SparseLists(_Stem):
     name: list[Text] = []
 
 
-class _OptionalValues(BaseModel):
+class _OptionalValues(_Stem):
     parentUnit: MergedOrganizationalUnitIdentifier | None = None
 
 
-class _VariadicValues(BaseModel):
+class _VariadicValues(_Stem):
     parentUnit: list[MergedOrganizationalUnitIdentifier] = []
 
 
@@ -86,7 +92,7 @@ class SubtractiveOrganizationalUnit(
     ] = "SubtractiveOrganizationalUnit"
 
 
-class PreventiveOrganizationalUnit(PreventiveRule):
+class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged organizational units."""
 
     entityType: Annotated[

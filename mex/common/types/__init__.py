@@ -1,4 +1,4 @@
-from typing import Final, get_args
+from typing import Final, Literal, get_args
 
 from mex.common.types.email import Email
 from mex.common.types.identifier import (
@@ -67,6 +67,7 @@ __all__ = (
     "AnonymizationPseudonymization",
     "AnyMergedIdentifier",
     "AnyNestedModel",
+    "AnyPrimitiveType",
     "APIType",
     "AssetsPath",
     "CET",
@@ -91,6 +92,7 @@ __all__ = (
     "License",
     "Link",
     "LinkLanguage",
+    "LiteralStringType",
     "MergedAccessPlatformIdentifier",
     "MergedActivityIdentifier",
     "MergedContactPointIdentifier",
@@ -110,20 +112,20 @@ __all__ = (
     "Sink",
     "split_to_caps",
     "TechnicalAccessibility",
-    "Text",
-    "TextLanguage",
-    "Theme",
     "TEMPORAL_ENTITY_CLASSES_BY_PRECISION",
     "TEMPORAL_ENTITY_FORMATS_BY_PRECISION",
     "TemporalEntity",
-    "YearMonth",
-    "YearMonthDay",
-    "YearMonthDayTime",
     "TemporalEntityPrecision",
+    "Text",
+    "TextLanguage",
+    "Theme",
     "UTC",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
+    "YearMonth",
+    "YearMonthDay",
+    "YearMonthDayTime",
 )
 
 AnyNestedModel = Link | Text
@@ -171,3 +173,6 @@ EXTRACTED_IDENTIFIER_CLASSES: Final[list[type[AnyExtractedIdentifier]]] = list(
 EXTRACTED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedIdentifier]]] = {
     cls.__name__: cls for cls in EXTRACTED_IDENTIFIER_CLASSES
 }
+
+AnyPrimitiveType = str | int | float | None | bool
+LiteralStringType = type(Literal["str"])

@@ -1,6 +1,6 @@
 """A way of physically accessing the Resource for re-use."""
 
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
@@ -26,9 +26,13 @@ from mex.common.types import (
 from mex.common.types.identifier import MergedPrimarySourceIdentifier
 
 
-class _OptionalLists(BaseModel):
-    """All list fields of an access platform that allow empty lists."""
+class _Stem(BaseModel):
+    stemType: ClassVar[Annotated[Literal["AccessPlatform"], Field(frozen=True)]] = (
+        "AccessPlatform"
+    )
 
+
+class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
     contact: list[
         MergedOrganizationalUnitIdentifier
@@ -41,7 +45,7 @@ class _OptionalLists(BaseModel):
     unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
 
 
-class _OptionalValues(BaseModel):
+class _OptionalValues(_Stem):
     endpointDescription: Link | None = None
     endpointType: (
         Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
@@ -50,21 +54,21 @@ class _OptionalValues(BaseModel):
     endpointURL: Link | None = None
 
 
-class _RequiredValues(BaseModel):
+class _RequiredValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility,
         Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
     ]
 
 
-class _SparseValues(BaseModel):
+class _SparseValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility | None,
         Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
     ] = None
 
 
-class _VariadicValues(BaseModel):
+class _VariadicValues(_Stem):
     endpointDescription: list[Link]
     endpointType: list[
         Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
@@ -118,7 +122,7 @@ class SubtractiveAccessPlatform(_OptionalLists, _VariadicValues, SubtractiveRule
     ] = "SubtractiveAccessPlatform"
 
 
-class PreventiveAccessPlatform(PreventiveRule):
+class PreventiveAccessPlatform(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged access platform items."""
 
     entityType: Annotated[

@@ -19,6 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.27.0] - 2024-06-10
+
+### Added
+
+- add static class attribute `stemType` to models, containing an unprefixed entityType
+- add `AnyRuleModel`, `RULE_MODEL_CLASSES`, `RULE_MODEL_CLASSES_BY_NAME` to models
+- add type aliases `AnyPrimitiveType` and `LiteralStringType` to types
+- add new utility function `ensure_postfix` for adding postfixes to strings
+
+### Changes
+
+- clean-up and unify `mapping` and `filter` class generation
+
 ## [0.26.1] - 2024-05-29
 
 ### Fixed
