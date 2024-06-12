@@ -69,8 +69,15 @@ class ExtractedData(Generic[ExtractedIdentifierT, MergedIdentifierT], BaseEntity
         def identifier(self) -> ExtractedIdentifierT:  # noqa: D102
             ...
 
+        @identifier.setter
+        def identifier(self, value: ExtractedIdentifierT) -> None: ...
+
         @property
         def stableTargetId(self) -> MergedIdentifierT:  # noqa: D102, N802
+            ...
+
+        @stableTargetId.setter
+        def stableTargetId(self, value: MergedIdentifierT) -> None:  # noqa: N802
             ...
 
     else:
@@ -82,9 +89,21 @@ class ExtractedData(Generic[ExtractedIdentifierT, MergedIdentifierT], BaseEntity
 
             return cast(ExtractedIdentifierT, assign_identity(self).identifier)
 
+        @identifier.setter
+        def identifier(self, value: ExtractedIdentifierT) -> None:
+            """Set the identifier field to its pre-determined value."""
+            if value != self.identifier:
+                raise ValueError("identifier cannot be changed")
+
         @computed_field
         def stableTargetId(self) -> MergedIdentifierT:  # noqa: N802
             """Return the computed stableTargetId for this extracted data item."""
             from mex.common.identity import assign_identity  # break import cycle, sigh
 
             return cast(MergedIdentifierT, assign_identity(self).stableTargetId)
+
+        @stableTargetId.setter
+        def stableTargetId(self, value: MergedIdentifierT) -> None:  # noqa: N802
+            """Set the stableTargetId field to its pre-determined value."""
+            if value != self.stableTargetId:
+                raise ValueError("stableTargetId cannot be changed")
