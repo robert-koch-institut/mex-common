@@ -1,10 +1,9 @@
 name: Release
 
-run-name: release version ${{ inputs.version }} by @${{ github.actor }}
+run-name: bump ${{ inputs.version }} version by @${{ github.actor }}
 
 on:
   workflow_dispatch:
-    branches: ["main"]
     inputs:
       version:
         type: choice
@@ -55,8 +54,25 @@ jobs:
       - name: Install requirements
         run: make setup
 
-      - name: Release new version
+      - name: Configure git
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
         run: |
-          git config --global user.name 'RKIMetadataExchange'
-          git config --global user.email 'mex@rki.de'
+          eval "$(ssh-agent -s)"
+          install --directory ~/.ssh --mode 700
+          base64 -d <<< '${{ secrets.SIGNING_KEY }}' > ~/.ssh/mex
+          base64 -d <<< '${{ secrets.SIGNING_PUB }}' > ~/.ssh/mex.pub
+          chmod 600 ~/.ssh/*
+          ssh-add ~/.ssh/mex
+          git config --local user.email ${{ vars.MEX_BOT_EMAIL }}
+          git config --local user.name ${{ vars.MEX_BOT_USER }}
+          git config --local gpg.format ssh
+          git config --local user.signingkey ~/.ssh/mex.pub
+          git config --local commit.gpgsign true
+
+      - name: Release new version
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+        run: |
           pdm release ${{ inputs.version }}
