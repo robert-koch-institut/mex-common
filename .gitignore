@@ -7,25 +7,27 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+.eggs/
+.installed.cfg
+.pdm-build
+.pdm-python
 .Python
+.web/
+*.egg
+*.egg-info/
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
-.pdm-python
 lib/
 lib64/
+MANIFEST
 parts/
 sdist/
+share/python-wheels/
 var/
 wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
 # PyInstaller
 *.manifest

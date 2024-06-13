@@ -3,7 +3,6 @@
     "enabledManagers": [
         "github-actions",
         "html",
-        "npm",
         "pep621",
         "pip_requirements"
     ],

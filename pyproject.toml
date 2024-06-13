@@ -16,8 +16,8 @@ dependencies = [
     "numpy==1.26.4",
     "pandas==2.2.2",
     "pyarrow==16.1.0",
-    "pydantic-settings==2.2.1",
-    "pydantic==2.7.3",
+    "pydantic-settings==2.3.3",
+    "pydantic==2.7.4",
     "requests==2.32.3",
 ]
 optional-dependencies.dev = [
@@ -28,7 +28,7 @@ optional-dependencies.dev = [
     "pytest-cov==5.0.0",
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
-    "pytest==8.2.1",
+    "pytest==8.2.2",
     "ruff==0.4.8",
     "sphinx==7.3.7",
     "types-ldap3==2.9.13.20240205",
@@ -57,10 +57,10 @@ ignore_missing_imports = true
 distribution = true
 
 [tool.pdm.scripts]
-update-all = { cmd = "pdm update --group :all --update-eager --save-minimum" }
-lock-all = { cmd = "pdm lock --group :all" }
-install-all = { cmd = "pdm install --group :all" }
-export-all = { cmd = "pdm export --group :all -f requirements" }
+update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
+lock-all = { cmd = "pdm lock --group :all --refresh" }
+install-all = { cmd = "pdm install --group :all --no-editable --no-lock" }
+export-all = { cmd = "pdm export --group :all --no-hashes -f requirements" }
 apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
 sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
 doc = { composite = ["apidoc", "sphinx"] }
