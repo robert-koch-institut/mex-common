@@ -5,8 +5,12 @@ on:
     branches: ["main"]
     tags: ["**"]
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "14 3 * * 1-5"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 env:
   PIP_NO_OPTION: on

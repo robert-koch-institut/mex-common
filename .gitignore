@@ -124,4 +124,5 @@ dmypy.json
 data/
 identity.csv
 schema.json
+tmp*/
 work/

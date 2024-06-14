@@ -1,8 +1,10 @@
 name: Documentation
 
 on:
-  push:
-    tags: ["**"]
+  workflow_run:
+    workflows: [Release]
+    types:
+      - completed
   workflow_dispatch:
 
 env:
@@ -16,7 +18,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: ${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
