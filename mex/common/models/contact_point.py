@@ -38,23 +38,23 @@ class BaseContactPoint(_RequiredLists):
     """All fields for a valid contact point except for provenance."""
 
 
-class ExtractedContactPoint(BaseContactPoint, ExtractedData):
+class ExtractedContactPoint(
+    BaseContactPoint,
+    ExtractedData[ExtractedContactPointIdentifier, MergedContactPointIdentifier],
+):
     """An automatically extracted metadata set describing a contact point."""
 
     entityType: Annotated[
         Literal["ExtractedContactPoint"], Field(alias="$type", frozen=True)
     ] = "ExtractedContactPoint"
-    identifier: Annotated[ExtractedContactPointIdentifier, Field(frozen=True)]
-    stableTargetId: MergedContactPointIdentifier
 
 
-class MergedContactPoint(BaseContactPoint, MergedItem):
+class MergedContactPoint(BaseContactPoint, MergedItem[MergedContactPointIdentifier]):
     """The result of merging all extracted data and rules for a contact point."""
 
     entityType: Annotated[
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
-    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
 
 
 class AdditiveContactPoint(_SparseLists, AdditiveRule):

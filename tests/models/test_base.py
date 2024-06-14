@@ -108,11 +108,10 @@ def test_base_model_str() -> None:
 
 
 def test_mex_model_str() -> None:
-    class MergedDummy(MergedItem):
+    class MergedDummy(MergedItem[Identifier]):
         entityType: Annotated[
             Literal["MergedDummy"], Field(alias="$type", frozen=True)
         ] = "MergedDummy"
-        identifier: Identifier
 
     model = MergedDummy(identifier=Identifier.generate(seed=99))
 

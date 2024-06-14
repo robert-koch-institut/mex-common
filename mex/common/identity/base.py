@@ -1,8 +1,16 @@
 from abc import abstractmethod
+from typing import TypeVar
 
 from mex.common.connector import BaseConnector
 from mex.common.identity.models import Identity
-from mex.common.types import AnyMergedIdentifier, MergedPrimarySourceIdentifier
+from mex.common.types import (
+    AnyExtractedIdentifier,
+    AnyMergedIdentifier,
+    MergedIdentifier,
+    MergedPrimarySourceIdentifier,
+)
+
+MergedIdentifierT = TypeVar("MergedIdentifierT", bound=MergedIdentifier)
 
 
 class BaseProvider(BaseConnector):
@@ -13,7 +21,7 @@ class BaseProvider(BaseConnector):
         self,
         had_primary_source: MergedPrimarySourceIdentifier,
         identifier_in_primary_source: str,
-    ) -> Identity:  # pragma: no cover
+    ) -> Identity[AnyExtractedIdentifier, AnyMergedIdentifier]:  # pragma: no cover
         """Find an Identity in a database or assign a new one."""
         ...
 
@@ -23,7 +31,7 @@ class BaseProvider(BaseConnector):
         *,
         had_primary_source: MergedPrimarySourceIdentifier | None = None,
         identifier_in_primary_source: str | None = None,
-        stable_target_id: AnyMergedIdentifier | None = None,
-    ) -> list[Identity]:  # pragma: no cover
+        stable_target_id: MergedIdentifierT | None = None,
+    ) -> list[Identity[AnyExtractedIdentifier, MergedIdentifierT]]:  # pragma: no cover
         """Find Identity instances matching the given filters."""
         ...

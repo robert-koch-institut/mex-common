@@ -115,23 +115,22 @@ class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
     """All fields for a valid variable except for provenance."""
 
 
-class ExtractedVariable(BaseVariable, ExtractedData):
+class ExtractedVariable(
+    BaseVariable, ExtractedData[ExtractedVariableIdentifier, MergedVariableIdentifier]
+):
     """An automatically extracted metadata set describing a variable."""
 
     entityType: Annotated[
         Literal["ExtractedVariable"], Field(alias="$type", frozen=True)
     ] = "ExtractedVariable"
-    identifier: Annotated[ExtractedVariableIdentifier, Field(frozen=True)]
-    stableTargetId: MergedVariableIdentifier
 
 
-class MergedVariable(BaseVariable, MergedItem):
+class MergedVariable(BaseVariable, MergedItem[MergedVariableIdentifier]):
     """The result of merging all extracted data and rules for a variable."""
 
     entityType: Annotated[
         Literal["MergedVariable"], Field(alias="$type", frozen=True)
     ] = "MergedVariable"
-    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
 
 
 class AdditiveVariable(_OptionalLists, _SparseLists, _OptionalValues, AdditiveRule):

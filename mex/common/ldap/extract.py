@@ -1,10 +1,14 @@
 from collections import defaultdict
 from collections.abc import Iterable
+from typing import cast
 
-from mex.common.identity import get_provider
+from mex.common.identity import Identity, get_provider
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
-from mex.common.types import MergedPersonIdentifier
+from mex.common.types import (
+    ExtractedPersonIdentifier,
+    MergedPersonIdentifier,
+)
 
 
 def _get_merged_ids_by_attribute(
@@ -31,9 +35,12 @@ def _get_merged_ids_by_attribute(
     merged_ids_by_attribute = defaultdict(list)
     provider = get_provider()
     for person in persons:
-        if identities := provider.fetch(
-            had_primary_source=primary_source.stableTargetId,
-            identifier_in_primary_source=str(person.objectGUID),
+        if identities := cast(
+            list[Identity[ExtractedPersonIdentifier, MergedPersonIdentifier]],
+            provider.fetch(
+                had_primary_source=primary_source.stableTargetId,
+                identifier_in_primary_source=str(person.objectGUID),
+            ),
         ):
             attribute_values = getattr(person, attribute)
             merged_id = MergedPersonIdentifier(identities[0].stableTargetId)
@@ -103,9 +110,12 @@ def get_merged_ids_by_query_string(
     merged_ids_by_attribute = defaultdict(list)
     provider = get_provider()
     for person_with_query in persons_with_query:
-        if identities := provider.fetch(
-            had_primary_source=primary_source.stableTargetId,
-            identifier_in_primary_source=str(person_with_query.person.objectGUID),
+        if identities := cast(
+            list[Identity[ExtractedPersonIdentifier, MergedPersonIdentifier]],
+            provider.fetch(
+                had_primary_source=primary_source.stableTargetId,
+                identifier_in_primary_source=str(person_with_query.person.objectGUID),
+            ),
         ):
             merged_ids_by_attribute[str(person_with_query.query)].append(
                 MergedPersonIdentifier(identities[0].stableTargetId)

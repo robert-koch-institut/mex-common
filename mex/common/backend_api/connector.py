@@ -3,9 +3,9 @@ from urllib.parse import urljoin
 
 from mex.common.backend_api.models import BulkInsertResponse
 from mex.common.connector import HTTPConnector
-from mex.common.models import ExtractedData
+from mex.common.models import AnyExtractedModel
 from mex.common.settings import BaseSettings
-from mex.common.types import Identifier
+from mex.common.types import AnyExtractedIdentifier
 
 
 class BackendApiConnector(HTTPConnector):
@@ -27,7 +27,9 @@ class BackendApiConnector(HTTPConnector):
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
 
-    def post_models(self, models: list[ExtractedData]) -> list[Identifier]:
+    def post_models(
+        self, models: list[AnyExtractedModel]
+    ) -> list[AnyExtractedIdentifier]:
         """Post models to Backend API in a bulk insertion request.
 
         Args:
