@@ -82,16 +82,6 @@ jobs:
           pdm release ${{ inputs.version }}
           echo "tag=$(git describe --abbrev=0 --tags)" >> "$GITHUB_OUTPUT"
 
-  containerize:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: release
-    steps:
-      - name: Build, tag and push docker image to ghcr
-        uses: GlueOps/github-actions-build-push-containers@v0.4.2
-        with:
-          tags: "${{ github.sha }},${{ needs.release.outputs.tag }},latest"
-
   distribute:
     runs-on: ubuntu-latest
     timeout-minutes: 10
