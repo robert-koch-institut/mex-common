@@ -21,15 +21,18 @@ env:
 
 permissions:
   contents: write
+  packages: write
 
 concurrency:
-  group: "release"
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -72,7 +75,58 @@ jobs:
           git config --local commit.gpgsign true
 
       - name: Release new version
+        id: release
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           pdm release ${{ inputs.version }}
+          echo "tag=$(git describe --abbrev=0 --tags)" >> "$GITHUB_OUTPUT"
+
+  containerize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: release
+    steps:
+      - name: Build, tag and push docker image to ghcr
+        uses: GlueOps/github-actions-build-push-containers@v0.4.2
+        with:
+          tags: "${{ github.sha }},${{ needs.release.outputs.tag }},latest"
+
+  distribute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: release
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Cache requirements
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-requirements
+        with:
+          path: ~/.cache/pip
+          key: ${{ env.cache-name }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install requirements
+        run: make setup
+
+      - name: Build wheel and sdist distros and create a github release
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          PDM_CHECK_UPDATE: False
+        run: |
+          gh release create ${{ needs.release.outputs.tag }} --generate-notes --latest --verify-tag
+          pdm build --dest dist
+          for filename in dist/*; do
+            gh release upload ${{ needs.release.outputs.tag }} ${filename};
+          done
