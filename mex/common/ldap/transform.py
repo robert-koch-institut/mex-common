@@ -105,7 +105,7 @@ def transform_ldap_person_to_mex_person(
             f"'{ldap_person.department}' or departmentNumber "
             f"'{ldap_person.departmentNumber}'"
         )
-    return ExtractedPerson(  # type: ignore[call-arg]
+    return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
         affiliation=[],  # TODO resolve organization for person.company/RKI
@@ -132,7 +132,7 @@ def transform_ldap_actor_to_mex_contact_point(
     Returns:
         Extracted contact point
     """
-    return ExtractedContactPoint(  # type: ignore[call-arg]
+    return ExtractedContactPoint(
         identifierInPrimarySource=str(ldap_actor.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
         email=ldap_actor.mail,

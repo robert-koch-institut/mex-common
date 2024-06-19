@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Annotated, Literal
 
 import pytest
-from pydantic import Field, ValidationError
+from pydantic import Field, ValidationError, computed_field
 
 from mex.common.identity import get_provider
 from mex.common.models import (
@@ -42,8 +42,26 @@ class ExtractedThing(BaseThing, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedThing"], Field(alias="$type", frozen=True)
     ] = "ExtractedThing"
-    identifier: Annotated[ExtractedThingIdentifier, Field(frozen=True)]
-    stableTargetId: MergedThingIdentifier
+
+    @computed_field
+    def identifier(self) -> ExtractedThingIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedThingIdentifier)
+
+    @identifier.setter  # type: ignore[no-redef]
+    def identifier(self, obj: ExtractedThingIdentifier) -> None:
+        """Set the identifier field to its pre-determined value."""
+        return self._set_identifier(obj)
+
+    @computed_field
+    def stableTargetId(self) -> MergedThingIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedThingIdentifier)
+
+    @stableTargetId.setter  # type: ignore[no-redef]
+    def stableTargetId(self, obj: MergedThingIdentifier) -> None:  # noqa: N802
+        """Set the stableTargetId field to its pre-determined value."""
+        return self._set_stable_target_id(obj)
 
 
 def test_extracted_data_requires_dict_for_construction() -> None:
@@ -66,7 +84,7 @@ def test_extracted_data_requires_had_primary_source() -> None:
 
 
 def test_extracted_data_does_not_allow_setting_identifier() -> None:
-    with pytest.raises(ValidationError, match="Identifier cannot be set manually"):
+    with pytest.raises(ValidationError, match="identifier cannot be changed"):
         ExtractedThing(
             identifier=Identifier.generate(seed=0),
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
@@ -74,22 +92,24 @@ def test_extracted_data_does_not_allow_setting_identifier() -> None:
         )
 
 
-def test_extracted_data_does_allow_setting_preexisting_identifiers() -> None:
+def test_extracted_data_does_allow_parsing_with_preexisting_identifiers() -> None:
     thing_1 = ExtractedThing(
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         identifierInPrimarySource="0",
     )
-    thing_2 = ExtractedThing(
-        identifier=thing_1.identifier,
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
-        identifierInPrimarySource="0",
+    thing_2 = ExtractedThing.model_validate(
+        dict(
+            identifier=thing_1.identifier,
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
+            identifierInPrimarySource="0",
+        )
     )
 
     assert thing_1.identifier == thing_2.identifier
 
 
 def test_extracted_data_does_not_allow_changing_mex_stable_target_id() -> None:
-    with pytest.raises(ValidationError, match="Cannot change `stableTargetId` of MEx"):
+    with pytest.raises(ValidationError, match="stableTargetId cannot be changed"):
         ExtractedThing(
             identifier=MEX_PRIMARY_SOURCE_IDENTIFIER,
             hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -103,6 +123,8 @@ def test_extracted_data_stores_identity_in_provider() -> None:
         identifierInPrimarySource="12345",
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=12345),
     )
+    assert thing.identifier
+    assert thing.stableTargetId
 
     provider = get_provider()
     identities = provider.fetch(

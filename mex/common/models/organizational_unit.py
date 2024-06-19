@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -59,8 +59,28 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "ExtractedOrganizationalUnit"
-    identifier: Annotated[ExtractedOrganizationalUnitIdentifier, Field(frozen=True)]
-    stableTargetId: MergedOrganizationalUnitIdentifier
+
+    @computed_field
+    def identifier(self) -> ExtractedOrganizationalUnitIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
+
+    @identifier.setter  # type: ignore[no-redef]
+    def identifier(self, obj: ExtractedOrganizationalUnitIdentifier) -> None:
+        """Set the identifier field to its pre-determined value."""
+        return self._set_identifier(obj)
+
+    @computed_field
+    def stableTargetId(self) -> MergedOrganizationalUnitIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
+
+    @stableTargetId.setter  # type: ignore[no-redef]
+    def stableTargetId(  # noqa: N802
+        self, obj: MergedOrganizationalUnitIdentifier
+    ) -> None:
+        """Set the stableTargetId field to its pre-determined value."""
+        return self._set_stable_target_id(obj)
 
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):

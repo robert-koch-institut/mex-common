@@ -3,14 +3,14 @@ from collections.abc import Generator, Iterable
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import watch
 from mex.common.models import AnyExtractedModel
-from mex.common.types import Identifier
+from mex.common.types import AnyExtractedIdentifier
 from mex.common.utils import grouper
 
 
 @watch
 def post_to_backend_api(
     models: Iterable[AnyExtractedModel], chunk_size: int = 100
-) -> Generator[Identifier, None, None]:
+) -> Generator[AnyExtractedIdentifier, None, None]:
     """Load models to the Backend API using bulk insertion.
 
     Args:
@@ -22,5 +22,5 @@ def post_to_backend_api(
     """
     connector = BackendApiConnector.get()
     for chunk in grouper(chunk_size, models):
-        model_list = list(filter(None, chunk))
+        model_list = [model for model in chunk if model is not None]
         yield from connector.post_models(model_list)

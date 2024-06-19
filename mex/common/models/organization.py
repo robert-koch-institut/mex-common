@@ -5,7 +5,7 @@ This can be any community or other social, commercial or political structure.
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -108,8 +108,26 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedOrganization"], Field(alias="$type", frozen=True)
     ] = "ExtractedOrganization"
-    identifier: Annotated[ExtractedOrganizationIdentifier, Field(frozen=True)]
-    stableTargetId: MergedOrganizationIdentifier
+
+    @computed_field
+    def identifier(self) -> ExtractedOrganizationIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedOrganizationIdentifier)
+
+    @identifier.setter  # type: ignore[no-redef]
+    def identifier(self, obj: ExtractedOrganizationIdentifier) -> None:
+        """Set the identifier field to its pre-determined value."""
+        return self._set_identifier(obj)
+
+    @computed_field
+    def stableTargetId(self) -> MergedOrganizationIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedOrganizationIdentifier)
+
+    @stableTargetId.setter  # type: ignore[no-redef]
+    def stableTargetId(self, obj: MergedOrganizationIdentifier) -> None:  # noqa: N802
+        """Set the stableTargetId field to its pre-determined value."""
+        return self._set_stable_target_id(obj)
 
 
 class MergedOrganization(BaseOrganization, MergedItem):

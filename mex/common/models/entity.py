@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, ClassVar
 
 from mex.common.models.base import BaseModel
-from mex.common.types import Identifier
 
 
 class BaseEntity(BaseModel, extra="forbid"):
@@ -26,13 +25,3 @@ class BaseEntity(BaseModel, extra="forbid"):
         # type of items. E.g. `ExtractedPerson`, `MergedPerson` and `PreventivePerson`
         # all share the same `stemType` of `Person`.
         stemType: ClassVar
-
-        # A globally unique identifier is added to all `BaseEntity` subclasses and
-        # should be typed to the correct identifier type. Regardless of the entity-type
-        # or whether this item was extracted, merged, etc., identifiers will be assigned
-        # just once and should be declared as `frozen` on subclasses.
-        identifier: Identifier
-
-    def __str__(self) -> str:
-        """Format this instance as a string for logging."""
-        return f"{self.entityType}: {self.identifier}"
