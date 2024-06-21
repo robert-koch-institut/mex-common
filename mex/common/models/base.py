@@ -1,5 +1,5 @@
 import hashlib
-import pickle  # nosec
+import json
 from collections.abc import MutableMapping
 from functools import cache
 from types import UnionType
@@ -20,6 +20,7 @@ from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
 from mex.common.models.schema import JsonSchemaGenerator
+from mex.common.transform import MExEncoder
 from mex.common.utils import get_inner_types
 
 RawModelDataT = TypeVar("RawModelDataT")
@@ -170,7 +171,8 @@ class BaseModel(PydanticBaseModel):
 
     def checksum(self) -> str:
         """Calculate md5 checksum for this model."""
-        return hashlib.md5(pickle.dumps(self)).hexdigest()  # noqa: S324
+        json_str = json.dumps(self, sort_keys=True, cls=MExEncoder)
+        return hashlib.md5(json_str.encode()).hexdigest()  # noqa: S324
 
     def __str__(self) -> str:
         """Format this model as a string for logging."""

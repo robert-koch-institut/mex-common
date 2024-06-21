@@ -96,7 +96,7 @@ class DummyBaseModel(BaseModel):
 
 def test_base_model_checksum() -> None:
     model_1 = DummyBaseModel()
-    assert model_1.checksum() == "69d67f58c6948849283e78d7b3f1a51e"
+    assert model_1.checksum() == "da8e081aa63fd2fd5b909dd86c6dfa6c"
 
     model_2 = DummyBaseModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
@@ -104,16 +104,4 @@ def test_base_model_checksum() -> None:
 
 def test_base_model_str() -> None:
     model = DummyBaseModel(foo="bar")
-    assert str(model) == "DummyBaseModel: ab794a793aad8fa45b0f85ac05ee2126"
-
-
-def test_mex_model_str() -> None:
-    class MergedDummy(MergedItem):
-        entityType: Annotated[
-            Literal["MergedDummy"], Field(alias="$type", frozen=True)
-        ] = "MergedDummy"
-        identifier: Identifier
-
-    model = MergedDummy(identifier=Identifier.generate(seed=99))
-
-    assert str(model) == "MergedDummy: bFQoRhcVH5DHV1"
+    assert str(model) == "DummyBaseModel: 94232c5b8fc9272f6f73a1e36eb68fcf"

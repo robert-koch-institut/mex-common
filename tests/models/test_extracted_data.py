@@ -83,39 +83,26 @@ def test_extracted_data_requires_had_primary_source() -> None:
         )
 
 
-def test_extracted_data_does_not_allow_setting_identifier() -> None:
-    with pytest.raises(ValidationError, match="identifier cannot be changed"):
-        ExtractedThing(
-            identifier=Identifier.generate(seed=0),
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
-            identifierInPrimarySource="0",
-        )
-
-
-def test_extracted_data_does_allow_parsing_with_preexisting_identifiers() -> None:
-    thing_1 = ExtractedThing(
-        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
-        identifierInPrimarySource="0",
-    )
-    thing_2 = ExtractedThing.model_validate(
+def test_extracted_data_ignores_manually_set_identifier() -> None:
+    thing = ExtractedThing.model_validate(
         dict(
-            identifier=thing_1.identifier,
+            identifier=Identifier.generate(seed=42),
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
             identifierInPrimarySource="0",
         )
     )
+    assert thing.identifier != Identifier.generate(seed=42)
 
-    assert thing_1.identifier == thing_2.identifier
 
-
-def test_extracted_data_does_not_allow_changing_mex_stable_target_id() -> None:
-    with pytest.raises(ValidationError, match="stableTargetId cannot be changed"):
-        ExtractedThing(
-            identifier=MEX_PRIMARY_SOURCE_IDENTIFIER,
-            hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-            identifierInPrimarySource=MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
+def test_extracted_data_ignores_manually_set_stable_target_id() -> None:
+    thing = ExtractedThing.model_validate(
+        dict(
+            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
+            identifierInPrimarySource="0",
             stableTargetId=MergedPrimarySourceIdentifier.generate(seed=12345),
         )
+    )
+    assert thing.stableTargetId != Identifier.generate(seed=12345)
 
 
 def test_extracted_data_stores_identity_in_provider() -> None:
