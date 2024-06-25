@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- extract multiple organization from wikidata
+- extract multiple organizations from wikidata
 
 ### Changes
 
