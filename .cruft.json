@@ -1,6 +1,6 @@
 {
   "checkout": null,
-  "commit": "71137ce60c22f449d66138dcd113772acd678a39",
+  "commit": "39db8b85e6bbde62ab72318329d9410f14187dab",
   "context": {
     "cookiecutter": {
       "project_name": "common",
