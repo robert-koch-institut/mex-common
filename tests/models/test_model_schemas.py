@@ -10,7 +10,7 @@ import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES
 from mex.common.transform import dromedary_to_kebab
-from mex.common.types.identifier import MEX_ID_PATTERN
+from mex.common.types import MEX_ID_PATTERN
 
 MEX_MODEL_ENTITIES = files("mex.model.entities")
 

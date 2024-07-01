@@ -3,9 +3,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field
 
 from mex.common.models import ExtractedData
-from mex.common.models.mapping import (
-    generate_mapping_schema,
-)
+from mex.common.models.mapping import generate_mapping_schema
 from mex.common.types import Email, Identifier, MergedOrganizationalUnitIdentifier
 
 
