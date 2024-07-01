@@ -54,12 +54,11 @@ TIME_PRECISIONS = [
 
 CET = timezone("CET")  # default assumed timezone
 UTC = timezone("UTC")  # required output timezone
-TEMPORAL_ENTITY_REGEX = (
-    r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"  # optional resolution
-)
-YEAR_MONTH_DAY_TIME_REGEX = r"^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"
-YEAR_MONTH_DAY_REGEX = r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
-YEAR_MONTH_REGEX = r"^(?:\d{4}|(?:\d{4}-(?:0[1-9]|1[0-2])))$"
+
+YEAR_MONTH_DAY_TIME_REGEX = r"^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"  # noqa: E501
+YEAR_MONTH_DAY_REGEX = r"^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$"
+YEAR_MONTH_REGEX = r"\d{4}-(?:0[1-9]|1[0-2])$"
+YEAR_REGEX = r"^\d{4}$"
 
 
 @total_ordering
@@ -70,7 +69,7 @@ class TemporalEntity:
 
     precision: TemporalEntityPrecision
     date_time: datetime
-    STR_SCHEMA_PATTERN = TEMPORAL_ENTITY_REGEX
+    STR_SCHEMA_PATTERN = r".*"
     ALLOWED_PRECISION_LEVELS = [
         key for key in TemporalEntityPrecision.__members__.values()
     ]
@@ -309,15 +308,20 @@ class TemporalEntity:
         return f'{self.__class__.__name__}("{self}")'
 
 
+class Year(TemporalEntity):
+    """Parser for temporal entities with year-precision."""
+
+    STR_SCHEMA_PATTERN = YEAR_REGEX
+    ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.YEAR]
+    JSON_SCHEMA_CONFIG = {"examples": ["2024"], "format": "date"}
+
+
 class YearMonth(TemporalEntity):
-    """Parser for temporal entities with year-precision or month-precision."""
+    """Parser for temporal entities with month-precision."""
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_REGEX
-    ALLOWED_PRECISION_LEVELS = [
-        TemporalEntityPrecision.YEAR,
-        TemporalEntityPrecision.MONTH,
-    ]
-    JSON_SCHEMA_CONFIG = {"examples": ["2011", "2019-03"]}
+    ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.MONTH]
+    JSON_SCHEMA_CONFIG = {"examples": ["2019-03"], "format": "date"}
 
 
 class YearMonthDay(TemporalEntity):
