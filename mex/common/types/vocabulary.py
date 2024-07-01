@@ -20,8 +20,8 @@ MODEL_VOCABULARIES = files("mex.model.vocabularies")
 class BilingualText(BaseModel):
     """String-field translated in German and English."""
 
-    de: str
-    en: str
+    de: str | None = None
+    en: str | None = None
 
 
 class Concept(BaseModel):
@@ -98,8 +98,11 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
                 if not label:
                     continue
                 if language is None:
-                    searchable_labels.extend([normalize(label.de), normalize(label.en)])
-                elif language_label := label.dict().get(language.value):
+                    if label.de:
+                        searchable_labels.append(normalize(label.de))
+                    if label.en:
+                        searchable_labels.append(normalize(label.en))
+                elif language_label := label.model_dump().get(language.value):
                     searchable_labels.append(normalize(language_label))
             if search_term in searchable_labels:
                 return cls(str(concept.identifier))
