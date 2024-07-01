@@ -25,6 +25,8 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedResourceIdentifier,
+    PersonalData,
+    ResourceCreationMethod,
     ResourceTypeGeneral,
     Text,
     Theme,
@@ -50,6 +52,9 @@ class _OptionalLists(_Stem):
             ),
         ]
     ] = []
+    conformsTo: list[
+        Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "FASTA"])]
+    ] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     contributor: list[MergedPersonIdentifier] = []
     creator: list[MergedPersonIdentifier] = []
@@ -57,6 +62,12 @@ class _OptionalLists(_Stem):
     distribution: list[MergedDistributionIdentifier] = []
     documentation: list[Link] = []
     externalPartner: list[MergedOrganizationIdentifier] = []
+    hasPersonalData: list[
+        Annotated[
+            PersonalData,
+            Field(examples=["https://mex.rki.de/item/personal-data-type-1"]),
+        ]
+    ] = []
     icd10code: list[str] = []
     instrumentToolOrApparatus: list[Text] = []
     isPartOf: list[MergedResourceIdentifier] = []
@@ -77,9 +88,17 @@ class _OptionalLists(_Stem):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
+    pathogenOrDisease: list[str] = []
+    populationCoverage: list[Text] = []
     publication: list[Link] = []
     publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: list[Text] = []
+    resourceCreationMethod: list[
+        Annotated[
+            ResourceCreationMethod,
+            Field(examples=["https://mex.rki.de/item/resource-creation-method-1"]),
+        ]
+    ] = []
     resourceTypeGeneral: list[
         Annotated[
             ResourceTypeGeneral,
@@ -139,9 +158,12 @@ class _OptionalValues(_Stem):
         | None
     ) = None
     created: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    hasLegalBasis: Text | None = None
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
+    maxTypicalAge: Annotated[int, Field(examples=["99", "21"])] | None = None
+    minTypicalAge: Annotated[int, Field(examples=["0", "18"])] | None = None
     modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
     sizeOfDataBasis: str | None = None
     temporal: (
@@ -198,9 +220,12 @@ class _VariadicValues(_Stem):
         Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
     ] = []
     created: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    hasLegalBasis: list[Text] = []
     license: list[
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])]
     ] = []
+    maxTypicalAge: list[Annotated[int, Field(examples=["99", "21"])]] = []
+    minTypicalAge: list[Annotated[int, Field(examples=["0", "18"])]] = []
     modified: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
     sizeOfDataBasis: list[str] = []
     temporal: list[
@@ -276,6 +301,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     accrualPeriodicity: list[MergedPrimarySourceIdentifier] = []
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
     anonymizationPseudonymization: list[MergedPrimarySourceIdentifier] = []
+    conformsTo: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
     contributingUnit: list[MergedPrimarySourceIdentifier] = []
     contributor: list[MergedPrimarySourceIdentifier] = []
@@ -285,6 +311,8 @@ class PreventiveResource(_Stem, PreventiveRule):
     distribution: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
     externalPartner: list[MergedPrimarySourceIdentifier] = []
+    hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
+    hasPersonalData: list[MergedPrimarySourceIdentifier] = []
     icd10code: list[MergedPrimarySourceIdentifier] = []
     instrumentToolOrApparatus: list[MergedPrimarySourceIdentifier] = []
     isPartOf: list[MergedPrimarySourceIdentifier] = []
@@ -292,13 +320,18 @@ class PreventiveResource(_Stem, PreventiveRule):
     language: list[MergedPrimarySourceIdentifier] = []
     license: list[MergedPrimarySourceIdentifier] = []
     loincId: list[MergedPrimarySourceIdentifier] = []
+    maxTypicalAge: list[MergedPrimarySourceIdentifier] = []
     meshId: list[MergedPrimarySourceIdentifier] = []
     method: list[MergedPrimarySourceIdentifier] = []
     methodDescription: list[MergedPrimarySourceIdentifier] = []
+    mixTypicalAge: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
+    pathogenOrDisease: list[MergedPrimarySourceIdentifier] = []
+    populationCoverage: list[MergedPrimarySourceIdentifier] = []
     publication: list[MergedPrimarySourceIdentifier] = []
     publisher: list[MergedPrimarySourceIdentifier] = []
     qualityInformation: list[MergedPrimarySourceIdentifier] = []
+    resourceCreationMethod: list[MergedPrimarySourceIdentifier] = []
     resourceTypeGeneral: list[MergedPrimarySourceIdentifier] = []
     resourceTypeSpecific: list[MergedPrimarySourceIdentifier] = []
     rights: list[MergedPrimarySourceIdentifier] = []

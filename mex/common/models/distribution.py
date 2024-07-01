@@ -15,8 +15,6 @@ from mex.common.types import (
     Link,
     MergedAccessPlatformIdentifier,
     MergedDistributionIdentifier,
-    MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
     YearMonth,
@@ -32,28 +30,12 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    author: list[MergedPersonIdentifier] = []
-    contactPerson: list[MergedPersonIdentifier] = []
-    dataCurator: list[MergedPersonIdentifier] = []
-    dataManager: list[MergedPersonIdentifier] = []
-    otherContributor: list[MergedPersonIdentifier] = []
-    projectLeader: list[MergedPersonIdentifier] = []
-    projectManager: list[MergedPersonIdentifier] = []
-    researcher: list[MergedPersonIdentifier] = []
-
-
-class _RequiredLists(_Stem):
-    publisher: Annotated[list[MergedOrganizationIdentifier], Field(min_length=1)]
-
-
-class _SparseLists(_Stem):
-    publisher: list[MergedOrganizationIdentifier] = []
+    accessURL: list[Link] = []
+    downloadURL: list[Link] = []
 
 
 class _OptionalValues(_Stem):
     accessService: MergedAccessPlatformIdentifier | None = None
-    accessURL: Link | None = None
-    downloadURL: Link | None = None
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -124,9 +106,7 @@ class _VariadicValues(_Stem):
     ] = []
 
 
-class BaseDistribution(
-    _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
-):
+class BaseDistribution(_OptionalLists, _OptionalValues, _RequiredValues):
     """All fields for a valid distribution except for provenance."""
 
 
@@ -150,7 +130,7 @@ class MergedDistribution(BaseDistribution, MergedItem):
 
 
 class AdditiveDistribution(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
+    _OptionalLists, _OptionalValues, _SparseValues, AdditiveRule
 ):
     """Rule to add values to merged distribution items."""
 
@@ -159,9 +139,7 @@ class AdditiveDistribution(
     ] = "AdditiveDistribution"
 
 
-class SubtractiveDistribution(
-    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
-):
+class SubtractiveDistribution(_OptionalLists, _VariadicValues, SubtractiveRule):
     """Rule to subtract values from merged distribution items."""
 
     entityType: Annotated[
@@ -178,18 +156,9 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     accessRestriction: list[MergedPrimarySourceIdentifier] = []
     accessService: list[MergedPrimarySourceIdentifier] = []
     accessURL: list[MergedPrimarySourceIdentifier] = []
-    author: list[MergedPrimarySourceIdentifier] = []
-    contactPerson: list[MergedPrimarySourceIdentifier] = []
-    dataCurator: list[MergedPrimarySourceIdentifier] = []
-    dataManager: list[MergedPrimarySourceIdentifier] = []
     downloadURL: list[MergedPrimarySourceIdentifier] = []
     issued: list[MergedPrimarySourceIdentifier] = []
     license: list[MergedPrimarySourceIdentifier] = []
     mediaType: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
-    otherContributor: list[MergedPrimarySourceIdentifier] = []
-    projectLeader: list[MergedPrimarySourceIdentifier] = []
-    projectManager: list[MergedPrimarySourceIdentifier] = []
-    publisher: list[MergedPrimarySourceIdentifier] = []
-    researcher: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []

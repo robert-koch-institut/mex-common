@@ -37,7 +37,6 @@ we use a number of intermediate private classes to compose the public classes:
 - `_OptionalLists` defines all fields typed as lists with an arity of 0-n
 - `_RequiredLists` defines all fields typed as lists with an arity of 1-n
 - `_SparseLists` re-defines all fields from `_RequiredLists` with an arity of 0-n
-
 - `_OptionalValues` defines all fields with optional values (arity of 0-1)
 - `_RequiredValues` defines all fields with required values (arity of 1)
 - `_SparseValues` re-defines all fields from `_RequiredValues` with an arity of 0-1
@@ -80,6 +79,14 @@ from mex.common.models.activity import (
     SubtractiveActivity,
 )
 from mex.common.models.base import BaseModel
+from mex.common.models.bibliographic_resource import (
+    AdditiveBibliographicResource,
+    BaseBibliographicResource,
+    ExtractedBibliographicResource,
+    MergedBibliographicResource,
+    PreventiveBibliographicResource,
+    SubtractiveBibliographicResource,
+)
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
     BaseContactPoint,
@@ -168,6 +175,7 @@ __all__ = (
     "ADDITIVE_MODEL_CLASSES",
     "AdditiveAccessPlatform",
     "AdditiveActivity",
+    "AdditiveBibliographicResource",
     "AdditiveContactPoint",
     "AdditiveDistribution",
     "AdditiveOrganization",
@@ -184,11 +192,13 @@ __all__ = (
     "AnyPreventiveModel",
     "AnyRuleModel",
     "AnySubtractiveModel",
+    "BaseBibliographicResource",
     "BaseModel",
     "EXTRACTED_MODEL_CLASSES_BY_NAME",
     "EXTRACTED_MODEL_CLASSES",
     "ExtractedAccessPlatform",
     "ExtractedActivity",
+    "ExtractedBibliographicResource",
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
@@ -205,6 +215,7 @@ __all__ = (
     "MERGED_MODEL_CLASSES",
     "MergedAccessPlatform",
     "MergedActivity",
+    "MergedBibliographicResource",
     "MergedContactPoint",
     "MergedDistribution",
     "MergedItem",
@@ -220,6 +231,7 @@ __all__ = (
     "MEX_PRIMARY_SOURCE_STABLE_TARGET_ID",
     "PreventiveAccessPlatform",
     "PreventiveActivity",
+    "PreventiveBibliographicResource",
     "PreventiveContactPoint",
     "PreventiveDistribution",
     "PreventiveOrganization",
@@ -236,6 +248,7 @@ __all__ = (
     "SUBTRACTIVE_MODEL_CLASSES",
     "SubtractiveAccessPlatform",
     "SubtractiveActivity",
+    "SubtractiveBibliographicResource",
     "SubtractiveContactPoint",
     "SubtractiveDistribution",
     "SubtractiveOrganization",
@@ -251,6 +264,7 @@ __all__ = (
 AnyBaseModel = (
     BaseAccessPlatform
     | BaseActivity
+    | BaseBibliographicResource
     | BaseContactPoint
     | BaseDistribution
     | BaseOrganization
@@ -269,6 +283,7 @@ BASE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyBaseModel]]] = {
 AnyExtractedModel = (
     ExtractedAccessPlatform
     | ExtractedActivity
+    | ExtractedBibliographicResource
     | ExtractedContactPoint
     | ExtractedDistribution
     | ExtractedOrganization
@@ -289,6 +304,7 @@ EXTRACTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedModel]]] = {
 AnyMergedModel = (
     MergedAccessPlatform
     | MergedActivity
+    | MergedBibliographicResource
     | MergedContactPoint
     | MergedDistribution
     | MergedOrganization
@@ -307,6 +323,7 @@ MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
 AnyAdditiveModel = (
     AdditiveAccessPlatform
     | AdditiveActivity
+    | AdditiveBibliographicResource
     | AdditiveContactPoint
     | AdditiveDistribution
     | AdditiveOrganization
@@ -327,6 +344,7 @@ ADDITIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyAdditiveModel]]] = {
 AnySubtractiveModel = (
     SubtractiveAccessPlatform
     | SubtractiveActivity
+    | SubtractiveBibliographicResource
     | SubtractiveContactPoint
     | SubtractiveDistribution
     | SubtractiveOrganization
@@ -347,6 +365,7 @@ SUBTRACTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnySubtractiveModel]]] =
 AnyPreventiveModel = (
     PreventiveAccessPlatform
     | PreventiveActivity
+    | PreventiveBibliographicResource
     | PreventiveContactPoint
     | PreventiveDistribution
     | PreventiveOrganization

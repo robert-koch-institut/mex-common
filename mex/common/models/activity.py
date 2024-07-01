@@ -20,6 +20,7 @@ from mex.common.types import (
     ExtractedActivityIdentifier,
     Link,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -52,7 +53,7 @@ class _OptionalLists(_Stem):
     involvedPerson: list[MergedPersonIdentifier] = []
     involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
     isPartOfActivity: list[MergedActivityIdentifier] = []
-    publication: list[Link] = []
+    publication: list[MergedBibliographicResourceIdentifier] = []
     shortName: list[Text] = []
     start: list[YearMonthDay | YearMonth] = []
     succeeds: list[MergedActivityIdentifier] = []

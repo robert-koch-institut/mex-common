@@ -130,16 +130,16 @@ class APIType(VocabularyEnum):
     __vocabulary__ = "api-type"
 
 
+class BibliographicReferenceType(VocabularyEnum):
+    """The type of a bibliographic reference."""
+
+    __vocabulary__ = "bibliographic-reference-type"
+
+
 class DataProcessingState(VocabularyEnum):
     """Type for state of data processing."""
 
     __vocabulary__ = "data-processing-state"
-
-
-class DataType(VocabularyEnum):
-    """The type of the single piece of information within a datum."""
-
-    __vocabulary__ = "data-type"
 
 
 class Frequency(VocabularyEnum):
@@ -164,6 +164,18 @@ class MIMEType(VocabularyEnum):
     """The mime type."""
 
     __vocabulary__ = "mime-type"
+
+
+class PersonalData(VocabularyEnum):
+    """Classification of personal data."""
+
+    __vocabulary__ = "personal-data"
+
+
+class ResourceCreationMethod(VocabularyEnum):
+    """The creation method of a resource."""
+
+    __vocabulary__ = "resource-creation-method"
 
 
 class ResourceTypeGeneral(VocabularyEnum):
