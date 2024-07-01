@@ -68,6 +68,7 @@ class ExtractedData(BaseEntity):
             examples=["123456", "item-501", "D7/x4/zz.final3"],
             min_length=1,
             max_length=1000,
+            pattern=r"^[^\n\r]+$",
             frozen=True,
         ),
     ]

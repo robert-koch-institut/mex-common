@@ -28,6 +28,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
     Theme,
+    Year,
     YearMonth,
     YearMonthDay,
 )
@@ -46,7 +47,7 @@ class _OptionalLists(_Stem):
     ] = []
     alternativeTitle: list[Text] = []
     documentation: list[Link] = []
-    end: list[YearMonthDay | YearMonth] = []
+    end: list[YearMonthDay | YearMonth | Year] = []
     externalAssociate: list[MergedOrganizationIdentifier | MergedPersonIdentifier] = []
     funderOrCommissioner: list[MergedOrganizationIdentifier] = []
     fundingProgram: list[str] = []
@@ -55,7 +56,7 @@ class _OptionalLists(_Stem):
     isPartOfActivity: list[MergedActivityIdentifier] = []
     publication: list[MergedBibliographicResourceIdentifier] = []
     shortName: list[Text] = []
-    start: list[YearMonthDay | YearMonth] = []
+    start: list[YearMonthDay | YearMonth | Year] = []
     succeeds: list[MergedActivityIdentifier] = []
     theme: list[
         Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]

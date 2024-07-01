@@ -17,6 +17,7 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
@@ -48,7 +49,7 @@ class _OptionalValues(_Stem):
         ]
         | None
     ) = None
-    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
 
 
 class _RequiredValues(_Stem):
@@ -56,7 +57,7 @@ class _RequiredValues(_Stem):
         AccessRestriction,
         Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
     ]
-    issued: YearMonthDayTime | YearMonthDay | YearMonth
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | Year
     title: Annotated[
         str,
         Field(
@@ -74,7 +75,7 @@ class _SparseValues(_Stem):
         ]
         | None
     ) = None
-    issued: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     title: (
         Annotated[
             str,
@@ -94,7 +95,7 @@ class _VariadicValues(_Stem):
             Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
         ]
     ] = []
-    issued: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     title: list[
         Annotated[
             str,

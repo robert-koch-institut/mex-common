@@ -19,22 +19,33 @@ from mex.common.types import (
     Link,
     MergedAccessPlatformIdentifier,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     PersonalData,
     ResourceCreationMethod,
     ResourceTypeGeneral,
     Text,
     Theme,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
 )
-from mex.common.types.identifier import MergedPrimarySourceIdentifier
+
+LoincIdStr = Annotated[
+    str,
+    Field(
+        examples=["https://loinc.org/95209-3", "https://loinc.org/LA26211-5"],
+        pattern=r"^https://loinc.org/([a-zA-z]*)|(([0-9]{5}-[0-9]*))$",
+        json_schema_extra={"format": "uri"},
+    ),
+]
 
 
 class _Stem(BaseModel):
@@ -62,12 +73,7 @@ class _OptionalLists(_Stem):
     distribution: list[MergedDistributionIdentifier] = []
     documentation: list[Link] = []
     externalPartner: list[MergedOrganizationIdentifier] = []
-    hasPersonalData: list[
-        Annotated[
-            PersonalData,
-            Field(examples=["https://mex.rki.de/item/personal-data-type-1"]),
-        ]
-    ] = []
+    hasLegalBasis: list[Text] = []
     icd10code: list[str] = []
     instrumentToolOrApparatus: list[Text] = []
     isPartOf: list[MergedResourceIdentifier] = []
@@ -75,7 +81,7 @@ class _OptionalLists(_Stem):
     language: list[
         Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
     ] = []
-    loincId: list[str] = []
+    loincId: list[LoincIdStr] = []
     meshId: list[
         Annotated[
             str,
@@ -90,7 +96,7 @@ class _OptionalLists(_Stem):
     methodDescription: list[Text] = []
     pathogenOrDisease: list[str] = []
     populationCoverage: list[Text] = []
-    publication: list[Link] = []
+    publication: list[MergedBibliographicResourceIdentifier] = []
     publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: list[Text] = []
     resourceCreationMethod: list[
@@ -157,19 +163,26 @@ class _OptionalValues(_Stem):
         Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
         | None
     ) = None
-    created: YearMonthDayTime | YearMonthDay | YearMonth | None = None
-    hasLegalBasis: Text | None = None
+    created: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
+    hasPersonalData: (
+        Annotated[
+            PersonalData,
+            Field(examples=["https://mex.rki.de/item/personal-data-type-1"]),
+        ]
+        | None
+    ) = None
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
     maxTypicalAge: Annotated[int, Field(examples=["99", "21"])] | None = None
     minTypicalAge: Annotated[int, Field(examples=["0", "18"])] | None = None
-    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     sizeOfDataBasis: str | None = None
     temporal: (
         YearMonthDayTime
         | YearMonthDay
         | YearMonth
+        | Year
         | Annotated[
             str,
             Field(
@@ -219,19 +232,25 @@ class _VariadicValues(_Stem):
     accrualPeriodicity: list[
         Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
     ] = []
-    created: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
-    hasLegalBasis: list[Text] = []
+    created: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    hasPersonalData: list[
+        Annotated[
+            PersonalData,
+            Field(examples=["https://mex.rki.de/item/personal-data-type-1"]),
+        ]
+    ] = []
     license: list[
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])]
     ] = []
     maxTypicalAge: list[Annotated[int, Field(examples=["99", "21"])]] = []
     minTypicalAge: list[Annotated[int, Field(examples=["0", "18"])]] = []
-    modified: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     sizeOfDataBasis: list[str] = []
     temporal: list[
         YearMonthDayTime
         | YearMonthDay
         | YearMonth
+        | Year
         | Annotated[
             str,
             Field(
@@ -324,7 +343,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     meshId: list[MergedPrimarySourceIdentifier] = []
     method: list[MergedPrimarySourceIdentifier] = []
     methodDescription: list[MergedPrimarySourceIdentifier] = []
-    mixTypicalAge: list[MergedPrimarySourceIdentifier] = []
+    minTypicalAge: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
     pathogenOrDisease: list[MergedPrimarySourceIdentifier] = []
     populationCoverage: list[MergedPrimarySourceIdentifier] = []

@@ -130,10 +130,10 @@ class APIType(VocabularyEnum):
     __vocabulary__ = "api-type"
 
 
-class BibliographicReferenceType(VocabularyEnum):
-    """The type of a bibliographic reference."""
+class BibliographicResourceType(VocabularyEnum):
+    """The type of a bibliographic resource."""
 
-    __vocabulary__ = "bibliographic-reference-type"
+    __vocabulary__ = "bibliographic-resource-type"
 
 
 class DataProcessingState(VocabularyEnum):

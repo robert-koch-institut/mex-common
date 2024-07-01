@@ -10,7 +10,7 @@ from mex.common.models.merged_item import MergedItem
 from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.types import (
     AccessRestriction,
-    BibliographicReferenceType,
+    BibliographicResourceType,
     ExtractedBibliographicResourceIdentifier,
     Language,
     License,
@@ -22,6 +22,7 @@ from mex.common.types import (
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
@@ -35,22 +36,20 @@ DoiStr = Annotated[
             "https://doi.org/10.2807/1560-7917.ES.2022.27.46.2200849",
             "https://doi.org/10.3389/fmicb.2022.868887",
             "http://dx.doi.org/10.25646/5147",
-            "https://doi.org/10.1016/j.vaccine.2022.11.065.",
+            "https://doi.org/10.1016/j.vaccine.2022.11.065",
         ],
-        pattern=r"^(((http)|(https))://(dx.)?doi.org/)(10.\\d{4,9}/[-._;()/:A-Z0-9]+)$",
+        pattern=r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Z0-9]+)$",
     ),
 ]
-SectionStr = Annotated[
+EditionStr = Annotated[
     str,
     Field(
         examples=[
-            "Kapitel 1",
-            "A Section About Public Health",
-            "Chapter XII: The History of Public Health",
-            "12",
-            "A",
-            "B.",
-        ]
+            "5",
+            "Band 2,1",
+            "Band 2,2",
+            "3rd edition",
+        ],
     ),
 ]
 IsbnIssnStr = Annotated[
@@ -70,22 +69,46 @@ IsbnIssnStr = Annotated[
         ],
     ),
 ]
+SectionStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "Kapitel 1",
+            "A Section About Public Health",
+            "Chapter XII: The History of Public Health",
+            "12",
+            "A",
+            "B.",
+        ]
+    ),
+]
+VolumeOrIssueStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "2",
+            "Q3",
+            "11/12",
+            "Winter '23",
+        ]
+    ),
+]
 
 
 class _Stem(BaseModel):
     stemType: ClassVar[
-        Annotated[Literal["BibliographicReference"], Field(frozen=True)]
-    ] = "BibliographicReference"
+        Annotated[Literal["BibliographicResource"], Field(frozen=True)]
+    ] = "BibliographicResource"
 
 
 class _OptionalLists(_Stem):
     abstract: list[Text] = []
     alternateIdentifier: list[str] = []
     alternativeTitle: list[Text] = []
-    bibliographicReferenceType: list[
+    bibliographicResourceType: list[
         Annotated[
-            BibliographicReferenceType,
-            Field(examples=["https://mex.rki.de/item/bibliographic-reference-type-1"]),
+            BibliographicResourceType,
+            Field(examples=["https://mex.rki.de/item/bibliographic-resource-type-1"]),
         ]
     ] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
@@ -116,9 +139,9 @@ class _SparseLists(_Stem):
 
 class _OptionalValues(_Stem):
     doi: DoiStr | None = None
-    edition: str | None = None
-    issue: Annotated[int, Field(examples=["1", "2", "12"])] | None = None
-    issued: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    edition: EditionStr | None = None
+    issue: VolumeOrIssueStr | None = None
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     license: (
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
     ) = None
@@ -126,11 +149,11 @@ class _OptionalValues(_Stem):
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
         | None
     ) = None
-    publicationYear: YearMonth | None = None  # should be just Year
+    publicationYear: Year | None = None
     respositoryURL: Link | None = None
     section: SectionStr | None = None
-    volume: Annotated[int, Field(examples=["24", "34", "1"])] | None = None
-    volumeOfSeries: Annotated[int, Field(examples=["24", "34", "1"])] | None = None
+    volume: VolumeOrIssueStr | None = None
+    volumeOfSeries: VolumeOrIssueStr | None = None
 
 
 class _RequiredValues(_Stem):
@@ -158,20 +181,20 @@ class _VariadicValues(_Stem):
         ]
     ] = []
     doi: list[DoiStr] = []
-    edition: list[str] = []
-    issue: list[Annotated[int, Field(examples=["1", "2", "12"])]] = []
-    issued: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    edition: list[EditionStr] = []
+    issue: list[VolumeOrIssueStr] = []
+    issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     license: list[
         Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])]
     ] = []
     pages: list[
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
     ] = []
-    publicationYear: list[YearMonth] = []  # should be just Year
+    publicationYear: list[Year] = []
     respositoryURL: list[Link] = []
     section: list[SectionStr] = []
-    volume: list[Annotated[int, Field(examples=["24", "34", "1"])]] = []
-    volumeOfSeries: list[Annotated[int, Field(examples=["24", "34", "1"])]] = []
+    volume: list[VolumeOrIssueStr] = []
+    volumeOfSeries: list[VolumeOrIssueStr] = []
 
 
 class BaseBibliographicResource(
@@ -219,7 +242,7 @@ class SubtractiveBibliographicResource(
     ] = "SubtractiveBibliographicResource"
 
 
-class PreventiveBibliographicResource(PreventiveRule):
+class PreventiveBibliographicResource(_Stem, PreventiveRule):
     """Rule to prevent primary sources for fields of merged bibliographic resource items."""  # noqa: E501
 
     entityType: Annotated[
@@ -229,7 +252,7 @@ class PreventiveBibliographicResource(PreventiveRule):
     accessRestriction: list[MergedPrimarySourceIdentifier] = []
     alternateIdentifier: list[MergedPrimarySourceIdentifier] = []
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    bibliographicReferenceType: list[MergedPrimarySourceIdentifier] = []
+    bibliographicResourceType: list[MergedPrimarySourceIdentifier] = []
     contributingUnit: list[MergedPrimarySourceIdentifier] = []
     creator: list[MergedPrimarySourceIdentifier] = []
     distribution: list[MergedPrimarySourceIdentifier] = []
