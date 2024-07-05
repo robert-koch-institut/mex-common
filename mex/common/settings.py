@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Self, cast
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic_core import Url
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
@@ -206,12 +207,19 @@ class BaseSettings(PydanticBaseSettings):
     @model_validator(mode="after")
     def resolve_paths(self) -> Self:
         """Resolve AssetPath and WorkPath."""
-        for name in self.model_fields:
-            value = getattr(self, name)
+
+        def _resolve(model: PydanticBaseModel, _name: str) -> None:
+            value = getattr(model, _name)
             if isinstance(value, AssetsPath) and value.is_relative():
-                setattr(self, name, self.assets_dir.resolve() / value)
+                setattr(model, _name, self.assets_dir.resolve() / value)
             elif isinstance(value, WorkPath) and value.is_relative():
-                setattr(self, name, self.work_dir.resolve() / value)
+                setattr(model, _name, self.work_dir.resolve() / value)
+            elif isinstance(value, PydanticBaseModel):
+                for sub_model_field_name in value.model_fields:
+                    _resolve(value, sub_model_field_name)
+
+        for name in self.model_fields:
+            _resolve(self, name)
         return self
 
     @model_validator(mode="after")
