@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from mex.common.models import BaseModel
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.types import AssetsPath, WorkPath
 
@@ -60,11 +61,16 @@ def test_parse_env_file() -> None:
 
 
 def test_resolve_paths() -> None:
+
+    class SubModel(BaseModel):
+        sub_model_path: WorkPath
+
     class DummySettings(BaseSettings):
         non_path: str
         abs_work_path: WorkPath
         rel_work_path: WorkPath
         assets_path: AssetsPath
+        sub_model: SubModel
 
     if platform.system() == "Windows":  # pragma: no cover
         absolute = WorkPath(r"C:\absolute\path")
@@ -80,6 +86,7 @@ def test_resolve_paths() -> None:
         assets_path=AssetsPath(relative),
         assets_dir=Path(absolute / "assets_dir"),
         work_dir=Path(absolute / "work_dir"),
+        sub_model=SubModel(sub_model_path=relative),
     )
 
     settings_dict = DummySettings.get().model_dump(exclude_defaults=True)
@@ -88,6 +95,9 @@ def test_resolve_paths() -> None:
     assert settings_dict["rel_work_path"] == WorkPath(settings.work_dir / relative)
     assert settings_dict["assets_path"] == AssetsPath(
         absolute / "assets_dir" / relative
+    )
+    assert settings_dict["sub_model"]["sub_model_path"] == WorkPath(
+        settings.work_dir / relative
     )
 
 
