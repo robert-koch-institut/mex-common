@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- extract multiple organizations from wikidata
+
 ### Changes
 
 ### Deprecated
@@ -18,12 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
-
-## [0.27.2] - 2024-07-08
-
-### Added
-
-- extract multiple organizations from wikidata
 
 ## [0.27.1] - 2024-06-14
 
