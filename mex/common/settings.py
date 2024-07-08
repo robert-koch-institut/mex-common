@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Self, cast
+from typing import Any, Self, TypeVar, cast
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic import BaseModel as PydanticBaseModel
@@ -8,10 +8,35 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
-from mex.common.context import SingletonStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
-SETTINGS_STORE = SingletonStore["BaseSettings"]()
+_T = TypeVar("_T")
+
+
+class SettingsSingletonStore:
+    """Thin wrapper for storing thread-local settings singleton."""
+
+    def __init__(self) -> None:
+        """Create a new settings singleton store."""
+        self._settings: _T | None = None
+
+    def load(self, cls: type[_T]) -> _T:
+        """Retrieve the settings for the given class or create a new one."""
+        if self._settings is None:
+            self._settings = cls()
+            return self._settings
+        if not issubclass(type(self._settings), cls):
+            raise TypeError(
+                "requested settings are not not a parent class of loaded settings"
+            )
+        return self._settings
+
+    def reset(self) -> None:
+        """Remove settings instance from the store."""
+        self._settings = None
+
+
+SETTINGS_STORE = SettingsSingletonStore()
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -221,26 +246,3 @@ class BaseSettings(PydanticBaseSettings):
         for name in self.model_fields:
             _resolve(self, name)
         return self
-
-    @model_validator(mode="after")
-    def sync_settings(self) -> Self:
-        """Sync updates to settings in the `BaseSettings` scope to other settings.
-
-        Caveat: Updating fields of one class does not automatically update other
-        classes. To update another class, call any settings `.get()` method.
-        """
-        # ensure the settings singled instance is stored
-        SETTINGS_STORE.push(self)
-        # collect the changes to fields in the `BaseSettings` scope
-        base_scope = {
-            field: value
-            for field, value in self.model_dump(exclude_unset=True).items()
-            if field in BaseSettings.model_fields
-        }
-        # iterate over all active setting instances and swap them out
-        for settings in SETTINGS_STORE:
-            # create a new setting instance with `BaseSettings` fields are overwritten
-            SETTINGS_STORE.push(
-                settings.model_construct(**{**settings.model_dump(), **base_scope})
-            )
-        return cast(Self, SETTINGS_STORE.load(type(self)))

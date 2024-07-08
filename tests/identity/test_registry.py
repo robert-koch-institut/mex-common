@@ -11,7 +11,7 @@ from mex.common.identity.registry import (
     get_provider,
     register_provider,
 )
-from mex.common.settings import BaseSettings
+from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.types import IdentityProvider
 
 
@@ -60,6 +60,7 @@ def test_get_provider_error(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_get_provider() -> None:
+    SETTINGS_STORE.reset()
     settings = DummySettings.get()
     settings.identity_provider = DummyIdentityProvider.DUMMY
 
