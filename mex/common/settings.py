@@ -31,6 +31,10 @@ class SettingsSingletonStore:
             )
         return self._settings
 
+    def push(self, instance: _T) -> None:
+        """Set or replace a singleton instance in the store."""
+        self._settings = instance
+
     def reset(self) -> None:
         """Remove settings instance from the store."""
         self._settings = None
