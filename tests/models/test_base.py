@@ -1,11 +1,10 @@
 from enum import Enum
-from typing import Annotated, Any, Literal
+from typing import Any
 
 import pytest
-from pydantic import Field, ValidationError
+from pydantic import ValidationError, computed_field
 
-from mex.common.models import BaseModel, MergedItem
-from mex.common.types import Identifier
+from mex.common.models import BaseModel
 
 
 class ComplexDummyModel(BaseModel):
@@ -88,6 +87,24 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
         ValidationError, match="Input should be a valid dictionary or instance of Pet"
     ):
         Shelter(inhabitants="foo")  # type: ignore
+
+
+def test_verify_computed_field_consistency() -> None:
+    class Computer(BaseModel):
+
+        @computed_field  # type: ignore[misc]
+        @property
+        def cpus(self) -> int:
+            return 42
+
+    computer = Computer.model_validate({"cpus": 42})
+    assert computer.cpus == 42
+
+    with pytest.raises(ValidationError, match="Cannot set computed fields"):
+        Computer.model_validate({"cpus": 1})
+
+    with pytest.raises(ValidationError, match="Cannot set computed fields"):
+        Computer(cpus=99)
 
 
 class DummyBaseModel(BaseModel):

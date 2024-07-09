@@ -98,25 +98,17 @@ class ExtractedActivity(BaseActivity, ExtractedData):
         Literal["ExtractedActivity"], Field(alias="$type", frozen=True)
     ] = "ExtractedActivity"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedActivityIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedActivityIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedActivityIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedActivityIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedActivityIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedActivityIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 class MergedActivity(BaseActivity, MergedItem):

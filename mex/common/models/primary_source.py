@@ -73,25 +73,17 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
         Literal["ExtractedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "ExtractedPrimarySource"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedPrimarySourceIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedPrimarySourceIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedPrimarySourceIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedPrimarySourceIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedPrimarySourceIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedPrimarySourceIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):

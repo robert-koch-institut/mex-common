@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING, ClassVar
 
+from pydantic import ConfigDict
+
 from mex.common.models.base import BaseModel
 
 
-class BaseEntity(BaseModel, extra="forbid"):
+class BaseEntity(BaseModel):
     """Abstract base model for extracted data, merged item and rule set classes.
 
     This class gives type hints for an `identifier` field, the frozen `entityType` field
@@ -11,6 +13,10 @@ class BaseEntity(BaseModel, extra="forbid"):
     Subclasses should implement all three fields while setting the correct identifier
     type as well as the correct literal values for the entity and stem types.
     """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
 
     if TYPE_CHECKING:  # pragma: no cover
         # The frozen `entityType` field is added to all `BaseEntity` subclasses to

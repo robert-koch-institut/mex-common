@@ -233,25 +233,17 @@ class ExtractedResource(BaseResource, ExtractedData):
         Literal["ExtractedResource"], Field(alias="$type", frozen=True)
     ] = "ExtractedResource"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedResourceIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedResourceIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedResourceIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedResourceIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedResourceIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedResourceIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 class MergedResource(BaseResource, MergedItem):

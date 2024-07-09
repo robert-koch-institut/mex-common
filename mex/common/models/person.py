@@ -83,25 +83,17 @@ class ExtractedPerson(BasePerson, ExtractedData):
         Literal["ExtractedPerson"], Field(alias="$type", frozen=True)
     ] = "ExtractedPerson"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedPersonIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedPersonIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedPersonIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedPersonIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedPersonIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedPersonIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 class MergedPerson(BasePerson, MergedItem):

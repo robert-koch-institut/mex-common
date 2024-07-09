@@ -122,25 +122,17 @@ class ExtractedVariable(BaseVariable, ExtractedData):
         Literal["ExtractedVariable"], Field(alias="$type", frozen=True)
     ] = "ExtractedVariable"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedVariableIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedVariableIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedVariableIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedVariableIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedVariableIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedVariableIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 class MergedVariable(BaseVariable, MergedItem):

@@ -93,25 +93,17 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
         Literal["ExtractedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "ExtractedAccessPlatform"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedAccessPlatformIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedAccessPlatformIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedAccessPlatformIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedAccessPlatformIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedAccessPlatformIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedAccessPlatformIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):

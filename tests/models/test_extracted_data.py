@@ -5,13 +5,7 @@ import pytest
 from pydantic import Field, ValidationError, computed_field
 
 from mex.common.identity import get_provider
-from mex.common.models import (
-    MEX_PRIMARY_SOURCE_IDENTIFIER,
-    MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-    BaseModel,
-    ExtractedData,
-)
+from mex.common.models import BaseModel, ExtractedData
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
 
@@ -43,25 +37,17 @@ class ExtractedThing(BaseThing, ExtractedData):
         Literal["ExtractedThing"], Field(alias="$type", frozen=True)
     ] = "ExtractedThing"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def identifier(self) -> ExtractedThingIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedThingIdentifier)
 
-    @identifier.setter  # type: ignore[no-redef]
-    def identifier(self, obj: ExtractedThingIdentifier) -> None:
-        """Set the identifier field to its pre-determined value."""
-        return self._set_identifier(obj)
-
-    @computed_field
+    @computed_field  # type: ignore[misc]
+    @property
     def stableTargetId(self) -> MergedThingIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
         return self._get_stable_target_id(MergedThingIdentifier)
-
-    @stableTargetId.setter  # type: ignore[no-redef]
-    def stableTargetId(self, obj: MergedThingIdentifier) -> None:  # noqa: N802
-        """Set the stableTargetId field to its pre-determined value."""
-        return self._set_stable_target_id(obj)
 
 
 def test_extracted_data_requires_dict_for_construction() -> None:
@@ -81,28 +67,6 @@ def test_extracted_data_requires_had_primary_source() -> None:
         ExtractedThing(
             identifierInPrimarySource="0",
         )
-
-
-def test_extracted_data_ignores_manually_set_identifier() -> None:
-    thing = ExtractedThing.model_validate(
-        dict(
-            identifier=Identifier.generate(seed=42),
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
-            identifierInPrimarySource="0",
-        )
-    )
-    assert thing.identifier != Identifier.generate(seed=42)
-
-
-def test_extracted_data_ignores_manually_set_stable_target_id() -> None:
-    thing = ExtractedThing.model_validate(
-        dict(
-            hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
-            identifierInPrimarySource="0",
-            stableTargetId=MergedPrimarySourceIdentifier.generate(seed=12345),
-        )
-    )
-    assert thing.stableTargetId != Identifier.generate(seed=12345)
 
 
 def test_extracted_data_stores_identity_in_provider() -> None:
