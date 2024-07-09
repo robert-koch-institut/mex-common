@@ -34,7 +34,7 @@ class PathWrapper(PathLike[str]):
         """Return a representation string of the resolved path."""
         return f'{self.__class__.__name__}("{self}")'
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Return true for two PathWrappers with equal paths."""
         if isinstance(other, PathWrapper):
             return self._path.__eq__(other._path)
