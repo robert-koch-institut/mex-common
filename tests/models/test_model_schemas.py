@@ -8,23 +8,28 @@ from typing import Any
 
 import pytest
 
-from mex.common.models import EXTRACTED_MODEL_CLASSES
+from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
 from mex.common.transform import dromedary_to_kebab
 from mex.common.types.identifier import MEX_ID_PATTERN
 
 MEX_MODEL_ENTITIES = files("mex.model.entities")
 
 
-def model_to_schema(model):  # yuck
-    vschema = model.model_json_schema(
+def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
+    validation_schema = model.model_json_schema(
         ref_template="/schema/fields/{model}", mode="validation"
     )
-    sschema = model.model_json_schema(
+    serialization_schema = model.model_json_schema(
         ref_template="/schema/fields/{model}", mode="serialization"
     )
-    vschema["properties"] = {**sschema["properties"], **vschema["properties"]}
-    vschema["required"] = sorted({*sschema["required"], *vschema["required"]})
-    return vschema
+    validation_schema["properties"] = {
+        **serialization_schema["properties"],
+        **validation_schema["properties"],
+    }
+    validation_schema["required"] = sorted(
+        {*serialization_schema["required"], *validation_schema["required"]}
+    )
+    return validation_schema
 
 
 GENERATED_SCHEMAS = dict(
