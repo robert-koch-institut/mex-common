@@ -90,7 +90,7 @@ class Aliases(BaseModel):
     en: list[Alias] = []
 
 
-class WikidataOrganization(BaseModel, extra="ignore"):
+class WikidataOrganization(BaseModel):
     """Model class for Wikidata sources."""
 
     identifier: Annotated[str, Field(alias="id")]

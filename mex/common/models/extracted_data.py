@@ -1,4 +1,4 @@
-from typing import Annotated, Any, TypeVar
+from typing import Annotated, TypeVar
 
 from pydantic import Field
 
@@ -63,46 +63,39 @@ class ExtractedData(BaseEntity):
     ]
 
     def _get_identifier(
-        self, type_: type[_ExtractedIdentifierT]
+        self, identifier_type: type[_ExtractedIdentifierT]
     ) -> _ExtractedIdentifierT:
-        # break import cycle, sigh
-        from mex.common.identity import get_provider
+        """Consult the identity provider to get the `identifier` for this item.
 
-        provider = get_provider()
-        return type_(
-            provider.assign(
-                self.hadPrimarySource, self.identifierInPrimarySource
-            ).identifier
+        Args:
+            identifier_type: ExtractedIdentifier-subclass to cast the identifier to
+
+        Returns:
+            Identifier of the correct type
+        """
+        from mex.common.identity import get_provider  # break import cycle, sigh
+
+        return identifier_type(
+            get_provider()
+            .assign(self.hadPrimarySource, self.identifierInPrimarySource)
+            .identifier
         )
-
-    def _set_identifier(self, obj: Any) -> None:
-        if ExtractedIdentifier(obj) != self._get_identifier(ExtractedIdentifier):
-            raise ValueError("identifier cannot be changed")
-
-    # Sometimes multiple primary sources describe the same activity, resource, etc.
-    # and a complete metadata item can only be created by merging these fragments.
-    # The `stableTargetId` is part of all extracted models to allow MEx to identify
-    # which items describe the same thing and should be merged to create a complete
-    # metadata item. The name `stableTargetId` might be a bit misleading, because
-    # the "stability" is only guaranteed for one "real world" or "digital world"
-    # thing having the same ID in MEx over time. But it is not a guarantee, that the
-    # same metadata sources contribute to the complete metadata item. The naming has
-    # its historical reasons, but we plan to change it in the near future.
-    # Because we anticipate that items have to be merged, the `stableTargetId` is
-    # also used as the foreign key for all fields containing references.
 
     def _get_stable_target_id(
-        self, type_: type[_MergedIdentifierT]
+        self, identifier_type: type[_MergedIdentifierT]
     ) -> _MergedIdentifierT:
-        from mex.common.identity import get_provider
+        """Consult the identity provider to get the `stableTargetId` for this item.
 
-        provider = get_provider()
-        return type_(
-            provider.assign(
-                self.hadPrimarySource, self.identifierInPrimarySource
-            ).stableTargetId
+        Args:
+            identifier_type: MergedIdentifier-subclass to cast the identifier to
+
+        Returns:
+            StableTargetId of the correct type
+        """
+        from mex.common.identity import get_provider  # break import cycle, sigh
+
+        return identifier_type(
+            get_provider()
+            .assign(self.hadPrimarySource, self.identifierInPrimarySource)
+            .stableTargetId
         )
-
-    def _set_stable_target_id(self, obj: Any) -> None:
-        if MergedIdentifier(obj) != self._get_stable_target_id(MergedIdentifier):
-            raise ValueError("stableTargetId cannot be changed")
