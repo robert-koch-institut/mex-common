@@ -65,6 +65,7 @@ class ExtractedData(BaseEntity):
     def _get_identifier(
         self, type_: type[_ExtractedIdentifierT]
     ) -> _ExtractedIdentifierT:
+        # break import cycle, sigh
         from mex.common.identity import get_provider
 
         provider = get_provider()
