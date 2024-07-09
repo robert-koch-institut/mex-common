@@ -67,6 +67,7 @@ __all__ = (
     "AccessRestriction",
     "ActivityType",
     "AnonymizationPseudonymization",
+    "AnyExtractedIdentifier",
     "AnyMergedIdentifier",
     "AnyNestedModel",
     "AnyPrimitiveType",
