@@ -22,7 +22,7 @@ from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerat
 from mex.common.models.schema import JsonSchemaGenerator
 from mex.common.utils import get_inner_types
 
-RawModelDataT = TypeVar("RawModelDataT")
+_RawModelDataT = TypeVar("_RawModelDataT")
 
 
 class BaseModel(PydanticBaseModel):
@@ -142,7 +142,7 @@ class BaseModel(PydanticBaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def fix_listyness(cls, data: RawModelDataT) -> RawModelDataT:
+    def fix_listyness(cls, data: _RawModelDataT) -> _RawModelDataT:
         """Adjust the listyness of to-be-parsed data to match the desired shape.
 
         If that data is a Mapping and the model defines a list[T] field but the raw data

@@ -3,7 +3,7 @@ import re
 from enum import Enum, EnumMeta
 from functools import cache
 from importlib.resources import files
-from typing import TYPE_CHECKING, ClassVar, Optional, Union
+from typing import TYPE_CHECKING, ClassVar, Self, Union
 
 from pydantic import AnyUrl, BaseModel
 
@@ -44,7 +44,7 @@ class VocabularyLoader(EnumMeta):
     """Metaclass to load names and values from a JSON file and create a dynamic enum."""
 
     def __new__(
-        cls: type["VocabularyLoader"], name: str, bases: tuple[type], dct: "_EnumDict"
+        cls, name: str, bases: tuple[type], dct: "_EnumDict"
     ) -> "VocabularyLoader":
         """Create a new enum class by loading the configured vocabulary JSON."""
         if vocabulary_name := dct.get("__vocabulary__"):
@@ -76,7 +76,7 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
         return f'{self.__class__.__name__}["{self.name}"]'
 
     @classmethod
-    def find(cls, search_term: Union[str, "Text"]) -> Optional["VocabularyEnum"]:
+    def find(cls, search_term: Union[str, "Text"]) -> Self | None:
         """Get the enum instance that matches a label of the underlying concepts.
 
         The given `search_term` can be string or a Text with an optional language

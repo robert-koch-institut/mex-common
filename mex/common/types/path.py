@@ -1,10 +1,8 @@
 from os import PathLike
 from pathlib import Path
-from typing import Any, TypeVar, Union
+from typing import Any, Self, Union
 
 from pydantic_core import core_schema
-
-PathWrapperT = TypeVar("PathWrapperT", bound="PathWrapper")
 
 
 class PathWrapper(PathLike[str]):
@@ -73,7 +71,7 @@ class PathWrapper(PathLike[str]):
         )
 
     @classmethod
-    def validate(cls: type[PathWrapperT], value: Any) -> PathWrapperT:
+    def validate(cls, value: Any) -> Self:
         """Convert a string value to a Text instance."""
         if isinstance(value, str | Path | PathWrapper):
             return cls(value)

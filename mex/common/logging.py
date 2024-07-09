@@ -7,39 +7,40 @@ from typing import Any, TypeVar
 
 import click
 
-YieldT = TypeVar("YieldT")
+_YieldT = TypeVar("_YieldT")
 
-LOGGING_CONFIG: dict[str, Any] = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "default": {
-            "format": "%(message)s",
-        }
-    },
-    "handlers": {
-        "default": {
-            "level": "INFO",
-            "formatter": "default",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout",
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "default": {
+                "format": "%(message)s",
+            }
         },
-    },
-    "loggers": {
-        "mex": {
-            "handlers": ["default"],
-            "level": "INFO",
-            "propagate": True,
-        }
-    },
-}
-logging.config.dictConfig(LOGGING_CONFIG)
+        "handlers": {
+            "default": {
+                "level": "INFO",
+                "formatter": "default",
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stdout",
+            },
+        },
+        "loggers": {
+            "mex": {
+                "handlers": ["default"],
+                "level": "INFO",
+                "propagate": True,
+            }
+        },
+    }
+)
 logger = logging.getLogger("mex")
 
 
 def watch(
-    func: Callable[..., Generator[YieldT, None, None]]
-) -> Callable[..., Generator[YieldT, None, None]]:
+    func: Callable[..., Generator[_YieldT, None, None]],
+) -> Callable[..., Generator[_YieldT, None, None]]:
     """Watch the output of a generator function and log the yielded items.
 
     Args:
@@ -51,7 +52,7 @@ def watch(
     """
 
     @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Generator[YieldT, None, None]:
+    def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
         fname = func.__name__.replace("_", " ")
         for item in func(*args, **kwargs):
             echo(f"[{fname}] {item}")
