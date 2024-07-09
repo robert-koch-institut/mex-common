@@ -9,32 +9,31 @@ import click
 
 _YieldT = TypeVar("_YieldT")
 
-logging.config.dictConfig(
-    {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "default": {
-                "format": "%(message)s",
-            }
+LOGGING_CONFIG: dict[str, Any] = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "format": "%(message)s",
+        }
+    },
+    "handlers": {
+        "default": {
+            "level": "INFO",
+            "formatter": "default",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
         },
-        "handlers": {
-            "default": {
-                "level": "INFO",
-                "formatter": "default",
-                "class": "logging.StreamHandler",
-                "stream": "ext://sys.stdout",
-            },
-        },
-        "loggers": {
-            "mex": {
-                "handlers": ["default"],
-                "level": "INFO",
-                "propagate": True,
-            }
-        },
-    }
-)
+    },
+    "loggers": {
+        "mex": {
+            "handlers": ["default"],
+            "level": "INFO",
+            "propagate": True,
+        }
+    },
+}
+logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("mex")
 
 
