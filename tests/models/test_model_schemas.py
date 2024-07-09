@@ -16,6 +16,11 @@ MEX_MODEL_ENTITIES = files("mex.model.entities")
 
 
 def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
+    # pydantic does not include computed fields in the validation schema
+    # and does not include validation rules in the serialization schema.
+    # so we need to mangle those two together here, to get a schema that is
+    # more comparable to what mex-model specifies.
+
     validation_schema = model.model_json_schema(
         ref_template="/schema/fields/{model}", mode="validation"
     )
