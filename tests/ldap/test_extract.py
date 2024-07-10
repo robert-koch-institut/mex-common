@@ -16,7 +16,7 @@ from mex.common.types import Identifier
 
 @pytest.fixture
 def ldap_primary_source(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource]
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     return extracted_primary_sources["ldap"]
 

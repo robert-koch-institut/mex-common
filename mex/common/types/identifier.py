@@ -16,7 +16,7 @@ class Identifier(str):
     """Common identifier class based on UUID version 4."""
 
     @classmethod
-    def generate(cls: type[Self], seed: int | None = None) -> Self:
+    def generate(cls, seed: int | None = None) -> Self:
         """Generate a new identifier from a seed or random UUID version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
@@ -31,7 +31,7 @@ class Identifier(str):
         return cls(output[::-1])
 
     @classmethod
-    def validate(cls: type[Self], value: Any) -> Self:
+    def validate(cls, value: Any) -> Self:
         """Validate a string, UUID or Identifier."""
         if isinstance(value, str | UUID | Identifier):
             value = str(value)

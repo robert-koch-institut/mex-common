@@ -1,6 +1,3 @@
-from typing import Any
-
-
 class Joker:
     """Testing utility that pretends to be equal to anything.
 
@@ -12,7 +9,7 @@ class Joker:
 
     _repr_cache: str | None = None
 
-    def __eq__(self, obj: Any) -> bool:
+    def __eq__(self, obj: object) -> bool:
         """Pretend to be equal to any other object."""
         self._repr_cache = repr(obj)
         return True

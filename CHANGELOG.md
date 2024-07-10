@@ -11,11 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- improve typing for methods using `Self`
+- make local type variables private
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix typing for `__eq__` arguments
 
 ### Security
 
