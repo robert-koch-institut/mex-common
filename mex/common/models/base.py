@@ -3,11 +3,7 @@ import json
 from collections.abc import MutableMapping
 from functools import cache
 from types import UnionType
-from typing import (
-    Any,
-    TypeVar,
-    Union,
-)
+from typing import Any, Union
 
 from pydantic import (
     BaseModel as PydanticBaseModel,
@@ -25,8 +21,6 @@ from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerat
 from mex.common.models.schema import JsonSchemaGenerator
 from mex.common.transform import MExEncoder
 from mex.common.utils import get_inner_types
-
-RawModelDataT = TypeVar("RawModelDataT")
 
 
 class BaseModel(PydanticBaseModel):

@@ -24,7 +24,7 @@ class BaseConnector(metaclass=ABCMeta):
 
     @final
     @classmethod
-    def get(cls: type[Self]) -> Self:
+    def get(cls) -> Self:
         """Get the singleton instance for this class from the store."""
         return cast(Self, CONNECTOR_STORE.load(cls))
 
