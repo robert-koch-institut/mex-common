@@ -9,14 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add validator to verify computed fields can be set but not altered to base model
+- new class hierarchy for identifiers: ExtractedIdentifier and MergedIdentifier
+
 ### Changes
 
 - improve typing for methods using `Self`
 - make local type variables private
+- use json instead of pickle to calculate checksum of models
+- swapped `set_identifiers` validator for computed fields on each extracted model
 
 ### Deprecated
 
 ### Removed
+
+- removed custom stringify method on base entities that included the `identifier` field
 
 ### Fixed
 
