@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.29.0] - 2024-07-12
+
+### Added
+
 - add validator to base model that verifies computed fields can be set but not altered
 - new class hierarchy for identifiers: ExtractedIdentifier and MergedIdentifier
 
@@ -19,8 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use json instead of pickle to calculate checksum of models
 - replace `set_identifiers` validator with computed fields on each extracted model
 
-### Deprecated
-
 ### Removed
 
 - removed custom stringify method on base entities that included the `identifier` field
@@ -28,8 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix typing for `__eq__` arguments
-
-### Security
 
 ## [0.28.0] - 2024-07-08
 
