@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Self, TypeVar, cast
+from typing import Any, Self, cast
 
 from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic import BaseModel as PydanticBaseModel
@@ -8,39 +8,10 @@ from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
+from mex.common.context import SingleSingletonStore
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
-_T = TypeVar("_T")
-
-
-class SettingsSingletonStore:
-    """Thin wrapper for storing thread-local settings singleton."""
-
-    def __init__(self) -> None:
-        """Create a new settings singleton store."""
-        self._settings: _T | None = None
-
-    def load(self, cls: type[_T]) -> _T:
-        """Retrieve the settings for the given class or create a new one."""
-        if self._settings is None:
-            self._settings = cls()
-            return self._settings
-        if not issubclass(type(self._settings), cls):
-            raise TypeError(
-                "requested settings are not not a parent class of loaded settings"
-            )
-        return self._settings
-
-    def push(self, instance: _T) -> None:
-        """Set or replace a singleton instance in the store."""
-        self._settings = instance
-
-    def reset(self) -> None:
-        """Remove settings instance from the store."""
-        self._settings = None
-
-
-SETTINGS_STORE = SettingsSingletonStore()
+SETTINGS_STORE = SingleSingletonStore["BaseSettings"]()
 
 
 class BaseSettings(PydanticBaseSettings):
