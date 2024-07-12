@@ -184,14 +184,18 @@ class BaseModel(PydanticBaseModel):
         Returns:
             data with consistent computed fields.
         """
-        if isinstance(data, MutableMapping):
-            custom_values = {
-                field: value
-                for field in cls.model_computed_fields
-                if (value := data.pop(field, None))
-            }
-        else:
-            custom_values = {}
+        if not cls.model_computed_fields:
+            return handler(data)
+        if not isinstance(data, MutableMapping):
+            raise AssertionError(
+                "Input should be a valid dictionary, validating other types is not "
+                "supported for models with computed fields."
+            )
+        custom_values = {
+            field: value
+            for field in cls.model_computed_fields
+            if (value := data.pop(field, None))
+        }
         result = handler(data)
         computed_values = result.model_dump(include=set(custom_values))
         if computed_values != custom_values:
