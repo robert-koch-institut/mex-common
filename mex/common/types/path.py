@@ -1,10 +1,8 @@
 from os import PathLike
 from pathlib import Path
-from typing import Any, TypeVar, Union
+from typing import Any, Self, Union
 
 from pydantic_core import core_schema
-
-PathWrapperT = TypeVar("PathWrapperT", bound="PathWrapper")
 
 
 class PathWrapper(PathLike[str]):
@@ -36,7 +34,7 @@ class PathWrapper(PathLike[str]):
         """Return a representation string of the resolved path."""
         return f'{self.__class__.__name__}("{self}")'
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Return true for two PathWrappers with equal paths."""
         if isinstance(other, PathWrapper):
             return self._path.__eq__(other._path)
@@ -73,7 +71,7 @@ class PathWrapper(PathLike[str]):
         )
 
     @classmethod
-    def validate(cls: type[PathWrapperT], value: Any) -> PathWrapperT:
+    def validate(cls, value: Any) -> Self:
         """Convert a string value to a Text instance."""
         if isinstance(value, str | Path | PathWrapper):
             return cls(value)
