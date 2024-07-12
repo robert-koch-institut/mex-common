@@ -7,7 +7,7 @@ from typing import Any, TypeVar
 
 import click
 
-YieldT = TypeVar("YieldT")
+_YieldT = TypeVar("_YieldT")
 
 LOGGING_CONFIG: dict[str, Any] = {
     "version": 1,
@@ -38,8 +38,8 @@ logger = logging.getLogger("mex")
 
 
 def watch(
-    func: Callable[..., Generator[YieldT, None, None]]
-) -> Callable[..., Generator[YieldT, None, None]]:
+    func: Callable[..., Generator[_YieldT, None, None]],
+) -> Callable[..., Generator[_YieldT, None, None]]:
     """Watch the output of a generator function and log the yielded items.
 
     Args:
@@ -51,7 +51,7 @@ def watch(
     """
 
     @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Generator[YieldT, None, None]:
+    def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
         fname = func.__name__.replace("_", " ")
         for item in func(*args, **kwargs):
             echo(f"[{fname}] {item}")

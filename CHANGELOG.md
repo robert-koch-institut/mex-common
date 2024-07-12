@@ -11,13 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- improve typing for methods using `Self`
+- make local type variables private
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+- fix typing for `__eq__` arguments
+
 ### Security
+
+## [0.28.0] - 2024-07-08
+
+### Added
+
+- extract multiple organizations from wikidata
 
 ## [0.27.1] - 2024-06-14
 

@@ -73,7 +73,7 @@ class BaseSettings(PydanticBaseSettings):
         )
 
     @classmethod
-    def get(cls: type[Self]) -> Self:
+    def get(cls) -> Self:
         """Get the current settings instance from singleton store.
 
         Returns:
