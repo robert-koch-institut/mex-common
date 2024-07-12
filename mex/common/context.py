@@ -34,7 +34,7 @@ class SingletonStore(Generic[_SingletonT]):
         self._instances_by_class.clear()
 
 
-class SingleSingletonStore(Generic[_T]):
+class SingleSingletonStore(Generic[_SingletonT]):
     """Thin wrapper for storing a single thread-local singleton.
 
     Stores only a single instance. Requested class must either be
@@ -43,9 +43,9 @@ class SingleSingletonStore(Generic[_T]):
 
     def __init__(self) -> None:
         """Create a new settings singleton store."""
-        self._singleton: _T | None = None
+        self._singleton: _SingletonT | None = None
 
-    def load(self, cls: type[_T]) -> _T:
+    def load(self, cls: type[_SingletonT]) -> _SingletonT:
         """Retrieve the settings for the given class or create a new one."""
         if self._singleton is None:
             self._singleton = cls()
@@ -58,7 +58,7 @@ class SingleSingletonStore(Generic[_T]):
             )
         return self._singleton
 
-    def push(self, instance: _T) -> None:
+    def push(self, instance: _SingletonT) -> None:
         """Set or replace a singleton instance in the store."""
         self._singleton = instance
 
