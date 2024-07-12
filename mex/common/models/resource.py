@@ -64,7 +64,7 @@ class _OptionalLists(_Stem):
         ]
     ] = []
     conformsTo: list[
-        Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "FASTA"])]
+        Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-10"])]
     ] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     contributor: list[MergedPersonIdentifier] = []
@@ -94,7 +94,6 @@ class _OptionalLists(_Stem):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    pathogenOrDisease: list[str] = []
     populationCoverage: list[Text] = []
     publication: list[MergedBibliographicResourceIdentifier] = []
     publisher: list[MergedOrganizationIdentifier] = []
@@ -167,7 +166,7 @@ class _OptionalValues(_Stem):
     hasPersonalData: (
         Annotated[
             PersonalData,
-            Field(examples=["https://mex.rki.de/item/personal-data-type-1"]),
+            Field(examples=["https://mex.rki.de/item/personal-data-1"]),
         ]
         | None
     ) = None
@@ -236,7 +235,7 @@ class _VariadicValues(_Stem):
     hasPersonalData: list[
         Annotated[
             PersonalData,
-            Field(examples=["https://mex.rki.de/item/personal-data-type-1"]),
+            Field(examples=["https://mex.rki.de/item/personal-data-1"]),
         ]
     ] = []
     license: list[
@@ -355,7 +354,6 @@ class PreventiveResource(_Stem, PreventiveRule):
     methodDescription: list[MergedPrimarySourceIdentifier] = []
     minTypicalAge: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
-    pathogenOrDisease: list[MergedPrimarySourceIdentifier] = []
     populationCoverage: list[MergedPrimarySourceIdentifier] = []
     publication: list[MergedPrimarySourceIdentifier] = []
     publisher: list[MergedPrimarySourceIdentifier] = []

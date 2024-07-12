@@ -193,13 +193,9 @@ class TemporalEntity:
         cls, _source: type[Any], _handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Mutate the field schema for temporal entity."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
+        from_str_schema = core_schema.no_info_before_validator_function(
+            cls.validate,
+            core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
         )
         from_anything_schema = core_schema.chain_schema(
             [
@@ -313,7 +309,7 @@ class Year(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_REGEX
     ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.YEAR]
-    JSON_SCHEMA_CONFIG = {"examples": ["2024"], "format": "date"}
+    JSON_SCHEMA_CONFIG = {"examples": ["2024"]}
 
 
 class YearMonth(TemporalEntity):
@@ -321,7 +317,7 @@ class YearMonth(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_REGEX
     ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.MONTH]
-    JSON_SCHEMA_CONFIG = {"examples": ["2019-03"], "format": "date"}
+    JSON_SCHEMA_CONFIG = {"examples": ["2019-03"]}
 
 
 class YearMonthDay(TemporalEntity):
@@ -329,7 +325,7 @@ class YearMonthDay(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_REGEX
     ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.DAY]
-    JSON_SCHEMA_CONFIG = {"examples": ["2014-08-24"], "format": "date"}
+    JSON_SCHEMA_CONFIG = {"examples": ["2014-08-24"]}
 
 
 class YearMonthDayTime(TemporalEntity):
@@ -337,7 +333,7 @@ class YearMonthDayTime(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_TIME_REGEX
     ALLOWED_PRECISION_LEVELS = TIME_PRECISIONS
-    JSON_SCHEMA_CONFIG = {"examples": ["2022-09-30T20:48:35Z"], "format": "date-time"}
+    JSON_SCHEMA_CONFIG = {"examples": ["2022-09-30T20:48:35Z"]}
 
 
 TEMPORAL_ENTITY_CLASSES_BY_PRECISION: dict[
