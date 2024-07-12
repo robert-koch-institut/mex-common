@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add validator to base model that verifies computed fields can be set but not altered 
+- add validator to base model that verifies computed fields can be set but not altered
 - new class hierarchy for identifiers: ExtractedIdentifier and MergedIdentifier
 
 ### Changes
