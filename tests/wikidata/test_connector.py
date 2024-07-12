@@ -28,7 +28,7 @@ def test_get_data_by_query() -> None:
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
             "itemDescription": {
                 "type": "literal",
-                "value": "German automobile manufacturer, and " "conglomerate",
+                "value": "German automobile manufacturer, and conglomerate",
                 "xml:lang": "en",
             },
             "itemLabel": {"type": "literal", "value": "BMW", "xml:lang": "en"},
@@ -72,7 +72,7 @@ def test_get_data_by_query_mocked(
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
             "itemDescription": {
                 "type": "literal",
-                "value": "German automobile manufacturer, and " "conglomerate",
+                "value": "German automobile manufacturer, and conglomerate",
                 "xml:lang": "en",
             },
             "itemLabel": {"type": "literal", "value": "BMW", "xml:lang": "en"},

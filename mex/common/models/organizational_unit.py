@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -59,8 +59,18 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "ExtractedOrganizationalUnit"
-    identifier: Annotated[ExtractedOrganizationalUnitIdentifier, Field(frozen=True)]
-    stableTargetId: MergedOrganizationalUnitIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedOrganizationalUnitIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedOrganizationalUnitIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):

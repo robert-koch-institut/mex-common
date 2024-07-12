@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -117,8 +117,18 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedDistribution"], Field(alias="$type", frozen=True)
     ] = "ExtractedDistribution"
-    identifier: Annotated[ExtractedDistributionIdentifier, Field(frozen=True)]
-    stableTargetId: MergedDistributionIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedDistributionIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedDistributionIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedDistributionIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
 class MergedDistribution(BaseDistribution, MergedItem):

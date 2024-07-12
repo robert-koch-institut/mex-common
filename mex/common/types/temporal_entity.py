@@ -279,7 +279,7 @@ class TemporalEntity:
         """Parse a date and assume the precision is days."""
         return datetime(value.year, value.month, value.day), TemporalEntityPrecision.DAY
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Return whether the given other value is the same as this one."""
         try:
             other = self.validate(other)
@@ -294,7 +294,7 @@ class TemporalEntity:
         try:
             other = self.validate(other)
         except TypeError:
-            raise NotImplementedError() from None
+            raise NotImplementedError from None
         return bool(self.date_time > other.date_time)
 
     def __str__(self) -> str:

@@ -8,6 +8,7 @@ from mex.common.types.identifier import (
     ExtractedBibliographicResourceIdentifier,
     ExtractedContactPointIdentifier,
     ExtractedDistributionIdentifier,
+    ExtractedIdentifier,
     ExtractedOrganizationalUnitIdentifier,
     ExtractedOrganizationIdentifier,
     ExtractedPersonIdentifier,
@@ -21,6 +22,7 @@ from mex.common.types.identifier import (
     MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
+    MergedIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -71,6 +73,7 @@ __all__ = (
     "AccessRestriction",
     "ActivityType",
     "AnonymizationPseudonymization",
+    "AnyExtractedIdentifier",
     "AnyMergedIdentifier",
     "AnyNestedModel",
     "AnyPrimitiveType",
@@ -85,6 +88,7 @@ __all__ = (
     "ExtractedBibliographicResourceIdentifier",
     "ExtractedContactPointIdentifier",
     "ExtractedDistributionIdentifier",
+    "ExtractedIdentifier",
     "ExtractedOrganizationalUnitIdentifier",
     "ExtractedOrganizationIdentifier",
     "ExtractedPersonIdentifier",
@@ -105,6 +109,7 @@ __all__ = (
     "MergedBibliographicResourceIdentifier",
     "MergedContactPointIdentifier",
     "MergedDistributionIdentifier",
+    "MergedIdentifier",
     "MergedOrganizationalUnitIdentifier",
     "MergedOrganizationIdentifier",
     "MergedPersonIdentifier",
@@ -149,6 +154,7 @@ NESTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyNestedModel]]] = {
 AnyMergedIdentifier = (
     MergedAccessPlatformIdentifier
     | MergedActivityIdentifier
+    | MergedBibliographicResourceIdentifier
     | MergedContactPointIdentifier
     | MergedDistributionIdentifier
     | MergedOrganizationalUnitIdentifier
@@ -169,6 +175,7 @@ MERGED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedIdentifier]]] =
 AnyExtractedIdentifier = (
     ExtractedAccessPlatformIdentifier
     | ExtractedActivityIdentifier
+    | ExtractedBibliographicResourceIdentifier
     | ExtractedContactPointIdentifier
     | ExtractedDistributionIdentifier
     | ExtractedOrganizationalUnitIdentifier

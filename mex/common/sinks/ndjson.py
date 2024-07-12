@@ -8,13 +8,13 @@ from mex.common.logging import echo, watch
 from mex.common.models import AnyExtractedModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
-from mex.common.types import Identifier
+from mex.common.types import AnyExtractedIdentifier
 
 
 @watch
 def write_ndjson(
     models: Iterable[AnyExtractedModel],
-) -> Generator[Identifier, None, None]:
+) -> Generator[AnyExtractedIdentifier, None, None]:
     """Write the incoming models into a new-line delimited JSON file.
 
     Args:
