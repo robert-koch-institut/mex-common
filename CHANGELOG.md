@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - get count of found wikidata organizations
 
+## [0.29.1] - 2024-07-15
+
 ## [0.29.0] - 2024-07-12
 
 ### Added
