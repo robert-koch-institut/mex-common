@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- get count of found wikidata organizations
-
 ### Changes
 
 ### Deprecated
@@ -21,7 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## [0.29.1] - 2024-07-15
+## [0.29.2] - 2024-07-16
+
+### Added
+
+- get count of found wikidata organizations
 
 ## [0.29.0] - 2024-07-12
 
