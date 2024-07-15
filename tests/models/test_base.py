@@ -109,7 +109,7 @@ def test_verify_computed_field_consistency() -> None:
         match="Input should be a valid dictionary, validating other types is not "
         "supported for models with computed fields.",
     ):
-        Computer.model_validate(computer)
+        Computer.model_validate('{"cpus": 1}')
 
     with pytest.raises(ValidationError, match="Cannot set computed fields"):
         Computer.model_validate({"cpus": 1})
