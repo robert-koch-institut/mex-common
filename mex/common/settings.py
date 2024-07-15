@@ -35,6 +35,7 @@ class BaseSettings(PydanticBaseSettings):
         env_prefix="mex_",
         env_file=".env",
         env_file_encoding="utf-8",
+        env_nested_delimiter="__",
         extra="ignore",
         validate_default=True,
         validate_assignment=True,
