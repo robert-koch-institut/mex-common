@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - improve typing for methods using `Self`
 - make local type variables private
+- BREAKING: ability to store different settings instances at the same time. Dependent
+    repositories now must bundle all settings in a single class.
 
 ### Deprecated
 
