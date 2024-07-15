@@ -89,13 +89,17 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
         Shelter(inhabitants="foo")  # type: ignore
 
 
-def test_verify_computed_field_consistency() -> None:
-    class Computer(BaseModel):
+class Computer(BaseModel):
 
-        @computed_field  # type: ignore[misc]
-        @property
-        def cpus(self) -> int:
-            return 42
+    ram: int = 16
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def cpus(self) -> int:
+        return 42
+
+
+def test_verify_computed_field_consistency() -> None:
 
     computer = Computer.model_validate({"cpus": 42})
     assert computer.cpus == 42
@@ -105,13 +109,26 @@ def test_verify_computed_field_consistency() -> None:
         match="Input should be a valid dictionary, validating other types is not "
         "supported for models with computed fields.",
     ):
-        Computer.model_validate(computer)
+        Computer.model_validate('{"cpus": 1}')
 
     with pytest.raises(ValidationError, match="Cannot set computed fields"):
         Computer.model_validate({"cpus": 1})
 
     with pytest.raises(ValidationError, match="Cannot set computed fields"):
         Computer(cpus=99)
+
+
+def test_field_assignment_on_model_with_computed_field() -> None:
+    computer = Computer()
+
+    # computed field cannot be set
+    with pytest.raises(
+        AttributeError, match="property 'cpus' of 'Computer' object has no setter"
+    ):
+        computer.cpus = 99
+
+    # non-computed field works as expected
+    computer.ram = 32
 
 
 class DummyBaseModel(BaseModel):

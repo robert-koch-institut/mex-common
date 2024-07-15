@@ -185,8 +185,15 @@ class BaseModel(PydanticBaseModel):
             data with consistent computed fields.
         """
         if not cls.model_computed_fields:
+            # no computed fields: exit early
+            return handler(data)
+        if isinstance(data, cls):
+            # data is a model instance: we can assume no computed field was set,
+            # because pydantic would throw an AttributeError if you tried
             return handler(data)
         if not isinstance(data, MutableMapping):
+            # data is not a dictionary: we can't "pop" values from that,
+            # so we can't safely do a before/after comparison
             raise AssertionError(
                 "Input should be a valid dictionary, validating other types is not "
                 "supported for models with computed fields."
