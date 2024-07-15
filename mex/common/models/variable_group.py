@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -43,8 +43,18 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "ExtractedVariableGroup"
-    identifier: Annotated[ExtractedVariableGroupIdentifier, Field(frozen=True)]
-    stableTargetId: MergedVariableGroupIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedVariableGroupIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedVariableGroupIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedVariableGroupIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedVariableGroupIdentifier)
 
 
 class MergedVariableGroup(BaseVariableGroup, MergedItem):

@@ -24,10 +24,10 @@ class DummyProvider(BaseProvider):
         pass
 
     def assign(self, *_: str) -> Identity:  # pragma: no cover
-        raise RuntimeError()
+        raise RuntimeError
 
     def fetch(self, **_: str | None) -> list[Identity]:  # pragma: no cover
-        raise RuntimeError()
+        raise RuntimeError
 
     def close(self) -> None:
         pass

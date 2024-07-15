@@ -36,10 +36,10 @@ def test_post_models_mocked(
     assert json.loads(mocked_send_request.call_args_list[-1].kwargs["data"]) == {
         "ExtractedPerson": [
             {
-                "identifier": "bFQoRhcVH5DH3i",
+                "identifier": "e3VhxMhEKyjqN5flzLpiEB",
                 "hadPrimarySource": "bFQoRhcVH5DHXE",
                 "identifierInPrimarySource": "00000000-0000-4000-8000-0000000003de",
-                "stableTargetId": "bFQoRhcVH5DH8y",
+                "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
                 "affiliation": ["bFQoRhcVH5DHZg"],
                 "email": ["TintzmannM@rki.de"],
                 "familyName": ["Tintzmann"],

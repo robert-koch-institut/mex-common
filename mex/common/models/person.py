@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -82,8 +82,18 @@ class ExtractedPerson(BasePerson, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedPerson"], Field(alias="$type", frozen=True)
     ] = "ExtractedPerson"
-    identifier: Annotated[ExtractedPersonIdentifier, Field(frozen=True)]
-    stableTargetId: MergedPersonIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedPersonIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedPersonIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedPersonIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedPersonIdentifier)
 
 
 class MergedPerson(BasePerson, MergedItem):

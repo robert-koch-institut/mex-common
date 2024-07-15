@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import Field, model_validator
 
 from mex.common.models import BaseModel
 
@@ -92,8 +92,6 @@ class Aliases(BaseModel):
 
 class WikidataOrganization(BaseModel):
     """Model class for Wikidata sources."""
-
-    model_config = ConfigDict(extra="ignore")
 
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels

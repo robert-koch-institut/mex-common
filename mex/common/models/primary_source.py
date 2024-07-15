@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -72,8 +72,18 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "ExtractedPrimarySource"
-    identifier: Annotated[ExtractedPrimarySourceIdentifier, Field(frozen=True)]
-    stableTargetId: MergedPrimarySourceIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedPrimarySourceIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedPrimarySourceIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedPrimarySourceIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedPrimarySourceIdentifier)
 
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from collections.abc import Generator
-from pathlib import Path
+from os import PathLike
 from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import numpy as np
@@ -14,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from mex.common.models import BaseModel
 
-ModelT = TypeVar("ModelT", bound="BaseModel")
+_BaseModelT = TypeVar("_BaseModelT", bound="BaseModel")
 
 PANDAS_DTYPE_MAP = defaultdict(
     lambda: "string",
@@ -38,11 +38,11 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
 
 
 def parse_csv(
-    path_or_buffer: Union[str, Path, "ReadCsvBuffer[Any]"],
-    into: type[ModelT],
+    path_or_buffer: Union[str, PathLike[str], "ReadCsvBuffer[Any]"],
+    into: type[_BaseModelT],
     chunksize: int = 10,
     **kwargs: Any,
-) -> Generator[ModelT, None, None]:
+) -> Generator[_BaseModelT, None, None]:
     """Parse a CSV file into an iterable of the given model type.
 
     Args:

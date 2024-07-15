@@ -1,11 +1,10 @@
 from enum import Enum
-from typing import Annotated, Any, Literal
+from typing import Any
 
 import pytest
-from pydantic import Field, ValidationError
+from pydantic import ValidationError, computed_field
 
-from mex.common.models import BaseModel, MergedItem
-from mex.common.types import Identifier
+from mex.common.models import BaseModel
 
 
 class ComplexDummyModel(BaseModel):
@@ -90,13 +89,38 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
         Shelter(inhabitants="foo")  # type: ignore
 
 
+def test_verify_computed_field_consistency() -> None:
+    class Computer(BaseModel):
+
+        @computed_field  # type: ignore[misc]
+        @property
+        def cpus(self) -> int:
+            return 42
+
+    computer = Computer.model_validate({"cpus": 42})
+    assert computer.cpus == 42
+
+    with pytest.raises(
+        ValidationError,
+        match="Input should be a valid dictionary, validating other types is not "
+        "supported for models with computed fields.",
+    ):
+        Computer.model_validate(computer)
+
+    with pytest.raises(ValidationError, match="Cannot set computed fields"):
+        Computer.model_validate({"cpus": 1})
+
+    with pytest.raises(ValidationError, match="Cannot set computed fields"):
+        Computer(cpus=99)
+
+
 class DummyBaseModel(BaseModel):
     foo: str | None = None
 
 
 def test_base_model_checksum() -> None:
     model_1 = DummyBaseModel()
-    assert model_1.checksum() == "69d67f58c6948849283e78d7b3f1a51e"
+    assert model_1.checksum() == "da8e081aa63fd2fd5b909dd86c6dfa6c"
 
     model_2 = DummyBaseModel(foo="bar")
     assert model_1.checksum() != model_2.checksum()
@@ -104,16 +128,4 @@ def test_base_model_checksum() -> None:
 
 def test_base_model_str() -> None:
     model = DummyBaseModel(foo="bar")
-    assert str(model) == "DummyBaseModel: ab794a793aad8fa45b0f85ac05ee2126"
-
-
-def test_mex_model_str() -> None:
-    class MergedDummy(MergedItem):
-        entityType: Annotated[
-            Literal["MergedDummy"], Field(alias="$type", frozen=True)
-        ] = "MergedDummy"
-        identifier: Identifier
-
-    model = MergedDummy(identifier=Identifier.generate(seed=99))
-
-    assert str(model) == "MergedDummy: bFQoRhcVH5DHV1"
+    assert str(model) == "DummyBaseModel: 94232c5b8fc9272f6f73a1e36eb68fcf"

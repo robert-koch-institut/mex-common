@@ -1,28 +1,26 @@
 import hashlib
-import pickle  # nosec
+import json
 from collections.abc import MutableMapping
 from functools import cache
 from types import UnionType
-from typing import (
-    Any,
-    TypeVar,
-    Union,
-)
+from typing import Any, Union
 
-from pydantic import BaseModel as PydanticBaseModel
+from pydantic import (
+    BaseModel as PydanticBaseModel,
+)
 from pydantic import (
     ConfigDict,
     TypeAdapter,
     ValidationError,
+    ValidatorFunctionWrapHandler,
     model_validator,
 )
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
 from mex.common.models.schema import JsonSchemaGenerator
+from mex.common.transform import MExEncoder
 from mex.common.utils import get_inner_types
-
-RawModelDataT = TypeVar("RawModelDataT")
 
 
 class BaseModel(PydanticBaseModel):
@@ -142,7 +140,7 @@ class BaseModel(PydanticBaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def fix_listyness(cls, data: RawModelDataT) -> RawModelDataT:
+    def fix_listyness(cls, data: Any) -> Any:
         """Adjust the listyness of to-be-parsed data to match the desired shape.
 
         If that data is a Mapping and the model defines a list[T] field but the raw data
@@ -156,7 +154,7 @@ class BaseModel(PydanticBaseModel):
         entry however, an error is raised, because we would not know which to choose.
 
         Args:
-            data: Raw data to be parsed
+            data: Raw data or instance to be parsed
 
         Returns:
             data with fixed list shapes
@@ -168,9 +166,46 @@ class BaseModel(PydanticBaseModel):
                     data[name] = cls._fix_value_listyness_for_field(field_name, value)
         return data
 
+    @model_validator(mode="wrap")
+    def verify_computed_field_consistency(
+        cls, data: Any, handler: ValidatorFunctionWrapHandler
+    ) -> Any:
+        """Validate that parsed values for computed fields are consistent.
+
+        Parsing a dictionary with a value for a computed field that is consistent with
+        what that field would have computed anyway is allowed. Omitting values for
+        computed fields is perfectly valid as well. However, if the parsed value is
+        different from the computed value, a validation error is raised.
+
+        Args:
+            data: Raw data or instance to be parsed
+            handler: Validator function wrap handler
+
+        Returns:
+            data with consistent computed fields.
+        """
+        if not cls.model_computed_fields:
+            return handler(data)
+        if not isinstance(data, MutableMapping):
+            raise AssertionError(
+                "Input should be a valid dictionary, validating other types is not "
+                "supported for models with computed fields."
+            )
+        custom_values = {
+            field: value
+            for field in cls.model_computed_fields
+            if (value := data.pop(field, None))
+        }
+        result = handler(data)
+        computed_values = result.model_dump(include=set(custom_values))
+        if computed_values != custom_values:
+            raise ValueError("Cannot set computed fields to custom values!")
+        return result
+
     def checksum(self) -> str:
         """Calculate md5 checksum for this model."""
-        return hashlib.md5(pickle.dumps(self)).hexdigest()  # noqa: S324
+        json_str = json.dumps(self, sort_keys=True, cls=MExEncoder)
+        return hashlib.md5(json_str.encode()).hexdigest()  # noqa: S324
 
     def __str__(self) -> str:
         """Format this model as a string for logging."""

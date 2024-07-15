@@ -17,7 +17,7 @@ from mex.common.ldap.models.person import LDAPPerson
 from mex.common.ldap.models.unit import LDAPUnit
 from mex.common.settings import BaseSettings
 
-ModelT = TypeVar("ModelT", bound=LDAPActor)
+_LDAPActorT = TypeVar("_LDAPActorT", bound=LDAPActor)
 
 
 class LDAPConnector(BaseConnector):
@@ -56,8 +56,8 @@ class LDAPConnector(BaseConnector):
         self._connection.__exit__(None, None, None)
 
     def _fetch(
-        self, model_cls: type[ModelT], /, **filters: str
-    ) -> Generator[ModelT, None, None]:
+        self, model_cls: type[_LDAPActorT], /, **filters: str
+    ) -> Generator[_LDAPActorT, None, None]:
         """Fetch all items that match the given filters and parse to given model.
 
         Args:
@@ -87,7 +87,10 @@ class LDAPConnector(BaseConnector):
         return list(entries)
 
     def get_functional_accounts(
-        self, mail: str = "*", sAMAccountName: str = "*", **filters: str  # noqa: N803
+        self,
+        mail: str = "*",
+        sAMAccountName: str = "*",  # noqa: N803
+        **filters: str,
     ) -> Generator[LDAPActor, None, None]:
         """Get LDAP functional accounts that match provided filters.
 
@@ -111,7 +114,11 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_persons(
-        self, surname: str = "*", given_name: str = "*", mail: str = "*", **filters: str
+        self,
+        surname: str = "*",
+        given_name: str = "*",
+        mail: str = "*",
+        **filters: str,
     ) -> Generator[LDAPPerson, None, None]:
         """Get LDAP persons that match the provided filters.
 
@@ -143,7 +150,10 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_units(
-        self, sAMAccountName: str = "*", mail: str = "*", **filters: str  # noqa: N803
+        self,
+        sAMAccountName: str = "*",  # noqa: N803
+        mail: str = "*",
+        **filters: str,
     ) -> Generator[LDAPUnit, None, None]:
         """Get LDAP units that match the provided filters.
 
@@ -164,7 +174,9 @@ class LDAPConnector(BaseConnector):
         )
 
     def get_functional_account(
-        self, objectGUID: str = "*", **filters: str  # noqa: N803
+        self,
+        objectGUID: str = "*",  # noqa: N803
+        **filters: str,
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
@@ -197,7 +209,10 @@ class LDAPConnector(BaseConnector):
         return functional_accounts[0]
 
     def get_person(
-        self, objectGUID: str = "*", employeeID: str = "*", **filters: str  # noqa: N803
+        self,
+        objectGUID: str = "*",  # noqa: N803
+        employeeID: str = "*",  # noqa: N803
+        **filters: str,
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 
