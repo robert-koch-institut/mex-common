@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -92,8 +92,18 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "ExtractedAccessPlatform"
-    identifier: Annotated[ExtractedAccessPlatformIdentifier, Field(frozen=True)]
-    stableTargetId: MergedAccessPlatformIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedAccessPlatformIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedAccessPlatformIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedAccessPlatformIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedAccessPlatformIdentifier)
 
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):

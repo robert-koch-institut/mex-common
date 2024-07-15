@@ -25,7 +25,7 @@ def transform_organigram_units_to_organizational_units(
     parent_id_in_primary_source_by_id_in_primary_source: dict[str, str] = {}
 
     for unit in units:
-        extracted_unit = ExtractedOrganizationalUnit(  # type: ignore[call-arg]
+        extracted_unit = ExtractedOrganizationalUnit(
             identifierInPrimarySource=unit.identifier,
             hadPrimarySource=primary_source.stableTargetId,
             alternativeName=unit.alternativeName if unit.alternativeName else [],
@@ -48,7 +48,14 @@ def transform_organigram_units_to_organizational_units(
             if parent_unit := extracted_unit_by_id_in_primary_source.get(
                 parent_identifier_in_primary_source
             ):
-                extracted_unit.parentUnit = MergedOrganizationalUnitIdentifier(
-                    parent_unit.stableTargetId
+                # Create a copy, because extracted data instances are immutable
+                # because of `BaseEntity.verify_computed_field_consistency`
+                extracted_unit = ExtractedOrganizationalUnit.model_validate(
+                    {
+                        **extracted_unit.model_dump(),
+                        "parentUnit": MergedOrganizationalUnitIdentifier(
+                            parent_unit.stableTargetId
+                        ),
+                    }
                 )
         yield extracted_unit

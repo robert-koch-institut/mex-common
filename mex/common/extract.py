@@ -1,6 +1,6 @@
 from collections import defaultdict
 from collections.abc import Generator
-from pathlib import Path
+from os import PathLike
 from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import numpy as np
@@ -38,7 +38,7 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
 
 
 def parse_csv(
-    path_or_buffer: Union[str, Path, "ReadCsvBuffer[Any]"],
+    path_or_buffer: Union[str, PathLike[str], "ReadCsvBuffer[Any]"],
     into: type[_BaseModelT],
     chunksize: int = 10,
     **kwargs: Any,

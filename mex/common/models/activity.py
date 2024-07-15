@@ -5,7 +5,7 @@ This may be a project, an area of work or an administrative procedure.
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
@@ -97,8 +97,18 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedActivity"], Field(alias="$type", frozen=True)
     ] = "ExtractedActivity"
-    identifier: Annotated[ExtractedActivityIdentifier, Field(frozen=True)]
-    stableTargetId: MergedActivityIdentifier
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def identifier(self) -> ExtractedActivityIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedActivityIdentifier)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def stableTargetId(self) -> MergedActivityIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedActivityIdentifier)
 
 
 class MergedActivity(BaseActivity, MergedItem):
