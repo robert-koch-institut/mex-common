@@ -12,6 +12,7 @@ from mex.common.wikidata.connector import (
 )
 from mex.common.wikidata.extract import (
     _get_organization_details,
+    get_count_of_found_organizations_by_label,
     search_organization_by_label,
     search_organizations_by_label,
 )
@@ -47,6 +48,16 @@ def test_search_organizations_by_label() -> None:
     assert len(search_result) == 3
     assert search_result[0].identifier == identifier
     assert search_result[0].labels.model_dump() == labels
+
+
+@pytest.mark.integration
+def test_get_count_of_found_organizations_by_label() -> None:
+    total_found_orgs = get_count_of_found_organizations_by_label(
+        item_label='Robert Koch Institute"',
+        lang=TextLanguage.EN,
+    )
+
+    assert total_found_orgs == 3
 
 
 @pytest.mark.integration
@@ -390,6 +401,38 @@ def test_search_organizations_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
 
     assert len(search_result) == 3
     assert search_result[0].model_dump() == expected_organization
+
+
+@pytest.mark.usefixtures(
+    "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
+)
+def test_get_count_of_found_organizations_by_label_mocked(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    expected_query_response = [
+        {
+            "count": {
+                "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                "type": "literal",
+                "value": "3",
+            }
+        }
+    ]
+
+    def mocked_query_response() -> list[dict[str, dict[str, str]]]:
+        return expected_query_response
+
+    monkeypatch.setattr(
+        WikidataQueryServiceConnector,
+        "get_data_by_query",
+        lambda self, _: mocked_query_response(),
+    )
+
+    search_result = get_count_of_found_organizations_by_label(
+        item_label="TEST", lang=TextLanguage.EN
+    )
+
+    assert search_result == 3
 
 
 @pytest.mark.integration
