@@ -53,11 +53,11 @@ def get_count_of_found_organizations_by_label(
     """Get total count of searched organizations in wikidata.
 
     Args:
-        item_label: Item title or label to be searched
+        item_label: Item title or label to be counted
         lang: language of the label. Example: en, de
 
     Returns:
-        list of WikidataOrganization
+        count of found organization
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
