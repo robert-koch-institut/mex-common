@@ -57,7 +57,7 @@ def get_count_of_found_organizations_by_label(
         lang: language of the label. Example: en, de
 
     Returns:
-        count of found organization
+        count of found organizations
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
