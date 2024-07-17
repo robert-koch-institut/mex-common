@@ -46,6 +46,42 @@ def search_organization_by_label(
     return _get_organization_details(wd_item_id)
 
 
+def get_count_of_found_organizations_by_label(
+    item_label: str,
+    lang: TextLanguage,
+) -> int:
+    """Get total count of searched organizations in wikidata.
+
+    Args:
+        item_label: Item title or label to be counted
+        lang: language of the label. Example: en, de
+
+    Returns:
+        count of found organizations
+    """
+    connector = WikidataQueryServiceConnector.get()
+    item_label = item_label.replace('"', "")
+    query_string_new = (
+        "SELECT (COUNT(distinct ?item) AS ?count) "
+        "WHERE { "
+        "SERVICE wikibase:mwapi { "
+        'bd:serviceParam wikibase:api "EntitySearch" . '
+        'bd:serviceParam wikibase:endpoint "www.wikidata.org" . '
+        f'bd:serviceParam mwapi:search "{item_label}" . '
+        f'bd:serviceParam mwapi:language "{lang}" . '
+        "?item wikibase:apiOutputItem mwapi:item . "
+        "?num wikibase:apiOrdinal true . "
+        "} "
+        "?item (wdt:P31/wdt:P8225*/wdt:P279*) wd:Q43229. "
+        'SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". } '  # noqa: E501
+        "} "
+        "ORDER BY ASC(?num) "
+    )
+
+    result = connector.get_data_by_query(query_string_new)
+    return int(result[0]["count"]["value"])
+
+
 def search_organizations_by_label(
     item_label: str,
     offset: int,
