@@ -15,7 +15,7 @@ def test_single_singleton_store() -> None:
     store = SingleSingletonStore["Parent"]()
     parent = store.load(Parent)
 
-    with pytest.raises(TypeError, match="is not a parent class of loaded class"):
+    with pytest.raises(RuntimeError, match="is not a parent class of loaded class"):
         store.load(Child)
 
     assert parent is store.load(Parent)

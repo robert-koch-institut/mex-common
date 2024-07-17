@@ -51,7 +51,7 @@ class SingleSingletonStore(Generic[_SingletonT]):
             self._singleton = cls()
             return self._singleton
         if not issubclass(type(self._singleton), cls):
-            raise TypeError(
+            raise RuntimeError(
                 f"requested class ({cls}) is not a parent class of loaded class "
                 f"({type(self._singleton)}). "
                 f"Did you initialize {cls} upon startup?"
