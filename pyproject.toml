@@ -17,7 +17,7 @@ dependencies = [
     "pandas==2.2.2",
     "pyarrow==16.1.0",
     "pydantic-settings==2.3.4",
-    "pydantic==2.7.4",
+    "pydantic==2.8.2",
     "requests==2.32.3",
 ]
 optional-dependencies.dev = [
