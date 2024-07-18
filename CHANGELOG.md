@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.31.0] - 2024-07-17
+
+### Removed
+- BREAKING: ability to store different settings instances at the same time. Dependent
+    repositories now must bundle all settings in a single class.
+
+## [0.30.0] - 2024-07-16
+
+### Added
+
+- get count of found wikidata organizations
+
 ## [0.29.1] - 2024-07-15
 
 ## [0.29.0] - 2024-07-12
