@@ -63,11 +63,17 @@ def parse_csv(
                 row.replace(regex=r"^\s*$", value=None, inplace=True)
                 try:
                     model = into.model_validate(row.to_dict())
-                    logger.info(f"parse_csv - {into.__name__} {index} OK")
+                    logger.info(
+                        "parse_csv - %s %s - OK",
+                        into.__name__,
+                        index,
+                    )
                     yield model
                 except ValidationError as error:
                     logger.error(
-                        f"parse_csv - {into.__name__} {index} "
-                        f"{error.__class__.__name__} "
-                        f"Errors: {error.errors()}"
+                        "parse_csv - %s %s - %s - %s",
+                        into.__name__,
+                        index,
+                        error.__class__.__name__,
+                        error.errors(),
                     )

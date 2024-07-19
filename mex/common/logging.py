@@ -53,9 +53,8 @@ def watch(
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
-        fname = func.__name__
         for item in func(*args, **kwargs):
-            logger.info(f"{fname} - {item}")
+            logger.info("%s - %s", func.__name__, item)
             yield item
 
     return wrapper
