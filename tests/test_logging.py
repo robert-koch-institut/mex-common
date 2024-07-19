@@ -5,7 +5,7 @@ from uuid import UUID
 from pytest import LogCaptureFixture
 
 from mex.common.exceptions import MExError
-from mex.common.logging import echo, watch
+from mex.common.logging import watch
 
 
 def test_watch(caplog: LogCaptureFixture) -> None:
@@ -28,11 +28,3 @@ def test_watch(caplog: LogCaptureFixture) -> None:
     assert "dummy_generator - foo" in str_line
     assert "dummy_generator - 00000000-0000-4000-8000-000000000010" in uuid_line
     assert "dummy_generator - MExError: foo, 42" in error_line
-
-
-def test_echo(caplog: LogCaptureFixture) -> None:
-    # echo while capturing logs
-    with caplog.at_level(logging.INFO, logger="mex"):
-        echo("This is going well")
-
-    assert "This is going well" in caplog.text

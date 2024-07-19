@@ -35,6 +35,7 @@ LOGGING_CONFIG: dict[str, Any] = {
 }
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("mex")
+echo = logger.info  # `echo` is deprecated, use the logger directly instead
 
 
 def watch(
@@ -54,17 +55,7 @@ def watch(
     def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
         fname = func.__name__
         for item in func(*args, **kwargs):
-            echo(f"{fname} - {item}")
+            logger.info(f"{fname} - {item}")
             yield item
 
     return wrapper
-
-
-def echo(text: str | bytes, **styles: Any) -> None:
-    """Echo the given text with the given styles and the current timestamp prefix.
-
-    Args:
-        text: Text to print to the console
-        styles: Keyword parameters to be passed to `click.style`
-    """
-    logger.info(text)
