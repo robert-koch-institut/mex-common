@@ -38,7 +38,9 @@ def write_ndjson(
                 writer = open(file_name, "a+", encoding="utf-8")
                 file_handles[class_name] = handle = stack.enter_context(writer)
                 logger.info(
-                    f"[writing {class_name} to file] {file_name.as_posix()}",
+                    "write_ndjson - writing %s to file %s",
+                    class_name,
+                    file_name.as_posix(),
                 )
 
             json.dump(model, handle, sort_keys=True, cls=MExEncoder)
