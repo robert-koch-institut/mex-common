@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from pydantic import ValidationError
 
-from mex.common.logging import echo
+from mex.common.logging import logger
 
 if TYPE_CHECKING:  # pragma: no cover
     from pandas._typing import Dtype, ReadCsvBuffer
@@ -63,12 +63,11 @@ def parse_csv(
                 row.replace(regex=r"^\s*$", value=None, inplace=True)
                 try:
                     model = into.model_validate(row.to_dict())
-                    echo(f"[parse csv] {into.__name__} {index} OK")
+                    logger.info(f"parse_csv - {into.__name__} {index} OK")
                     yield model
                 except ValidationError as error:
-                    echo(
-                        f"[parse csv] {into.__name__} {index} "
+                    logger.error(
+                        f"parse_csv - {into.__name__} {index} "
                         f"{error.__class__.__name__} "
-                        f"Errors: {error.errors()}",
-                        fg="red",
+                        f"Errors: {error.errors()}"
                     )

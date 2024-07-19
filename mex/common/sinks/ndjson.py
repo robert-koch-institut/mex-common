@@ -4,7 +4,7 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import IO, Any
 
-from mex.common.logging import echo, watch
+from mex.common.logging import logger, watch
 from mex.common.models import AnyExtractedModel
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
@@ -37,9 +37,8 @@ def write_ndjson(
                 file_name = Path(settings.work_dir, f"{class_name}.ndjson")
                 writer = open(file_name, "a+", encoding="utf-8")
                 file_handles[class_name] = handle = stack.enter_context(writer)
-                echo(
+                logger.info(
                     f"[writing {class_name} to file] {file_name.as_posix()}",
-                    fg="green",
                 )
 
             json.dump(model, handle, sort_keys=True, cls=MExEncoder)

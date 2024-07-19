@@ -15,7 +15,7 @@ from click.exceptions import Abort, Exit
 from pydantic.fields import FieldInfo
 
 from mex.common.connector import CONNECTOR_STORE
-from mex.common.logging import echo, logger
+from mex.common.logging import logger
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.transform import MExEncoder
 
@@ -145,11 +145,11 @@ def _callback(
             pdb.post_mortem(sys.exc_info()[2])
             raise error
         # if not in debug mode, exit with code 1.
-        echo("exit", fg="red")
+        logger.error("exit")
         context.exit(1)
 
     # all good, exit with code 0.
-    echo("done", fg="green")
+    logger.info("done")
     context.exit(0)
 
 
