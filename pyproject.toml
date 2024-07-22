@@ -89,7 +89,11 @@ markers = "integration: mark a test as integration test"
 
 [tool.ruff]
 fix = true
+line-length = 88
 show-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
 
 [tool.ruff.lint]
 ignore = [
