@@ -125,7 +125,7 @@ class BaseModel(PydanticBaseModel):
         """Build a cached list of fields can be set to None."""
         field_names: list[str] = []
         for field_name, field_info in cls.get_all_fields().items():
-            validator = TypeAdapter(field_info.annotation)  # type: ignore[var-annotated]
+            validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
             try:
                 validator.validate_python(None)
             except ValidationError:
