@@ -93,13 +93,13 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
         Literal["ExtractedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "ExtractedAccessPlatform"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedAccessPlatformIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedAccessPlatformIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedAccessPlatformIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""

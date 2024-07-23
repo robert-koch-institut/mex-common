@@ -83,13 +83,13 @@ class ExtractedPerson(BasePerson, ExtractedData):
         Literal["ExtractedPerson"], Field(alias="$type", frozen=True)
     ] = "ExtractedPerson"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedPersonIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedPersonIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedPersonIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""

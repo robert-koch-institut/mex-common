@@ -45,13 +45,13 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
         Literal["ExtractedContactPoint"], Field(alias="$type", frozen=True)
     ] = "ExtractedContactPoint"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedContactPointIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedContactPointIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedContactPointIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""

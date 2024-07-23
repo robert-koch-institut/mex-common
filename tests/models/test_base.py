@@ -15,7 +15,7 @@ class ComplexDummyModel(BaseModel):
     optional_list: list[str] | None = None
     required_list: list[str] = []
 
-    @computed_field(alias="computedInt")  # type: ignore[misc]
+    @computed_field(alias="computedInt")  # type: ignore[prop-decorator]
     @property
     def computed_int(self) -> int:
         return 42
@@ -131,7 +131,7 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
 class Computer(BaseModel):
     ram: int = 16
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def cpus(self) -> int:
         return 42
