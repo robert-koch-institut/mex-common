@@ -17,7 +17,7 @@ dependencies = [
     "pandas==2.2.2",
     "pyarrow==16.1.0",
     "pydantic-settings==2.3.4",
-    "pydantic==2.7.4",
+    "pydantic==2.8.2",
     "requests==2.32.3",
 ]
 optional-dependencies.dev = [
@@ -29,11 +29,11 @@ optional-dependencies.dev = [
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
     "pytest==8.2.2",
-    "ruff==0.5.1",
+    "ruff==0.5.2",
     "sphinx==7.3.7",
     "types-ldap3==2.9.13.20240205",
     "types-pytz==2024.1.0.20240417",
-    "types-requests==2.32.0.20240622",
+    "types-requests==2.32.0.20240712",
 ]
 
 [tool.cruft]
@@ -89,7 +89,11 @@ markers = "integration: mark a test as integration test"
 
 [tool.ruff]
 fix = true
+line-length = 88
 show-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
 
 [tool.ruff.lint]
 ignore = [
