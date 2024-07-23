@@ -98,13 +98,13 @@ class ExtractedActivity(BaseActivity, ExtractedData):
         Literal["ExtractedActivity"], Field(alias="$type", frozen=True)
     ] = "ExtractedActivity"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedActivityIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedActivityIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedActivityIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
