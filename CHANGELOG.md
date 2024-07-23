@@ -11,19 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.32.0] - 2024-07-23
+
+### Changes
+
 - move log timestamp and coloring into the formatter
 
 ### Deprecated
 
 - `mex.common.logging.echo` is deprecated in favor of `logging.info`
 
-### Removed
-
 ### Fixed
 
 - add missing listyness-fix support for computed-fields
-
-### Security
 
 ## [0.31.0] - 2024-07-17
 
