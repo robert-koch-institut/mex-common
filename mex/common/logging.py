@@ -1,7 +1,6 @@
 import logging
 import logging.config
 from collections.abc import Callable, Generator
-from datetime import datetime
 from functools import wraps
 from typing import Any, TypeVar
 
@@ -14,7 +13,8 @@ LOGGING_CONFIG: dict[str, Any] = {
     "disable_existing_loggers": False,
     "formatters": {
         "default": {
-            "format": "%(message)s",
+            "format": f"{click.style('%(asctime)s', fg='bright_yellow')}"
+            " - mex - %(message)s",
         }
     },
     "handlers": {
@@ -35,6 +35,7 @@ LOGGING_CONFIG: dict[str, Any] = {
 }
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("mex")
+echo = logger.info  # `echo` is deprecated, use the logger directly instead
 
 
 def watch(
@@ -52,25 +53,8 @@ def watch(
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
-        fname = func.__name__.replace("_", " ")
         for item in func(*args, **kwargs):
-            echo(f"[{fname}] {item}")
+            logger.info("%s - %s", func.__name__, item)
             yield item
 
     return wrapper
-
-
-def get_ts(ts: datetime | None = None) -> str:
-    """Get a styled timestamp tag for prefixing log messages."""
-    return click.style(f"[{ts or datetime.now()}]", fg="bright_yellow")
-
-
-def echo(text: str | bytes, ts: datetime | None = None, **styles: Any) -> None:
-    """Echo the given text with the given styles and the current timestamp prefix.
-
-    Args:
-        text: Text to print to the console
-        ts: Timestamp to print as prefix, defaults to `now()`
-        styles: Keyword parameters to be passed to `click.style`
-    """
-    logger.info(f"{get_ts(ts)} {click.style(text, **styles)}")

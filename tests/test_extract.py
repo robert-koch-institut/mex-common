@@ -45,5 +45,5 @@ false,"bad row",,,
     }
     assert len(caplog.text.splitlines()) == 2
     good_row_log, bad_row_log = caplog.text.splitlines()
-    assert "[parse csv] DummyModel 0 OK" in good_row_log
-    assert "[parse csv] DummyModel 1 ValidationError" in bad_row_log
+    assert "parse_csv - DummyModel 0 - OK" in good_row_log
+    assert "parse_csv - DummyModel 1 - ValidationError" in bad_row_log
