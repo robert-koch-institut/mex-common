@@ -21,16 +21,15 @@ dependencies = [
     "requests==2.32.3",
 ]
 optional-dependencies.dev = [
-    "black==24.4.2",
     "ipdb==0.13.13",
-    "mypy==1.10.1",
+    "mypy==1.11.0",
     "pandas-stubs==2.2.2.240603",
     "pytest-cov==5.0.0",
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
-    "pytest==8.2.2",
-    "ruff==0.5.2",
-    "sphinx==7.3.7",
+    "pytest==8.3.1",
+    "ruff==0.5.4",
+    "sphinx==7.4.0",
     "types-ldap3==2.9.13.20240205",
     "types-pytz==2024.1.0.20240417",
     "types-requests==2.32.0.20240712",
@@ -147,5 +146,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend==2.3.2"]
+requires = ["pdm-backend==2.3.3"]
 build-backend = "pdm.backend"
