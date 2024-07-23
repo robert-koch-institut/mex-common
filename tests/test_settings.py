@@ -61,7 +61,6 @@ def test_parse_env_file() -> None:
 
 
 def test_resolve_paths() -> None:
-
     class SubModel(BaseModel):
         sub_model_path: WorkPath
 

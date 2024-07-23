@@ -90,7 +90,6 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
 
 
 class Computer(BaseModel):
-
     ram: int = 16
 
     @computed_field  # type: ignore[misc]
@@ -100,7 +99,6 @@ class Computer(BaseModel):
 
 
 def test_verify_computed_field_consistency() -> None:
-
     computer = Computer.model_validate({"cpus": 42})
     assert computer.cpus == 42
 
