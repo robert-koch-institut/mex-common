@@ -233,13 +233,13 @@ class ExtractedResource(BaseResource, ExtractedData):
         Literal["ExtractedResource"], Field(alias="$type", frozen=True)
     ] = "ExtractedResource"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedResourceIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedResourceIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedResourceIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""
