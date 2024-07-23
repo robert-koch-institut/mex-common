@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- add missing listyness-fix support for computed-fields
+
 ### Security
 
 ## [0.31.0] - 2024-07-17
