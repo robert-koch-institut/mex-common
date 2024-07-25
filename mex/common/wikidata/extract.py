@@ -25,7 +25,7 @@ def search_organization_by_label(
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
-    query_string_new = (
+    query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
         "WHERE { "
         "SERVICE wikibase:mwapi { "
@@ -43,7 +43,7 @@ def search_organization_by_label(
         "LIMIT 1 "
     )
 
-    results = connector.get_data_by_query(query_string_new)
+    results = connector.get_data_by_query(query_string)
 
     if not results:
         return None
@@ -71,7 +71,7 @@ def get_count_of_found_organizations_by_label(
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
-    query_string_new = (
+    query_string = (
         "SELECT (COUNT(distinct ?item) AS ?count) "
         "WHERE { "
         "SERVICE wikibase:mwapi { "
@@ -88,7 +88,7 @@ def get_count_of_found_organizations_by_label(
         "ORDER BY ASC(?num) "
     )
 
-    result = connector.get_data_by_query(query_string_new)
+    result = connector.get_data_by_query(query_string)
     return int(result[0]["count"]["value"])
 
 
@@ -111,7 +111,7 @@ def search_organizations_by_label(
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
-    query_string_new = (
+    query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
         "WHERE { "
         "SERVICE wikibase:mwapi { "
@@ -130,7 +130,7 @@ def search_organizations_by_label(
         f"LIMIT {limit} "
     )
 
-    results = connector.get_data_by_query(query_string_new)
+    results = connector.get_data_by_query(query_string)
     for item in results:
         try:
             wd_item_id = item["item"]["value"].split("/")[-1]
