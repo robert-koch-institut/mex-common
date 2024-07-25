@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - wikidata search organization request query update with optional language parameter
+  wikidata query search can be enhanced by specifying the language.
+  EN is the default language.
 
 ### Deprecated
 
