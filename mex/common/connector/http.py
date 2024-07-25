@@ -74,9 +74,8 @@ class HTTPConnector(BaseConnector):
         else:
             url = self.url
         kwargs.setdefault("timeout", self.TIMEOUT)
-        kwargs.setdefault(
-            "headers", {"User-Agent": "rki/mex", "Api-User-Agent": "rki/mex"}
-        )
+        if not kwargs.get("headers"):
+            kwargs.setdefault("headers", {})
         kwargs["headers"].setdefault("Accept", "application/json")
 
         if payload:

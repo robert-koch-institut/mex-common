@@ -29,8 +29,9 @@ class WikidataQueryServiceConnector(HTTPConnector):
             list: list of all items found
         """
         params = {"format": "json", "query": query}
+        headers = {"User-Agent": "rki/mex", "Api-User-Agent": "rki/mex"}
 
-        results = self.request("GET", params=params)
+        results = self.request("GET", params=params, headers=headers)
 
         return results["results"]["bindings"]  # type: ignore
 
@@ -77,6 +78,7 @@ class WikidataAPIConnector(HTTPConnector):
             ),
             "formatversion": "2",
         }
+        headers = {"User-Agent": "rki/mex", "Api-User-Agent": "rki/mex"}
 
-        results = self.request("GET", params=params)
+        results = self.request("GET", params=params, headers=headers)
         return results["entities"][item_id]  # type: ignore
