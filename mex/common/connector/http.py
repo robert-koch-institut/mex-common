@@ -74,7 +74,9 @@ class HTTPConnector(BaseConnector):
         else:
             url = self.url
         kwargs.setdefault("timeout", self.TIMEOUT)
-        kwargs.setdefault("headers", {})
+        kwargs.setdefault(
+            "headers", {"User-Agent": "rki/mex", "Api-User-Agent": "rki/mex"}
+        )
         kwargs["headers"].setdefault("Accept", "application/json")
 
         if payload:
@@ -104,6 +106,11 @@ class HTTPConnector(BaseConnector):
     @backoff.on_predicate(
         backoff.fibo,
         lambda response: cast(Response, response).status_code == 429,
+        max_tries=10,
+    )
+    @backoff.on_predicate(
+        backoff.fibo,
+        lambda response: cast(Response, response).status_code == 403,
         max_tries=10,
     )
     @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)

@@ -11,11 +11,13 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 
 def search_organization_by_label(
     item_label: str,
+    lang: TextLanguage = TextLanguage.EN,
 ) -> WikidataOrganization | None:
     """Search for an item in wikidata. Only organizations are fetched.
 
     Args:
         item_label: Item title or label to be searched
+        lang: lang in which item should be searched. Default: TextLanguage.EN
 
     Returns:
         WikidataOrganization if only one organization is found
@@ -23,19 +25,27 @@ def search_organization_by_label(
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
-    query_string = (
+    query_string_new = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
-        "WHERE{"
-        "?item (wdt:P31/wdt:P8225*/wdt:P279*) wd:Q43229."
-        f'?item ?label "{item_label}"@en.'
-        "?article schema:about ?item ."
-        'SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }'
-        "}"
+        "WHERE { "
+        "SERVICE wikibase:mwapi { "
+        'bd:serviceParam wikibase:api "EntitySearch" . '
+        'bd:serviceParam wikibase:endpoint "www.wikidata.org" . '
+        f'bd:serviceParam mwapi:search "{item_label}" . '
+        f'bd:serviceParam mwapi:language "{lang}" . '
+        "?item wikibase:apiOutputItem mwapi:item . "
+        "?num wikibase:apiOrdinal true . "
+        "} "
+        "?item (wdt:P31/wdt:P8225*/wdt:P279*) wd:Q43229. "
+        'SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". } '  # noqa: E501
+        "} "
+        "ORDER BY ASC(?num) "
+        "LIMIT 1 "
     )
 
-    results = connector.get_data_by_query(query_string)
+    results = connector.get_data_by_query(query_string_new)
 
-    if len(results) != 1:
+    if not results:
         return None
 
     try:
