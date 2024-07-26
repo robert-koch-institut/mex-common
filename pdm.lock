@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:65e5bcf3091fdf1436e5f44c3279cb42b580bae371568d85a775147845628549"
+content_hash = "sha256:17aa598a5999bbb0aa1751d74f68fc639f56e5bbf28f2a262d197e8786ce0515"
 
 [[metadata.targets]]
 requires_python = ">=3.11,<3.13"
@@ -147,7 +147,7 @@ version = "0.4.6"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 summary = "Cross-platform colored terminal text."
 groups = ["default", "dev"]
-marker = "sys_platform == \"win32\" or platform_system == \"Windows\""
+marker = "platform_system == \"Windows\" or sys_platform == \"win32\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
@@ -937,7 +937,7 @@ files = [
 
 [[package]]
 name = "sphinx"
-version = "7.4.5"
+version = "7.4.6"
 requires_python = ">=3.9"
 summary = "Python documentation generator"
 groups = ["dev"]
@@ -962,8 +962,8 @@ dependencies = [
     "tomli>=2; python_version < \"3.11\"",
 ]
 files = [
-    {file = "sphinx-7.4.5-py3-none-any.whl", hash = "sha256:9f135d8c1d277db67be514be579c4c4a26c8c0e962219aaca5a721b04bd6d0d8"},
-    {file = "sphinx-7.4.5.tar.gz", hash = "sha256:a4abe5385bf856df094c1e6cadf24a2351b12057be3670b99a12c05a01d209f5"},
+    {file = "sphinx-7.4.6-py3-none-any.whl", hash = "sha256:915760d6188288a1e30c2cd0d9fa31b1b009bc6e6019cc0c32d16c77d20e86d9"},
+    {file = "sphinx-7.4.6.tar.gz", hash = "sha256:116918d455c493fff3178edea12b4fe1c1e4894680fd81e7b7431ea21d47ca52"},
 ]
 
 [[package]]
