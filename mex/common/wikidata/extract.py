@@ -13,15 +13,15 @@ def search_organization_by_label(
     item_label: str,
     lang: TextLanguage = TextLanguage.EN,
 ) -> WikidataOrganization | None:
-    """Search for an item in wikidata. Only organizations are fetched.
+    """Search for an item in wikidata. Only organizations are searched.
 
     Args:
         item_label: Item title or label to be searched
         lang: lang in which item should be searched. Default: TextLanguage.EN
 
     Returns:
-        WikidataOrganization if only one organization is found
-        None if no or multiple organizations are found
+        WikidataOrganization if organization is found
+        None if no organization is found
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
