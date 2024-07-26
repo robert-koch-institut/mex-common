@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError, computed_field
 
-from mex.common.models import BaseModel
+from mex.common.models import BaseModel, GenericFieldInfo
 
 
 class ComplexDummyModel(BaseModel):
@@ -15,18 +15,33 @@ class ComplexDummyModel(BaseModel):
     optional_list: list[str] | None = None
     required_list: list[str] = []
 
+    @computed_field(alias="computedInt")  # type: ignore[prop-decorator]
+    @property
+    def computed_int(self) -> int:
+        return 42
 
-def test_get_field_names_allowing_none() -> None:
-    assert ComplexDummyModel._get_field_names_allowing_none() == [
-        "optional_str",
-        "optional_list",
-    ]
+
+def test_get_alias_lookup() -> None:
+    assert ComplexDummyModel._get_alias_lookup() == {
+        "optional_str": "optional_str",
+        "required_str": "required_str",
+        "optional_list": "optional_list",
+        "required_list": "required_list",
+        "computedInt": "computed_int",
+    }
 
 
 def test_get_list_field_names() -> None:
     assert ComplexDummyModel._get_list_field_names() == [
         "optional_list",
         "required_list",
+    ]
+
+
+def test_get_field_names_allowing_none() -> None:
+    assert ComplexDummyModel._get_field_names_allowing_none() == [
+        "optional_str",
+        "optional_list",
     ]
 
 
@@ -62,6 +77,28 @@ class Animal(Enum):
         ({"optional_list": "value"}, {"optional_list": ["value"]}),
         ({"required_list": None}, {"required_list": []}),
         ({"required_list": "value"}, {"required_list": ["value"]}),
+        ({"computed_int": 42}, {"computed_int": 42}),
+        ({"computed_int": [42]}, {"computed_int": 42}),
+        (
+            {"computed_int": 9999999},
+            "Cannot set computed fields to custom values! [type=value_error, "
+            "input_value={}, input_type=dict]",
+        ),
+    ],
+    ids=[
+        "empty list as optional single",
+        "None in list as optional single",
+        "string in list as optional single",
+        "empty list as required single",
+        "None in list as required single",
+        "strings in list as required single",
+        "None as optional list",
+        "string as optional list",
+        "None as required list",
+        "string as required list",
+        "correct int as computed single",
+        "correct int in list as computed single",
+        "false int as computed single",
     ],
 )
 def test_base_model_listyness_fix(
@@ -72,7 +109,9 @@ def test_base_model_listyness_fix(
     except Exception as error:
         assert str(expected) in str(error)
     else:
-        assert model.model_dump(exclude_unset=True) == expected
+        actual = model.model_dump()
+        for key, value in expected.items():
+            assert actual[key] == value
 
 
 def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
@@ -90,17 +129,15 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
 
 
 class Computer(BaseModel):
-
     ram: int = 16
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def cpus(self) -> int:
         return 42
 
 
 def test_verify_computed_field_consistency() -> None:
-
     computer = Computer.model_validate({"cpus": 42})
     assert computer.cpus == 42
 
@@ -129,6 +166,13 @@ def test_field_assignment_on_model_with_computed_field() -> None:
 
     # non-computed field works as expected
     computer.ram = 32
+
+
+def test_get_all_fields_on_model_with_computed_field() -> None:
+    assert Computer.get_all_fields() == {
+        "cpus": GenericFieldInfo(alias=None, annotation=int, frozen=True),
+        "ram": GenericFieldInfo(alias=None, annotation=int, frozen=False),
+    }
 
 
 class DummyBaseModel(BaseModel):

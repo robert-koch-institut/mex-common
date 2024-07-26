@@ -1,13 +1,12 @@
 import hashlib
 import json
 from collections.abc import MutableMapping
+from dataclasses import dataclass
 from functools import cache
 from types import UnionType
 from typing import Any, Union
 
-from pydantic import (
-    BaseModel as PydanticBaseModel,
-)
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import (
     ConfigDict,
     TypeAdapter,
@@ -23,6 +22,15 @@ from mex.common.transform import MExEncoder
 from mex.common.utils import get_inner_types
 
 
+@dataclass
+class GenericFieldInfo:
+    """Abstraction class for unifying `FieldInfo` and `ComputedFieldInfo` objects."""
+
+    alias: str | None
+    annotation: type[Any] | None
+    frozen: bool
+
+
 class BaseModel(PydanticBaseModel):
     """Common base class for all MEx model classes."""
 
@@ -36,6 +44,29 @@ class BaseModel(PydanticBaseModel):
         validate_default=True,
         validate_assignment=True,
     )
+
+    @classmethod
+    @cache
+    def get_all_fields(cls) -> dict[str, GenericFieldInfo]:
+        """Return a combined dict of defined and computed fields."""
+        return {
+            **{
+                name: GenericFieldInfo(
+                    alias=info.alias,
+                    annotation=info.annotation,
+                    frozen=bool(info.frozen),
+                )
+                for name, info in cls.model_fields.items()
+            },
+            **{
+                name: GenericFieldInfo(
+                    alias=info.alias,
+                    annotation=info.return_type,
+                    frozen=True,
+                )
+                for name, info in cls.model_computed_fields.items()
+            },
+        }
 
     @classmethod
     def model_json_schema(
@@ -69,7 +100,7 @@ class BaseModel(PydanticBaseModel):
         """Build a cached mapping from field alias to field names."""
         return {
             field_info.alias or field_name: field_name
-            for field_name, field_info in cls.model_fields.items()
+            for field_name, field_info in cls.get_all_fields().items()
         }
 
     @classmethod
@@ -77,7 +108,7 @@ class BaseModel(PydanticBaseModel):
     def _get_list_field_names(cls) -> list[str]:
         """Build a cached list of fields that look like lists."""
         field_names = []
-        for field_name, field_info in cls.model_fields.items():
+        for field_name, field_info in cls.get_all_fields().items():
             field_types = get_inner_types(
                 field_info.annotation, unpack=(Union, UnionType)
             )
@@ -93,8 +124,8 @@ class BaseModel(PydanticBaseModel):
     def _get_field_names_allowing_none(cls) -> list[str]:
         """Build a cached list of fields can be set to None."""
         field_names: list[str] = []
-        for field_name, field_info in cls.model_fields.items():
-            validator = TypeAdapter(field_info.annotation)
+        for field_name, field_info in cls.get_all_fields().items():
+            validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
             try:
                 validator.validate_python(None)
             except ValidationError:
@@ -138,35 +169,8 @@ class BaseModel(PydanticBaseModel):
         # already desired shape
         return value
 
-    @model_validator(mode="before")
-    @classmethod
-    def fix_listyness(cls, data: Any) -> Any:
-        """Adjust the listyness of to-be-parsed data to match the desired shape.
-
-        If that data is a Mapping and the model defines a list[T] field but the raw data
-        contains just a value of type T, it will be wrapped into a list. If the raw
-        data contains a literal `None`, but the list field is defined as required, we
-        substitute an empty list.
-
-        If the model does not expect a list, but the raw data contains a list with
-        no entries, it will be substituted with `None`. If the raw data contains exactly
-        one entry, then it will be unpacked from the list. If it contains more than one
-        entry however, an error is raised, because we would not know which to choose.
-
-        Args:
-            data: Raw data or instance to be parsed
-
-        Returns:
-            data with fixed list shapes
-        """
-        if isinstance(data, MutableMapping):
-            for name, value in data.items():
-                field_name = cls._get_alias_lookup().get(name, name)
-                if field_name in cls.model_fields:
-                    data[name] = cls._fix_value_listyness_for_field(field_name, value)
-        return data
-
     @model_validator(mode="wrap")
+    @classmethod
     def verify_computed_field_consistency(
         cls, data: Any, handler: ValidatorFunctionWrapHandler
     ) -> Any:
@@ -208,6 +212,38 @@ class BaseModel(PydanticBaseModel):
         if computed_values != custom_values:
             raise ValueError("Cannot set computed fields to custom values!")
         return result
+
+    @model_validator(mode="wrap")
+    @classmethod
+    def fix_listyness(cls, data: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+        """Adjust the listyness of to-be-parsed data to match the desired shape.
+
+        If that data is a Mapping and the model defines a list[T] field but the raw data
+        contains just a value of type T, it will be wrapped into a list. If the raw
+        data contains a literal `None`, but the list field is defined as required, we
+        substitute an empty list.
+
+        If the model does not expect a list, but the raw data contains a list with
+        no entries, it will be substituted with `None`. If the raw data contains exactly
+        one entry, then it will be unpacked from the list. If it contains more than one
+        entry however, an error is raised, because we would not know which to choose.
+
+        Args:
+            data: Raw data or instance to be parsed
+            handler: Validator function wrap handler
+
+        Returns:
+            data with fixed list shapes
+        """
+        # XXX This needs to be a "wrap" validator that is defined *after* the computed
+        #     field model validator, so it runs *before* the computed field validator.
+        #     Sigh, see https://github.com/pydantic/pydantic/discussions/7434
+        if isinstance(data, MutableMapping):
+            for name, value in data.items():
+                field_name = cls._get_alias_lookup().get(name, name)
+                if field_name in cls.get_all_fields():
+                    data[name] = cls._fix_value_listyness_for_field(field_name, value)
+        return handler(data)
 
     def checksum(self) -> str:
         """Calculate md5 checksum for this model."""

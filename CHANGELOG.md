@@ -19,6 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.32.0] - 2024-07-23
+
+### Changes
+
+- move log timestamp and coloring into the formatter
+
+### Deprecated
+
+- `mex.common.logging.echo` is deprecated in favor of `logging.info`
+
+### Fixed
+
+- add missing listyness-fix support for computed-fields
+
+## [0.31.0] - 2024-07-17
+
+### Removed
+- BREAKING: ability to store different settings instances at the same time. Dependent
+    repositories now must bundle all settings in a single class.
+
 ## [0.30.0] - 2024-07-16
 
 ### Added

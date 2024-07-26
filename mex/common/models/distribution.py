@@ -118,13 +118,13 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
         Literal["ExtractedDistribution"], Field(alias="$type", frozen=True)
     ] = "ExtractedDistribution"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedDistributionIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedDistributionIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedDistributionIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""

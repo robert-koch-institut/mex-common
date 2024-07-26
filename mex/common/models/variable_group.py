@@ -44,13 +44,13 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
         Literal["ExtractedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "ExtractedVariableGroup"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedVariableGroupIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedVariableGroupIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedVariableGroupIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""

@@ -196,9 +196,7 @@ def test_field_defs_match_spec(entity_type: str, field_name: str) -> None:
     prepare_field(field_name, specified)
     prepare_field(field_name, generated)
 
-    assert (
-        generated == specified
-    ), f"""
+    assert generated == specified, f"""
 {entity_type}.{field_name}
 
 specified:

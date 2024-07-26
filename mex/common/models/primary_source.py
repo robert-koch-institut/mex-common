@@ -73,13 +73,13 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
         Literal["ExtractedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "ExtractedPrimarySource"
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedPrimarySourceIdentifier:
         """Return the computed identifier for this extracted data item."""
         return self._get_identifier(ExtractedPrimarySourceIdentifier)
 
-    @computed_field  # type: ignore[misc]
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedPrimarySourceIdentifier:  # noqa: N802
         """Return the computed stableTargetId for this extracted data item."""

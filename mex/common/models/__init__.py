@@ -78,7 +78,7 @@ from mex.common.models.activity import (
     PreventiveActivity,
     SubtractiveActivity,
 )
-from mex.common.models.base import BaseModel
+from mex.common.models.base import BaseModel, GenericFieldInfo
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
     BaseBibliographicResource,
@@ -222,6 +222,7 @@ __all__ = (
     "MergedOrganization",
     "MergedOrganizationalUnit",
     "MergedPerson",
+    "GenericFieldInfo",
     "MergedPrimarySource",
     "MergedResource",
     "MergedVariable",
