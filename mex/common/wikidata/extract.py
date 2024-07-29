@@ -11,31 +11,41 @@ from mex.common.wikidata.models.organization import WikidataOrganization
 
 def search_organization_by_label(
     item_label: str,
+    lang: TextLanguage = TextLanguage.EN,
 ) -> WikidataOrganization | None:
-    """Search for an item in wikidata. Only organizations are fetched.
+    """Search for an item in wikidata. Only organizations are searched.
 
     Args:
         item_label: Item title or label to be searched
+        lang: lang in which item should be searched. Default: TextLanguage.EN
 
     Returns:
-        WikidataOrganization if only one organization is found
-        None if no or multiple organizations are found
+        WikidataOrganization if organization is found
+        None if no organization is found
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
     query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
-        "WHERE{"
-        "?item (wdt:P31/wdt:P8225*/wdt:P279*) wd:Q43229."
-        f'?item ?label "{item_label}"@en.'
-        "?article schema:about ?item ."
-        'SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }'
-        "}"
+        "WHERE { "
+        "SERVICE wikibase:mwapi { "
+        'bd:serviceParam wikibase:api "EntitySearch" . '
+        'bd:serviceParam wikibase:endpoint "www.wikidata.org" . '
+        f'bd:serviceParam mwapi:search "{item_label}" . '
+        f'bd:serviceParam mwapi:language "{lang}" . '
+        "?item wikibase:apiOutputItem mwapi:item . "
+        "?num wikibase:apiOrdinal true . "
+        "} "
+        "?item (wdt:P31/wdt:P8225*/wdt:P279*) wd:Q43229. "
+        'SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". } '  # noqa: E501
+        "} "
+        "ORDER BY ASC(?num) "
+        "LIMIT 1 "
     )
 
     results = connector.get_data_by_query(query_string)
 
-    if len(results) != 1:
+    if not results:
         return None
 
     try:
@@ -61,7 +71,7 @@ def get_count_of_found_organizations_by_label(
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
-    query_string_new = (
+    query_string = (
         "SELECT (COUNT(distinct ?item) AS ?count) "
         "WHERE { "
         "SERVICE wikibase:mwapi { "
@@ -78,7 +88,7 @@ def get_count_of_found_organizations_by_label(
         "ORDER BY ASC(?num) "
     )
 
-    result = connector.get_data_by_query(query_string_new)
+    result = connector.get_data_by_query(query_string)
     return int(result[0]["count"]["value"])
 
 
@@ -101,7 +111,7 @@ def search_organizations_by_label(
     """
     connector = WikidataQueryServiceConnector.get()
     item_label = item_label.replace('"', "")
-    query_string_new = (
+    query_string = (
         "SELECT distinct ?item ?itemLabel ?itemDescription "
         "WHERE { "
         "SERVICE wikibase:mwapi { "
@@ -120,7 +130,7 @@ def search_organizations_by_label(
         f"LIMIT {limit} "
     )
 
-    results = connector.get_data_by_query(query_string_new)
+    results = connector.get_data_by_query(query_string)
     for item in results:
         try:
             wd_item_id = item["item"]["value"].split("/")[-1]

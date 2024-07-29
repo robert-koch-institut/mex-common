@@ -180,6 +180,12 @@ class BaseSettings(PydanticBaseSettings):
         "organization ID",
         validation_alias="MEX_WIKI_QUERY_SERVICE_URL",
     )
+    mex_web_user_agent: str = Field(
+        "rki/mex",
+        description="a user agent is sent in the header of some requests to external "
+        "services ",
+        validation_alias="MEX_WEB_USER_AGENT",
+    )
 
     def text(self) -> str:
         """Dump the current settings into a readable table."""
