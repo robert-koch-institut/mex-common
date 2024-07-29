@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- HTTP connector backoff for 10 retries on 403 from server
+- `rki/mex` user agent is sent with query requests via wikidata connector
+
 ### Changes
+
+- update wikidata search organization request query, with optional language parameter
+  wikidata query search can be enhanced by specifying the language.
+  EN is the default language.
 
 ### Deprecated
 
@@ -36,8 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.31.0] - 2024-07-17
 
 ### Removed
+
 - BREAKING: ability to store different settings instances at the same time. Dependent
-    repositories now must bundle all settings in a single class.
+  repositories now must bundle all settings in a single class.
 
 ## [0.30.0] - 2024-07-16
 

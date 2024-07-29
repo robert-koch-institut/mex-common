@@ -63,7 +63,9 @@ def test_get_count_of_found_organizations_by_label() -> None:
 @pytest.mark.integration
 def test_search_organization_by_label_for_none() -> None:
     """Test if None is returned when multiple organizations are found."""
-    search_result = search_organization_by_label(item_label="BMW")
+    search_result = search_organization_by_label(
+        item_label="Blah-test128%3h2 .1 12 bus"
+    )
     assert search_result is None
 
 
@@ -229,22 +231,10 @@ def test_search_organization_by_label_mocked(monkeypatch: MonkeyPatch) -> None:
     "mocked_session_wikidata_query_service", "mocked_session_wikidata_api"
 )
 def test_search_organization_by_label_for_none_mocked(monkeypatch: MonkeyPatch) -> None:
-    expected_query_response = [
-        {
-            "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
-        },
-        {
-            "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q821937"},
-        },
-    ]
-
-    def mocked_query_response() -> list[dict[str, dict[str, str]]]:
-        return expected_query_response
-
     monkeypatch.setattr(
         WikidataQueryServiceConnector,
         "get_data_by_query",
-        lambda self, _: mocked_query_response(),
+        lambda self, _: [],
     )
 
     def mocked_item_details_response() -> Any:

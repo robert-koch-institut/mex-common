@@ -28,9 +28,14 @@ class WikidataQueryServiceConnector(HTTPConnector):
         Returns:
             list: list of all items found
         """
+        settings = BaseSettings.get()
         params = {"format": "json", "query": query}
+        headers = {
+            "User-Agent": f"{settings.mex_web_user_agent}",
+            "Api-User-Agent": f"{settings.mex_web_user_agent}",
+        }
 
-        results = self.request("GET", params=params)
+        results = self.request("GET", params=params, headers=headers)
 
         return results["results"]["bindings"]  # type: ignore
 
@@ -59,6 +64,7 @@ class WikidataAPIConnector(HTTPConnector):
         Returns:
             dict[str, Any]: details of the found item.
         """
+        settings = BaseSettings.get()
         params = {
             "action": "wbgetentities",
             "format": "json",
@@ -77,6 +83,9 @@ class WikidataAPIConnector(HTTPConnector):
             ),
             "formatversion": "2",
         }
-
-        results = self.request("GET", params=params)
+        headers = {
+            "User-Agent": f"{settings.mex_web_user_agent}",
+            "Api-User-Agent": f"{settings.mex_web_user_agent}",
+        }
+        results = self.request("GET", params=params, headers=headers)
         return results["entities"][item_id]  # type: ignore
