@@ -29,7 +29,7 @@ optional-dependencies.dev = [
     "pytest-xdist==3.6.1",
     "pytest==8.3.1",
     "ruff==0.5.4",
-    "sphinx==7.4.6",
+    "sphinx==7.4.7",
     "types-ldap3==2.9.13.20240205",
     "types-pytz==2024.1.0.20240417",
     "types-requests==2.32.0.20240712",
