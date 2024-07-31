@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.33.0] - 2024-07-31
+
+### Added
+
 - HTTP connector backoff for 10 retries on 403 from server
 - `rki/mex` user agent is sent with query requests via wikidata connector
 
@@ -18,14 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update wikidata search organization request query, with optional language parameter
   wikidata query search can be enhanced by specifying the language.
   EN is the default language.
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.32.0] - 2024-07-23
 
