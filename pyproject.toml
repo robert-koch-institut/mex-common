@@ -27,7 +27,7 @@ optional-dependencies.dev = [
     "pytest-cov==5.0.0",
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
-    "pytest==8.3.1",
+    "pytest==8.3.2",
     "ruff==0.5.4",
     "sphinx==7.4.7",
     "types-ldap3==2.9.13.20240205",
