@@ -4,15 +4,18 @@ Activate by adding `pytest_plugins = ("mex.common.testing.plugin",)`
 to the `conftest.py` in your root test folder.
 """
 
+import json
 import os
 from collections.abc import Generator
 from enum import Enum
 from pathlib import Path
-from typing import Any
-from unittest.mock import MagicMock
+from typing import Any, cast
+from unittest.mock import MagicMock, Mock
 
+import requests
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
+from requests import Response
 
 from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
@@ -21,6 +24,11 @@ from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.settings import SETTINGS_STORE, BaseSettings
+from mex.common.wikidata.connector import (
+    WikidataAPIConnector,
+    WikidataQueryServiceConnector,
+)
+from mex.common.wikidata.models.organization import WikidataOrganization
 
 
 class NoOpPytest:
@@ -120,3 +128,74 @@ def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
         )
     )
     return {p.identifierInPrimarySource: p for p in extracted_primary_sources}
+
+
+@pytest.fixture
+def wikidata_organization_raw() -> dict[str, Any]:
+    """Return a raw wikidata organization."""
+    with open(
+        Path(__file__).parent / "test_data" / "wikidata_organization_raw.json"
+    ) as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
+def wikidata_organization(
+    wikidata_organization_raw: dict[str, Any],
+) -> WikidataOrganization:
+    """Return a wikidata organization instance."""
+    return WikidataOrganization.model_validate(wikidata_organization_raw)
+
+
+@pytest.fixture
+def mocked_wikidata(
+    monkeypatch: pytest.MonkeyPatch, wikidata_organization_raw: dict[str, Any]
+) -> None:
+    """Mock wikidata connector."""
+    response_query = Mock(spec=Response, status_code=200)
+
+    session = MagicMock(spec=requests.Session)
+    session.get = MagicMock(side_effect=[response_query])
+
+    def mocked_init(self: WikidataQueryServiceConnector) -> None:
+        self.session = session
+
+    monkeypatch.setattr(WikidataQueryServiceConnector, "__init__", mocked_init)
+    monkeypatch.setattr(WikidataAPIConnector, "__init__", mocked_init)
+
+    # mock search_wikidata_with_query
+
+    def get_data_by_query(
+        self: WikidataQueryServiceConnector, query: str
+    ) -> list[dict[str, dict[str, str]]]:
+        return [
+            {
+                "item": {
+                    "type": "uri",
+                    "value": "http://www.wikidata.org/entity/Q26678",
+                },
+                "itemLabel": {"xml:lang": "en", "type": "literal", "value": "BMW"},
+                "itemDescription": {
+                    "xml:lang": "en",
+                    "type": "literal",
+                    "value": "German automotive manufacturer, and conglomerate",
+                },
+            },
+        ]
+
+    monkeypatch.setattr(
+        WikidataQueryServiceConnector, "get_data_by_query", get_data_by_query
+    )
+
+    # mock get_wikidata_org_with_org_id
+
+    def get_wikidata_item_details_by_id(
+        self: WikidataQueryServiceConnector, item_id: str
+    ) -> dict[str, str]:
+        return wikidata_organization_raw
+
+    monkeypatch.setattr(
+        WikidataAPIConnector,
+        "get_wikidata_item_details_by_id",
+        get_wikidata_item_details_by_id,
+    )
