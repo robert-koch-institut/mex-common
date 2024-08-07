@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.common.models import ExtractedPrimarySource
+from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.wikidata import convenience
 from mex.common.wikidata.convenience import (
     _ORGANIZATION_BY_QUERY_CACHE,
@@ -31,6 +31,7 @@ def test_get_merged_organization_id_by_query_with_extract_transform_and_load_moc
             wikidata_organization, wikidata_primary_source
         )
     )
+    assert isinstance(extracted_wikidata_organization, ExtractedOrganization)
 
     # mock all the things
     mocked_search_organization_by_label = Mock(side_effect=search_organization_by_label)
@@ -70,6 +71,20 @@ def test_get_merged_organization_id_by_query_with_extract_transform_and_load_moc
     mocked_search_organization_by_label.assert_not_called()
     mocked_transform_wikidata_organization_to_extracted_organization.assert_not_called()
     load_function.assert_not_called()
+
+    # make sure cache is reset for different load function
+    mocked_search_organization_by_label.reset_mock()
+    mocked_transform_wikidata_organization_to_extracted_organization.reset_mock()
+    load_function = Mock()
+    returned = get_merged_organization_id_by_query_with_extract_transform_and_load(
+        query_string, wikidata_primary_source, load_function
+    )
+    assert returned == extracted_wikidata_organization.stableTargetId
+    mocked_search_organization_by_label.assert_called_once_with(query_string)
+    mocked_transform_wikidata_organization_to_extracted_organization.assert_called_once_with(
+        wikidata_organization, wikidata_primary_source
+    )
+    load_function.assert_called_once_with([extracted_wikidata_organization])
 
     # transformation returns no organization
     mocked_search_organization_by_label.reset_mock()

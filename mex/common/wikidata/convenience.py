@@ -1,13 +1,20 @@
 from collections.abc import Callable, Iterable
 
 from mex.common.models import ExtractedData, ExtractedPrimarySource
-from mex.common.types import MergedOrganizationIdentifier
+from mex.common.types import MergedOrganizationIdentifier, MergedPrimarySourceIdentifier
 from mex.common.wikidata.extract import search_organization_by_label
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
 )
 
-_ORGANIZATION_BY_QUERY_CACHE: dict[str, MergedOrganizationIdentifier] = {}
+
+class _QueryCache(dict[str, MergedOrganizationIdentifier]):
+    primary_source_and_load_function: tuple[
+        MergedPrimarySourceIdentifier | None, int | None
+    ] = (None, None)
+
+
+_ORGANIZATION_BY_QUERY_CACHE: _QueryCache = _QueryCache()
 
 
 def get_merged_organization_id_by_query_with_extract_transform_and_load(
@@ -30,7 +37,19 @@ def get_merged_organization_id_by_query_with_extract_transform_and_load(
            Wikidata lookup.
          None if multiple matches / no organization is found
     """
-    if organization_id := _ORGANIZATION_BY_QUERY_CACHE.get(query_string):
+    primary_source_and_load_function = (
+        wikidata_primary_source.stableTargetId,
+        id(load_function),
+    )
+    if (
+        _ORGANIZATION_BY_QUERY_CACHE.primary_source_and_load_function
+        != primary_source_and_load_function
+    ):
+        _ORGANIZATION_BY_QUERY_CACHE.primary_source_and_load_function = (
+            primary_source_and_load_function
+        )
+        _ORGANIZATION_BY_QUERY_CACHE.clear()
+    elif organization_id := _ORGANIZATION_BY_QUERY_CACHE.get(query_string):
         return organization_id
 
     found_organization = search_organization_by_label(query_string)
