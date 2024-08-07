@@ -190,7 +190,7 @@ def mocked_wikidata(
     # mock get_wikidata_org_with_org_id
 
     def get_wikidata_item_details_by_id(
-        self: WikidataQueryServiceConnector, item_id: str
+        self: WikidataAPIConnector, item_id: str
     ) -> dict[str, str]:
         return wikidata_organization_raw
 
