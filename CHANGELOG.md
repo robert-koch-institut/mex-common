@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
+  mocked_wikidata
+- convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
+  for getting the stableTargetId of an organization, while transforming and loading the
+  organization using the provided load function
+
 ### Changes
 
 ### Deprecated
