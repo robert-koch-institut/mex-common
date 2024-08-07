@@ -45,10 +45,10 @@ def get_merged_organization_id_by_query_with_extract_transform_and_load(
         _ORGANIZATION_BY_QUERY_CACHE.primary_source_and_load_function
         != primary_source_and_load_function
     ):
+        _ORGANIZATION_BY_QUERY_CACHE.clear()
         _ORGANIZATION_BY_QUERY_CACHE.primary_source_and_load_function = (
             primary_source_and_load_function
         )
-        _ORGANIZATION_BY_QUERY_CACHE.clear()
     elif organization_id := _ORGANIZATION_BY_QUERY_CACHE.get(query_string):
         return organization_id
 
