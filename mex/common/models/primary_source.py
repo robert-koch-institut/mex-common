@@ -7,7 +7,12 @@ from pydantic import Field, computed_field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    RuleSet,
+    SubtractiveRule,
+)
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
     Link,
@@ -125,3 +130,14 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     title: list[MergedPrimarySourceIdentifier] = []
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
     version: list[MergedPrimarySourceIdentifier] = []
+
+
+class PrimarySourceRuleSet(_Stem, RuleSet):
+    """Set of rules to edit an primary source item."""
+
+    entityType: Annotated[
+        Literal["PrimarySourceRuleSet"], Field(alias="$type", frozen=True)
+    ] = "PrimarySourceRuleSet"
+    additive: AdditivePrimarySource
+    subtractive: SubtractivePrimarySource
+    preventive: PreventivePrimarySource
