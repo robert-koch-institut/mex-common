@@ -1,4 +1,3 @@
-from itertools import groupby
 from urllib.parse import urljoin
 
 from mex.common.backend_api.models import BulkInsertResponse
@@ -42,15 +41,7 @@ class BackendApiConnector(HTTPConnector):
             Identifiers of posted extracted models
         """
         response = self.request(
-            method="POST",
-            endpoint="ingest",
-            payload={
-                class_name: list(entities)
-                for class_name, entities in groupby(
-                    sorted(models, key=lambda e: e.__class__.__name__),
-                    lambda e: e.__class__.__name__,
-                )
-            },
+            method="POST", endpoint="ingest", payload={"items": models}
         )
         insert_response = BulkInsertResponse.model_validate(response)
         return insert_response.identifiers

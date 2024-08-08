@@ -1,0 +1,228 @@
+{
+    "aliases": {
+        "de": [
+            {
+                "language": "de",
+                "value": "alias_de_1"
+            },
+            {
+                "language": "de",
+                "value": "alias_de_2"
+            },
+            {
+                "language": "de",
+                "value": "alias_de_3"
+            }
+        ],
+        "en": [
+            {
+                "language": "en",
+                "value": "alias_en_1"
+            },
+            {
+                "language": "en",
+                "value": "alias_en_2"
+            },
+            {
+                "language": "en",
+                "value": "alias_en_3"
+            },
+            {
+                "language": "en",
+                "value": "alias_en_4"
+            }
+        ]
+    },
+    "claims": {
+        "P1813": [
+            {
+                "id": "Q679041$AAE01E9A-03EA-424E-A51A-222A4858C4DD",
+                "mainsnak": {
+                    "datatype": "monolingualtext",
+                    "datavalue": {
+                        "type": "monolingualtext",
+                        "value": {
+                            "language": "en",
+                            "text": "RKI"
+                        }
+                    },
+                    "hash": "6cd9c230521797cef15c529e5bb006a0c51e801e",
+                    "property": "P1813",
+                    "snaktype": "value"
+                },
+                "rank": "normal",
+                "type": "statement"
+            },
+            {
+                "id": "Q679041$20A515C6-206D-4001-A408-4DA10F41533A",
+                "mainsnak": {
+                    "datatype": "monolingualtext",
+                    "datavalue": {
+                        "type": "monolingualtext",
+                        "value": {
+                            "language": "de",
+                            "text": "RKI"
+                        }
+                    },
+                    "hash": "03dcb3e47ca24e8ab90a1b11eb7602ceca2d07ad",
+                    "property": "P1813",
+                    "snaktype": "value"
+                },
+                "rank": "normal",
+                "type": "statement"
+            },
+            {
+                "id": "Q679041$ac3e29c1-4ace-df94-91f7-d74b410c3582",
+                "mainsnak": {
+                    "datatype": "monolingualtext",
+                    "datavalue": {
+                        "type": "monolingualtext",
+                        "value": {
+                            "language": "fr",
+                            "text": "IRK"
+                        }
+                    },
+                    "hash": "966f7d0aee390d96edaafd00d04a07ec88844a1e",
+                    "property": "P1813",
+                    "snaktype": "value"
+                },
+                "rank": "normal",
+                "type": "statement"
+            }
+        ],
+        "P213": [
+            {
+                "id": "Q679041$0ABA944D-81E3-4ED0-A792-52EC80175170",
+                "mainsnak": {
+                    "datatype": "external-id",
+                    "datavalue": {
+                        "type": "string",
+                        "value": "0000 0001 0940 3744"
+                    },
+                    "hash": "17d825de2b5559de23b14b54519731a55a733ba4",
+                    "property": "P213",
+                    "snaktype": "value"
+                },
+                "rank": "normal",
+                "type": "statement"
+            }
+        ],
+        "P6782": [
+            {
+                "id": "Q679041$42EED77F-B584-48C1-B1D7-DD1C27815BA6",
+                "mainsnak": {
+                    "datatype": "external-id",
+                    "datavalue": {
+                        "type": "string",
+                        "value": "01k5qnb77"
+                    },
+                    "hash": "dd1172552e08b0ce0ac4f5af1c3b086fe95f4bdb",
+                    "property": "P6782",
+                    "snaktype": "value"
+                },
+                "rank": "normal",
+                "type": "statement"
+            }
+        ],
+        "P856": [
+            {
+                "id": "Q679041$ccd210f4-4f33-9140-5060-a83edd44a7f2",
+                "mainsnak": {
+                    "datatype": "url",
+                    "datavalue": {
+                        "type": "string",
+                        "value": "https://www.rki.de/"
+                    },
+                    "hash": "d07d9f8d73b9fa174b86cbbc7c5d3154f84e7a29",
+                    "property": "P856",
+                    "snaktype": "value"
+                },
+                "rank": "normal",
+                "type": "statement"
+            },
+            {
+                "id": "Q679041$3FE8023E-41AE-4DB3-B0B7-51419DA6CAE7",
+                "mainsnak": {
+                    "datatype": "url",
+                    "datavalue": {
+                        "type": "string",
+                        "value": "https://www.rki.de/DE/Home/homepage_node.html"
+                    },
+                    "hash": "4da1521afde56c04ad95ba5d0b5977dc4cda248f",
+                    "property": "P856",
+                    "snaktype": "value"
+                },
+                "qualifiers": {
+                    "P407": [
+                        {
+                            "datatype": "wikibase-item",
+                            "datavalue": {
+                                "type": "wikibase-entityid",
+                                "value": {
+                                    "entity-type": "item",
+                                    "id": "Q188",
+                                    "numeric-id": 188
+                                }
+                            },
+                            "hash": "46bfd327b830f66f7061ea92d1be430c135fa91f",
+                            "property": "P407",
+                            "snaktype": "value"
+                        }
+                    ]
+                },
+                "qualifiers-order": [
+                    "P407"
+                ],
+                "rank": "normal",
+                "type": "statement"
+            },
+            {
+                "id": "Q679041$324BC651-7212-4CE7-89A1-9E9135AAAA09",
+                "mainsnak": {
+                    "datatype": "url",
+                    "datavalue": {
+                        "type": "string",
+                        "value": "https://www.rki.de/EN/Home/homepage_node.html"
+                    },
+                    "hash": "9e7237708fdfec88603db5ead3645b9d5d825808",
+                    "property": "P856",
+                    "snaktype": "value"
+                },
+                "qualifiers": {
+                    "P407": [
+                        {
+                            "datatype": "wikibase-item",
+                            "datavalue": {
+                                "type": "wikibase-entityid",
+                                "value": {
+                                    "entity-type": "item",
+                                    "id": "Q1860",
+                                    "numeric-id": 1860
+                                }
+                            },
+                            "hash": "daf1c4fcb58181b02dff9cc89deb084004ddae4b",
+                            "property": "P407",
+                            "snaktype": "value"
+                        }
+                    ]
+                },
+                "qualifiers-order": [
+                    "P407"
+                ],
+                "rank": "normal",
+                "type": "statement"
+            }
+        ]
+    },
+    "id": "Q679041",
+    "labels": {
+        "de": {
+            "language": "de",
+            "value": "Robert Koch-Institut"
+        },
+        "en": {
+            "language": "en",
+            "value": "Robert Koch Institute"
+        }
+    }
+}

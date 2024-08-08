@@ -34,7 +34,7 @@ def test_post_models_mocked(
     )
 
     assert json.loads(mocked_send_request.call_args_list[-1].kwargs["data"]) == {
-        "ExtractedPerson": [
+        "items": [
             {
                 "identifier": "e3VhxMhEKyjqN5flzLpiEB",
                 "hadPrimarySource": "bFQoRhcVH5DHXE",
