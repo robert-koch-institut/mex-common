@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   for getting the stableTargetId of an organization, while transforming and loading the
   organization using the provided load function
 - models for rule-set requests and responses along with typing and lookups
+- add `BaseT` models to the exported names of `mex.common.models`
+- add `MEX_ID_PATTERN` to the exported names of `mex.common.types`
 
 ### Changes
 
