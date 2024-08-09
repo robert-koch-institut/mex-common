@@ -7,7 +7,12 @@ from pydantic import Field, computed_field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    RuleSet,
+    SubtractiveRule,
+)
 from mex.common.types import (
     ExtractedVariableIdentifier,
     MergedPrimarySourceIdentifier,
@@ -162,3 +167,14 @@ class PreventiveVariable(_Stem, PreventiveRule):
     label: list[MergedPrimarySourceIdentifier] = []
     usedIn: list[MergedPrimarySourceIdentifier] = []
     valueSet: list[MergedPrimarySourceIdentifier] = []
+
+
+class VariableRuleSet(_Stem, RuleSet):
+    """Set of rules to edit a variable item."""
+
+    entityType: Annotated[
+        Literal["VariableRuleSet"], Field(alias="$type", frozen=True)
+    ] = "VariableRuleSet"
+    additive: AdditiveVariable
+    subtractive: SubtractiveVariable
+    preventive: PreventiveVariable

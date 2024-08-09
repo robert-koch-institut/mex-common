@@ -63,6 +63,7 @@ lists of models, lookups by class name and typing for unions of models.
 from typing import Final, get_args
 
 from mex.common.models.access_platform import (
+    AccessPlatformRuleSet,
     AdditiveAccessPlatform,
     BaseAccessPlatform,
     ExtractedAccessPlatform,
@@ -71,6 +72,7 @@ from mex.common.models.access_platform import (
     SubtractiveAccessPlatform,
 )
 from mex.common.models.activity import (
+    ActivityRuleSet,
     AdditiveActivity,
     BaseActivity,
     ExtractedActivity,
@@ -82,6 +84,7 @@ from mex.common.models.base import BaseModel, GenericFieldInfo
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
     BaseBibliographicResource,
+    BibliographicResourceRuleSet,
     ExtractedBibliographicResource,
     MergedBibliographicResource,
     PreventiveBibliographicResource,
@@ -90,6 +93,7 @@ from mex.common.models.bibliographic_resource import (
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
     BaseContactPoint,
+    ContactPointRuleSet,
     ExtractedContactPoint,
     MergedContactPoint,
     PreventiveContactPoint,
@@ -98,6 +102,7 @@ from mex.common.models.contact_point import (
 from mex.common.models.distribution import (
     AdditiveDistribution,
     BaseDistribution,
+    DistributionRuleSet,
     ExtractedDistribution,
     MergedDistribution,
     PreventiveDistribution,
@@ -117,6 +122,7 @@ from mex.common.models.organization import (
     BaseOrganization,
     ExtractedOrganization,
     MergedOrganization,
+    OrganizationRuleSet,
     PreventiveOrganization,
     SubtractiveOrganization,
 )
@@ -125,6 +131,7 @@ from mex.common.models.organizational_unit import (
     BaseOrganizationalUnit,
     ExtractedOrganizationalUnit,
     MergedOrganizationalUnit,
+    OrganizationalUnitRuleSet,
     PreventiveOrganizationalUnit,
     SubtractiveOrganizationalUnit,
 )
@@ -133,6 +140,7 @@ from mex.common.models.person import (
     BasePerson,
     ExtractedPerson,
     MergedPerson,
+    PersonRuleSet,
     PreventivePerson,
     SubtractivePerson,
 )
@@ -142,6 +150,7 @@ from mex.common.models.primary_source import (
     ExtractedPrimarySource,
     MergedPrimarySource,
     PreventivePrimarySource,
+    PrimarySourceRuleSet,
     SubtractivePrimarySource,
 )
 from mex.common.models.resource import (
@@ -150,6 +159,7 @@ from mex.common.models.resource import (
     ExtractedResource,
     MergedResource,
     PreventiveResource,
+    ResourceRuleSet,
     SubtractiveResource,
 )
 from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
@@ -160,6 +170,7 @@ from mex.common.models.variable import (
     MergedVariable,
     PreventiveVariable,
     SubtractiveVariable,
+    VariableRuleSet,
 )
 from mex.common.models.variable_group import (
     AdditiveVariableGroup,
@@ -168,6 +179,7 @@ from mex.common.models.variable_group import (
     MergedVariableGroup,
     PreventiveVariableGroup,
     SubtractiveVariableGroup,
+    VariableGroupRuleSet,
 )
 
 __all__ = (
@@ -388,6 +400,27 @@ AnyRuleModel = AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel
 RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel))
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
+}
+
+AnyRuleSetModel = (
+    AccessPlatformRuleSet
+    | ActivityRuleSet
+    | BibliographicResourceRuleSet
+    | ContactPointRuleSet
+    | DistributionRuleSet
+    | OrganizationRuleSet
+    | OrganizationalUnitRuleSet
+    | PersonRuleSet
+    | PrimarySourceRuleSet
+    | ResourceRuleSet
+    | VariableRuleSet
+    | VariableGroupRuleSet
+)
+RULE_SET_MODEL_CLASSES: Final[list[type[AnyRuleSetModel]]] = list(
+    get_args(AnyRuleSetModel)
+)
+RULE_SET_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetModel]]] = {
+    cls.__name__: cls for cls in RULE_SET_MODEL_CLASSES
 }
 
 FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {

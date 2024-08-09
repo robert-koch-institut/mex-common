@@ -7,7 +7,12 @@ from pydantic import Field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    RuleSet,
+    SubtractiveRule,
+)
 from mex.common.types import (
     AccessRestriction,
     BibliographicResourceType,
@@ -278,3 +283,14 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     titleOfSeries: list[MergedPrimarySourceIdentifier] = []
     volume: list[MergedPrimarySourceIdentifier] = []
     volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
+
+
+class BibliographicResourceRuleSet(_Stem, RuleSet):
+    """Set of rules to edit a bibliographic resource item."""
+
+    entityType: Annotated[
+        Literal["BibliographicResourceRuleSet"], Field(alias="$type", frozen=True)
+    ] = "BibliographicResourceRuleSet"
+    additive: AdditiveBibliographicResource
+    subtractive: SubtractiveBibliographicResource
+    preventive: PreventiveBibliographicResource

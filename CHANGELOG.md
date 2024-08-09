@@ -9,14 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- HTTP connector backoff for 10 retries on 403 from server
-- `rki/mex` user agent is sent with query requests via wikidata connector
+- wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
+  mocked_wikidata
+- convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
+  for getting the stableTargetId of an organization, while transforming and loading the
+  organization using the provided load function
+- models for rule sets along with typing and lookups
 
 ### Changes
-
-- update wikidata search organization request query, with optional language parameter
-  wikidata query search can be enhanced by specifying the language.
-  EN is the default language.
 
 ### Deprecated
 
@@ -25,6 +25,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.33.0] - 2024-07-31
+
+### Added
+
+- HTTP connector backoff for 10 retries on 403 from server
+- `rki/mex` user agent is sent with query requests via wikidata connector
+
+### Changes
+- changed backend api connector payload to "items"
+
+- update wikidata search organization request query, with optional language parameter
+  wikidata query search can be enhanced by specifying the language.
+  EN is the default language.
 
 ## [0.32.0] - 2024-07-23
 

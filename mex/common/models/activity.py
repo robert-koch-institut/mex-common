@@ -13,6 +13,7 @@ from mex.common.models.merged_item import MergedItem
 from mex.common.models.rules import (
     AdditiveRule,
     PreventiveRule,
+    RuleSet,
     SubtractiveRule,
 )
 from mex.common.types import (
@@ -164,3 +165,14 @@ class PreventiveActivity(_Stem, PreventiveRule):
     theme: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []
     website: list[MergedPrimarySourceIdentifier] = []
+
+
+class ActivityRuleSet(_Stem, RuleSet):
+    """Set of rules to edit an activity item."""
+
+    entityType: Annotated[
+        Literal["ActivityRuleSet"], Field(alias="$type", frozen=True)
+    ] = "ActivityRuleSet"
+    additive: AdditiveActivity
+    subtractive: SubtractiveActivity
+    preventive: PreventiveActivity

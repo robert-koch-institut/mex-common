@@ -10,6 +10,7 @@ from mex.common.models.merged_item import MergedItem
 from mex.common.models.rules import (
     AdditiveRule,
     PreventiveRule,
+    RuleSet,
     SubtractiveRule,
 )
 from mex.common.types import (
@@ -149,3 +150,14 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
     technicalAccessibility: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
+
+
+class AccessPlatformRuleSet(_Stem, RuleSet):
+    """Set of rules to edit an access platform item."""
+
+    entityType: Annotated[
+        Literal["AccessPlatformRuleSet"], Field(alias="$type", frozen=True)
+    ] = "AccessPlatformRuleSet"
+    additive: AdditiveAccessPlatform
+    subtractive: SubtractiveAccessPlatform
+    preventive: PreventiveAccessPlatform
