@@ -1,7 +1,6 @@
 import hashlib
 import json
 from collections.abc import MutableMapping
-from dataclasses import dataclass
 from functools import cache
 from types import UnionType
 from typing import Any, Union
@@ -17,18 +16,10 @@ from pydantic import (
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
-from mex.common.models.schema import JsonSchemaGenerator
+from mex.common.models.base.field_info import GenericFieldInfo
+from mex.common.models.base.schema import JsonSchemaGenerator
 from mex.common.transform import MExEncoder
 from mex.common.utils import get_inner_types
-
-
-@dataclass
-class GenericFieldInfo:
-    """Abstraction class for unifying `FieldInfo` and `ComputedFieldInfo` objects."""
-
-    alias: str | None
-    annotation: type[Any] | None
-    frozen: bool
 
 
 class BaseModel(PydanticBaseModel):

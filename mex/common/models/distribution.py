@@ -4,10 +4,10 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
-from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import (
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
     RuleSet,
@@ -210,12 +210,24 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     title: list[MergedPrimarySourceIdentifier] = []
 
 
-class DistributionRuleSet(_Stem, RuleSet):
-    """Set of rules to edit a distribution item."""
-
-    entityType: Annotated[
-        Literal["DistributionRuleSet"], Field(alias="$type", frozen=True)
-    ] = "DistributionRuleSet"
+class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveDistribution
     subtractive: SubtractiveDistribution
     preventive: PreventiveDistribution
+
+
+class DistributionRuleSetRequest(_BaseRuleSet):
+    """Set of rules to create or update a distribution item."""
+
+    entityType: Annotated[
+        Literal["DistributionRuleSetRequest"], Field(alias="$type", frozen=True)
+    ] = "DistributionRuleSetRequest"
+
+
+class DistributionRuleSetResponse(_BaseRuleSet):
+    """Set of rules to retrieve a distribution item."""
+
+    entityType: Annotated[
+        Literal["DistributionRuleSetRequest"], Field(alias="$type", frozen=True)
+    ] = "DistributionRuleSetRequest"
+    stableTargetId: MergedAccessPlatformIdentifier

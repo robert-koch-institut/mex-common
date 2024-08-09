@@ -1,6 +1,6 @@
 from collections.abc import Callable, Iterable
 
-from mex.common.models import ExtractedData, ExtractedPrimarySource
+from mex.common.models import AnyExtractedModel, ExtractedPrimarySource
 from mex.common.types import MergedOrganizationIdentifier, MergedPrimarySourceIdentifier
 from mex.common.wikidata.extract import search_organization_by_label
 from mex.common.wikidata.transform import (
@@ -20,7 +20,7 @@ _ORGANIZATION_BY_QUERY_CACHE: _QueryCache = _QueryCache()
 def get_merged_organization_id_by_query_with_extract_transform_and_load(
     query_string: str,
     wikidata_primary_source: ExtractedPrimarySource,
-    load_function: Callable[[Iterable[ExtractedData]], None],
+    load_function: Callable[[Iterable[AnyExtractedModel]], None],
 ) -> MergedOrganizationIdentifier | None:
     """Get stableTargetId of an organization matching the query string.
 

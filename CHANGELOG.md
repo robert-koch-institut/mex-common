@@ -14,9 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
   for getting the stableTargetId of an organization, while transforming and loading the
   organization using the provided load function
-- models for rule sets along with typing and lookups
+- models for rule-set requests and responses along with typing and lookups
+- add `BaseT` models to the exported names of `mex.common.models`
+- add `MEX_ID_PATTERN` to the exported names of `mex.common.types`
 
 ### Changes
+
+- move all base models and pydantic scaffolding into `mex.common.models.base`
+  for a cleaner structure within the growing `models` module
 
 ### Deprecated
 

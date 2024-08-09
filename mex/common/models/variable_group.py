@@ -4,10 +4,10 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
-from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import (
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
     RuleSet,
@@ -97,12 +97,24 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
     label: list[MergedPrimarySourceIdentifier] = []
 
 
-class VariableGroupRuleSet(_Stem, RuleSet):
-    """Set of rules to edit a variable group item."""
-
-    entityType: Annotated[
-        Literal["VariableGroupRuleSet"], Field(alias="$type", frozen=True)
-    ] = "VariableGroupRuleSet"
+class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveVariableGroup
     subtractive: SubtractiveVariableGroup
     preventive: PreventiveVariableGroup
+
+
+class VariableGroupRuleSetRequest(_BaseRuleSet):
+    """Set of rules to create or update a variable group item."""
+
+    entityType: Annotated[
+        Literal["VariableGroupRuleSetRequest"], Field(alias="$type", frozen=True)
+    ] = "VariableGroupRuleSetRequest"
+
+
+class VariableGroupRuleSetResponse(_BaseRuleSet):
+    """Set of rules to retrieve a variable group item."""
+
+    entityType: Annotated[
+        Literal["VariableGroupRuleSetResponse"], Field(alias="$type", frozen=True)
+    ] = "VariableGroupRuleSetResponse"
+    stableTargetId: MergedVariableGroupIdentifier

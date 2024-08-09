@@ -2,17 +2,12 @@ from typing import Annotated, TypeVar
 
 from pydantic import Field
 
-from mex.common.models.entity import BaseEntity
+from mex.common.models.base.entity import BaseEntity
 from mex.common.types import (
     ExtractedIdentifier,
-    ExtractedPrimarySourceIdentifier,
     MergedIdentifier,
     MergedPrimarySourceIdentifier,
 )
-
-MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")
-MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
-MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
 
 _MergedIdentifierT = TypeVar("_MergedIdentifierT", bound=MergedIdentifier)
 _ExtractedIdentifierT = TypeVar("_ExtractedIdentifierT", bound=ExtractedIdentifier)
