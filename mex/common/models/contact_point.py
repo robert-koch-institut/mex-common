@@ -10,6 +10,7 @@ from mex.common.models.merged_item import MergedItem
 from mex.common.models.rules import (
     AdditiveRule,
     PreventiveRule,
+    RuleSet,
     SubtractiveRule,
 )
 from mex.common.types import (
@@ -90,3 +91,14 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
         Literal["PreventiveContactPoint"], Field(alias="$type", frozen=True)
     ] = "PreventiveContactPoint"
     email: list[MergedPrimarySourceIdentifier] = []
+
+
+class ContactPointRuleSet(_Stem, RuleSet):
+    """Set of rules to edit a contact point item."""
+
+    entityType: Annotated[
+        Literal["ContactPointRuleSet"], Field(alias="$type", frozen=True)
+    ] = "ContactPointRuleSet"
+    additive: AdditiveContactPoint
+    subtractive: SubtractiveContactPoint
+    preventive: PreventiveContactPoint

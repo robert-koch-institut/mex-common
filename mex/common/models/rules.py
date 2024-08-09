@@ -11,3 +11,7 @@ class SubtractiveRule(BaseEntity):
 
 class PreventiveRule(BaseEntity):
     """Base rule to prevent primary sources for fields of merged items."""
+
+
+class RuleSet(BaseEntity):
+    """Base class for a set of an additive, subtractive and preventive rule."""

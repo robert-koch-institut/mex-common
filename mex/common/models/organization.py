@@ -10,7 +10,12 @@ from pydantic import Field, computed_field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    RuleSet,
+    SubtractiveRule,
+)
 from mex.common.types import (
     ExtractedOrganizationIdentifier,
     MergedOrganizationIdentifier,
@@ -162,3 +167,14 @@ class PreventiveOrganization(_Stem, PreventiveRule):
     shortName: list[MergedPrimarySourceIdentifier] = []
     viafId: list[MergedPrimarySourceIdentifier] = []
     wikidataId: list[MergedPrimarySourceIdentifier] = []
+
+
+class OrganizationRuleSet(_Stem, RuleSet):
+    """Set of rules to edit an organization item."""
+
+    entityType: Annotated[
+        Literal["OrganizationRuleSet"], Field(alias="$type", frozen=True)
+    ] = "OrganizationRuleSet"
+    additive: AdditiveOrganization
+    subtractive: SubtractiveOrganization
+    preventive: PreventiveOrganization

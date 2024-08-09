@@ -7,7 +7,12 @@ from pydantic import Field, computed_field
 from mex.common.models.base import BaseModel
 from mex.common.models.extracted_data import ExtractedData
 from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    RuleSet,
+    SubtractiveRule,
+)
 from mex.common.types import (
     AccessRestriction,
     ExtractedDistributionIdentifier,
@@ -203,3 +208,14 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     publisher: list[MergedPrimarySourceIdentifier] = []
     researcher: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []
+
+
+class DistributionRuleSet(_Stem, RuleSet):
+    """Set of rules to edit a distribution item."""
+
+    entityType: Annotated[
+        Literal["DistributionRuleSet"], Field(alias="$type", frozen=True)
+    ] = "DistributionRuleSet"
+    additive: AdditiveDistribution
+    subtractive: SubtractiveDistribution
+    preventive: PreventiveDistribution
