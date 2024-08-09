@@ -74,6 +74,12 @@ IsbnIssnStr = Annotated[
         ],
     ),
 ]
+PublicationPlaceStr = Annotated[
+    str,
+    Field(
+        examples=["Berlin", "Chigago", "NYC/NY", "Tampa, FL"],
+    ),
+]
 SectionStr = Annotated[
     str,
     Field(
@@ -154,6 +160,7 @@ class _OptionalValues(_Stem):
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
         | None
     ) = None
+    publicationPlace: PublicationPlaceStr | None
     publicationYear: Year | None = None
     respositoryURL: Link | None = None
     section: SectionStr | None = None
@@ -195,6 +202,7 @@ class _VariadicValues(_Stem):
     pages: list[
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
     ] = []
+    publicationPlace: list[PublicationPlaceStr] = []
     publicationYear: list[Year] = []
     respositoryURL: list[Link] = []
     section: list[SectionStr] = []
@@ -273,6 +281,7 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     language: list[MergedPrimarySourceIdentifier] = []
     license: list[MergedPrimarySourceIdentifier] = []
     pages: list[MergedPrimarySourceIdentifier] = []
+    publicationPlace: list[MergedPrimarySourceIdentifier] = []
     publicationYear: list[MergedPrimarySourceIdentifier] = []
     publisher: list[MergedPrimarySourceIdentifier] = []
     respositoryURL: list[MergedPrimarySourceIdentifier] = []
