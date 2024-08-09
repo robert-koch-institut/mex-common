@@ -4,10 +4,10 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
-from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import (
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
     RuleSet,
@@ -122,12 +122,24 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
-class OrganizationalUnitRuleSet(_Stem, RuleSet):
-    """Set of rules to edit an organizational unit item."""
-
-    entityType: Annotated[
-        Literal["OrganizationalUnitRuleSet"], Field(alias="$type", frozen=True)
-    ] = "OrganizationalUnitRuleSet"
+class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveOrganizationalUnit
     subtractive: SubtractiveOrganizationalUnit
     preventive: PreventiveOrganizationalUnit
+
+
+class OrganizationalUnitRuleSetRequest(_BaseRuleSet):
+    """Set of rules to create or update an organizational unit item."""
+
+    entityType: Annotated[
+        Literal["OrganizationalUnitRuleSetRequest"], Field(alias="$type", frozen=True)
+    ] = "OrganizationalUnitRuleSetRequest"
+
+
+class OrganizationalUnitRuleSetResponse(_BaseRuleSet):
+    """Set of rules to retrieve an organizational unit item."""
+
+    entityType: Annotated[
+        Literal["OrganizationalUnitRuleSetResponse"], Field(alias="$type", frozen=True)
+    ] = "OrganizationalUnitRuleSetResponse"
+    stableTargetId: MergedOrganizationalUnitIdentifier
