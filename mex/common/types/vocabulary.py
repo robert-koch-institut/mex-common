@@ -20,8 +20,8 @@ MODEL_VOCABULARIES = files("mex.model.vocabularies")
 class BilingualText(BaseModel):
     """String-field translated in German and English."""
 
-    de: str
-    en: str
+    de: str | None = None
+    en: str | None = None
 
 
 class Concept(BaseModel):
@@ -98,8 +98,11 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
                 if not label:
                     continue
                 if language is None:
-                    searchable_labels.extend([normalize(label.de), normalize(label.en)])
-                elif language_label := label.dict().get(language.value):
+                    if label.de:
+                        searchable_labels.append(normalize(label.de))
+                    if label.en:
+                        searchable_labels.append(normalize(label.en))
+                elif language_label := label.model_dump().get(language.value):
                     searchable_labels.append(normalize(language_label))
             if search_term in searchable_labels:
                 return cls(str(concept.identifier))
@@ -130,16 +133,16 @@ class APIType(VocabularyEnum):
     __vocabulary__ = "api-type"
 
 
+class BibliographicResourceType(VocabularyEnum):
+    """The type of a bibliographic resource."""
+
+    __vocabulary__ = "bibliographic-resource-type"
+
+
 class DataProcessingState(VocabularyEnum):
     """Type for state of data processing."""
 
     __vocabulary__ = "data-processing-state"
-
-
-class DataType(VocabularyEnum):
-    """The type of the single piece of information within a datum."""
-
-    __vocabulary__ = "data-type"
 
 
 class Frequency(VocabularyEnum):
@@ -164,6 +167,18 @@ class MIMEType(VocabularyEnum):
     """The mime type."""
 
     __vocabulary__ = "mime-type"
+
+
+class PersonalData(VocabularyEnum):
+    """Classification of personal data."""
+
+    __vocabulary__ = "personal-data"
+
+
+class ResourceCreationMethod(VocabularyEnum):
+    """The creation method of a resource."""
+
+    __vocabulary__ = "resource-creation-method"
 
 
 class ResourceTypeGeneral(VocabularyEnum):

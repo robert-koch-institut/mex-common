@@ -21,10 +21,10 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     TechnicalAccessibility,
     Text,
 )
-from mex.common.types.identifier import MergedPrimarySourceIdentifier
 
 
 class _Stem(BaseModel):
