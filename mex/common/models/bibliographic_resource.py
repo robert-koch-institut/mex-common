@@ -77,7 +77,12 @@ IsbnIssnStr = Annotated[
 PublicationPlaceStr = Annotated[
     str,
     Field(
-        examples=["Berlin", "Chigago", "NYC/NY", "Tampa, FL"],
+        examples=[
+            "Berlin",
+            "Chigago",
+            "NYC/NY",
+            "Tampa, FL",
+        ],
     ),
 ]
 SectionStr = Annotated[
@@ -160,7 +165,7 @@ class _OptionalValues(_Stem):
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
         | None
     ) = None
-    publicationPlace: PublicationPlaceStr | None
+    publicationPlace: PublicationPlaceStr | None = None
     publicationYear: Year | None = None
     respositoryURL: Link | None = None
     section: SectionStr | None = None
