@@ -9,13 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
-  mocked_wikidata
-- convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
-  for getting the stableTargetId of an organization, while transforming and loading the
-  organization using the provided load function
-- models for rule sets along with typing and lookups
-
 ### Changes
 
 ### Deprecated
@@ -25,6 +18,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.34.0] - 2024-08-12
+
+### Added
+
+- wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
+  mocked_wikidata
+- convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
+  for getting the stableTargetId of an organization, while transforming and loading the
+  organization using the provided load function
+- models for rule-set requests and responses along with typing and lookups
+- add `BaseT` models to the exported names of `mex.common.models`
+- add `MEX_ID_PATTERN` to the exported names of `mex.common.types`
+
+### Changes
+
+- move all base models and pydantic scaffolding into `mex.common.models.base`
+  for a cleaner structure within the growing `models` module
 
 ## [0.33.0] - 2024-07-31
 

@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "0.33.0"
+version = "0.34.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -28,7 +28,7 @@ optional-dependencies.dev = [
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
     "pytest==8.3.2",
-    "ruff==0.5.5",
+    "ruff==0.5.6",
     "sphinx==8.0.2",
     "types-ldap3==2.9.13.20240205",
     "types-pytz==2024.1.0.20240417",
@@ -57,7 +57,7 @@ distribution = true
 
 [tool.pdm.scripts]
 update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
-lock-all = { cmd = "pdm lock --group :all --refresh" }
+lock-all = { cmd = "pdm lock --group :all --python='==3.11.*'" }
 install-all = { cmd = "pdm install --group :all --frozen-lockfile" }
 export-all = { cmd = "pdm export --group :all --no-hashes -f requirements" }
 apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }

@@ -4,6 +4,7 @@ The current set of entity types includes:
 
 - AccessPlatform
 - Activity
+- BibliographicResource
 - ContactPoint
 - Distribution
 - Organization
@@ -25,6 +26,7 @@ Each entity type `T` is modelled for the following use cases:
   fields from contributing to a merged item
 - `PreventiveT` defines a rule to prevent (or block) specific primary sources from
   contributing to specific fields of a merged item
+- `TRuleSet` classes are used for CRUD operations on a set of three rules
 
 - `ExtractedTEntityFilter` defines how an entity filter specification should look like
 - `ExtractedTMapping` defines how a raw data to extracted item mapping should look like
@@ -43,6 +45,8 @@ we use a number of intermediate private classes to compose the public classes:
 - `_VariadicValues` re-defines all fields from `_OptionalValues` and `_RequiredValues`
   as list fields with an arity of 0-n
 
+- `_BaseRuleSet` bundles the additive, subtractive and preventive rules for one type
+
 These private classes are used to compose the public classes like so:
 
 - BaseT: _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
@@ -52,6 +56,8 @@ These private classes are used to compose the public classes like so:
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
 - PreventiveT: all fields from BaseT re-typed as MergedPrimarySourceIdentifier
+- TRuleSetRequest: bundle of all three rules for one type used to create new rules
+- TRuleSetResponse: bundle of all three rules for one type including a `stableTargetId`
 
 - ExtractedTEntityFilter: all BaseT fields re-typed as a list of EntityFilter
 - ExtractedTMapping: all BaseT fields re-typed as lists of subclasses of GenericField
@@ -63,7 +69,8 @@ lists of models, lookups by class name and typing for unions of models.
 from typing import Final, get_args
 
 from mex.common.models.access_platform import (
-    AccessPlatformRuleSet,
+    AccessPlatformRuleSetRequest,
+    AccessPlatformRuleSetResponse,
     AdditiveAccessPlatform,
     BaseAccessPlatform,
     ExtractedAccessPlatform,
@@ -72,7 +79,8 @@ from mex.common.models.access_platform import (
     SubtractiveAccessPlatform,
 )
 from mex.common.models.activity import (
-    ActivityRuleSet,
+    ActivityRuleSetRequest,
+    ActivityRuleSetResponse,
     AdditiveActivity,
     BaseActivity,
     ExtractedActivity,
@@ -80,11 +88,18 @@ from mex.common.models.activity import (
     PreventiveActivity,
     SubtractiveActivity,
 )
-from mex.common.models.base import BaseModel, GenericFieldInfo
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.field_info import GenericFieldInfo
+from mex.common.models.base.filter import generate_entity_filter_schema
+from mex.common.models.base.mapping import generate_mapping_schema
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
     BaseBibliographicResource,
-    BibliographicResourceRuleSet,
+    BibliographicResourceRuleSetRequest,
+    BibliographicResourceRuleSetResponse,
     ExtractedBibliographicResource,
     MergedBibliographicResource,
     PreventiveBibliographicResource,
@@ -93,7 +108,8 @@ from mex.common.models.bibliographic_resource import (
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
     BaseContactPoint,
-    ContactPointRuleSet,
+    ContactPointRuleSetRequest,
+    ContactPointRuleSetResponse,
     ExtractedContactPoint,
     MergedContactPoint,
     PreventiveContactPoint,
@@ -102,27 +118,20 @@ from mex.common.models.contact_point import (
 from mex.common.models.distribution import (
     AdditiveDistribution,
     BaseDistribution,
-    DistributionRuleSet,
+    DistributionRuleSetRequest,
+    DistributionRuleSetResponse,
     ExtractedDistribution,
     MergedDistribution,
     PreventiveDistribution,
     SubtractiveDistribution,
 )
-from mex.common.models.extracted_data import (
-    MEX_PRIMARY_SOURCE_IDENTIFIER,
-    MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE,
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-    ExtractedData,
-)
-from mex.common.models.filter import generate_entity_filter_schema
-from mex.common.models.mapping import generate_mapping_schema
-from mex.common.models.merged_item import MergedItem
 from mex.common.models.organization import (
     AdditiveOrganization,
     BaseOrganization,
     ExtractedOrganization,
     MergedOrganization,
-    OrganizationRuleSet,
+    OrganizationRuleSetRequest,
+    OrganizationRuleSetResponse,
     PreventiveOrganization,
     SubtractiveOrganization,
 )
@@ -131,7 +140,8 @@ from mex.common.models.organizational_unit import (
     BaseOrganizationalUnit,
     ExtractedOrganizationalUnit,
     MergedOrganizationalUnit,
-    OrganizationalUnitRuleSet,
+    OrganizationalUnitRuleSetRequest,
+    OrganizationalUnitRuleSetResponse,
     PreventiveOrganizationalUnit,
     SubtractiveOrganizationalUnit,
 )
@@ -140,7 +150,8 @@ from mex.common.models.person import (
     BasePerson,
     ExtractedPerson,
     MergedPerson,
-    PersonRuleSet,
+    PersonRuleSetRequest,
+    PersonRuleSetResponse,
     PreventivePerson,
     SubtractivePerson,
 )
@@ -150,7 +161,8 @@ from mex.common.models.primary_source import (
     ExtractedPrimarySource,
     MergedPrimarySource,
     PreventivePrimarySource,
-    PrimarySourceRuleSet,
+    PrimarySourceRuleSetRequest,
+    PrimarySourceRuleSetResponse,
     SubtractivePrimarySource,
 )
 from mex.common.models.resource import (
@@ -159,10 +171,10 @@ from mex.common.models.resource import (
     ExtractedResource,
     MergedResource,
     PreventiveResource,
-    ResourceRuleSet,
+    ResourceRuleSetRequest,
+    ResourceRuleSetResponse,
     SubtractiveResource,
 )
-from mex.common.models.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.models.variable import (
     AdditiveVariable,
     BaseVariable,
@@ -170,7 +182,8 @@ from mex.common.models.variable import (
     MergedVariable,
     PreventiveVariable,
     SubtractiveVariable,
-    VariableRuleSet,
+    VariableRuleSetRequest,
+    VariableRuleSetResponse,
 )
 from mex.common.models.variable_group import (
     AdditiveVariableGroup,
@@ -179,7 +192,12 @@ from mex.common.models.variable_group import (
     MergedVariableGroup,
     PreventiveVariableGroup,
     SubtractiveVariableGroup,
-    VariableGroupRuleSet,
+    VariableGroupRuleSetRequest,
+    VariableGroupRuleSetResponse,
+)
+from mex.common.types import (
+    ExtractedPrimarySourceIdentifier,
+    MergedPrimarySourceIdentifier,
 )
 
 __all__ = (
@@ -205,7 +223,18 @@ __all__ = (
     "AnyRuleModel",
     "AnySubtractiveModel",
     "BaseBibliographicResource",
+    "BaseAccessPlatform",
+    "BaseActivity",
+    "BaseContactPoint",
+    "BaseDistribution",
     "BaseModel",
+    "BaseOrganization",
+    "BaseOrganizationalUnit",
+    "BasePerson",
+    "BasePrimarySource",
+    "BaseResource",
+    "BaseVariable",
+    "BaseVariableGroup",
     "EXTRACTED_MODEL_CLASSES_BY_NAME",
     "EXTRACTED_MODEL_CLASSES",
     "ExtractedAccessPlatform",
@@ -273,6 +302,10 @@ __all__ = (
     "SubtractiveVariable",
     "SubtractiveVariableGroup",
 )
+
+MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")
+MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
+MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
 
 AnyBaseModel = (
     BaseAccessPlatform
@@ -402,25 +435,46 @@ RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
 
-AnyRuleSetModel = (
-    AccessPlatformRuleSet
-    | ActivityRuleSet
-    | BibliographicResourceRuleSet
-    | ContactPointRuleSet
-    | DistributionRuleSet
-    | OrganizationRuleSet
-    | OrganizationalUnitRuleSet
-    | PersonRuleSet
-    | PrimarySourceRuleSet
-    | ResourceRuleSet
-    | VariableRuleSet
-    | VariableGroupRuleSet
+AnyRuleSetRequest = (
+    AccessPlatformRuleSetRequest
+    | ActivityRuleSetRequest
+    | BibliographicResourceRuleSetRequest
+    | ContactPointRuleSetRequest
+    | DistributionRuleSetRequest
+    | OrganizationRuleSetRequest
+    | OrganizationalUnitRuleSetRequest
+    | PersonRuleSetRequest
+    | PrimarySourceRuleSetRequest
+    | ResourceRuleSetRequest
+    | VariableRuleSetRequest
+    | VariableGroupRuleSetRequest
 )
-RULE_SET_MODEL_CLASSES: Final[list[type[AnyRuleSetModel]]] = list(
-    get_args(AnyRuleSetModel)
+RULE_SET_REQUEST_CLASSES: Final[list[type[AnyRuleSetRequest]]] = list(
+    get_args(AnyRuleSetRequest)
 )
-RULE_SET_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetModel]]] = {
-    cls.__name__: cls for cls in RULE_SET_MODEL_CLASSES
+RULE_SET_REQUEST_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetRequest]]] = {
+    cls.__name__: cls for cls in RULE_SET_REQUEST_CLASSES
+}
+
+AnyRuleSetResponse = (
+    AccessPlatformRuleSetResponse
+    | ActivityRuleSetResponse
+    | BibliographicResourceRuleSetResponse
+    | ContactPointRuleSetResponse
+    | DistributionRuleSetResponse
+    | OrganizationRuleSetResponse
+    | OrganizationalUnitRuleSetResponse
+    | PersonRuleSetResponse
+    | PrimarySourceRuleSetResponse
+    | ResourceRuleSetResponse
+    | VariableRuleSetResponse
+    | VariableGroupRuleSetResponse
+)
+RULE_SET_RESPONSE_CLASSES: Final[list[type[AnyRuleSetResponse]]] = list(
+    get_args(AnyRuleSetResponse)
+)
+RULE_SET_RESPONSE_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetResponse]]] = {
+    cls.__name__: cls for cls in RULE_SET_RESPONSE_CLASSES
 }
 
 FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {

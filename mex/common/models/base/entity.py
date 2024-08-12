@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import ConfigDict
 
-from mex.common.models.base import BaseModel
+from mex.common.models.base.model import BaseModel
 
 
 class BaseEntity(BaseModel):

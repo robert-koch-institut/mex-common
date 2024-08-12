@@ -4,10 +4,10 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
-from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import (
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
     RuleSet,
@@ -299,12 +299,26 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
 
 
-class BibliographicResourceRuleSet(_Stem, RuleSet):
-    """Set of rules to edit a bibliographic resource item."""
-
-    entityType: Annotated[
-        Literal["BibliographicResourceRuleSet"], Field(alias="$type", frozen=True)
-    ] = "BibliographicResourceRuleSet"
+class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveBibliographicResource
     subtractive: SubtractiveBibliographicResource
     preventive: PreventiveBibliographicResource
+
+
+class BibliographicResourceRuleSetRequest(_BaseRuleSet):
+    """Set of rules to create or update a bibliographic resource item."""
+
+    entityType: Annotated[
+        Literal["BibliographicResourceRuleSetRequest"],
+        Field(alias="$type", frozen=True),
+    ] = "BibliographicResourceRuleSetRequest"
+
+
+class BibliographicResourceRuleSetResponse(_BaseRuleSet):
+    """Set of rules to retrieve a bibliographic resource item."""
+
+    entityType: Annotated[
+        Literal["BibliographicResourceRuleSetResponse"],
+        Field(alias="$type", frozen=True),
+    ] = "BibliographicResourceRuleSetResponse"
+    stableTargetId: MergedBibliographicResourceIdentifier

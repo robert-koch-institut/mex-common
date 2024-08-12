@@ -1,4 +1,4 @@
-from mex.common.models.entity import BaseEntity
+from mex.common.models.base.entity import BaseEntity
 
 
 class MergedItem(BaseEntity):
