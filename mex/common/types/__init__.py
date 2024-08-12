@@ -2,6 +2,7 @@ from typing import Final, Literal, get_args
 
 from mex.common.types.email import Email
 from mex.common.types.identifier import (
+    MEX_ID_PATTERN,
     ExtractedAccessPlatformIdentifier,
     ExtractedActivityIdentifier,
     ExtractedContactPointIdentifier,
@@ -109,6 +110,7 @@ __all__ = (
     "MergedResourceIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
+    "MEX_ID_PATTERN",
     "MIMEType",
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",

@@ -4,10 +4,10 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
-from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import (
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
     RuleSet,
@@ -327,12 +327,24 @@ class PreventiveResource(_Stem, PreventiveRule):
     wasGeneratedBy: list[MergedPrimarySourceIdentifier] = []
 
 
-class ResourceRuleSet(_Stem, RuleSet):
-    """Set of rules to edit a resource item."""
-
-    entityType: Annotated[
-        Literal["ResourceRuleSet"], Field(alias="$type", frozen=True)
-    ] = "ResourceRuleSet"
+class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveResource
     subtractive: SubtractiveResource
     preventive: PreventiveResource
+
+
+class ResourceRuleSetRequest(_BaseRuleSet):
+    """Set of rules to create or update a resource item."""
+
+    entityType: Annotated[
+        Literal["ResourceRuleSetRequest"], Field(alias="$type", frozen=True)
+    ] = "ResourceRuleSetRequest"
+
+
+class ResourceRuleSetResponse(_BaseRuleSet):
+    """Set of rules to retrieve a resource item."""
+
+    entityType: Annotated[
+        Literal["ResourceRuleSetResponse"], Field(alias="$type", frozen=True)
+    ] = "ResourceRuleSetResponse"
+    stableTargetId: MergedResourceIdentifier

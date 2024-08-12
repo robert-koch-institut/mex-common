@@ -4,10 +4,10 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
 
-from mex.common.models.base import BaseModel
-from mex.common.models.extracted_data import ExtractedData
-from mex.common.models.merged_item import MergedItem
-from mex.common.models.rules import (
+from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.model import BaseModel
+from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
     RuleSet,
@@ -182,12 +182,24 @@ class PreventiveVariable(_Stem, PreventiveRule):
     valueSet: list[MergedPrimarySourceIdentifier] = []
 
 
-class VariableRuleSet(_Stem, RuleSet):
-    """Set of rules to edit a variable item."""
-
-    entityType: Annotated[
-        Literal["VariableRuleSet"], Field(alias="$type", frozen=True)
-    ] = "VariableRuleSet"
+class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveVariable
     subtractive: SubtractiveVariable
     preventive: PreventiveVariable
+
+
+class VariableRuleSetRequest(_BaseRuleSet):
+    """Set of rules to create or update a variable item."""
+
+    entityType: Annotated[
+        Literal["VariableRuleSetRequest"], Field(alias="$type", frozen=True)
+    ] = "VariableRuleSetRequest"
+
+
+class VariableRuleSetResponse(_BaseRuleSet):
+    """Set of rules to retrieve a variable item."""
+
+    entityType: Annotated[
+        Literal["VariableRuleSetResponse"], Field(alias="$type", frozen=True)
+    ] = "VariableRuleSetResponse"
+    stableTargetId: MergedVariableIdentifier
