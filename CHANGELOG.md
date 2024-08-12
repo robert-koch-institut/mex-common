@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.34.0] - 2024-08-12
+
+### Added
+
 - wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
   mocked_wikidata
 - convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
@@ -22,14 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - move all base models and pydantic scaffolding into `mex.common.models.base`
   for a cleaner structure within the growing `models` module
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.33.0] - 2024-07-31
 
