@@ -9,13 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- added `BackendApiConnector` methods to cover all current (and near future) endpoints:
+  `fetch_extracted_items`, `fetch_merged_items`, `get_merged_item`,
+  `preview_merged_item` and `get_rule_set`
+
 ### Changes
 
 ### Deprecated
 
+- deprecated `BackendApiConnector.post_models` in favor of `post_extracted_items`
+
 ### Removed
 
 ### Fixed
+
+- added the `rki/mex` user-agent to all requests of the HTTPConnector
 
 ### Security
 
