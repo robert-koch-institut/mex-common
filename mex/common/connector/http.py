@@ -78,10 +78,10 @@ class HTTPConnector(BaseConnector):
         if not kwargs.get("headers"):
             kwargs.setdefault("headers", {})
         kwargs["headers"].setdefault("Accept", "application/json")
+        kwargs["headers"].setdefault("User-Agent", "rki/mex")
 
         if payload:
             kwargs["data"] = json.dumps(payload, cls=MExEncoder)
-            kwargs["headers"].setdefault("User-Agent", "rki/mex")
 
         # Send request
         response = self._send_request(method, url, params, **kwargs)

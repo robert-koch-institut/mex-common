@@ -1,27 +1,37 @@
 import json
-from unittest.mock import MagicMock, Mock, call
+from unittest.mock import MagicMock, call
 
-from pytest import MonkeyPatch
+import pytest
+from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import ExtractedPerson
+from mex.common.backend_api.models import ExtractedItemsRequest
+from mex.common.models import (
+    ExtractedPerson,
+    MergedPerson,
+    PersonRuleSetRequest,
+    PersonRuleSetResponse,
+)
 from mex.common.testing import Joker
 
 
-def test_post_models_mocked(
-    monkeypatch: MonkeyPatch, extracted_person: ExtractedPerson
+@pytest.mark.usefixtures("mocked_backend")
+def test_set_authentication_mocked() -> None:
+    connector = BackendApiConnector.get()
+    assert connector.session.headers["X-API-Key"] == "dummy_write_key"
+
+
+def test_post_extracted_items_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
 ) -> None:
-    mocked_send_request = MagicMock(
-        spec=BackendApiConnector._send_request,
-        return_value=Mock(json=MagicMock(return_value={"identifiers": []})),
-    )
-    monkeypatch.setattr(BackendApiConnector, "_send_request", mocked_send_request)
+    mocked_return = {"identifiers": [extracted_person.identifier]}
+    mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
-    connector.post_models([extracted_person])
+    response = connector.post_extracted_items([extracted_person])
 
-    assert connector.session.headers["X-API-Key"] == "dummy_write_key"
-    assert mocked_send_request.call_args_list[-1] == call(
+    assert response.identifiers == [extracted_person.identifier]
+    assert mocked_backend.call_args == call(
         "POST",
         "http://localhost:8080/v0/ingest",
         None,
@@ -32,23 +42,178 @@ def test_post_models_mocked(
         timeout=10,
         data=Joker(),
     )
+    assert (
+        json.loads(mocked_backend.call_args.kwargs["data"])
+        == ExtractedItemsRequest(items=[extracted_person]).model_dump()
+    )
 
-    assert json.loads(mocked_send_request.call_args_list[-1].kwargs["data"]) == {
-        "items": [
-            {
-                "identifier": "e3VhxMhEKyjqN5flzLpiEB",
-                "hadPrimarySource": "bFQoRhcVH5DHXE",
-                "identifierInPrimarySource": "00000000-0000-4000-8000-0000000003de",
-                "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
-                "affiliation": ["bFQoRhcVH5DHZg"],
-                "email": ["TintzmannM@rki.de"],
-                "familyName": ["Tintzmann"],
-                "fullName": ["Meinrad I. Tintzmann"],
-                "givenName": ["Meinrad"],
-                "isniId": ["https://isni.org/isni/0000000109403744"],
-                "memberOf": ["bFQoRhcVH5DHV2", "bFQoRhcVH5DHV3"],
-                "orcidId": ["https://orcid.org/0000-0002-9079-593X"],
-                "entityType": "ExtractedPerson",
-            }
-        ]
-    }
+
+def test_fetch_extracted_items_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = {"items": [extracted_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_extracted_items(
+        "Tintzmann",
+        "NGwfzG8ROsrvIiQIVDVy",
+        entity_type=["ExtractedPerson", "ExtractedContactPoint"],
+        skip=0,
+        limit=1,
+    )
+
+    assert response.items == [extracted_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/extracted-item",
+        {
+            "q": "Tintzmann",
+            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "entityType": ["ExtractedPerson", "ExtractedContactPoint"],
+            "skip": "0",
+            "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_fetch_merged_items_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    mocked_return = {"items": [merged_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_merged_items(
+        "Tintzmann",
+        entity_type=["MergedPerson", "MergedContactPoint"],
+        skip=0,
+        limit=1,
+    )
+
+    assert response.items == [merged_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/merged-item",
+        {
+            "q": "Tintzmann",
+            "entityType": ["MergedPerson", "MergedContactPoint"],
+            "skip": "0",
+            "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_merged_item_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    mocked_return = {"items": [merged_person.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_merged_item("NGwfzG8ROsrvIiQIVDVy")
+
+    assert response == merged_person
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/merged-item",
+        {
+            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_merged_item_error_mocked(mocked_backend: MagicMock) -> None:
+    mocked_return = {"items": [], "total": 0}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    with pytest.raises(HTTPError, match="merged item was not found"):
+        connector.get_merged_item("NGwfzG8ROsrvIiQIVDVy")
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/merged-item",
+        {
+            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_preview_merged_item_mocked(
+    mocked_backend: MagicMock,
+    merged_person: MergedPerson,
+    rule_set_request: PersonRuleSetRequest,
+) -> None:
+    mocked_return = merged_person.model_dump()
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.preview_merged_item("NGwfzG8ROsrvIiQIVDVy", rule_set_request)
+
+    assert response == merged_person
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/preview-item/NGwfzG8ROsrvIiQIVDVy",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=Joker(),
+    )
+    assert (
+        json.loads(mocked_backend.call_args.kwargs["data"])
+        == rule_set_request.model_dump()
+    )
+
+
+def test_get_rule_set_mocked(
+    mocked_backend: MagicMock, rule_set_response: PersonRuleSetResponse
+) -> None:
+    mocked_backend.return_value.json.return_value = rule_set_response.model_dump()
+
+    connector = BackendApiConnector.get()
+    response = connector.get_rule_set("NGwfzG8ROsrvIiQIVDVy")
+
+    assert response == rule_set_response
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/rule-set/NGwfzG8ROsrvIiQIVDVy",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )

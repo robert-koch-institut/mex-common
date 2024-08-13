@@ -1,6 +1,8 @@
 from typing import cast
 from urllib.parse import urljoin
 
+from requests.exceptions import HTTPError
+
 from mex.common.backend_api.models import (
     ExtractedItemsRequest,
     ExtractedItemsResponse,
@@ -10,7 +12,6 @@ from mex.common.backend_api.models import (
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
-from mex.common.exceptions import MExError
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
@@ -100,6 +101,9 @@ class BackendApiConnector(HTTPConnector):
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
+
         Returns:
             One page of extracted items and the total count that was matched
         """
@@ -116,7 +120,7 @@ class BackendApiConnector(HTTPConnector):
         )
         return ExtractedItemsResponse.model_validate(response)
 
-    def fetch_merged_models(
+    def fetch_merged_items(
         self,
         query_string: str | None,
         entity_type: list[str] | None,
@@ -130,6 +134,9 @@ class BackendApiConnector(HTTPConnector):
             entity_type: The item's entityType
             skip: How many items to skip for pagination
             limit: How many items to return in one page
+
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
 
         Returns:
             One page of merged items and the total count that was matched
@@ -147,7 +154,7 @@ class BackendApiConnector(HTTPConnector):
         )
         return MergedItemsResponse.model_validate(response)
 
-    def get_merged_model(
+    def get_merged_item(
         self,
         stable_target_id: str,
     ) -> AnyMergedModel:
@@ -155,6 +162,9 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             stable_target_id: The merged item's identifier
+
+        Raises:
+            MExError: If no merged item was found
 
         Returns:
             A single merged item
@@ -172,9 +182,9 @@ class BackendApiConnector(HTTPConnector):
         try:
             return response_model.items[0]
         except IndexError:
-            raise MExError("merged item was not found") from None
+            raise HTTPError("merged item was not found") from None
 
-    def preview_merged_model(
+    def preview_merged_item(
         self,
         stable_target_id: str,
         rule_set: AnyRuleSetRequest,
@@ -185,12 +195,17 @@ class BackendApiConnector(HTTPConnector):
             stable_target_id: The extracted items' `stableTargetId`
             rule_set: A rule-set to use for previewing
 
+        Raises:
+            HTTPError: If preview produces errors, crashes or times out
+
         Returns:
             A single merged item
         """
         # XXX experimental method until the backend has a preview endpoint (MX-1406)
         response = self.request(
-            method="GET", endpoint=f"preview-item/{stable_target_id}", payload=rule_set
+            method="GET",
+            endpoint=f"preview-item/{stable_target_id}",
+            payload=rule_set,
         )
         return MergedModelTypeAdapter.validate_python(response)
 
@@ -202,6 +217,9 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             stable_target_id: The merged item's identifier
+
+        Raises:
+            HTTPError: If no rule-set was found
 
         Returns:
             A set of three rules
