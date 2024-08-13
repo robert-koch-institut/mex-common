@@ -1,4 +1,5 @@
 from collections.abc import Generator, Iterable
+from typing import cast
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import watch
@@ -23,4 +24,5 @@ def post_to_backend_api(
     connector = BackendApiConnector.get()
     for chunk in grouper(chunk_size, models):
         model_list = [model for model in chunk if model is not None]
-        yield from connector.post_models(model_list)
+        response = connector.post_extracted_items(model_list)
+        yield from cast(list[AnyExtractedIdentifier], response.identifiers)

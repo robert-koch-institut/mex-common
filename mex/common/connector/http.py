@@ -1,5 +1,6 @@
 import json
 from abc import abstractmethod
+from collections.abc import Mapping
 from typing import Any, Literal, cast
 
 import backoff
@@ -48,7 +49,7 @@ class HTTPConnector(BaseConnector):
         method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
         endpoint: str | None = None,
         payload: Any = None,
-        params: dict[str, str] | None = None,
+        params: Mapping[str, list[str] | str | None] | None = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Prepare and send a request with error handling and payload de/serialization.
@@ -114,7 +115,11 @@ class HTTPConnector(BaseConnector):
     )
     @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)
     def _send_request(
-        self, method: str, url: str, params: dict[str, str] | None, **kwargs: Any
+        self,
+        method: str,
+        url: str,
+        params: Mapping[str, list[str] | str | None] | None,
+        **kwargs: Any,
     ) -> Response:
         """Send the response with advanced retrying rules."""
         return self.session.request(method, url, params, **kwargs)
