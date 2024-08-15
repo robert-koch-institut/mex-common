@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update cruft and loosen up pyproject dependencies
+
 ### Deprecated
 
 ### Removed
@@ -45,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `rki/mex` user agent is sent with query requests via wikidata connector
 
 ### Changes
+
 - changed backend api connector payload to "items"
 
 - update wikidata search organization request query, with optional language parameter
