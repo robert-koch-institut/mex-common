@@ -2,6 +2,8 @@ name: Linting
 
 on:
   push:
+    branches: ["main"]
+    tags: ["**"]
   pull_request:
     types:
       - opened
