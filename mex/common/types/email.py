@@ -24,7 +24,3 @@ class Email(str):
         json_schema_["format"] = "email"
         json_schema_["examples"] = ["info@rki.de"]
         return json_schema_
-
-    def __repr__(self) -> str:
-        """Overwrite the default representation."""
-        return f"{self.__class__.__name__}({super().__str__().__repr__()})"
