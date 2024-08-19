@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 from pytz import timezone
 
 from mex.common.types import (
@@ -268,3 +269,12 @@ def test_temporal_entity_repr() -> None:
         repr(YearMonthDayTime("2018-03-02T12:00:01Z"))
         == 'YearMonthDayTime("2018-03-02T12:00:01Z")'
     )
+
+
+def test_temporal_entity_serialization() -> None:
+    class Person(BaseModel):
+        birthday: YearMonthDay
+
+    person = Person.model_validate({"birthday": "24th July 1999"})
+
+    assert person.model_dump_json() == '{"birthday":"1999-07-24"}'
