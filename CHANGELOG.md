@@ -11,19 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update cruft and loosen up pyproject dependencies
-- harmonize signatures/docs of pydantic core/json schema manipulating methods
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [0.35.0] - 2024-08-20
+
+### Changes
+
+- update cruft and loosen up pyproject dependencies
+- harmonize signatures/docs of pydantic core/json schema manipulating methods
+
+### Fixed
+
 - fix schema tests not starting with diverging model names in common and mex-model
 - fix serialization for temporal entity instances within pydantic models
-
-### Security
 
 ## [0.34.0] - 2024-08-12
 
