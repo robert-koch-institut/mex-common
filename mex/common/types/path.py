@@ -49,7 +49,7 @@ class PathWrapper(PathLike[str]):
         return not self._path.is_absolute()
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, _source: type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(cls, source: type[Any]) -> core_schema.CoreSchema:
         """Set schema to str schema."""
         from_str_schema = core_schema.chain_schema(
             [

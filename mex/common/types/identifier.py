@@ -3,11 +3,10 @@ import string
 from typing import Any, Self
 from uuid import UUID, uuid4
 
-from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
-from pydantic.json_schema import JsonSchemaValue
-from pydantic_core import CoreSchema, core_schema
+from pydantic import GetJsonSchemaHandler, json_schema
+from pydantic_core import core_schema
 
-ALPHABET = string.ascii_letters + string.digits
+MEX_ID_ALPHABET = string.ascii_letters + string.digits
 MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
 UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
@@ -20,14 +19,14 @@ class Identifier(str):
         """Generate a new identifier from a seed or random UUID version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
-        alpha_len = len(ALPHABET)
+        alpha_len = len(MEX_ID_ALPHABET)
         if seed is None:
             number = uuid4().int
         else:
             number = UUID(int=seed, version=4).int
         while number:
             number, digit = divmod(number, alpha_len)
-            output += ALPHABET[digit]
+            output += MEX_ID_ALPHABET[digit]
         return cls(output[::-1])
 
     @classmethod
@@ -43,28 +42,21 @@ class Identifier(str):
         raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source: type[Any], handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        """Modify the schema to add the ID regex."""
-        identifier_schema = {
-            "type": "str",
-            "pattern": MEX_ID_PATTERN,
-        }
+    def __get_pydantic_core_schema__(cls, source: type[Any]) -> core_schema.CoreSchema:
+        """Modify the core schema to add the ID regex."""
         return core_schema.no_info_before_validator_function(
-            cls.validate,
-            identifier_schema,
+            cls.validate, core_schema.str_schema(pattern=MEX_ID_PATTERN)
         )
 
     @classmethod
     def __get_pydantic_json_schema__(
-        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
-        """Modify the schema to add the class name as title."""
-        json_schema = handler(core_schema_)
-        json_schema = handler.resolve_ref_schema(json_schema)
-        json_schema["title"] = cls.__name__
-        return json_schema
+        cls, core_schema_: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> json_schema.JsonSchemaValue:
+        """Modify the json schema to add the class name as title."""
+        json_schema_ = handler(core_schema_)
+        json_schema_ = handler.resolve_ref_schema(json_schema_)
+        json_schema_["title"] = cls.__name__
+        return json_schema_
 
     def __repr__(self) -> str:
         """Overwrite the default representation."""

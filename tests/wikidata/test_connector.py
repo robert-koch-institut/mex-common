@@ -25,6 +25,22 @@ def test_get_data_by_query() -> None:
     """Test if items can be searched providing a label."""
     expected = [
         {
+            "item": {
+                "type": "uri",
+                "value": "http://www.wikidata.org/entity/Q2875797",
+            },
+            "itemDescription": {
+                "type": "literal",
+                "value": "airport in Algeria",
+                "xml:lang": "en",
+            },
+            "itemLabel": {
+                "type": "literal",
+                "value": "Bordj Mokhtar Airport",
+                "xml:lang": "en",
+            },
+        },
+        {
             "item": {"type": "uri", "value": "http://www.wikidata.org/entity/Q26678"},
             "itemDescription": {
                 "type": "literal",
