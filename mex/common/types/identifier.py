@@ -3,7 +3,7 @@ import string
 from typing import Any, Self
 from uuid import UUID, uuid4
 
-from pydantic import GetJsonSchemaHandler, json_schema
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
 
 MEX_ID_ALPHABET = string.ascii_letters + string.digits
@@ -42,7 +42,9 @@ class Identifier(str):
         raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source: type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
         """Modify the core schema to add the ID regex."""
         return core_schema.no_info_before_validator_function(
             cls.validate, core_schema.str_schema(pattern=MEX_ID_PATTERN)

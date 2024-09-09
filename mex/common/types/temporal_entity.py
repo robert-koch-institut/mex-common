@@ -6,7 +6,7 @@ from itertools import zip_longest
 from typing import Any, Literal, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
-from pydantic import GetJsonSchemaHandler, json_schema
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
 from pytz import timezone
 
@@ -189,7 +189,9 @@ class TemporalEntity:
             raise ValueError(error_str)
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source: type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
         """Modify the core schema to add validation and serialization rules."""
         from_str_schema = core_schema.chain_schema(
             [
