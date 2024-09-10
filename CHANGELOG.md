@@ -19,6 +19,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.36.0] - 2024-09-09
+
+### Added
+
+- added `BackendApiConnector` methods to cover all current (and near future) endpoints:
+  `fetch_extracted_items`, `fetch_merged_items`, `get_merged_item`,
+  `preview_merged_item` and `get_rule_set`
+- complete the list of exported names in `models` and `types` modules
+
+### Deprecated
+
+- deprecated `BackendApiConnector.post_models` in favor of `post_extracted_items`
+
+### Removed
+
+- containerize section from release pipeline
+
+### Fixed
+
+- added the `rki/mex` user-agent to all requests of the HTTPConnector
+
+## [0.35.0] - 2024-08-20
+
+### Changes
+
+- update cruft and loosen up pyproject dependencies
+- harmonize signatures/docs of pydantic core/json schema manipulating methods
+
+### Fixed
+
+- fix schema tests not starting with diverging model names in common and mex-model
+- fix serialization for temporal entity instances within pydantic models
+
 ## [0.34.0] - 2024-08-12
 
 ### Added
@@ -45,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `rki/mex` user agent is sent with query requests via wikidata connector
 
 ### Changes
+
 - changed backend api connector payload to "items"
 
 - update wikidata search organization request query, with optional language parameter

@@ -2,7 +2,15 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.models import ExtractedPerson
+from mex.common.models import (
+    AdditivePerson,
+    ExtractedPerson,
+    MergedPerson,
+    PersonRuleSetRequest,
+    PersonRuleSetResponse,
+    PreventivePerson,
+    SubtractivePerson,
+)
 from mex.common.types import (
     Email,
     ExtractedPersonIdentifier,
@@ -34,4 +42,44 @@ def extracted_person() -> ExtractedPerson:
             MergedOrganizationalUnitIdentifier.generate(seed=101),
         ],
         orcidId=["https://orcid.org/0000-0002-9079-593X"],
+    )
+
+
+@pytest.fixture
+def merged_person() -> MergedPerson:
+    """Return a dummy merged person for testing purposes."""
+    return MergedPerson.model_construct(
+        identifier=MergedPersonIdentifier.generate(seed=876),
+        affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
+        email=[Email("TintzmannM@rki.de")],
+        familyName=["Tintzmann"],
+        givenName=["Meinrad"],
+        fullName=["Meinrad I. Tintzmann"],
+        isniId=["https://isni.org/isni/0000000109403744"],
+        memberOf=[
+            MergedOrganizationalUnitIdentifier.generate(seed=100),
+            MergedOrganizationalUnitIdentifier.generate(seed=101),
+        ],
+        orcidId=["https://orcid.org/0000-0002-9079-593X"],
+    )
+
+
+@pytest.fixture()
+def rule_set_request() -> PersonRuleSetRequest:
+    """Return a dummy person rule set request for testing purposes."""
+    return PersonRuleSetRequest(
+        additive=AdditivePerson(),
+        subtractive=SubtractivePerson(fullName="That's not my name!"),
+        preventive=PreventivePerson(),
+    )
+
+
+@pytest.fixture()
+def rule_set_response() -> PersonRuleSetResponse:
+    """Return a dummy person rule set response for testing purposes."""
+    return PersonRuleSetResponse(
+        stableTargetId=MergedPersonIdentifier.generate(seed=876),
+        additive=AdditivePerson(),
+        subtractive=SubtractivePerson(fullName="That's not my name!"),
+        preventive=PreventivePerson(),
     )

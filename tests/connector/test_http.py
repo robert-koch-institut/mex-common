@@ -6,10 +6,7 @@ import requests
 from pytest import MonkeyPatch
 from requests import JSONDecodeError, Response
 
-from mex.common.connector import (
-    CONNECTOR_STORE,
-    HTTPConnector,
-)
+from mex.common.connector import CONNECTOR_STORE, HTTPConnector
 
 
 class DummyHTTPConnector(HTTPConnector):
@@ -44,7 +41,10 @@ def test_init_mocked(mocked_dummy_session: MagicMock) -> None:
         "https://www.example.com/_system/check",
         None,
         timeout=10,
-        headers={"Accept": "application/json"},
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
     )
 
 
@@ -66,13 +66,23 @@ def test_reset_all_connectors(mocked_dummy_session: MagicMock) -> None:
             {},
             MagicMock(status_code=204, json=MagicMock(side_effect=JSONDecodeError)),
             {},
-            {"headers": {"Accept": "application/json"}},
+            {
+                "headers": {
+                    "Accept": "application/json",
+                    "User-Agent": "rki/mex",
+                },
+            },
         ),
         (
             {},
             MagicMock(status_code=200, json=MagicMock(return_value={"foo": "bar"})),
             {"foo": "bar"},
-            {"headers": {"Accept": "application/json"}},
+            {
+                "headers": {
+                    "Accept": "application/json",
+                    "User-Agent": "rki/mex",
+                },
+            },
         ),
         (
             {"q": "SELECT status;"},

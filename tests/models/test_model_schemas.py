@@ -67,8 +67,8 @@ def test_entity_types_match_spec() -> None:
 
 @pytest.mark.parametrize(
     ("generated", "specified"),
-    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values()),
-    ids=GENERATED_SCHEMAS,
+    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values(), fillvalue={}),
+    ids=map(str, zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A")),
 )
 def test_field_names_match_spec(
     generated: dict[str, Any], specified: dict[str, Any]
@@ -84,8 +84,8 @@ def test_field_names_match_spec(
 
 @pytest.mark.parametrize(
     ("generated", "specified"),
-    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values()),
-    ids=GENERATED_SCHEMAS,
+    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values(), fillvalue={}),
+    ids=map(str, zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A")),
 )
 def test_entity_type_matches_class_name(
     generated: dict[str, Any], specified: dict[str, Any]
@@ -98,8 +98,8 @@ def test_entity_type_matches_class_name(
 
 @pytest.mark.parametrize(
     ("generated", "specified"),
-    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values()),
-    ids=GENERATED_SCHEMAS,
+    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values(), fillvalue={}),
+    ids=map(str, zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A")),
 )
 def test_required_fields_match_spec(
     generated: dict[str, Any], specified: dict[str, Any]

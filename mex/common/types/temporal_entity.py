@@ -6,9 +6,8 @@ from itertools import zip_longest
 from typing import Any, Literal, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
-from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
-from pydantic.json_schema import JsonSchemaValue
-from pydantic_core import CoreSchema, core_schema
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
+from pydantic_core import core_schema
 from pytz import timezone
 
 
@@ -190,12 +189,16 @@ class TemporalEntity:
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, _source: type[Any], _handler: GetCoreSchemaHandler
+        cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
-        """Mutate the field schema for temporal entity."""
-        from_str_schema = core_schema.no_info_before_validator_function(
-            cls.validate,
-            core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
+        """Modify the core schema to add validation and serialization rules."""
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
+                core_schema.no_info_plain_validator_function(
+                    cls.validate,
+                ),
+            ]
         )
         from_anything_schema = core_schema.chain_schema(
             [
@@ -203,16 +206,20 @@ class TemporalEntity:
                 core_schema.is_instance_schema(cls),
             ]
         )
+        serialization_schema = core_schema.plain_serializer_function_ser_schema(
+            lambda instance: str(instance)
+        )
         return core_schema.json_or_python_schema(
             json_schema=from_str_schema,
             python_schema=from_anything_schema,
+            serialization=serialization_schema,
         )
 
     @classmethod
     def __get_pydantic_json_schema__(
-        cls, core_schema_: CoreSchema, handler: GetJsonSchemaHandler
-    ) -> JsonSchemaValue:
-        """Modify the schema to add the class name as title and examples."""
+        cls, core_schema_: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> json_schema.JsonSchemaValue:
+        """Modify the json schema to add a title, examples and an optional format."""
         json_schema = handler(core_schema_)
         json_schema["title"] = cls.__name__
         json_schema.update(cls.JSON_SCHEMA_CONFIG)
