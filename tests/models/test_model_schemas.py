@@ -10,7 +10,7 @@ import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
 from mex.common.transform import dromedary_to_kebab
-from mex.common.types.identifier import MEX_ID_PATTERN
+from mex.common.types import MEX_ID_PATTERN
 
 MEX_MODEL_ENTITIES = files("mex.model.entities")
 
@@ -73,10 +73,13 @@ def test_entity_types_match_spec() -> None:
 def test_field_names_match_spec(
     generated: dict[str, Any], specified: dict[str, Any]
 ) -> None:
-    generated = {
-        k: v for k, v in generated["properties"].items() if k != "$type"
-    }  # only in generated models
-    assert set(generated) == set(specified["properties"])
+    ignored_properties = {
+        "$type",  # only in generated models
+    }
+    generated_properties = {
+        k: v for k, v in generated["properties"].items() if k not in ignored_properties
+    }
+    assert set(generated_properties) == set(specified["properties"])
 
 
 @pytest.mark.parametrize(
@@ -133,6 +136,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     obj.pop("sameAs", None)  # only in spec
     obj.pop("subPropertyOf", None)  # only in spec
     obj.pop("description", None)  # only in model (mostly implementation hints)
+    obj.pop("$comment", None)  # only in model
     obj.pop("readOnly", None)  # only in model (but could be in spec)
 
     # pop annotations that we don't compare directly but use for other comparisons

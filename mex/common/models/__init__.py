@@ -4,6 +4,7 @@ The current set of entity types includes:
 
 - AccessPlatform
 - Activity
+- BibliographicResource
 - ContactPoint
 - Distribution
 - Organization
@@ -95,6 +96,16 @@ from mex.common.models.base.mapping import generate_mapping_schema
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.bibliographic_resource import (
+    AdditiveBibliographicResource,
+    BaseBibliographicResource,
+    BibliographicResourceRuleSetRequest,
+    BibliographicResourceRuleSetResponse,
+    ExtractedBibliographicResource,
+    MergedBibliographicResource,
+    PreventiveBibliographicResource,
+    SubtractiveBibliographicResource,
+)
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
     BaseContactPoint,
@@ -199,6 +210,7 @@ __all__ = (
     "ADDITIVE_MODEL_CLASSES",
     "AdditiveAccessPlatform",
     "AdditiveActivity",
+    "AdditiveBibliographicResource",
     "AdditiveContactPoint",
     "AdditiveDistribution",
     "AdditiveOrganization",
@@ -218,6 +230,7 @@ __all__ = (
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
     "AnySubtractiveModel",
+    "BaseBibliographicResource",
     "BASE_MODEL_CLASSES_BY_NAME",
     "BASE_MODEL_CLASSES",
     "BaseAccessPlatform",
@@ -240,6 +253,7 @@ __all__ = (
     "EXTRACTED_MODEL_CLASSES",
     "ExtractedAccessPlatform",
     "ExtractedActivity",
+    "ExtractedBibliographicResource",
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
@@ -260,6 +274,7 @@ __all__ = (
     "MERGED_MODEL_CLASSES",
     "MergedAccessPlatform",
     "MergedActivity",
+    "MergedBibliographicResource",
     "MergedContactPoint",
     "MergedDistribution",
     "MergedItem",
@@ -284,6 +299,7 @@ __all__ = (
     "PREVENTIVE_MODEL_CLASSES",
     "PreventiveAccessPlatform",
     "PreventiveActivity",
+    "PreventiveBibliographicResource",
     "PreventiveContactPoint",
     "PreventiveDistribution",
     "PreventiveOrganization",
@@ -308,6 +324,7 @@ __all__ = (
     "SUBTRACTIVE_MODEL_CLASSES",
     "SubtractiveAccessPlatform",
     "SubtractiveActivity",
+    "SubtractiveBibliographicResource",
     "SubtractiveContactPoint",
     "SubtractiveDistribution",
     "SubtractiveOrganization",
@@ -331,6 +348,7 @@ MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000
 AnyBaseModel = (
     BaseAccessPlatform
     | BaseActivity
+    | BaseBibliographicResource
     | BaseContactPoint
     | BaseDistribution
     | BaseOrganization
@@ -349,6 +367,7 @@ BASE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyBaseModel]]] = {
 AnyExtractedModel = (
     ExtractedAccessPlatform
     | ExtractedActivity
+    | ExtractedBibliographicResource
     | ExtractedContactPoint
     | ExtractedDistribution
     | ExtractedOrganization
@@ -369,6 +388,7 @@ EXTRACTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedModel]]] = {
 AnyMergedModel = (
     MergedAccessPlatform
     | MergedActivity
+    | MergedBibliographicResource
     | MergedContactPoint
     | MergedDistribution
     | MergedOrganization
@@ -387,6 +407,7 @@ MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
 AnyAdditiveModel = (
     AdditiveAccessPlatform
     | AdditiveActivity
+    | AdditiveBibliographicResource
     | AdditiveContactPoint
     | AdditiveDistribution
     | AdditiveOrganization
@@ -407,6 +428,7 @@ ADDITIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyAdditiveModel]]] = {
 AnySubtractiveModel = (
     SubtractiveAccessPlatform
     | SubtractiveActivity
+    | SubtractiveBibliographicResource
     | SubtractiveContactPoint
     | SubtractiveDistribution
     | SubtractiveOrganization
@@ -427,6 +449,7 @@ SUBTRACTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnySubtractiveModel]]] =
 AnyPreventiveModel = (
     PreventiveAccessPlatform
     | PreventiveActivity
+    | PreventiveBibliographicResource
     | PreventiveContactPoint
     | PreventiveDistribution
     | PreventiveOrganization
@@ -453,6 +476,7 @@ RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
 AnyRuleSetRequest = (
     AccessPlatformRuleSetRequest
     | ActivityRuleSetRequest
+    | BibliographicResourceRuleSetRequest
     | ContactPointRuleSetRequest
     | DistributionRuleSetRequest
     | OrganizationRuleSetRequest
@@ -473,6 +497,7 @@ RULE_SET_REQUEST_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetRequest]]] = {
 AnyRuleSetResponse = (
     AccessPlatformRuleSetResponse
     | ActivityRuleSetResponse
+    | BibliographicResourceRuleSetResponse
     | ContactPointRuleSetResponse
     | DistributionRuleSetResponse
     | OrganizationRuleSetResponse

@@ -3,8 +3,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field
 
 from mex.common.models import ExtractedData, generate_entity_filter_schema
-from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.common.types.email import Email
+from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 
 
 class ExtractedDummy(ExtractedData):
