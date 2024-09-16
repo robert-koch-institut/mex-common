@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic.json_schema import (
     GenerateJsonSchema as PydanticJsonSchemaGenerator,
 )
@@ -18,3 +20,9 @@ class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
         to stay compatible with mex-editor and mex-model.
         """
         return json_schema
+
+    def complex_schema(schema_or_field: Any) -> JsonSchemaValue:  # noqa: D102
+        # TODO: clean this up in MX-1704 (stop-gap)
+        raise NotImplementedError(
+            "Method for generating JsonSchema for 'complex' schemas is not implemented."
+        )
