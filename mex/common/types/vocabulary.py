@@ -139,6 +139,18 @@ class BibliographicResourceType(VocabularyEnum):
     __vocabulary__ = "bibliographic-resource-type"
 
 
+class ConsentStatus(VocabularyEnum):
+    """The status of a consent."""
+
+    __vocabulary__ = "consent-status"
+
+
+class ConsentType(VocabularyEnum):
+    """The type of a consent."""
+
+    __vocabulary__ = "consent-type"
+
+
 class DataProcessingState(VocabularyEnum):
     """Type for state of data processing."""
 

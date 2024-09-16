@@ -47,7 +47,7 @@ LoincIdStr = Annotated[
     str,
     Field(
         examples=["https://loinc.org/95209-3", "https://loinc.org/LA26211-5"],
-        pattern=r"^https://loinc.org/([a-zA-z]*)|(([0-9]{5}-[0-9]*))$",
+        pattern=r"^https://loinc.org/([a-zA-z]*)|(([0-9]*(-[0-9])*))$",
         json_schema_extra={"format": "uri"},
     ),
 ]

@@ -5,6 +5,7 @@ The current set of entity types includes:
 - AccessPlatform
 - Activity
 - BibliographicResource
+- Consent
 - ContactPoint
 - Distribution
 - Organization
@@ -105,6 +106,16 @@ from mex.common.models.bibliographic_resource import (
     MergedBibliographicResource,
     PreventiveBibliographicResource,
     SubtractiveBibliographicResource,
+)
+from mex.common.models.consent import (
+    AdditiveConsent,
+    BaseConsent,
+    ConsentRuleSetRequest,
+    ConsentRuleSetResponse,
+    ExtractedConsent,
+    MergedConsent,
+    PreventiveConsent,
+    SubtractiveConsent,
 )
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
@@ -211,6 +222,7 @@ __all__ = (
     "AdditiveAccessPlatform",
     "AdditiveActivity",
     "AdditiveBibliographicResource",
+    "AdditiveConsent",
     "AdditiveContactPoint",
     "AdditiveDistribution",
     "AdditiveOrganization",
@@ -230,11 +242,12 @@ __all__ = (
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
     "AnySubtractiveModel",
-    "BaseBibliographicResource",
     "BASE_MODEL_CLASSES_BY_NAME",
     "BASE_MODEL_CLASSES",
     "BaseAccessPlatform",
     "BaseActivity",
+    "BaseBibliographicResource",
+    "BaseConsent",
     "BaseContactPoint",
     "BaseDistribution",
     "BaseModel",
@@ -245,6 +258,8 @@ __all__ = (
     "BaseResource",
     "BaseVariable",
     "BaseVariableGroup",
+    "ConsentRuleSetRequest",
+    "ConsentRuleSetResponse",
     "ContactPointRuleSetRequest",
     "ContactPointRuleSetResponse",
     "DistributionRuleSetRequest",
@@ -254,6 +269,7 @@ __all__ = (
     "ExtractedAccessPlatform",
     "ExtractedActivity",
     "ExtractedBibliographicResource",
+    "ExtractedConsent",
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
@@ -275,6 +291,7 @@ __all__ = (
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedBibliographicResource",
+    "MergedConsent",
     "MergedContactPoint",
     "MergedDistribution",
     "MergedItem",
@@ -300,6 +317,7 @@ __all__ = (
     "PreventiveAccessPlatform",
     "PreventiveActivity",
     "PreventiveBibliographicResource",
+    "PreventiveConsent",
     "PreventiveContactPoint",
     "PreventiveDistribution",
     "PreventiveOrganization",
@@ -325,6 +343,7 @@ __all__ = (
     "SubtractiveAccessPlatform",
     "SubtractiveActivity",
     "SubtractiveBibliographicResource",
+    "SubtractiveConsent",
     "SubtractiveContactPoint",
     "SubtractiveDistribution",
     "SubtractiveOrganization",
@@ -349,6 +368,7 @@ AnyBaseModel = (
     BaseAccessPlatform
     | BaseActivity
     | BaseBibliographicResource
+    | BaseConsent
     | BaseContactPoint
     | BaseDistribution
     | BaseOrganization
@@ -368,6 +388,7 @@ AnyExtractedModel = (
     ExtractedAccessPlatform
     | ExtractedActivity
     | ExtractedBibliographicResource
+    | ExtractedConsent
     | ExtractedContactPoint
     | ExtractedDistribution
     | ExtractedOrganization
@@ -389,6 +410,7 @@ AnyMergedModel = (
     MergedAccessPlatform
     | MergedActivity
     | MergedBibliographicResource
+    | MergedConsent
     | MergedContactPoint
     | MergedDistribution
     | MergedOrganization
@@ -408,6 +430,7 @@ AnyAdditiveModel = (
     AdditiveAccessPlatform
     | AdditiveActivity
     | AdditiveBibliographicResource
+    | AdditiveConsent
     | AdditiveContactPoint
     | AdditiveDistribution
     | AdditiveOrganization
@@ -429,6 +452,7 @@ AnySubtractiveModel = (
     SubtractiveAccessPlatform
     | SubtractiveActivity
     | SubtractiveBibliographicResource
+    | SubtractiveConsent
     | SubtractiveContactPoint
     | SubtractiveDistribution
     | SubtractiveOrganization
@@ -450,6 +474,7 @@ AnyPreventiveModel = (
     PreventiveAccessPlatform
     | PreventiveActivity
     | PreventiveBibliographicResource
+    | PreventiveConsent
     | PreventiveContactPoint
     | PreventiveDistribution
     | PreventiveOrganization
@@ -477,6 +502,7 @@ AnyRuleSetRequest = (
     AccessPlatformRuleSetRequest
     | ActivityRuleSetRequest
     | BibliographicResourceRuleSetRequest
+    | ConsentRuleSetRequest
     | ContactPointRuleSetRequest
     | DistributionRuleSetRequest
     | OrganizationRuleSetRequest
@@ -498,6 +524,7 @@ AnyRuleSetResponse = (
     AccessPlatformRuleSetResponse
     | ActivityRuleSetResponse
     | BibliographicResourceRuleSetResponse
+    | ConsentRuleSetResponse
     | ContactPointRuleSetResponse
     | DistributionRuleSetResponse
     | OrganizationRuleSetResponse

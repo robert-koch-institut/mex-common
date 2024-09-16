@@ -90,6 +90,10 @@ class ExtractedBibliographicResourceIdentifier(ExtractedIdentifier):
     """Identifier for bibliographic resources."""
 
 
+class ExtractedConsentIdentifier(ExtractedIdentifier):
+    """Identifier for extracted consents."""
+
+
 class ExtractedContactPointIdentifier(ExtractedIdentifier):
     """Identifier for extracted contact points."""
 
@@ -140,6 +144,10 @@ class MergedActivityIdentifier(MergedIdentifier):
 
 class MergedBibliographicResourceIdentifier(MergedIdentifier):
     """Identifier for merged bibliographic resources."""
+
+
+class MergedConsentIdentifier(MergedIdentifier):
+    """Identifier for merged consents."""
 
 
 class MergedContactPointIdentifier(MergedIdentifier):
