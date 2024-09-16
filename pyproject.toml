@@ -18,11 +18,12 @@ dependencies = [
     "pyarrow>=17.0.0,<18",
     "pydantic-settings>=2.4.0,<3",
     "pydantic>=2.8.2,<3",
+    "pytz>=2024.1,<2024.2",
     "requests>=2.32.3,<3",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13.13,<1",
-    "pandas-stubs>=2.2.2.240807,<3",
+    "pandas-stubs>=2.2.2,<3",
     "mypy>=1.11.0,<2",
     "pytest-cov>=5.0.0,<6",
     "pytest-random-order>=1.1.1,<2",
@@ -30,9 +31,9 @@ optional-dependencies.dev = [
     "pytest>=8.3.1,<9",
     "ruff>=0.5.4,<1",
     "sphinx>=8.0.2,<9",
-    "types-ldap3>=2.9.13.20240205,<3",
-    "types-pytz>=2024.1.0.20240417,<2025",
-    "types-requests>=2.32.0.20240712,<3",
+    "types-ldap3>=2.9.13,<3",
+    "types-pytz>=2024.1.0,<2025",
+    "types-requests>=2.32.0,<3",
 ]
 
 [tool.cruft]
