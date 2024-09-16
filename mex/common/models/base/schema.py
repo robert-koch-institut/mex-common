@@ -4,6 +4,7 @@ from pydantic.json_schema import (
     GenerateJsonSchema as PydanticJsonSchemaGenerator,
 )
 from pydantic.json_schema import JsonSchemaValue
+from pydantic_core.core_schema import ComplexSchema
 
 
 class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
@@ -21,7 +22,8 @@ class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
         """
         return json_schema
 
-    def complex_schema(schema_or_field: Any) -> JsonSchemaValue:  # noqa: D102
+    def complex_schema(self, schema: ComplexSchema) -> dict[str, Any]:
+        """Returns a schema that matches a complex value."""
         # TODO: clean this up in MX-1704 (stop-gap)
         raise NotImplementedError(
             "Method for generating JsonSchema for 'complex' schemas is not implemented."
