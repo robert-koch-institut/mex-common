@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- pin pytz to 2024.1, as stopgap for MX-1703
+
 ### Security
 
 ## [0.36.0] - 2024-09-09
