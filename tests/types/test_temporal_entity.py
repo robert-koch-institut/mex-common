@@ -104,15 +104,6 @@ def test_temporal_entity_value_errors(
 
 
 @pytest.mark.parametrize(
-    ("value", "message"),
-    [(object(), "Cannot parse <class 'object'> as TemporalEntity")],
-)
-def test_temporal_entity_validation_errors(value: Any, message: str) -> None:
-    with pytest.raises(TypeError, match=message):
-        TemporalEntity.validate(value)
-
-
-@pytest.mark.parametrize(
     ("cls", "args", "kwargs", "expected"),
     [
         (TemporalEntity, (), {}, 'TemporalEntity("1970")'),

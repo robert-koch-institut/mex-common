@@ -35,8 +35,8 @@ def test_vocabulary_enum_model() -> None:
 
     # check enum values are loaded correctly
     assert [c.value for c in DummyEnum] == [
-        "https://dummy/concept-one",
-        "https://dummy/concept-two",
+        "https://mex.rki.de/item/dummy-concept-1",
+        "https://mex.rki.de/item/dummy-concept-2",
     ]
 
     # check enum instance representation
@@ -51,10 +51,14 @@ def test_vocabulary_enum_model() -> None:
 
     # check wrong value raises error
     with pytest.raises(ValidationError):
-        DummyModel.model_validate({"dummy": "https://dummy/not-a-valid-concept"})
+        DummyModel.model_validate(
+            {"dummy": "https://mex.rki.de/item/not-a-valid-concept"}
+        )
 
     # check parsing from string works
-    model = DummyModel.model_validate({"dummy": "https://dummy/concept-two"})
+    model = DummyModel.model_validate(
+        {"dummy": "https://mex.rki.de/item/dummy-concept-2"}
+    )
     assert model.dummy == DummyEnum["PREF_EN_TWO"]
 
 
@@ -68,4 +72,4 @@ def test_vocabulary_enum_find() -> None:
 
     found_enum = DummyEnum.find("pref-de-one")
     assert found_enum is not None
-    assert found_enum.value == "https://dummy/concept-one"
+    assert found_enum.value == "https://mex.rki.de/item/dummy-concept-1"

@@ -193,27 +193,20 @@ class TemporalEntity:
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add validation and serialization rules."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
-        )
-        from_anything_schema = core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(cls),
-            ]
-        )
-        serialization_schema = core_schema.plain_serializer_function_ser_schema(
-            lambda instance: str(instance)
-        )
         return core_schema.json_or_python_schema(
-            json_schema=from_str_schema,
-            python_schema=from_anything_schema,
-            serialization=serialization_schema,
+            json_schema=core_schema.chain_schema(
+                [
+                    core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
+                    core_schema.no_info_plain_validator_function(cls),
+                ]
+            ),
+            python_schema=core_schema.chain_schema(
+                [
+                    core_schema.is_instance_schema(cls | date | str | TemporalEntity),
+                    core_schema.no_info_plain_validator_function(cls),
+                ]
+            ),
+            serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
         )
 
     @classmethod
@@ -221,17 +214,10 @@ class TemporalEntity:
         cls, core_schema_: core_schema.CoreSchema, handler: GetJsonSchemaHandler
     ) -> json_schema.JsonSchemaValue:
         """Modify the json schema to add a title, examples and an optional format."""
-        json_schema = handler(core_schema_)
-        json_schema["title"] = cls.__name__
-        json_schema.update(cls.JSON_SCHEMA_CONFIG)
-        return json_schema
-
-    @classmethod
-    def validate(cls, value: Any) -> "TemporalEntity":
-        """Parse any value and try to convert it into a temporal entity."""
-        if isinstance(value, cls | date | str | TemporalEntity):
-            return cls(value)
-        raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
+        json_schema_ = handler(core_schema_)
+        json_schema_["title"] = cls.__name__
+        json_schema_.update(cls.JSON_SCHEMA_CONFIG)
+        return json_schema_
 
     @staticmethod
     def _parse_integers(
@@ -286,20 +272,21 @@ class TemporalEntity:
     def __eq__(self, other: object) -> bool:
         """Return whether the given other value is the same as this one."""
         try:
-            other = self.validate(other)
+            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
         except TypeError:
             return False
         return bool(
-            self.date_time == other.date_time and self.precision == other.precision
+            self.date_time == other_temporal.date_time
+            and self.precision == other_temporal.precision
         )
 
     def __gt__(self, other: Any) -> bool:
         """Return whether the given other value is the greater than this one."""
         try:
-            other = self.validate(other)
+            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
         except TypeError:
             raise NotImplementedError from None
-        return bool(self.date_time > other.date_time)
+        return bool(self.date_time > other_temporal.date_time)
 
     def __str__(self) -> str:
         """Render temporal entity with format fitting for its precision."""
@@ -308,7 +295,7 @@ class TemporalEntity:
         )
 
     def __repr__(self) -> str:
-        """Render a presentation showing this is not just a datetime."""
+        """Overwrite the default representation."""
         return f'{self.__class__.__name__}("{self}")'
 
 

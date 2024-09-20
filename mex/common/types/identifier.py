@@ -1,4 +1,3 @@
-import re
 import string
 from typing import Any, Self
 from uuid import UUID, uuid4
@@ -8,7 +7,6 @@ from pydantic_core import core_schema
 
 MEX_ID_ALPHABET = string.ascii_letters + string.digits
 MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
-UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
 
 class Identifier(str):
@@ -30,24 +28,16 @@ class Identifier(str):
         return cls(output[::-1])
 
     @classmethod
-    def validate(cls, value: Any) -> Self:
-        """Validate a string, UUID or Identifier."""
-        if isinstance(value, str | UUID | Identifier):
-            value = str(value)
-            if re.match(MEX_ID_PATTERN, value):
-                return cls(value)
-            if re.match(UUID_PATTERN, value):
-                return cls.generate(seed=UUID(value).int)
-            raise ValueError(f"Invalid identifier format: {value}")
-        raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
-
-    @classmethod
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add the ID regex."""
-        return core_schema.no_info_before_validator_function(
-            cls.validate, core_schema.str_schema(pattern=MEX_ID_PATTERN)
+        return core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=MEX_ID_PATTERN),
+                core_schema.no_info_plain_validator_function(cls),
+            ],
+            serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
         )
 
     @classmethod
@@ -58,11 +48,12 @@ class Identifier(str):
         json_schema_ = handler(core_schema_)
         json_schema_ = handler.resolve_ref_schema(json_schema_)
         json_schema_["title"] = cls.__name__
+        json_schema_["pattern"] = MEX_ID_PATTERN
         return json_schema_
 
     def __repr__(self) -> str:
         """Overwrite the default representation."""
-        return f"{self.__class__.__name__}({super().__str__().__repr__()})"
+        return f'{self.__class__.__name__}("{self}")'
 
 
 # We have technically-identical subclasses of identifier types (one per entity-type).

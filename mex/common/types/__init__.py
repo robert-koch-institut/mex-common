@@ -46,6 +46,7 @@ from mex.common.types.temporal_entity import (
 )
 from mex.common.types.text import Text, TextLanguage
 from mex.common.types.vocabulary import (
+    VOCABULARY_PATTERN,
     AccessRestriction,
     ActivityType,
     AnonymizationPseudonymization,
@@ -131,6 +132,7 @@ __all__ = (
     "TextLanguage",
     "Theme",
     "UTC",
+    "VOCABULARY_PATTERN",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
