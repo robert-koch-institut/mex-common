@@ -43,6 +43,19 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 
+DoiStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "https://doi.org/10.1007/978-1-0716-2441-8_7",
+            "https://doi.org/10.2807/1560-7917.ES.2022.27.46.2200849",
+            "https://doi.org/10.3389/fmicb.2022.868887",
+            "http://dx.doi.org/10.25646/5147",
+            "https://doi.org/10.1016/j.vaccine.2022.11.065",
+        ],
+        pattern=r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Z0-9]+)$",
+    ),
+]
 LoincIdStr = Annotated[
     str,
     Field(
@@ -168,6 +181,7 @@ class _OptionalValues(_Stem):
         | None
     ) = None
     created: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
+    doi: DoiStr | None = None
     hasPersonalData: (
         Annotated[
             PersonalData,
@@ -237,6 +251,7 @@ class _VariadicValues(_Stem):
         Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
     ] = []
     created: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    doi: list[DoiStr] = []
     hasPersonalData: list[
         Annotated[
             PersonalData,
@@ -339,6 +354,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     contributingUnit: list[MergedPrimarySourceIdentifier] = []
     contributor: list[MergedPrimarySourceIdentifier] = []
     created: list[MergedPrimarySourceIdentifier] = []
+    doi: list[MergedPrimarySourceIdentifier] = []
     creator: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
     distribution: list[MergedPrimarySourceIdentifier] = []
