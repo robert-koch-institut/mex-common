@@ -9,7 +9,6 @@ from mex.common.ldap.extract import (
     get_merged_ids_by_email,
     get_merged_ids_by_employee_ids,
     get_merged_ids_by_query_string,
-    get_person_by_id,
     get_persons_by_name,
 )
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
@@ -208,20 +207,4 @@ def test_get_count_of_found_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> N
     assert persons_count == 1
 
 
-def test_get_person_by_id_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    person = get_person_by_id(objectGUID=SAMPLE_PERSON_ATTRS["objectGUID"][0])
-    expected = {
-        "company": "RKI",
-        "department": "XY",
-        "departmentNumber": "XY2",
-        "displayName": "Sample, Sam",
-        "employeeID": "1024",
-        "givenName": ["Sam"],
-        "mail": ["SampleS@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
-        "ou": ["XY"],
-        "sAMAccountName": "SampleS",
-        "sn": "Sample",
-    }
-    assert person.model_dump(exclude_none=True) == expected
+
