@@ -63,6 +63,30 @@ def test_vocabulary_enum_model() -> None:
 
 
 @pytest.mark.usefixtures("use_dummy_vocabulary")
+def test_vocabulary_enum_schema() -> None:
+    class DummyEnum(VocabularyEnum):
+        __vocabulary__ = "dummy-vocabulary"
+
+    class DummyModel(BaseModel):
+        dummy: DummyEnum
+
+    assert DummyModel.model_json_schema() == {
+        "properties": {
+            "dummy": {
+                "examples": ["https://mex.rki.de/item/dummy-vocabulary-1"],
+                "pattern": "https://mex.rki.de/item/[a-z0-9-]+",
+                "title": "Dummy",
+                "type": "string",
+                "useScheme": "https://mex.rki.de/item/dummy-vocabulary",
+            }
+        },
+        "required": ["dummy"],
+        "title": "DummyModel",
+        "type": "object",
+    }
+
+
+@pytest.mark.usefixtures("use_dummy_vocabulary")
 def test_vocabulary_enum_find() -> None:
     class DummyEnum(VocabularyEnum):
         __vocabulary__ = "dummy-vocabulary"
