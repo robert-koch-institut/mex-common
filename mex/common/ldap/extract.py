@@ -114,24 +114,6 @@ def get_merged_ids_by_query_string(
     return merged_ids_by_attribute
 
 
-def get_person_by_id(
-    objectguid: str = "*",
-    employeeid: str = "*",
-    **filters: str,
-) -> LDAPPerson:
-    """Search for a unique person in LDAP.
-
-    Args:
-        objectGUID: Internal LDAP identifier.
-        employeeID: Employee ID, must be present.
-        **filters: Filters for LDAP search.
-
-    Returns:
-        Single LDAP person matching the filters.
-
-    """
-    connector = LDAPConnector.get()
-    return connector.get_person(objectguid, employeeid, **filters)
 
 
 def get_persons_by_name(
