@@ -2,8 +2,7 @@ import hashlib
 import json
 from collections.abc import MutableMapping
 from functools import cache
-from types import UnionType
-from typing import Any, Union
+from typing import Any
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import (
@@ -100,9 +99,7 @@ class BaseModel(PydanticBaseModel):
         """Build a cached list of fields that look like lists."""
         field_names = []
         for field_name, field_info in cls.get_all_fields().items():
-            field_types = get_inner_types(
-                field_info.annotation, unpack=(Union, UnionType)
-            )
+            field_types = get_inner_types(field_info.annotation, unpack_list=False)
             if any(
                 isinstance(field_type, type) and issubclass(field_type, list)
                 for field_type in field_types
