@@ -179,7 +179,7 @@ def test_get_merged_ids_by_query_string(
     assert merged_ids_by_query_string == expected
 
 
-def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
+def test_get_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
     persons = get_persons_by_name(surname="Sample", given_name="Sam")
     persons_list = list(persons)
@@ -200,7 +200,7 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     assert persons_list[0].model_dump(exclude_none=True)["givenName"] == expected["givenName"]
 
 
-def test_get_count_persons_mocked(ldap_mocker: LDAPMocker) -> None:
+def test_get_count_of_found_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
     persons_count = get_count_of_found_persons_by_name(
         surname="Sample", given_name="Sam"
@@ -208,7 +208,7 @@ def test_get_count_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     assert persons_count == 1
 
 
-def test_get_person_mocked(ldap_mocker: LDAPMocker) -> None:
+def test_get_person_by_id_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
     person = get_person_by_id(objectGUID=SAMPLE_PERSON_ATTRS["objectGUID"][0])
     expected = {
