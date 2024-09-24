@@ -132,6 +132,7 @@ __all__ = (
     "Text",
     "TextLanguage",
     "Theme",
+    "URL_PATTERN",
     "UTC",
     "VOCABULARY_PATTERN",
     "VocabularyEnum",
