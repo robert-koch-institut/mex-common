@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from mex.common.types import Email, EMAIL_PATTERN
+from mex.common.types import EMAIL_PATTERN, Email
 
 
 class DummyModel(BaseModel):

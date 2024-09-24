@@ -1,7 +1,7 @@
 import string
 from typing import Any, Self
 from uuid import UUID, uuid4
-import re
+
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
 

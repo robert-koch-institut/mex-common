@@ -1,6 +1,6 @@
 from typing import Final, Literal, get_args
 
-from mex.common.types.email import Email, EMAIL_PATTERN
+from mex.common.types.email import EMAIL_PATTERN, Email
 from mex.common.types.identifier import (
     IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,

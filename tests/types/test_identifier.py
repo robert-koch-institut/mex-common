@@ -4,7 +4,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common.types import Identifier, IDENTIFIER_PATTERN
+from mex.common.types import IDENTIFIER_PATTERN, Identifier
 
 
 class DummyIdentifier(Identifier):
