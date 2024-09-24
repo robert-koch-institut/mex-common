@@ -16,8 +16,6 @@ from typing import (
     get_origin,
 )
 
-from pydantic.fields import FieldInfo
-
 if TYPE_CHECKING:  # pragma: no cover
     from mex.common.models import GenericFieldInfo
     from mex.common.models.base.model import BaseModel
@@ -88,11 +86,10 @@ def get_inner_types(
     # If the origin should be unpacked
     if origin_type in types_to_unpack:
         for inner_type in get_args(annotation):
-            # Recursively process each inner type, skipping pydantic's FieldInfo
-            if not isinstance(inner_type, FieldInfo):
-                yield from get_inner_types(
-                    inner_type, include_none, unpack_list, unpack_literal
-                )
+            # Recursively process each inner type
+            yield from get_inner_types(
+                inner_type, include_none, unpack_list, unpack_literal
+            )
 
     # Handle Literal types based on the unpack_literal flag
     elif origin_type is Literal:
@@ -105,12 +102,12 @@ def get_inner_types(
     elif origin_type is not None:
         yield origin_type
 
-    # Yield the annotation if it isn't none
-    elif annotation not in (None, NoneType):
+    # Yield the annotation if it is valid type, that isn't NoneType
+    elif isinstance(annotation, type) and annotation is not NoneType:
         yield annotation
 
-    # Optionally yield none
-    elif include_none:
+    # Optionally yield none types
+    elif include_none and annotation in (None, NoneType):
         yield NoneType
 
 
