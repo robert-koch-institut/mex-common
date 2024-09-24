@@ -10,7 +10,7 @@ import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
 from mex.common.transform import dromedary_to_kebab
-from mex.common.types import MEX_ID_PATTERN, VOCABULARY_PATTERN
+from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
 
 MEX_MODEL_ENTITIES = files("mex.model.entities")
 
@@ -141,7 +141,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     # align reference paths
     # (the paths to referenced vocabularies and types differ between the models
     # and the specification, so we need to make sure they match before comparing)
-    if obj.get("pattern") == MEX_ID_PATTERN:
+    if obj.get("pattern") == IDENTIFIER_PATTERN:
         obj.pop("pattern")
         obj.pop("type")
         if field in ("identifier", "stableTargetId"):
