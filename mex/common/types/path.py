@@ -2,6 +2,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Self, Union
 
+from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
 
 
@@ -49,7 +50,9 @@ class PathWrapper(PathLike[str]):
         return not self._path.is_absolute()
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source: type[Any]) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
         """Set schema to str schema."""
         from_str_schema = core_schema.chain_schema(
             [
