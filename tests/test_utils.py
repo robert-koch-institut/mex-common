@@ -96,6 +96,7 @@ def test_contains_only_types(
         (list[int], {"unpack_list": False}, [list]),
         (list[str | int | list[str]], {}, [str, int, str]),
         (Annotated[str | int, FieldInfo(description="str or int")], {}, [str, int]),
+        (Annotated[str | int, "This is a string or integer"], {}, [str, int]),
         (Literal["okay"] | None, {}, [Literal, NoneType]),
         (
             Literal["okay"] | None,
@@ -113,7 +114,8 @@ def test_contains_only_types(
         "list of optional strings",
         "not unpacking list",
         "list nested in list",
-        "annotated string or int",
+        "annotated string or int with FieldInfo",
+        "annotated string or int with plain text",
         "unpacking literal",
         "not unpacking literal",
     ],
