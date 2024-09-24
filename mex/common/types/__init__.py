@@ -1,8 +1,8 @@
 from typing import Final, Literal, get_args
 
-from mex.common.types.email import Email
+from mex.common.types.email import Email, EMAIL_PATTERN
 from mex.common.types.identifier import (
-    MEX_ID_PATTERN,
+    IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,
     ExtractedActivityIdentifier,
     ExtractedContactPointIdentifier,
@@ -78,6 +78,7 @@ __all__ = (
     "CET",
     "DataProcessingState",
     "DataType",
+    "EMAIL_PATTERN",
     "Email",
     "EXTRACTED_IDENTIFIER_CLASSES_BY_NAME",
     "EXTRACTED_IDENTIFIER_CLASSES",
@@ -94,6 +95,7 @@ __all__ = (
     "ExtractedVariableGroupIdentifier",
     "ExtractedVariableIdentifier",
     "Frequency",
+    "IDENTIFIER_PATTERN",
     "Identifier",
     "IdentityProvider",
     "Language",
@@ -115,7 +117,6 @@ __all__ = (
     "MergedResourceIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
-    "MEX_ID_PATTERN",
     "MIMEType",
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",

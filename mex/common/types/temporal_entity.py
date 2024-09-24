@@ -269,10 +269,10 @@ class TemporalEntity:
         """Parse a date and assume the precision is days."""
         return datetime(value.year, value.month, value.day), TemporalEntityPrecision.DAY
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Return whether the given other value is the same as this one."""
         try:
-            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
+            other_temporal = TemporalEntity(other)
         except TypeError:
             return False
         return bool(
@@ -283,7 +283,7 @@ class TemporalEntity:
     def __gt__(self, other: Any) -> bool:
         """Return whether the given other value is the greater than this one."""
         try:
-            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
+            other_temporal = TemporalEntity(other)
         except TypeError:
             raise NotImplementedError from None
         return bool(self.date_time > other_temporal.date_time)

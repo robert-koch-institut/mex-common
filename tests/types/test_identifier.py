@@ -4,7 +4,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common.types import Identifier
+from mex.common.types import Identifier, IDENTIFIER_PATTERN
 
 
 class DummyIdentifier(Identifier):
@@ -12,40 +12,45 @@ class DummyIdentifier(Identifier):
 
 
 class DummyModel(BaseModel):
-    id: Identifier
-    dummy: DummyIdentifier | None = None
+    id: DummyIdentifier
 
 
-def test_identifier_validates() -> None:
-    model_with_obj = DummyModel.model_validate({"id": Identifier("bFQoRhcVH5DIfZ")})
-    model_with_raw = DummyModel.model_validate({"id": "bFQoRhcVH5DIfZ"})
+def test_identifier_validation() -> None:
+    model = DummyModel.model_validate({"id": "bFQoRhcVH5DIfZ"})
+    assert model.id == DummyIdentifier("bFQoRhcVH5DIfZ")
 
-    assert model_with_obj.id == model_with_raw.id == Identifier.generate(seed=1337)
+    model = DummyModel.model_validate({"id": DummyIdentifier("bFQoRhcVH5DIfZ")})
+    assert model.id == DummyIdentifier("bFQoRhcVH5DIfZ")
+
+    model = DummyModel(id=DummyIdentifier("bFQoRhcVH5DIfZ"))
+    assert model.id == DummyIdentifier("bFQoRhcVH5DIfZ")
 
     with pytest.raises(ValidationError):
         DummyModel.model_validate({"id": "baaiaaaboi!!!"})
 
     with pytest.raises(ValidationError):
-        DummyModel.model_validate({"id": 42})
+        DummyModel.model_validate({"id": object()})
 
 
-def test_identifier_modifies_schema() -> None:
-    assert DummyModel.model_json_schema()["properties"]["id"] == {
-        "title": "Identifier",
-        "type": "string",
-        "pattern": r"^[a-zA-Z0-9]{14,22}$",
-    }
-    assert DummyModel.model_json_schema()["properties"]["dummy"] == {
-        "anyOf": [
-            {
-                "pattern": "^[a-zA-Z0-9]{14,22}$",
+def test_identifier_serialization() -> None:
+    model = DummyModel(id=DummyIdentifier("bFQoRhcVH5DIfZ"))
+    raw = model.model_dump()
+
+    assert raw == {"id": "bFQoRhcVH5DIfZ"}
+
+
+def test_identifier_schema() -> None:
+    assert DummyModel.model_json_schema() == {
+        "properties": {
+            "id": {
+                "pattern": IDENTIFIER_PATTERN,
                 "title": "DummyIdentifier",
                 "type": "string",
-            },
-            {"type": "null"},
-        ],
-        "default": None,
-        "title": "Dummy",
+            }
+        },
+        "required": ["id"],
+        "title": "DummyModel",
+        "type": "object",
     }
 
 

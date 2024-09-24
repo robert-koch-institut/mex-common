@@ -1,12 +1,12 @@
 import string
 from typing import Any, Self
 from uuid import UUID, uuid4
-
+import re
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
 
-MEX_ID_ALPHABET = string.ascii_letters + string.digits
-MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
+_ALPHABET = string.ascii_letters + string.digits
+IDENTIFIER_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
 
 
 class Identifier(str):
@@ -17,14 +17,14 @@ class Identifier(str):
         """Generate a new identifier from a seed or random UUID version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
-        alpha_len = len(MEX_ID_ALPHABET)
+        alpha_len = len(_ALPHABET)
         if seed is None:
             number = uuid4().int
         else:
             number = UUID(int=seed, version=4).int
         while number:
             number, digit = divmod(number, alpha_len)
-            output += MEX_ID_ALPHABET[digit]
+            output += _ALPHABET[digit]
         return cls(output[::-1])
 
     @classmethod
@@ -34,7 +34,7 @@ class Identifier(str):
         """Modify the core schema to add the ID regex."""
         return core_schema.chain_schema(
             [
-                core_schema.str_schema(pattern=MEX_ID_PATTERN),
+                core_schema.str_schema(pattern=IDENTIFIER_PATTERN),
                 core_schema.no_info_plain_validator_function(cls),
             ],
             serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
@@ -48,7 +48,7 @@ class Identifier(str):
         json_schema_ = handler(core_schema_)
         json_schema_ = handler.resolve_ref_schema(json_schema_)
         json_schema_["title"] = cls.__name__
-        json_schema_["pattern"] = MEX_ID_PATTERN
+        json_schema_["pattern"] = IDENTIFIER_PATTERN
         return json_schema_
 
     def __repr__(self) -> str:
