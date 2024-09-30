@@ -114,17 +114,22 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
         cls, source_type: object, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add the vocabulary regex."""
-        return core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(
-                    lambda v: v.value if isinstance(v, cls) else v
-                ),
-                core_schema.str_schema(pattern=VOCABULARY_PATTERN),
-                core_schema.no_info_plain_validator_function(cls),
-            ],
+        return core_schema.json_or_python_schema(
+            json_schema=core_schema.union_schema(
+                [
+                    core_schema.str_schema(pattern=VOCABULARY_PATTERN),
+                    core_schema.no_info_plain_validator_function(cls),
+                ],
+            ),
+            python_schema=core_schema.chain_schema(
+                [
+                    core_schema.is_instance_schema(cls | str),
+                    core_schema.no_info_plain_validator_function(cls),
+                ]
+            ),
             serialization=core_schema.plain_serializer_function_ser_schema(
                 lambda s: s.value,
-                return_schema=core_schema.str_schema(pattern=VOCABULARY_PATTERN),
+                when_used="unless-none",
             ),
         )
 
