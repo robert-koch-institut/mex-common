@@ -56,7 +56,7 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             Identifiers of posted extracted models
         """
-        # XXX deprecated method, please use `post_extracted_models` instead
+        # XXX deprecated method, please use `post_extracted_items` instead
         return cast(
             list[AnyExtractedIdentifier],
             self.post_extracted_items(extracted_items).identifiers,
