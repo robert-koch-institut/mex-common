@@ -8,14 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- added methods for extracting persons by name or ID from ldap
-
-- `contains_only_types` to check if fields are annotated as desired
-- `group_fields_by_class_name` utility to simplify filtered model/field lookups
-- new parameters to `get_inner_types` to customize what to unpack
-- add pattern constants for vocabs, emails, urls and ids to types module
-- add regex pattern to json schema of identifier fields
-- automatically add examples and useScheme to json schema of enum fields
 
 ### Changes
 
@@ -41,6 +33,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.37.0] - 2024-10-01
+
+### Added
+
+- added methods for extracting persons by name or ID from ldap
+- `contains_only_types` to check if fields are annotated as desired
+- `group_fields_by_class_name` utility to simplify filtered model/field lookups
+- new parameters to `get_inner_types` to customize what to unpack
 
 ## [0.36.1] - 2024-09-16
 
