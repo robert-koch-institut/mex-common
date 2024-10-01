@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - added methods for extracting persons by name or ID from ldap
 
+- `contains_only_types` to check if fields are annotated as desired
+- `group_fields_by_class_name` utility to simplify filtered model/field lookups
+- new parameters to `get_inner_types` to customize what to unpack
+
 ### Changes
 
 ### Deprecated
