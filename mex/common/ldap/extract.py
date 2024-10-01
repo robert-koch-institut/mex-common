@@ -114,8 +114,6 @@ def get_merged_ids_by_query_string(
     return merged_ids_by_attribute
 
 
-
-
 def get_persons_by_name(
     surname: str = "*",
     given_name: str = "*",

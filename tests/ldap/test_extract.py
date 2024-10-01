@@ -196,7 +196,10 @@ def test_get_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
         "sn": "Sample",
     }
     assert len(persons_list) == 1
-    assert persons_list[0].model_dump(exclude_none=True)["givenName"] == expected["givenName"]
+    assert (
+        persons_list[0].model_dump(exclude_none=True)["givenName"]
+        == expected["givenName"]
+    )
 
 
 def test_get_count_of_found_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
@@ -205,6 +208,3 @@ def test_get_count_of_found_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> N
         surname="Sample", given_name="Sam"
     )
     assert persons_count == 1
-
-
-
