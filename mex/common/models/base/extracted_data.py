@@ -96,3 +96,7 @@ class ExtractedData(BaseEntity):
             .assign(self.hadPrimarySource, self.identifierInPrimarySource)
             .stableTargetId
         )
+
+    def __hash__(self) -> int:
+        """Calculates a hash value to make the object cachable."""
+        return hash(f"{self.hadPrimarySource}\n{self.identifierInPrimarySource}")

@@ -28,6 +28,7 @@ def transform_seed_primary_sources_to_extracted_primary_sources(
         )
 
 
+# TODO: Remove this in MX-1698
 def get_primary_sources_by_name(
     extracted_primary_sources: Iterable[ExtractedPrimarySource], *names: str
 ) -> tuple[ExtractedPrimarySource, ...]:
