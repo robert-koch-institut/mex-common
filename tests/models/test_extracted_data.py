@@ -90,11 +90,9 @@ def test_extracted_data_stores_identity_in_provider() -> None:
 def test_hash_function():
     hps1 = MergedPrimarySourceIdentifier.generate(seed=123456)
     hps2 = MergedPrimarySourceIdentifier.generate(seed=234567)
-    model1 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
-    model2 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
-    model3 = ExtractedThing(hadPrimarySource=hps2, identifierInPrimarySource="567")
+    thing1 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
+    thing2 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
+    thing3 = ExtractedThing(hadPrimarySource=hps2, identifierInPrimarySource="567")
 
-    assert hash(model1) == hash(model2), "Hashes of identical models should be the same"
-    assert hash(model1) != hash(
-        model3
-    ), "Hashes of different models should be different"
+    assert hash(thing1) == hash(thing2)
+    assert hash(thing1) != hash(thing3)
