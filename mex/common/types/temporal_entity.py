@@ -192,13 +192,9 @@ class TemporalEntity:
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add validation and serialization rules."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
+        from_str_schema = core_schema.no_info_before_validator_function(
+            cls.validate,
+            core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
         )
         from_anything_schema = core_schema.chain_schema(
             [
@@ -344,9 +340,9 @@ class YearMonthDayTime(TemporalEntity):
 
 
 TEMPORAL_ENTITY_CLASSES_BY_PRECISION: dict[
-    TemporalEntityPrecision, type[YearMonth | YearMonthDay | YearMonthDayTime]
+    TemporalEntityPrecision, type[Year | YearMonth | YearMonthDay | YearMonthDayTime]
 ] = {
-    TemporalEntityPrecision.YEAR: YearMonth,
+    TemporalEntityPrecision.YEAR: Year,
     TemporalEntityPrecision.MONTH: YearMonth,
     TemporalEntityPrecision.DAY: YearMonthDay,
     TemporalEntityPrecision.HOUR: YearMonthDayTime,

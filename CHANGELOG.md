@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `contains_only_types` to check if fields are annotated as desired
+- `group_fields_by_class_name` utility to simplify filtered model/field lookups
+- new parameters to `get_inner_types` to customize what to unpack
+
 ### Changes
 
 ### Deprecated
@@ -18,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.36.1] - 2024-09-16
+
+### Fixed
+
+- pin pytz to 2024.1, as stopgap for MX-1703
 
 ## [0.36.0] - 2024-09-09
 

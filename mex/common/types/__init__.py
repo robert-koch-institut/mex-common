@@ -6,6 +6,7 @@ from mex.common.types.identifier import (
     ExtractedAccessPlatformIdentifier,
     ExtractedActivityIdentifier,
     ExtractedBibliographicResourceIdentifier,
+    ExtractedConsentIdentifier,
     ExtractedContactPointIdentifier,
     ExtractedDistributionIdentifier,
     ExtractedIdentifier,
@@ -20,6 +21,7 @@ from mex.common.types.identifier import (
     MergedAccessPlatformIdentifier,
     MergedActivityIdentifier,
     MergedBibliographicResourceIdentifier,
+    MergedConsentIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedIdentifier,
@@ -54,6 +56,8 @@ from mex.common.types.vocabulary import (
     AnonymizationPseudonymization,
     APIType,
     BibliographicResourceType,
+    ConsentStatus,
+    ConsentType,
     DataProcessingState,
     Frequency,
     Language,
@@ -81,6 +85,8 @@ __all__ = (
     "AssetsPath",
     "BibliographicResourceType",
     "CET",
+    "ConsentStatus",
+    "ConsentType",
     "DataProcessingState",
     "Email",
     "EXTRACTED_IDENTIFIER_CLASSES_BY_NAME",
@@ -88,6 +94,7 @@ __all__ = (
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
     "ExtractedBibliographicResourceIdentifier",
+    "ExtractedConsentIdentifier",
     "ExtractedContactPointIdentifier",
     "ExtractedDistributionIdentifier",
     "ExtractedIdentifier",
@@ -111,6 +118,7 @@ __all__ = (
     "MergedAccessPlatformIdentifier",
     "MergedActivityIdentifier",
     "MergedBibliographicResourceIdentifier",
+    "MergedConsentIdentifier",
     "MergedContactPointIdentifier",
     "MergedDistributionIdentifier",
     "MergedIdentifier",
@@ -159,6 +167,7 @@ AnyMergedIdentifier = (
     MergedAccessPlatformIdentifier
     | MergedActivityIdentifier
     | MergedBibliographicResourceIdentifier
+    | MergedConsentIdentifier
     | MergedContactPointIdentifier
     | MergedDistributionIdentifier
     | MergedOrganizationalUnitIdentifier
@@ -180,6 +189,7 @@ AnyExtractedIdentifier = (
     ExtractedAccessPlatformIdentifier
     | ExtractedActivityIdentifier
     | ExtractedBibliographicResourceIdentifier
+    | ExtractedConsentIdentifier
     | ExtractedContactPointIdentifier
     | ExtractedDistributionIdentifier
     | ExtractedOrganizationalUnitIdentifier
