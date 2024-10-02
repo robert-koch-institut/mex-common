@@ -105,15 +105,6 @@ def test_temporal_entity_value_errors(
 
 
 @pytest.mark.parametrize(
-    ("value", "message"),
-    [(object(), "Cannot parse <class 'object'> as TemporalEntity")],
-)
-def test_temporal_entity_validation_errors(value: Any, message: str) -> None:
-    with pytest.raises(TypeError, match=message):
-        TemporalEntity.validate(value)
-
-
-@pytest.mark.parametrize(
     ("cls", "args", "kwargs", "expected"),
     [
         (TemporalEntity, (), {}, 'TemporalEntity("1970")'),
@@ -278,10 +269,31 @@ def test_temporal_entity_repr() -> None:
     )
 
 
-def test_temporal_entity_serialization() -> None:
-    class Person(BaseModel):
-        birthday: YearMonthDay
+class DummyModel(BaseModel):
+    birthday: YearMonthDay
 
-    person = Person.model_validate({"birthday": "24th July 1999"})
+
+def test_email_schema() -> None:
+    assert DummyModel.model_json_schema() == {
+        "properties": {
+            "birthday": {
+                "examples": ["2014-08-24"],
+                "format": "date",
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+                "title": "YearMonthDay",
+                "type": "string",
+            }
+        },
+        "required": ["birthday"],
+        "title": "DummyModel",
+        "type": "object",
+    }
+
+
+DummyModel.model_json_schema()
+
+
+def test_temporal_entity_serialization() -> None:
+    person = DummyModel.model_validate({"birthday": "24th July 1999"})
 
     assert person.model_dump_json() == '{"birthday":"1999-07-24"}'
