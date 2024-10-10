@@ -266,7 +266,7 @@ class DummyModel(BaseModel):
     birthday: YearMonthDay
 
 
-def test_email_schema() -> None:
+def test_temporal_entity_schema() -> None:
     assert DummyModel.model_json_schema() == {
         "properties": {
             "birthday": {
