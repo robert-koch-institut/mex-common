@@ -1,56 +1,38 @@
-from pydantic import BaseModel
+import pytest
+from pydantic import BaseModel, ValidationError
 
 from mex.common.types import Link, LinkLanguage
 
 
-def test_parsing_from_string() -> None:
-    class DummyModel(BaseModel):
-        link: Link
+class DummyModel(BaseModel):
+    link: Link
 
-    # plain link
+
+def test_link_validation() -> None:
+    with pytest.raises(ValidationError, match="Allowed input types are dict and str"):
+        _ = DummyModel.model_validate({"link": 1})
+
     model = DummyModel.model_validate({"link": "https://example.com"})
-    assert model.model_dump(exclude_none=True) == {
-        "link": {"url": "https://example.com"}
+    assert model.model_dump() == {
+        "link": {
+            "language": None,
+            "title": None,
+            "url": "https://example.com",
+        }
     }
 
-    # link with title
-    model = DummyModel.model_validate({"link": "[Example](https://example.com)"})
-    assert model.model_dump(exclude_none=True) == {
-        "link": {"url": "https://example.com", "title": "Example"}
-    }
-
-    # link with funky characters
-    model = DummyModel.model_validate(
-        {"link": r"[\[TEST\] Example](https://example.com/test?q=\(\.\*\))"}
-    )
-    assert model.model_dump(exclude_none=True) == {
-        "link": {"url": "https://example.com/test?q=(.*)", "title": "[TEST] Example"}
-    }
-
-    # nested model
     model = DummyModel.model_validate(
         {"link": {"url": "https://example.com", "title": "Example", "language": "en"}}
     )
-    assert model.model_dump(exclude_none=True) == {
+    assert model.model_dump() == {
         "link": {
-            "url": "https://example.com",
-            "title": "Example",
             "language": LinkLanguage.EN,
+            "title": "Example",
+            "url": "https://example.com",
         }
     }
 
 
-def test_rendering_as_string() -> None:
-    # plain link
-    link = Link.model_validate({"url": "https://example.com"})
-    assert str(link) == "https://example.com"
-
-    # link with title
-    link = Link.model_validate({"url": "https://example.com", "title": "Example"})
-    assert str(link) == r"[Example](https://example\.com)"
-
-    # link with funky characters
-    link = Link.model_validate(
-        {"url": "https://example.com/test?q=(.*)", "title": "[TEST] Example"}
-    )
-    assert str(link) == r"[\[TEST\] Example](https://example\.com/test?q=\(\.\*\))"
+def test_link_hash() -> None:
+    link = Link(url="https://foo.bar", title="Hallo Welt.", language=LinkLanguage.DE)
+    assert hash(link) == hash(("https://foo.bar", "Hallo Welt.", LinkLanguage.DE))

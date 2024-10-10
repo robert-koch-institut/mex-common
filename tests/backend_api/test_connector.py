@@ -133,7 +133,7 @@ def test_get_merged_item_mocked(
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
-            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "identifier": "NGwfzG8ROsrvIiQIVDVy",
             "limit": "1",
         },
         headers={
@@ -156,7 +156,7 @@ def test_get_merged_item_error_mocked(mocked_backend: MagicMock) -> None:
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
-            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "identifier": "NGwfzG8ROsrvIiQIVDVy",
             "limit": "1",
         },
         headers={

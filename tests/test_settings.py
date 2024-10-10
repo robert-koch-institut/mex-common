@@ -88,13 +88,8 @@ def test_resolve_paths() -> None:
         sub_model=SubModel(sub_model_path=relative),
     )
 
-    settings_dict = settings.model_dump()
-    assert settings_dict["non_path"] == "blablabla"
-    assert settings_dict["abs_work_path"] == absolute
-    assert settings_dict["rel_work_path"] == WorkPath(settings.work_dir / relative)
-    assert settings_dict["assets_path"] == AssetsPath(
-        absolute / "assets_dir" / relative
-    )
-    assert settings_dict["sub_model"]["sub_model_path"] == WorkPath(
-        settings.work_dir / relative
-    )
+    assert settings.non_path == "blablabla"
+    assert settings.abs_work_path == absolute
+    assert settings.rel_work_path == WorkPath(settings.work_dir / relative)
+    assert settings.assets_path == AssetsPath(absolute / "assets_dir" / relative)
+    assert settings.sub_model.sub_model_path == WorkPath(settings.work_dir / relative)

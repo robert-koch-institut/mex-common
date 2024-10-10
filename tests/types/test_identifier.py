@@ -4,59 +4,58 @@ import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common.types import Identifier
+from mex.common.types import IDENTIFIER_PATTERN, Identifier
 
 
-class DummyID(Identifier):
+class DummyIdentifier(Identifier):
     pass
 
 
 class DummyModel(BaseModel):
-    id: Identifier
-    dummy: DummyID | None = None
+    id: DummyIdentifier
 
 
-def test_identifier_validates() -> None:
-    model_with_obj = DummyModel.model_validate({"id": Identifier("bFQoRhcVH5DIfZ")})
-    model_with_raw = DummyModel.model_validate({"id": "bFQoRhcVH5DIfZ"})
-    model_with_raw_uuid = DummyModel.model_validate(
-        {"id": "00000000-0000-4000-8000-000000000539"}
-    )
-    model_with_uuid_obj = DummyModel.model_validate({"id": UUID(int=1337, version=4)})
+def test_identifier_validation() -> None:
+    model = DummyModel.model_validate({"id": "bFQoRhcVH5DIfZ"})
+    assert model.id == DummyIdentifier("bFQoRhcVH5DIfZ")
 
-    assert (
-        model_with_obj.id
-        == model_with_raw.id
-        == model_with_raw_uuid.id
-        == model_with_uuid_obj.id
-        == Identifier.generate(seed=1337)
-    )
+    model = DummyModel.model_validate({"id": DummyIdentifier("bFQoRhcVH5DIfZ")})
+    assert model.id == DummyIdentifier("bFQoRhcVH5DIfZ")
+
+    model = DummyModel(id=DummyIdentifier("bFQoRhcVH5DIfZ"))
+    assert model.id == DummyIdentifier("bFQoRhcVH5DIfZ")
 
     with pytest.raises(ValidationError):
         DummyModel.model_validate({"id": "baaiaaaboi!!!"})
 
     with pytest.raises(ValidationError):
-        DummyModel.model_validate({"id": 42})
+        DummyModel.model_validate({"id": object()})
 
 
-def test_identifier_modifies_schema() -> None:
-    assert DummyModel.model_json_schema()["properties"]["id"] == {
-        "title": "Identifier",
-        "type": "string",
-        "pattern": r"^[a-zA-Z0-9]{14,22}$",
-    }
-    assert DummyModel.model_json_schema()["properties"]["dummy"] == {
-        "anyOf": [
-            {"pattern": "^[a-zA-Z0-9]{14,22}$", "title": "DummyID", "type": "string"},
-            {"type": "null"},
-        ],
-        "default": None,
-        "title": "Dummy",
+def test_identifier_serialization() -> None:
+    model = DummyModel(id=DummyIdentifier("bFQoRhcVH5DIfZ"))
+    raw = model.model_dump()
+
+    assert raw == {"id": "bFQoRhcVH5DIfZ"}
+
+
+def test_identifier_schema() -> None:
+    assert DummyModel.model_json_schema() == {
+        "properties": {
+            "id": {
+                "pattern": IDENTIFIER_PATTERN,
+                "title": "DummyIdentifier",
+                "type": "string",
+            }
+        },
+        "required": ["id"],
+        "title": "DummyModel",
+        "type": "object",
     }
 
 
 def test_identifier_repr() -> None:
-    assert repr(Identifier("baaiaaaaaaaboi")) == "Identifier('baaiaaaaaaaboi')"
+    assert repr(Identifier("baaiaaaaaaaboi")) == 'Identifier("baaiaaaaaaaboi")'
 
 
 def test_identifier_generate(monkeypatch: MonkeyPatch) -> None:

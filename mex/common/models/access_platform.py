@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field, computed_field
+from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
@@ -16,6 +16,7 @@ from mex.common.models.base.rules import (
 from mex.common.types import (
     APIType,
     ExtractedAccessPlatformIdentifier,
+    Identifier,
     Link,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
@@ -36,9 +37,12 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
     contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier
+        Annotated[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+            AfterValidator(Identifier),
+        ]
     ] = []
     description: list[Text] = []
     landingPage: list[Link] = []
@@ -48,39 +52,23 @@ class _OptionalLists(_Stem):
 
 class _OptionalValues(_Stem):
     endpointDescription: Link | None = None
-    endpointType: (
-        Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
-        | None
-    ) = None
+    endpointType: APIType | None = None
     endpointURL: Link | None = None
 
 
 class _RequiredValues(_Stem):
-    technicalAccessibility: Annotated[
-        TechnicalAccessibility,
-        Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
-    ]
+    technicalAccessibility: TechnicalAccessibility
 
 
 class _SparseValues(_Stem):
-    technicalAccessibility: Annotated[
-        TechnicalAccessibility | None,
-        Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
-    ] = None
+    technicalAccessibility: TechnicalAccessibility | None = None
 
 
 class _VariadicValues(_Stem):
     endpointDescription: list[Link]
-    endpointType: list[
-        Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
-    ] = []
+    endpointType: list[APIType] = []
     endpointURL: list[Link] = []
-    technicalAccessibility: list[
-        Annotated[
-            TechnicalAccessibility,
-            Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
-        ]
-    ] = []
+    technicalAccessibility: list[TechnicalAccessibility] = []
 
 
 class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):

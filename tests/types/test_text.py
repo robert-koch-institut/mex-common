@@ -33,23 +33,27 @@ def test_text_language_detect() -> None:
     assert none_text.language is None
 
 
-def test_parsing_from_string() -> None:
-    class DummyModel(BaseModel):
-        text: Text
+class DummyModel(BaseModel):
+    text: Text
+
+
+def test_text_validation() -> None:
+    with pytest.raises(ValidationError, match="Allowed input types are dict and str"):
+        _ = DummyModel.model_validate({"text": 1})
 
     model = DummyModel.model_validate({"text": "we are parsing a string here"})
     assert model.model_dump() == {
         "text": {"value": "we are parsing a string here", "language": TextLanguage.EN}
     }
 
-    with pytest.raises(ValidationError):
-        _ = DummyModel.model_validate({"text": 1})
-
     model = DummyModel.model_validate(
-        {"text": {"value": "and here, we parsing an object"}}
+        {"text": {"value": "and here, we are parsing an object"}}
     )
     assert model.model_dump() == {
-        "text": {"value": "and here, we parsing an object", "language": TextLanguage.EN}
+        "text": {
+            "value": "and here, we are parsing an object",
+            "language": TextLanguage.EN,
+        }
     }
 
     model = DummyModel.model_validate(
@@ -66,11 +70,6 @@ def test_parsing_from_string() -> None:
             "language": TextLanguage.DE,
         }
     }
-
-
-def test_text_str() -> None:
-    text = Text(value="Hello world.")
-    assert str(text) == "Hello world."
 
 
 def test_text_hash() -> None:

@@ -54,10 +54,6 @@ class Text(BaseModel):
             return value
         raise ValueError(f"Allowed input types are dict and str, got {type(value)}")
 
-    def __str__(self) -> str:
-        """Return the text value."""
-        return self.value
-
     def __hash__(self) -> int:
         """Return the hash of Text."""
         return hash((self.value, self.language))
