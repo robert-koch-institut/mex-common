@@ -4,6 +4,8 @@ The current set of entity types includes:
 
 - AccessPlatform
 - Activity
+- BibliographicResource
+- Consent
 - ContactPoint
 - Distribution
 - Organization
@@ -95,6 +97,26 @@ from mex.common.models.base.mapping import generate_mapping_schema
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.bibliographic_resource import (
+    AdditiveBibliographicResource,
+    BaseBibliographicResource,
+    BibliographicResourceRuleSetRequest,
+    BibliographicResourceRuleSetResponse,
+    ExtractedBibliographicResource,
+    MergedBibliographicResource,
+    PreventiveBibliographicResource,
+    SubtractiveBibliographicResource,
+)
+from mex.common.models.consent import (
+    AdditiveConsent,
+    BaseConsent,
+    ConsentRuleSetRequest,
+    ConsentRuleSetResponse,
+    ExtractedConsent,
+    MergedConsent,
+    PreventiveConsent,
+    SubtractiveConsent,
+)
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
     BaseContactPoint,
@@ -199,6 +221,8 @@ __all__ = (
     "ADDITIVE_MODEL_CLASSES",
     "AdditiveAccessPlatform",
     "AdditiveActivity",
+    "AdditiveBibliographicResource",
+    "AdditiveConsent",
     "AdditiveContactPoint",
     "AdditiveDistribution",
     "AdditiveOrganization",
@@ -222,6 +246,8 @@ __all__ = (
     "BASE_MODEL_CLASSES",
     "BaseAccessPlatform",
     "BaseActivity",
+    "BaseBibliographicResource",
+    "BaseConsent",
     "BaseContactPoint",
     "BaseDistribution",
     "BaseModel",
@@ -232,6 +258,8 @@ __all__ = (
     "BaseResource",
     "BaseVariable",
     "BaseVariableGroup",
+    "ConsentRuleSetRequest",
+    "ConsentRuleSetResponse",
     "ContactPointRuleSetRequest",
     "ContactPointRuleSetResponse",
     "DistributionRuleSetRequest",
@@ -240,6 +268,8 @@ __all__ = (
     "EXTRACTED_MODEL_CLASSES",
     "ExtractedAccessPlatform",
     "ExtractedActivity",
+    "ExtractedBibliographicResource",
+    "ExtractedConsent",
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
@@ -260,6 +290,8 @@ __all__ = (
     "MERGED_MODEL_CLASSES",
     "MergedAccessPlatform",
     "MergedActivity",
+    "MergedBibliographicResource",
+    "MergedConsent",
     "MergedContactPoint",
     "MergedDistribution",
     "MergedItem",
@@ -284,6 +316,8 @@ __all__ = (
     "PREVENTIVE_MODEL_CLASSES",
     "PreventiveAccessPlatform",
     "PreventiveActivity",
+    "PreventiveBibliographicResource",
+    "PreventiveConsent",
     "PreventiveContactPoint",
     "PreventiveDistribution",
     "PreventiveOrganization",
@@ -308,6 +342,8 @@ __all__ = (
     "SUBTRACTIVE_MODEL_CLASSES",
     "SubtractiveAccessPlatform",
     "SubtractiveActivity",
+    "SubtractiveBibliographicResource",
+    "SubtractiveConsent",
     "SubtractiveContactPoint",
     "SubtractiveDistribution",
     "SubtractiveOrganization",
@@ -331,6 +367,8 @@ MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000
 AnyBaseModel = (
     BaseAccessPlatform
     | BaseActivity
+    | BaseBibliographicResource
+    | BaseConsent
     | BaseContactPoint
     | BaseDistribution
     | BaseOrganization
@@ -349,6 +387,8 @@ BASE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyBaseModel]]] = {
 AnyExtractedModel = (
     ExtractedAccessPlatform
     | ExtractedActivity
+    | ExtractedBibliographicResource
+    | ExtractedConsent
     | ExtractedContactPoint
     | ExtractedDistribution
     | ExtractedOrganization
@@ -369,6 +409,8 @@ EXTRACTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedModel]]] = {
 AnyMergedModel = (
     MergedAccessPlatform
     | MergedActivity
+    | MergedBibliographicResource
+    | MergedConsent
     | MergedContactPoint
     | MergedDistribution
     | MergedOrganization
@@ -387,6 +429,8 @@ MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
 AnyAdditiveModel = (
     AdditiveAccessPlatform
     | AdditiveActivity
+    | AdditiveBibliographicResource
+    | AdditiveConsent
     | AdditiveContactPoint
     | AdditiveDistribution
     | AdditiveOrganization
@@ -407,6 +451,8 @@ ADDITIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyAdditiveModel]]] = {
 AnySubtractiveModel = (
     SubtractiveAccessPlatform
     | SubtractiveActivity
+    | SubtractiveBibliographicResource
+    | SubtractiveConsent
     | SubtractiveContactPoint
     | SubtractiveDistribution
     | SubtractiveOrganization
@@ -427,6 +473,8 @@ SUBTRACTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnySubtractiveModel]]] =
 AnyPreventiveModel = (
     PreventiveAccessPlatform
     | PreventiveActivity
+    | PreventiveBibliographicResource
+    | PreventiveConsent
     | PreventiveContactPoint
     | PreventiveDistribution
     | PreventiveOrganization
@@ -453,6 +501,8 @@ RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
 AnyRuleSetRequest = (
     AccessPlatformRuleSetRequest
     | ActivityRuleSetRequest
+    | BibliographicResourceRuleSetRequest
+    | ConsentRuleSetRequest
     | ContactPointRuleSetRequest
     | DistributionRuleSetRequest
     | OrganizationRuleSetRequest
@@ -473,6 +523,8 @@ RULE_SET_REQUEST_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetRequest]]] = {
 AnyRuleSetResponse = (
     AccessPlatformRuleSetResponse
     | ActivityRuleSetResponse
+    | BibliographicResourceRuleSetResponse
+    | ConsentRuleSetResponse
     | ContactPointRuleSetResponse
     | DistributionRuleSetResponse
     | OrganizationRuleSetResponse
