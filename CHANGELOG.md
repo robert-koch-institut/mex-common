@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: drop support for parsing UUIDs as Identifiers, this was unused
 - BREAKING: drop support for parsing Links from markdown syntax, this was unused
 - BREAKING: remove pydantic1-style `validate` methods from all type models
+- BREAKING: `BackendApiConnector.post_models` in favor of `post_extracted_items`
 
 ### Fixed
 
