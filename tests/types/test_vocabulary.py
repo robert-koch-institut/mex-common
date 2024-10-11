@@ -17,7 +17,7 @@ def test_split_to_caps(string: str, expected: str) -> None:
     assert split_to_caps(string) == expected
 
 
-@pytest.fixture
+@pytest.fixture()
 def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
     dummy_vocabulary = VocabularyLoader.parse_file(
         str(TESTDATA_DIR / "dummy-vocabulary.json")

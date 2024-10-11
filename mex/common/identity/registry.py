@@ -21,7 +21,8 @@ def register_provider(key: Hashable, provider_cls: type[BaseProvider]) -> None:
         RuntimeError: When the `key` is already registered
     """
     if key in _PROVIDER_REGISTRY:
-        raise RuntimeError(f"Already registered identity provider: {key}")
+        msg = f"Already registered identity provider: {key}"
+        raise RuntimeError(msg)
     _PROVIDER_REGISTRY[key] = provider_cls
 
 
@@ -41,9 +42,8 @@ def get_provider() -> BaseProvider:
     if settings.identity_provider in _PROVIDER_REGISTRY:
         provider_cls = _PROVIDER_REGISTRY[settings.identity_provider]
         return provider_cls.get()
-    raise RuntimeError(
-        f"Identity provider not implemented: {settings.identity_provider}"
-    )
+    msg = f"Identity provider not implemented: {settings.identity_provider}"
+    raise RuntimeError(msg)
 
 
 # register the default providers shipped with mex-common

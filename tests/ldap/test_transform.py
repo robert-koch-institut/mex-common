@@ -15,7 +15,7 @@ from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySourc
 from mex.common.testing import Joker
 
 
-@pytest.fixture
+@pytest.fixture()
 def extracted_unit(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedOrganizationalUnit:

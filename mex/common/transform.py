@@ -16,7 +16,7 @@ from mex.common.types import PathWrapper, TemporalEntity
 class MExEncoder(json.JSONEncoder):
     """Custom JSON encoder that can handle pydantic models, enums and UUIDs."""
 
-    def default(self, obj: Any) -> Any:
+    def default(self, obj: Any) -> Any:  # noqa: PLR0911
         """Implement custom serialization rules."""
         if isinstance(obj, PydanticModel):
             return obj.model_dump()
@@ -106,7 +106,9 @@ def to_key_and_values(dct: dict[str, Any]) -> Iterable[tuple[str, list[Any]]]:
     """Return an iterable of dictionary items where the values are always lists."""
     for key, value in dct.items():
         if value is None:
-            value = []
-        elif not isinstance(value, list):
-            value = [value]
-        yield key, value
+            list_of_values = []
+        elif isinstance(value, list):
+            list_of_values = value
+        else:
+            list_of_values = [value]
+        yield key, list_of_values

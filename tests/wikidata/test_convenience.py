@@ -119,7 +119,7 @@ def test_get_merged_organization_id_by_query_with_extract_transform_and_load_moc
     load_function.assert_not_called()
 
 
-@pytest.mark.integration
+@pytest.mark.integration()
 def test_get_merged_organization_id_by_query_with_extract_transform_and_load(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:

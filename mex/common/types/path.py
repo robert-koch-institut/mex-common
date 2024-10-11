@@ -16,7 +16,7 @@ class PathWrapper(PathLike[str]):
         if isinstance(path, str):
             path = Path(path)
         elif isinstance(path, PathWrapper):
-            path = path._path
+            path = path._path  # noqa: SLF001
         self._path = path
 
     @classmethod
@@ -52,7 +52,8 @@ class PathWrapper(PathLike[str]):
         """Return true for two PathWrappers with equal paths."""
         if isinstance(other, PathWrapper):
             return self._path.__eq__(other._path)
-        raise TypeError(f"Can't compare {type(other)} with {type(self)}")
+        msg = f"Can't compare {type(other)} with {type(self)}"
+        raise TypeError(msg)
 
     def is_absolute(self) -> bool:
         """True if the underlying path is absolute."""

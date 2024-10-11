@@ -20,7 +20,7 @@ from mex.common.types import (
     ("args", "kwargs", "message"),
     [
         (
-            (datetime.now(),),
+            (datetime.now(tz=UTC),),
             {"tzinfo": UTC},
             "Temporal entity does not accept tzinfo in parsing mode",
         ),
@@ -155,7 +155,7 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2020, 3, 22, 14, 30, 58),),
+            (datetime(2020, 3, 22, 14, 30, 58, tzinfo=UTC),),
             {},
             'TemporalEntity("2020-03-22T13:30:58Z")',
         ),
@@ -183,13 +183,13 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2004, 11, 19, 00, 00),),
+            (datetime(2004, 11, 19, 00, 00, tzinfo=UTC),),
             {"precision": TemporalEntityPrecision.DAY},
             'TemporalEntity("2004-11-19")',
         ),
         (
             YearMonth,
-            (datetime(2004, 11, 19, 00, 00),),
+            (datetime(2004, 11, 19, 00, 00, tzinfo=UTC),),
             {"precision": TemporalEntityPrecision.YEAR},
             'YearMonth("2004")',
         ),
@@ -227,7 +227,7 @@ def test_temporal_entity_eq() -> None:
     assert TemporalEntity(2004, 11) == TemporalEntity(2004, 11)
     assert TemporalEntity(2004, 11, 2) == "2004-11-02"
     assert TemporalEntity(2020, 3, 22, 14, 30, 58, 0) == datetime(
-        2020, 3, 22, 14, 30, 58, 0
+        2020, 3, 22, 14, 30, 58, 0, tzinfo=UTC
     )
     assert TemporalEntity(2005) != object()
 
@@ -236,7 +236,9 @@ def test_temporal_entity_gt() -> None:
     assert TemporalEntity(2004) > TemporalEntity("2003")
     assert TemporalEntity(2004, 11) < "2013-10-02"
     assert TemporalEntity(2004, 11) <= TemporalEntity(2004, 12)
-    assert TemporalEntity(2020, 3, 22, 14, 30, 58) >= datetime(2020, 3, 22, 14, 29)
+    assert TemporalEntity(2020, 3, 22, 14, 30, 58) >= datetime(
+        2020, 3, 22, 14, 29, tzinfo=UTC
+    )
 
     with pytest.raises(NotImplementedError):
         assert TemporalEntity(2005) > object()

@@ -23,7 +23,7 @@ from mex.common.types import (
 pytest_plugins = ("mex.common.testing.plugin",)
 
 
-@pytest.fixture
+@pytest.fixture()
 def extracted_person() -> ExtractedPerson:
     """Return a dummy extracted person for testing purposes."""
     return ExtractedPerson.model_construct(
@@ -45,7 +45,7 @@ def extracted_person() -> ExtractedPerson:
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def merged_person() -> MergedPerson:
     """Return a dummy merged person for testing purposes."""
     return MergedPerson.model_construct(

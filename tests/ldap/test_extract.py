@@ -17,14 +17,14 @@ from mex.common.types import Identifier
 from tests.ldap.conftest import SAMPLE_PERSON_ATTRS, LDAPMocker
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_primary_source(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedPrimarySource:
     return extracted_primary_sources["ldap"]
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_person_with_identity(
     ldap_primary_source: ExtractedPrimarySource,
 ) -> LDAPPerson:
@@ -40,14 +40,14 @@ def ldap_person_with_identity(
     return person
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_person_with_identity_with_query(
     ldap_person_with_identity: LDAPPerson,
 ) -> LDAPPersonWithQuery:
     return LDAPPersonWithQuery(person=ldap_person_with_identity, query="foo")
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_person_without_identity() -> LDAPPerson:
     return LDAPPerson(
         objectGUID=UUID(int=2, version=4),
@@ -58,14 +58,14 @@ def ldap_person_without_identity() -> LDAPPerson:
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_person_without_identity_with_query(
     ldap_person_without_identity: LDAPPerson,
 ) -> LDAPPersonWithQuery:
     return LDAPPersonWithQuery(person=ldap_person_without_identity, query="foo")
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_persons(
     ldap_person_with_identity: LDAPPerson, ldap_person_without_identity: LDAPPerson
 ) -> list[LDAPPerson]:
@@ -75,7 +75,7 @@ def ldap_persons(
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def ldap_persons_with_query(
     ldap_person_with_identity_with_query: LDAPPersonWithQuery,
     ldap_person_without_identity_with_query: LDAPPersonWithQuery,
@@ -86,7 +86,7 @@ def ldap_persons_with_query(
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def merged_id_of_person_with_identity(
     ldap_person_with_identity: LDAPPerson,
     ldap_primary_source: ExtractedPrimarySource,
