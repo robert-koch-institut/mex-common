@@ -1,25 +1,9 @@
-import re
 from enum import StrEnum
 from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, model_validator
 
-# https://daringfireball.net/projects/markdown/syntax#backslash
-MARKDOWN_SPECIAL_CHARS = r"\`*_{}[]()#+-.!"
-
-
-def markdown_escape(string: str) -> str:
-    """Escape all special characters for markdown usage."""
-    for char in MARKDOWN_SPECIAL_CHARS:
-        string = string.replace(char, f"\\{char}")
-    return string
-
-
-def markdown_unescape(string: str) -> str:
-    """Unescape all special characters from a markdown string."""
-    for char in MARKDOWN_SPECIAL_CHARS:
-        string = string.replace(f"\\{char}", char)
-    return string
+URL_PATTERN = r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?"
 
 
 class LinkLanguage(StrEnum):
@@ -32,10 +16,10 @@ class LinkLanguage(StrEnum):
 class Link(BaseModel):
     """Type class for Link objects.
 
-    Links can be parsed from nested JSON objects or from markdown strings.
+    Links can be parsed from nested JSON objects or from raw strings.
 
     Example:
-        Link(url="https://foo", title="Title") == Link.model_validate("[Title](https://foo)")
+        Link(url="http://foo.bar") == Link.model_validate("http://foo.bar")
     """
 
     language: LinkLanguage | None = None
@@ -43,7 +27,7 @@ class Link(BaseModel):
     url: Annotated[
         str,
         Field(
-            pattern=r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+            pattern=URL_PATTERN,
             min_length=1,
             examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
             json_schema_extra={"format": "uri"},
@@ -52,23 +36,14 @@ class Link(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def convert_markdown_to_link(cls, values: Any) -> dict[str, Any]:
+    def validate_strings(cls, value: Any) -> dict[str, Any]:
         """Convert string input to dictionary."""
-        if isinstance(values, dict):
-            return values
-        if isinstance(values, str):
-            if match := re.match(r"\[(?P<title>.*)\]\((?P<url>.*)\)", values):
-                return {
-                    key: markdown_unescape(value)
-                    for key, value in match.groupdict().items()
-                }
-            return {"url": values}
-        raise ValueError(f"Allowed input types are dict and str, got {type(values)}")
+        if isinstance(value, str):
+            return {"url": value}
+        if isinstance(value, dict):
+            return value
+        raise ValueError(f"Allowed input types are dict and str, got {type(value)}")
 
-    def __str__(self) -> str:
-        """Render the link as markdown if a title is set, otherwise as plain url."""
-        if title := self.title:
-            title = markdown_escape(title)
-            url = markdown_escape(self.url)
-            return f"[{title}]({url})"
-        return self.url
+    def __hash__(self) -> int:
+        """Return the hash of this link."""
+        return hash((self.url, self.title, self.language))

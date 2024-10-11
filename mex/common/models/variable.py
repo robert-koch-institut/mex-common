@@ -86,15 +86,7 @@ class _OptionalValues(_Stem):
         ]
         | None
     ) = None
-    dataType: (
-        Annotated[
-            DataType,
-            Field(
-                examples=["https://mex.rki.de/item/data-type-1"],
-            ),
-        ]
-        | None
-    ) = None
+    dataType: DataType | None = None
 
 
 class _VariadicValues(_Stem):
@@ -106,14 +98,7 @@ class _VariadicValues(_Stem):
             ),
         ]
     ] = []
-    dataType: list[
-        Annotated[
-            DataType,
-            Field(
-                examples=["https://mex.rki.de/item/data-type-1"],
-            ),
-        ]
-    ] = []
+    dataType: list[DataType] = []
 
 
 class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):

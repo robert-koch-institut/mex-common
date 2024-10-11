@@ -1,6 +1,6 @@
 from os import PathLike
 from pathlib import Path
-from typing import Any, Self, Union
+from typing import Any, Union
 
 from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
@@ -18,6 +18,19 @@ class PathWrapper(PathLike[str]):
         elif isinstance(path, PathWrapper):
             path = path._path
         self._path = path
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Modify the core schema to add validation and serialization rules."""
+        return core_schema.chain_schema(
+            [
+                core_schema.is_instance_schema(str | Path | PathWrapper),
+                core_schema.no_info_plain_validator_function(cls),
+            ],
+            serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
+        )
 
     def __fspath__(self) -> str:
         """Return the file system path representation."""
@@ -48,37 +61,6 @@ class PathWrapper(PathLike[str]):
     def is_relative(self) -> bool:
         """True if the underlying path is relative."""
         return not self._path.is_absolute()
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        """Set schema to str schema."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
-        )
-        from_anything_schema = core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(PathWrapper),
-            ]
-        )
-        return core_schema.json_or_python_schema(
-            json_schema=from_str_schema,
-            python_schema=from_anything_schema,
-        )
-
-    @classmethod
-    def validate(cls, value: Any) -> Self:
-        """Convert a string value to a Text instance."""
-        if isinstance(value, str | Path | PathWrapper):
-            return cls(value)
-        raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
 
 class AssetsPath(PathWrapper):

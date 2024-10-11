@@ -1,4 +1,3 @@
-from typing import cast
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -19,7 +18,6 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.settings import BaseSettings
-from mex.common.types import AnyExtractedIdentifier
 
 
 class BackendApiConnector(HTTPConnector):
@@ -40,27 +38,6 @@ class BackendApiConnector(HTTPConnector):
         """Set the backend api url with the version path."""
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
-
-    def post_models(
-        self,
-        extracted_items: list[AnyExtractedModel],
-    ) -> list[AnyExtractedIdentifier]:
-        """Post extracted models to the backend in bulk.
-
-        Args:
-            extracted_items: Extracted models to post
-
-        Raises:
-            HTTPError: If post was not accepted, crashes or times out
-
-        Returns:
-            Identifiers of posted extracted models
-        """
-        # XXX deprecated method, please use `post_extracted_models` instead
-        return cast(
-            list[AnyExtractedIdentifier],
-            self.post_extracted_items(extracted_items).identifiers,
-        )
 
     def post_extracted_items(
         self,
@@ -141,7 +118,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             One page of merged items and the total count that was matched
         """
-        # XXX this endpoint will only return faux merged items for now (MX-1382)
         response = self.request(
             method="GET",
             endpoint="merged-item",
@@ -156,12 +132,12 @@ class BackendApiConnector(HTTPConnector):
 
     def get_merged_item(
         self,
-        stable_target_id: str,
+        identifier: str,
     ) -> AnyMergedModel:
-        """Return one merged item for the given `stableTargetId`.
+        """Return one merged item for the given `identifier`.
 
         Args:
-            stable_target_id: The merged item's identifier
+            identifier: The merged item's identifier
 
         Raises:
             MExError: If no merged item was found
@@ -174,7 +150,7 @@ class BackendApiConnector(HTTPConnector):
             method="GET",
             endpoint="merged-item",
             params={
-                "stableTargetId": stable_target_id,
+                "identifier": identifier,
                 "limit": "1",
             },
         )
@@ -201,7 +177,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A single merged item
         """
-        # XXX experimental method until the backend has a preview endpoint (MX-1406)
         response = self.request(
             method="GET",
             endpoint=f"preview-item/{stable_target_id}",
@@ -224,7 +199,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A set of three rules
         """
-        # XXX experimental method until the backend has a rule-set endpoint (MX-1416)
         response = self.request(
             method="GET",
             endpoint=f"rule-set/{stable_target_id}",

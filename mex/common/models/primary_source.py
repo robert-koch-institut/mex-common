@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field, computed_field
+from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
@@ -15,6 +15,7 @@ from mex.common.models.base.rules import (
 )
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
+    Identifier,
     Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
@@ -33,9 +34,12 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
     contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier
+        Annotated[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+            AfterValidator(Identifier),
+        ]
     ] = []
     description: list[Text] = []
     documentation: list[Link] = []

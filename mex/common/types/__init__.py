@@ -1,8 +1,8 @@
 from typing import Final, Literal, get_args
 
-from mex.common.types.email import Email
+from mex.common.types.email import EMAIL_PATTERN, Email
 from mex.common.types.identifier import (
-    MEX_ID_PATTERN,
+    IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,
     ExtractedActivityIdentifier,
     ExtractedContactPointIdentifier,
@@ -46,6 +46,7 @@ from mex.common.types.temporal_entity import (
 )
 from mex.common.types.text import Text, TextLanguage
 from mex.common.types.vocabulary import (
+    VOCABULARY_PATTERN,
     AccessRestriction,
     ActivityType,
     AnonymizationPseudonymization,
@@ -77,6 +78,7 @@ __all__ = (
     "CET",
     "DataProcessingState",
     "DataType",
+    "EMAIL_PATTERN",
     "Email",
     "EXTRACTED_IDENTIFIER_CLASSES_BY_NAME",
     "EXTRACTED_IDENTIFIER_CLASSES",
@@ -93,6 +95,7 @@ __all__ = (
     "ExtractedVariableGroupIdentifier",
     "ExtractedVariableIdentifier",
     "Frequency",
+    "IDENTIFIER_PATTERN",
     "Identifier",
     "IdentityProvider",
     "Language",
@@ -114,7 +117,6 @@ __all__ = (
     "MergedResourceIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
-    "MEX_ID_PATTERN",
     "MIMEType",
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",
@@ -130,7 +132,9 @@ __all__ = (
     "Text",
     "TextLanguage",
     "Theme",
+    "URL_PATTERN",
     "UTC",
+    "VOCABULARY_PATTERN",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",

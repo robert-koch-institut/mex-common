@@ -8,8 +8,8 @@
             "de": "desc-de-one",
             "en": "desc-en-one"
         },
-        "identifier": "https://dummy/concept-one",
-        "inScheme": "https://dummy/concept",
+        "identifier": "https://mex.rki.de/item/dummy-concept-1",
+        "inScheme": "https://mex.rki.de/item/dummy-concept",
         "prefLabel": {
             "de": "pref-de-one",
             "en": "pref-en-one"
@@ -17,8 +17,8 @@
     },
     {
         "definition": null,
-        "identifier": "https://dummy/concept-two",
-        "inScheme": "https://dummy/concept",
+        "identifier": "https://mex.rki.de/item/dummy-concept-2",
+        "inScheme": "https://mex.rki.de/item/dummy-concept",
         "prefLabel": {
             "de": "pref-de-two",
             "en": "pref-en-two"
