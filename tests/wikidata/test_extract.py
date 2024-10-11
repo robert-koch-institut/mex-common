@@ -19,7 +19,7 @@ from mex.common.wikidata.extract import (
 from tests.wikidata.conftest import TESTDATA_DIR
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_search_organization_by_label() -> None:
     expected = "Q679041"
 
@@ -29,7 +29,7 @@ def test_search_organization_by_label() -> None:
     assert search_result.identifier == expected
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_search_organizations_by_label() -> None:
     search_result = list(
         search_organizations_by_label(
@@ -50,7 +50,7 @@ def test_search_organizations_by_label() -> None:
     assert search_result[0].labels.model_dump() == labels
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_get_count_of_found_organizations_by_label() -> None:
     total_found_orgs = get_count_of_found_organizations_by_label(
         item_label='Robert Koch Institute"',
@@ -60,7 +60,7 @@ def test_get_count_of_found_organizations_by_label() -> None:
     assert total_found_orgs == 3
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_search_organization_by_label_for_none() -> None:
     """Test if None is returned when multiple organizations are found."""
     search_result = search_organization_by_label(
@@ -425,7 +425,7 @@ def test_get_count_of_found_organizations_by_label_mocked(
     assert search_result == 3
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_get_organization_details() -> None:
     expected = {
         "identifier": "Q679041",

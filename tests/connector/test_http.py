@@ -17,7 +17,7 @@ class DummyHTTPConnector(HTTPConnector):
         self.request("GET", "_system/check")
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_dummy_session(monkeypatch: MonkeyPatch) -> MagicMock:
     """Mock the DummyHTTPConnector with a MagicMock session and return that."""
     mocked_session = MagicMock(spec=requests.Session, name="dummy_session")

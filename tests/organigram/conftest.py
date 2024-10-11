@@ -8,7 +8,7 @@ from mex.common.organigram.transform import (
 from mex.common.types import Link, LinkLanguage, Text
 
 
-@pytest.fixture()
+@pytest.fixture
 def child_unit() -> OrganigramUnit:
     """Return a child unit corresponding to the test_data."""
     return OrganigramUnit(
@@ -28,7 +28,7 @@ def child_unit() -> OrganigramUnit:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def extracted_child_unit(
     child_unit: OrganigramUnit,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
@@ -41,7 +41,7 @@ def extracted_child_unit(
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def parent_unit() -> OrganigramUnit:
     """Return a parent unit corresponding to the test_data."""
     return OrganigramUnit(
@@ -62,7 +62,7 @@ def parent_unit() -> OrganigramUnit:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def extracted_parent_unit(
     parent_unit: OrganigramUnit,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],

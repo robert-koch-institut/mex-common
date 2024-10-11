@@ -23,7 +23,7 @@ from mex.common.types import (
 pytest_plugins = ("mex.common.testing.plugin",)
 
 
-@pytest.fixture()
+@pytest.fixture
 def extracted_person() -> ExtractedPerson:
     """Return a dummy extracted person for testing purposes."""
     return ExtractedPerson.model_construct(
@@ -45,7 +45,7 @@ def extracted_person() -> ExtractedPerson:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def merged_person() -> MergedPerson:
     """Return a dummy merged person for testing purposes."""
     return MergedPerson.model_construct(
@@ -64,7 +64,7 @@ def merged_person() -> MergedPerson:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def rule_set_request() -> PersonRuleSetRequest:
     """Return a dummy person rule set request for testing purposes."""
     return PersonRuleSetRequest(
@@ -74,7 +74,7 @@ def rule_set_request() -> PersonRuleSetRequest:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def rule_set_response() -> PersonRuleSetResponse:
     """Return a dummy person rule set response for testing purposes."""
     return PersonRuleSetResponse(

@@ -51,7 +51,7 @@ XY2_FUNC_ACCOUNT_ATTRS = {
 }
 
 
-@pytest.fixture()
+@pytest.fixture
 def ldap_mocker(monkeypatch: MonkeyPatch) -> LDAPMocker:
     """Patch the LDAP connector to return `SAMPLE_PERSON_ATTRS` from its connection."""
 

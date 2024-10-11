@@ -48,7 +48,7 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
         "nonexistent_person",
     ],
 )
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_get_persons_ldap(kwargs: dict[str, str], pattern: str) -> None:
     connector = LDAPConnector.get()
     persons = list(connector.get_persons(**kwargs))
@@ -68,7 +68,7 @@ def test_get_persons_ldap(kwargs: dict[str, str], pattern: str) -> None:
         "nonexistent_functional_account",
     ],
 )
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_get_functional_accounts_ldap(kwargs: dict[str, str], pattern: str) -> None:
     connector = LDAPConnector.get()
     functional_accounts = list(connector.get_functional_accounts(**kwargs))

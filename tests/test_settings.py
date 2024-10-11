@@ -52,7 +52,7 @@ def test_settings_getting_caches_singleton() -> None:
     assert settings_fetched_again is settings
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_parse_env_file() -> None:
     settings = BaseSettings.get()
     # "work_dir" and "assets_dir" are always set, assert that more than these two are
