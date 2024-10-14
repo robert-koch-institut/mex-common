@@ -208,7 +208,7 @@ class BaseSettings(PydanticBaseSettings):
             case_sensitive=cls.model_config.get("case_sensitive", False),
             env_prefix=cls.model_config.get("env_prefix", ""),
         )
-        env_info = env_settings._extract_field_info(field, name)
+        env_info = env_settings._extract_field_info(field, name)  # noqa: SLF001
         return env_info[0][1].upper()
 
     @model_validator(mode="after")

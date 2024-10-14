@@ -145,7 +145,7 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A single merged item
         """
-        # XXX stop-gap until the backend has a proper get merged item endpoint (MX-1669)
+        # TODO(ND): stop-gap until backend has proper get merged item endpoint (MX-1669)
         response = self.request(
             method="GET",
             endpoint="merged-item",
@@ -158,7 +158,8 @@ class BackendApiConnector(HTTPConnector):
         try:
             return response_model.items[0]
         except IndexError:
-            raise HTTPError("merged item was not found") from None
+            msg = "merged item was not found"
+            raise HTTPError(msg) from None
 
     def preview_merged_item(
         self,

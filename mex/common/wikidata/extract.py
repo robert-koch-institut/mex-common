@@ -50,8 +50,9 @@ def search_organization_by_label(
 
     try:
         wd_item_id = results[0]["item"]["value"].split("/")[-1]
-    except KeyError as exc:
-        raise MExError(f"KeyError: Error processing results for {item_label}") from exc
+    except KeyError as error:
+        msg = f"KeyError: Error processing results for {item_label}"
+        raise MExError(msg) from error
 
     return _get_organization_details(wd_item_id)
 
@@ -134,14 +135,12 @@ def search_organizations_by_label(
     for item in results:
         try:
             wd_item_id = item["item"]["value"].split("/")[-1]
-        except KeyError as exc:
-            raise MExError(
-                f"KeyError: Error processing results for {item_label}"
-            ) from exc
-        except IndexError as exc:
-            raise MExError(
-                f"IndexError: Error processing results for {item_label}"
-            ) from exc
+        except KeyError as error:
+            msg = f"KeyError: Error processing results for {item_label}"
+            raise MExError(msg) from error
+        except IndexError as error:
+            msg = f"IndexError: Error processing results for {item_label}"
+            raise MExError(msg) from error
 
         yield _get_organization_details(wd_item_id)
 

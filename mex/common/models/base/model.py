@@ -143,7 +143,8 @@ class BaseModel(PydanticBaseModel):
             # if we have just one entry, we can safely unpack it
             return value[0]
         # we cannot unambiguously unpack more than one value
-        raise ValueError(f"got multiple values for {field_name}")
+        msg = f"got multiple values for {field_name}"
+        raise ValueError(msg)
 
     @classmethod
     def _fix_value_listyness_for_field(cls, field_name: str, value: Any) -> Any:
@@ -186,10 +187,11 @@ class BaseModel(PydanticBaseModel):
         if not isinstance(data, MutableMapping):
             # data is not a dictionary: we can't "pop" values from that,
             # so we can't safely do a before/after comparison
-            raise AssertionError(
+            msg = (
                 "Input should be a valid dictionary, validating other types is not "
                 "supported for models with computed fields."
             )
+            raise AssertionError(msg)  # noqa: TRY004
         custom_values = {
             field: value
             for field in cls.model_computed_fields
@@ -198,7 +200,8 @@ class BaseModel(PydanticBaseModel):
         result = handler(data)
         computed_values = result.model_dump(include=set(custom_values))
         if computed_values != custom_values:
-            raise ValueError("Cannot set computed fields to custom values!")
+            msg = "Cannot set computed fields to custom values!"
+            raise ValueError(msg)
         return result
 
     @model_validator(mode="wrap")
@@ -223,9 +226,9 @@ class BaseModel(PydanticBaseModel):
         Returns:
             data with fixed list shapes
         """
-        # XXX This needs to be a "wrap" validator that is defined *after* the computed
-        #     field model validator, so it runs *before* the computed field validator.
-        #     Sigh, see https://github.com/pydantic/pydantic/discussions/7434
+        # TODO(ND): This needs to be a "wrap" validator that is defined *after* the
+        # computed field model validator, so it runs *before* the computed field
+        # validator. Sigh, see https://github.com/pydantic/pydantic/discussions/7434
         if isinstance(data, MutableMapping):
             for name, value in data.items():
                 field_name = cls._get_alias_lookup().get(name, name)

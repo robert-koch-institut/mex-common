@@ -51,11 +51,12 @@ class SingleSingletonStore(Generic[_SingletonT]):
             self._singleton = cls()
             return self._singleton
         if not issubclass(type(self._singleton), cls):
-            raise RuntimeError(
+            msg = (
                 f"requested class ({cls}) is not a parent class of loaded class "
                 f"({type(self._singleton)}). "
                 f"Did you initialize {cls} upon startup?"
             )
+            raise RuntimeError(msg)  # noqa: TRY004
         return self._singleton
 
     def push(self, instance: _SingletonT) -> None:

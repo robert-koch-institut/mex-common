@@ -35,7 +35,7 @@ def write_ndjson(
                 handle = file_handles[class_name]
             except KeyError:
                 file_name = Path(settings.work_dir, f"{class_name}.ndjson")
-                writer = open(file_name, "a+", encoding="utf-8")
+                writer = open(file_name, "a+", encoding="utf-8")  # noqa: SIM115
                 file_handles[class_name] = handle = stack.enter_context(writer)
                 logger.info(
                     "write_ndjson - writing %s to file %s",

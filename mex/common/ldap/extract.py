@@ -28,7 +28,8 @@ def _get_merged_ids_by_attribute(
         MergedPersonIdentifiers
     """
     if attribute not in LDAPPerson.model_fields:
-        raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
+        msg = f"Not a valid LDAPPerson field: {attribute}"
+        raise RuntimeError(msg)
     merged_ids_by_attribute = defaultdict(list)
     provider = get_provider()
     for person in persons:
