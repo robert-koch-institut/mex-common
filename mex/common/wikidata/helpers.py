@@ -1,6 +1,8 @@
 from functools import cache
 
-from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
+from mex.common.exceptions import MExError
+from mex.common.models.organization import ExtractedOrganization
+from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
 from mex.common.wikidata.extract import search_organization_by_label
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
@@ -10,7 +12,6 @@ from mex.common.wikidata.transform import (
 @cache
 def get_extracted_organization_from_wikidata(
     query_string: str,
-    wikidata_primary_source: ExtractedPrimarySource,
 ) -> ExtractedOrganization | None:
     """Get extracted organization matching the query string.
 
@@ -30,11 +31,10 @@ def get_extracted_organization_from_wikidata(
     if found_organization is None:
         return None
 
-    extracted_organization = transform_wikidata_organization_to_extracted_organization(
+    wikidata_primary_source = get_extracted_primary_source_by_name("wikidata")
+    if not wikidata_primary_source:
+        raise MExError("Primary Source Wikidata not found")
+
+    return transform_wikidata_organization_to_extracted_organization(
         found_organization, wikidata_primary_source
     )
-
-    if extracted_organization is None:
-        return None
-
-    return extracted_organization

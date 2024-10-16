@@ -8,6 +8,9 @@ from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
 
+### this code is nearly the same as in the pytest.fixture.extracted_primary_sources.
+### Can we reuse this?
+
 
 @cache
 def get_all_extracted_primary_sources() -> list[ExtractedPrimarySource]:

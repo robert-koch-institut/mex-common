@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - consistently parse emails, identifiers and temporals in models to their type, not str
 - consistently serialize emails, ids and temporals in models to str, not their type
 - make instances of Link type hashable
+- convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
+  changed into helper function 'get_extracted_organization_from_wikidata'
 
 ### Deprecated
 
