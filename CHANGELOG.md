@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- helper function for primary source look up
+
 ### Changes
 
 - make ruff linter config opt-out, instead of opt-in
+- wikidata convenience function split between mex-common and mex-extractors
 
 ### Deprecated
 
