@@ -191,10 +191,10 @@ class _SparseValues(_Stem):
 class _VariadicValues(_Stem):
     accessRestriction: list[AccessRestriction] = []
     accrualPeriodicity: list[Frequency] = []
-    license: list[License] = []
     created: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     doi: list[DoiStr] = []
     hasPersonalData: list[PersonalData] = []
+    license: list[License] = []
     maxTypicalAge: list[Annotated[int, Field(examples=["99", "21"])]] = []
     minTypicalAge: list[Annotated[int, Field(examples=["0", "18"])]] = []
     modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []

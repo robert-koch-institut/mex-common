@@ -9,6 +9,8 @@ EMAIL_PATTERN = r"^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$"
 class Email(str):
     """Email address of a person, organization or other entity."""
 
+    __slots__ = ()
+
     @classmethod
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler

@@ -12,6 +12,8 @@ IDENTIFIER_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
 class Identifier(str):
     """Common identifier class based on UUID version 4."""
 
+    __slots__ = ()
+
     @classmethod
     def generate(cls, seed: int | None = None) -> Self:
         """Generate a new identifier from a seed or random UUID version 4."""

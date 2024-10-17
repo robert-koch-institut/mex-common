@@ -33,7 +33,8 @@ def get_extracted_organization_from_wikidata(
 
     wikidata_primary_source = get_extracted_primary_source_by_name("wikidata")
     if not wikidata_primary_source:
-        raise MExError("Primary Source Wikidata not found")
+        msg = "Primary source for wikidata not found"
+        raise MExError(msg)
 
     return transform_wikidata_organization_to_extracted_organization(
         found_organization, wikidata_primary_source

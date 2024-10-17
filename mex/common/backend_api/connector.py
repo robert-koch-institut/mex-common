@@ -1,4 +1,3 @@
-from typing import cast
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -19,7 +18,6 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.settings import BaseSettings
-from mex.common.types import AnyExtractedIdentifier
 
 
 class BackendApiConnector(HTTPConnector):
@@ -40,27 +38,6 @@ class BackendApiConnector(HTTPConnector):
         """Set the backend api url with the version path."""
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
-
-    def post_models(
-        self,
-        extracted_items: list[AnyExtractedModel],
-    ) -> list[AnyExtractedIdentifier]:
-        """Post extracted models to the backend in bulk.
-
-        Args:
-            extracted_items: Extracted models to post
-
-        Raises:
-            HTTPError: If post was not accepted, crashes or times out
-
-        Returns:
-            Identifiers of posted extracted models
-        """
-        # XXX deprecated method, please use `post_extracted_items` instead
-        return cast(
-            list[AnyExtractedIdentifier],
-            self.post_extracted_items(extracted_items).identifiers,
-        )
 
     def post_extracted_items(
         self,
@@ -168,7 +145,7 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A single merged item
         """
-        # XXX stop-gap until the backend has a proper get merged item endpoint (MX-1669)
+        # TODO(ND): stop-gap until backend has proper get merged item endpoint (MX-1669)
         response = self.request(
             method="GET",
             endpoint="merged-item",
@@ -181,7 +158,8 @@ class BackendApiConnector(HTTPConnector):
         try:
             return response_model.items[0]
         except IndexError:
-            raise HTTPError("merged item was not found") from None
+            msg = "merged item was not found"
+            raise HTTPError(msg) from None
 
     def preview_merged_item(
         self,

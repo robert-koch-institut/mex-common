@@ -15,13 +15,14 @@ from mex.common.types import (
     YearMonthDay,
     YearMonthDayTime,
 )
+from mex.common.types.temporal_entity import YEAR_MONTH_DAY_REGEX
 
 
 @pytest.mark.parametrize(
     ("args", "kwargs", "message"),
     [
         (
-            (datetime.now(),),
+            (datetime.now(tz=UTC),),
             {"tzinfo": UTC},
             "Temporal entity does not accept tzinfo in parsing mode",
         ),
@@ -161,7 +162,7 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2020, 3, 22, 14, 30, 58),),
+            (datetime(2020, 3, 22, 14, 30, 58, tzinfo=CET),),
             {},
             'TemporalEntity("2020-03-22T13:30:58Z")',
         ),
@@ -183,19 +184,19 @@ def test_temporal_entity_value_errors(
         ),
         (
             YearMonthDayTime,
-            (YearMonthDayTime(2004, 11, 21, 19, 59, tzinfo=timezone("UTC")),),
+            (YearMonthDayTime(2004, 11, 21, 19, 59, tzinfo=UTC),),
             {},
             'YearMonthDayTime("2004-11-21T19:59:00Z")',
         ),
         (
             TemporalEntity,
-            (datetime(2004, 11, 19, 00, 00),),
+            (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
             {"precision": TemporalEntityPrecision.DAY},
             'TemporalEntity("2004-11-19")',
         ),
         (
             Year,
-            (datetime(2004, 11, 19, 00, 00),),
+            (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
             {"precision": TemporalEntityPrecision.YEAR},
             'Year("2004")',
         ),
@@ -232,8 +233,8 @@ def test_temporal_entity_eq() -> None:
     assert TemporalEntity(2004) == TemporalEntity("2004")
     assert TemporalEntity(2004, 11) == TemporalEntity(2004, 11)
     assert TemporalEntity(2004, 11, 2) == "2004-11-02"
-    assert TemporalEntity(2020, 3, 22, 14, 30, 58, 0) == datetime(
-        2020, 3, 22, 14, 30, 58, 0
+    assert TemporalEntity(2020, 3, 22, 14, 30, 58, 0, tzinfo=UTC) == datetime(
+        2020, 3, 22, 14, 30, 58, 0, tzinfo=UTC
     )
     assert TemporalEntity(2005) != object()
 
@@ -242,7 +243,9 @@ def test_temporal_entity_gt() -> None:
     assert TemporalEntity(2004) > TemporalEntity("2003")
     assert TemporalEntity(2004, 11) < "2013-10-02"
     assert TemporalEntity(2004, 11) <= TemporalEntity(2004, 12)
-    assert TemporalEntity(2020, 3, 22, 14, 30, 58) >= datetime(2020, 3, 22, 14, 29)
+    assert TemporalEntity(2020, 3, 22, 14, 30, 58, tzinfo=UTC) >= datetime(
+        2020, 3, 22, 14, 29, tzinfo=UTC
+    )
 
     with pytest.raises(NotImplementedError):
         assert TemporalEntity(2005) > object()
@@ -273,13 +276,12 @@ class DummyModel(BaseModel):
     birthday: YearMonthDay
 
 
-def test_email_schema() -> None:
+def test_temporal_entity_schema() -> None:
     assert DummyModel.model_json_schema() == {
         "properties": {
             "birthday": {
                 "examples": ["2014-08-24"],
-                "format": "date",
-                "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+                "pattern": YEAR_MONTH_DAY_REGEX,
                 "title": "YearMonthDay",
                 "type": "string",
             }

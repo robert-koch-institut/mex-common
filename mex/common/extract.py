@@ -59,10 +59,12 @@ def parse_csv(
     ) as reader:
         for chunk in reader:
             for index, row in chunk.iterrows():
-                row.replace(to_replace=np.nan, value=None, inplace=True)
-                row.replace(regex=r"^\s*$", value=None, inplace=True)
                 try:
-                    model = into.model_validate(row.to_dict())
+                    model = into.model_validate(
+                        row.replace(to_replace=np.nan, value=None)
+                        .replace(regex=r"^\s*$", value=None)
+                        .to_dict()
+                    )
                     logger.info(
                         "parse_csv - %s %s - OK",
                         into.__name__,

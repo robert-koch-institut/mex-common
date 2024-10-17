@@ -64,7 +64,7 @@ def merged_person() -> MergedPerson:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def rule_set_request() -> PersonRuleSetRequest:
     """Return a dummy person rule set request for testing purposes."""
     return PersonRuleSetRequest(
@@ -74,7 +74,7 @@ def rule_set_request() -> PersonRuleSetRequest:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def rule_set_response() -> PersonRuleSetResponse:
     """Return a dummy person rule set response for testing purposes."""
     return PersonRuleSetResponse(
