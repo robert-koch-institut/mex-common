@@ -29,44 +29,24 @@ class _Stem(BaseModel):
 
 
 class _OptionalValues(_Stem):
-    hasConsentType: (
-        Annotated[
-            ConsentType, Field(examples=["https://mex.rki.de/item/consent-type-1"])
-        ]
-        | None
-    ) = None
+    hasConsentType: ConsentType | None = None
 
 
 class _RequiredValues(_Stem):
-    hasConsentStatus: Annotated[
-        ConsentStatus, Field(examples=["https://mex.rki.de/item/consent-status-1"])
-    ]
+    hasConsentStatus: ConsentStatus
     hasDataSubject: MergedPersonIdentifier
     isIndicatedAtTime: YearMonthDayTime
 
 
 class _SparseValues(_Stem):
-    hasConsentStatus: (
-        Annotated[
-            ConsentStatus, Field(examples=["https://mex.rki.de/item/consent-status-1"])
-        ]
-        | None
-    ) = None
+    hasConsentStatus: ConsentStatus | None = None
     hasDataSubject: MergedPersonIdentifier | None = None
     isIndicatedAtTime: YearMonthDayTime | None = None
 
 
 class _VariadicValues(_Stem):
-    hasConsentType: list[
-        Annotated[
-            ConsentType, Field(examples=["https://mex.rki.de/item/consent-type-1"])
-        ]
-    ] = []
-    hasConsentStatus: list[
-        Annotated[
-            ConsentStatus, Field(examples=["https://mex.rki.de/item/consent-status-1"])
-        ]
-    ] = []
+    hasConsentType: list[ConsentType] = []
+    hasConsentStatus: list[ConsentStatus] = []
     hasDataSubject: list[MergedPersonIdentifier] = []
     isIndicatedAtTime: list[YearMonthDayTime] = []
 

@@ -5,7 +5,14 @@ from functools import cache
 from importlib.resources import files
 from typing import TYPE_CHECKING, ClassVar, Self, Union
 
-from pydantic import AnyUrl, BaseModel
+from pydantic import (
+    AnyUrl,
+    BaseModel,
+    GetCoreSchemaHandler,
+    GetJsonSchemaHandler,
+    json_schema,
+)
+from pydantic_core import core_schema
 
 from mex.common.utils import normalize
 
@@ -15,6 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from mex.common.types import Text
 
 MODEL_VOCABULARIES = files("mex.model.vocabularies")
+VOCABULARY_PATTERN = r"https://mex.rki.de/item/[a-z0-9-]+"
 
 
 class BilingualText(BaseModel):
@@ -71,10 +79,6 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
     __vocabulary__: ClassVar[str]
     __concepts__: ClassVar[list[Concept]]
 
-    def __repr__(self) -> str:
-        """Overwrite representation because dynamic enum names are unknown to mypy."""
-        return f'{self.__class__.__name__}["{self.name}"]'
-
     @classmethod
     def find(cls, search_term: Union[str, "Text"]) -> Self | None:
         """Get the enum instance that matches a label of the underlying concepts.
@@ -107,6 +111,44 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
             if search_term in searchable_labels:
                 return cls(str(concept.identifier))
         return None
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: object, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        """Modify the core schema to add the vocabulary regex."""
+        return core_schema.json_or_python_schema(
+            json_schema=core_schema.union_schema(
+                [
+                    core_schema.str_schema(pattern=VOCABULARY_PATTERN),
+                    core_schema.no_info_plain_validator_function(cls),
+                ],
+            ),
+            python_schema=core_schema.chain_schema(
+                [
+                    core_schema.is_instance_schema(cls | str),
+                    core_schema.no_info_plain_validator_function(cls),
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda s: s.value,
+                when_used="unless-none",
+            ),
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, core_schema_: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> json_schema.JsonSchemaValue:
+        """Modify the json schema to add the scheme and an example."""
+        json_schema_ = handler(core_schema_)
+        json_schema_["examples"] = [f"https://mex.rki.de/item/{cls.__vocabulary__}-1"]
+        json_schema_["useScheme"] = f"https://mex.rki.de/item/{cls.__vocabulary__}"
+        return json_schema_
+
+    def __repr__(self) -> str:
+        """Overwrite representation because dynamic enum names are unknown to mypy."""
+        return f'{self.__class__.__name__}["{self.name}"]'
 
 
 class AccessRestriction(VocabularyEnum):

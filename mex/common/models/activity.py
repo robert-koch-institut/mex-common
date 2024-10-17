@@ -5,7 +5,7 @@ This may be a project, an area of work or an administrative procedure.
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field, computed_field
+from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
@@ -19,6 +19,7 @@ from mex.common.models.base.rules import (
 from mex.common.types import (
     ActivityType,
     ExtractedActivityIdentifier,
+    Identifier,
     Link,
     MergedActivityIdentifier,
     MergedBibliographicResourceIdentifier,
@@ -41,15 +42,16 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     abstract: list[Text] = []
-    activityType: list[
-        Annotated[
-            ActivityType, Field(examples=["https://mex.rki.de/item/activity-type-1"])
-        ]
-    ] = []
+    activityType: list[ActivityType] = []
     alternativeTitle: list[Text] = []
     documentation: list[Link] = []
     end: list[YearMonthDay | YearMonth | Year] = []
-    externalAssociate: list[MergedOrganizationIdentifier | MergedPersonIdentifier] = []
+    externalAssociate: list[
+        Annotated[
+            MergedOrganizationIdentifier | MergedPersonIdentifier,
+            AfterValidator(Identifier),
+        ]
+    ] = []
     funderOrCommissioner: list[MergedOrganizationIdentifier] = []
     fundingProgram: list[str] = []
     involvedPerson: list[MergedPersonIdentifier] = []
@@ -59,18 +61,19 @@ class _OptionalLists(_Stem):
     shortName: list[Text] = []
     start: list[YearMonthDay | YearMonth | Year] = []
     succeeds: list[MergedActivityIdentifier] = []
-    theme: list[
-        Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
-    ] = []
+    theme: list[Theme] = []
     website: list[Link] = []
 
 
 class _RequiredLists(_Stem):
     contact: Annotated[
         list[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
+            Annotated[
+                MergedOrganizationalUnitIdentifier
+                | MergedPersonIdentifier
+                | MergedContactPointIdentifier,
+                AfterValidator(Identifier),
+            ]
         ],
         Field(min_length=1),
     ]
@@ -82,9 +85,12 @@ class _RequiredLists(_Stem):
 
 class _SparseLists(_Stem):
     contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier,
+        Annotated[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+            AfterValidator(Identifier),
+        ]
     ] = []
     responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
     title: list[Text] = []

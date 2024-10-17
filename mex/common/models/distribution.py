@@ -42,26 +42,13 @@ class _OptionalLists(_Stem):
 
 class _OptionalValues(_Stem):
     accessService: MergedAccessPlatformIdentifier | None = None
-    license: (
-        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
-    ) = None
-    mediaType: (
-        Annotated[
-            MIMEType,
-            Field(
-                examples=["https://mex.rki.de/item/mime-type-1"],
-            ),
-        ]
-        | None
-    ) = None
+    license: License | None = None
+    mediaType: MIMEType | None = None
     modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
 
 
 class _RequiredValues(_Stem):
-    accessRestriction: Annotated[
-        AccessRestriction,
-        Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-    ]
+    accessRestriction: AccessRestriction
     issued: YearMonthDayTime | YearMonthDay | YearMonth | Year
     title: Annotated[
         str,
@@ -73,13 +60,7 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
-    accessRestriction: (
-        Annotated[
-            AccessRestriction,
-            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-        ]
-        | None
-    ) = None
+    accessRestriction: AccessRestriction | None = None
     issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     title: (
         Annotated[
@@ -94,12 +75,7 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
-    accessRestriction: list[
-        Annotated[
-            AccessRestriction,
-            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-        ]
-    ] = []
+    accessRestriction: list[AccessRestriction] = []
     issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     title: list[
         Annotated[

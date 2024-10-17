@@ -25,10 +25,7 @@ T = TypeVar("T")
 
 def contains_any(base: Container[T], tokens: Iterable[T]) -> bool:
     """Check if a given base contains any of the given tokens."""
-    for token in tokens:
-        if token in base:
-            return True
-    return False
+    return any(token in base for token in tokens)
 
 
 def any_contains_any(bases: Iterable[Container[T] | None], tokens: Iterable[T]) -> bool:

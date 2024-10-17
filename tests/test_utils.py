@@ -55,7 +55,7 @@ def test_any_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> N
 
 @pytest.mark.parametrize(
     ("annotation", "types", "expected"),
-    (
+    [
         (None, [str], False),
         (str, [str], True),
         (str, [Identifier], False),
@@ -63,7 +63,7 @@ def test_any_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> N
         (list[str | int | list[str]], [str, float], False),
         (list[str | int | list[str]], [int, str], True),
         (MergedPersonIdentifier | None, MERGED_IDENTIFIER_CLASSES, True),
-    ),
+    ],
     ids=[
         "static None",
         "simple str",
@@ -85,7 +85,7 @@ def test_contains_only_types(
 
 @pytest.mark.parametrize(
     ("annotation", "flags", "expected_types"),
-    (
+    [
         (str, {}, [str]),
         (None, {}, [NoneType]),
         (None, {"include_none": False}, []),
@@ -103,7 +103,7 @@ def test_contains_only_types(
             {"unpack_literal": False},
             [Literal["okay"], NoneType],
         ),
-    ),
+    ],
     ids=[
         "string",
         "None allowing None",
@@ -141,7 +141,7 @@ def test_group_fields_by_class_name() -> None:
 
 @pytest.mark.parametrize(
     ("string", "expected"),
-    (("", ""), ("__XYZ__", "xyz"), ("/foo/BAR$42", "foo bar 42")),
+    [("", ""), ("__XYZ__", "xyz"), ("/foo/BAR$42", "foo bar 42")],
 )
 def test_normalize(string: str, expected: str) -> None:
     assert normalize(string) == expected

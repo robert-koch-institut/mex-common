@@ -35,8 +35,8 @@ def test_vocabulary_enum_model() -> None:
 
     # check enum values are loaded correctly
     assert [c.value for c in DummyEnum] == [
-        "https://dummy/concept-one",
-        "https://dummy/concept-two",
+        "https://mex.rki.de/item/dummy-concept-1",
+        "https://mex.rki.de/item/dummy-concept-2",
     ]
 
     # check enum instance representation
@@ -51,11 +51,39 @@ def test_vocabulary_enum_model() -> None:
 
     # check wrong value raises error
     with pytest.raises(ValidationError):
-        DummyModel.model_validate({"dummy": "https://dummy/not-a-valid-concept"})
+        DummyModel.model_validate(
+            {"dummy": "https://mex.rki.de/item/not-a-valid-concept"}
+        )
 
     # check parsing from string works
-    model = DummyModel.model_validate({"dummy": "https://dummy/concept-two"})
+    model = DummyModel.model_validate(
+        {"dummy": "https://mex.rki.de/item/dummy-concept-2"}
+    )
     assert model.dummy == DummyEnum["PREF_EN_TWO"]
+
+
+@pytest.mark.usefixtures("use_dummy_vocabulary")
+def test_vocabulary_enum_schema() -> None:
+    class DummyEnum(VocabularyEnum):
+        __vocabulary__ = "dummy-vocabulary"
+
+    class DummyModel(BaseModel):
+        dummy: DummyEnum
+
+    assert DummyModel.model_json_schema() == {
+        "properties": {
+            "dummy": {
+                "examples": ["https://mex.rki.de/item/dummy-vocabulary-1"],
+                "pattern": "https://mex.rki.de/item/[a-z0-9-]+",
+                "title": "Dummy",
+                "type": "string",
+                "useScheme": "https://mex.rki.de/item/dummy-vocabulary",
+            }
+        },
+        "required": ["dummy"],
+        "title": "DummyModel",
+        "type": "object",
+    }
 
 
 @pytest.mark.usefixtures("use_dummy_vocabulary")
@@ -68,4 +96,4 @@ def test_vocabulary_enum_find() -> None:
 
     found_enum = DummyEnum.find("pref-de-one")
     assert found_enum is not None
-    assert found_enum.value == "https://dummy/concept-one"
+    assert found_enum.value == "https://mex.rki.de/item/dummy-concept-1"

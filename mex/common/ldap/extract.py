@@ -1,7 +1,8 @@
 from collections import defaultdict
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 
 from mex.common.identity import get_provider
+from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import MergedPersonIdentifier
@@ -27,7 +28,8 @@ def _get_merged_ids_by_attribute(
         MergedPersonIdentifiers
     """
     if attribute not in LDAPPerson.model_fields:
-        raise RuntimeError(f"Not a valid LDAPPerson field: {attribute}")
+        msg = f"Not a valid LDAPPerson field: {attribute}"
+        raise RuntimeError(msg)
     merged_ids_by_attribute = defaultdict(list)
     provider = get_provider()
     for person in persons:
@@ -111,3 +113,41 @@ def get_merged_ids_by_query_string(
                 MergedPersonIdentifier(identities[0].stableTargetId)
             )
     return merged_ids_by_attribute
+
+
+def get_persons_by_name(
+    surname: str = "*",
+    given_name: str = "*",
+    **filters: str,
+) -> Generator[LDAPPerson, None, None]:
+    """Get all ldap persons matching the filters.
+
+    Args:
+        given_name: Given name of a person, defaults to non-null.
+        surname: Surname of a person, defaults to non-null.
+        **filters: Additional filters.
+
+    Returns:
+        Generator for LDAP persons.
+    """
+    connector = LDAPConnector.get()
+    return connector.get_persons(surname, given_name, **filters)
+
+
+def get_count_of_found_persons_by_name(
+    surname: str = "*",
+    given_name: str = "*",
+    **filters: str,
+) -> int:
+    """Get total count of found ldap persons.
+
+    Args:
+        given_name: Given name of a person, defaults to non-null.
+        surname: Surname of a person, defaults to non-null.
+        **filters: Additional filters.
+
+    Returns:
+          count of found persons.
+    """
+    connector = LDAPConnector.get()
+    return len(list(connector.get_persons(surname, given_name, **filters)))

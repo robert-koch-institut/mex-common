@@ -9,12 +9,20 @@ EMAIL_PATTERN = r"^[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+$"
 class Email(str):
     """Email address of a person, organization or other entity."""
 
+    __slots__ = ()
+
     @classmethod
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add the email regex."""
-        return core_schema.str_schema(pattern=EMAIL_PATTERN)
+        return core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=EMAIL_PATTERN),
+                core_schema.no_info_plain_validator_function(cls),
+            ],
+            serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
+        )
 
     @classmethod
     def __get_pydantic_json_schema__(
@@ -26,3 +34,7 @@ class Email(str):
         json_schema_["format"] = "email"
         json_schema_["examples"] = ["info@rki.de"]
         return json_schema_
+
+    def __repr__(self) -> str:
+        """Overwrite the default representation."""
+        return f'{self.__class__.__name__}("{self}")'

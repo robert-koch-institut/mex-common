@@ -22,9 +22,8 @@ class JsonSchemaGenerator(PydanticJsonSchemaGenerator):
         """
         return json_schema
 
-    def complex_schema(self, schema: ComplexSchema) -> dict[str, Any]:
+    def complex_schema(self, _: ComplexSchema) -> dict[str, Any]:
         """Returns a schema that matches a complex value."""
-        # TODO: clean this up in MX-1704 (stop-gap)
-        raise NotImplementedError(
-            "Method for generating JsonSchema for 'complex' schemas is not implemented."
-        )
+        # TODO(ND): clean this up in MX-1704 (stop-gap)
+        msg = "Method for generating JsonSchema for complex schemas is not implemented."
+        raise NotImplementedError(msg)
