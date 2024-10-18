@@ -19,10 +19,7 @@ from requests import Response
 
 from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
-from mex.common.primary_source.extract import extract_seed_primary_sources
-from mex.common.primary_source.transform import (
-    transform_seed_primary_sources_to_extracted_primary_sources,
-)
+from mex.common.primary_source.helpers import get_all_extracted_primary_sources
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.wikidata.connector import (
     WikidataAPIConnector,
@@ -121,13 +118,7 @@ def faker_session_locale() -> list[str]:
 @pytest.fixture()
 def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
-    seed_primary_sources = extract_seed_primary_sources()
-    extracted_primary_sources = (
-        transform_seed_primary_sources_to_extracted_primary_sources(
-            seed_primary_sources
-        )
-    )
-    return {p.identifierInPrimarySource: p for p in extracted_primary_sources}
+    return get_all_extracted_primary_sources()
 
 
 @pytest.fixture

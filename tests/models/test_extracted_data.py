@@ -85,3 +85,14 @@ def test_extracted_data_stores_identity_in_provider() -> None:
     assert len(identities) == 1
     assert str(thing.identifier) == identities[0].identifier
     assert str(thing.stableTargetId) == identities[0].stableTargetId
+
+
+def test_hash_function():
+    hps1 = MergedPrimarySourceIdentifier.generate(seed=123456)
+    hps2 = MergedPrimarySourceIdentifier.generate(seed=234567)
+    thing1 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
+    thing2 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
+    thing3 = ExtractedThing(hadPrimarySource=hps2, identifierInPrimarySource="567")
+
+    assert hash(thing1) == hash(thing2)
+    assert hash(thing1) != hash(thing3)
