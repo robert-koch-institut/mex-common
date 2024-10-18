@@ -23,7 +23,7 @@ def get_extracted_organization_from_wikidata(
 
     Returns:
         ExtractedOrganization if one matching organization is found in
-           Wikidata lookup.
+            Wikidata lookup.
         None if multiple matches / no organization is found.
     """
     found_organization = search_organization_by_label(query_string)

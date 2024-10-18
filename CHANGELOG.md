@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - consistently parse emails, identifiers and temporals in models to their type, not str
 - consistently serialize emails, ids and temporals in models to str, not their type
 - make instances of Link type hashable
-- wikidata convenience function split between mex-common and mex-extractors
+- make instances of extracted data hashable
+- wikidata helper function split between mex-common and mex-extractors
 
 ### Deprecated
 
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: drop support for parsing UUIDs as Identifiers, this was unused
 - BREAKING: drop support for parsing Links from markdown syntax, this was unused
 - BREAKING: remove pydantic1-style `validate` methods from all type models
+- BREAKING: Wikidata convenience function refactored and renamed to 'helper'
 
 ### Fixed
 
