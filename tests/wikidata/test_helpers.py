@@ -31,7 +31,7 @@ def test_get_extracted_organization_from_wikidata_for_nonsensequery_and_exceptio
     None
 ):
     try:
-        string_nonsense = "this schould give no match"
+        string_nonsense = "this should give no match"
         returned = get_extracted_organization_from_wikidata(string_nonsense)
 
         assert returned is None
