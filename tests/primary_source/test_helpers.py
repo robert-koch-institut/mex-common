@@ -6,7 +6,7 @@ from mex.common.primary_source.helpers import (
 
 def test_get_extracted_primary_source_by_name() -> None:
     string_wiki = "wikidata"
-    string_nonsense = "this schould give no match"
+    string_nonsense = "this should give no match"
 
     # primary source found
     extracted_primary_source = get_extracted_primary_source_by_name(string_wiki)
