@@ -22,6 +22,7 @@ from mex.common.types import (
     Identifier,
     Link,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -29,6 +30,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
     Theme,
+    Year,
     YearMonth,
     YearMonthDay,
 )
@@ -43,7 +45,7 @@ class _OptionalLists(_Stem):
     activityType: list[ActivityType] = []
     alternativeTitle: list[Text] = []
     documentation: list[Link] = []
-    end: list[YearMonthDay | YearMonth] = []
+    end: list[YearMonthDay | YearMonth | Year] = []
     externalAssociate: list[
         Annotated[
             MergedOrganizationIdentifier | MergedPersonIdentifier,
@@ -55,9 +57,9 @@ class _OptionalLists(_Stem):
     involvedPerson: list[MergedPersonIdentifier] = []
     involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
     isPartOfActivity: list[MergedActivityIdentifier] = []
-    publication: list[Link] = []
+    publication: list[MergedBibliographicResourceIdentifier] = []
     shortName: list[Text] = []
-    start: list[YearMonthDay | YearMonth] = []
+    start: list[YearMonthDay | YearMonth | Year] = []
     succeeds: list[MergedActivityIdentifier] = []
     theme: list[Theme] = []
     website: list[Link] = []

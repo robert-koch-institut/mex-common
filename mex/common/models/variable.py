@@ -14,7 +14,6 @@ from mex.common.models.base.rules import (
     SubtractiveRule,
 )
 from mex.common.types import (
-    DataType,
     ExtractedVariableIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
@@ -22,6 +21,15 @@ from mex.common.types import (
     MergedVariableIdentifier,
     Text,
 )
+
+CodingSystemStr = Annotated[
+    str,
+    Field(examples=["SF-36 Version 1"]),
+]
+DataTypeStr = Annotated[
+    str,
+    Field(examples=["integer", "string", "image", "int55", "number"]),
+]
 
 
 class _Stem(BaseModel):
@@ -77,28 +85,13 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
-    codingSystem: (
-        Annotated[
-            str,
-            Field(
-                examples=["SF-36 Version 1"],
-            ),
-        ]
-        | None
-    ) = None
-    dataType: DataType | None = None
+    codingSystem: CodingSystemStr | None = None
+    dataType: DataTypeStr | None = None
 
 
 class _VariadicValues(_Stem):
-    codingSystem: list[
-        Annotated[
-            str,
-            Field(
-                examples=["SF-36 Version 1"],
-            ),
-        ]
-    ] = []
-    dataType: list[DataType] = []
+    codingSystem: list[CodingSystemStr] = []
+    dataType: list[DataTypeStr] = []
 
 
 class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):

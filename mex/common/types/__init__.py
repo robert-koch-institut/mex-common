@@ -5,6 +5,8 @@ from mex.common.types.identifier import (
     IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,
     ExtractedActivityIdentifier,
+    ExtractedBibliographicResourceIdentifier,
+    ExtractedConsentIdentifier,
     ExtractedContactPointIdentifier,
     ExtractedDistributionIdentifier,
     ExtractedIdentifier,
@@ -18,6 +20,8 @@ from mex.common.types.identifier import (
     Identifier,
     MergedAccessPlatformIdentifier,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
+    MergedConsentIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedIdentifier,
@@ -40,6 +44,7 @@ from mex.common.types.temporal_entity import (
     UTC,
     TemporalEntity,
     TemporalEntityPrecision,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
@@ -51,12 +56,16 @@ from mex.common.types.vocabulary import (
     ActivityType,
     AnonymizationPseudonymization,
     APIType,
+    BibliographicResourceType,
+    ConsentStatus,
+    ConsentType,
     DataProcessingState,
-    DataType,
     Frequency,
     Language,
     License,
     MIMEType,
+    PersonalData,
+    ResourceCreationMethod,
     ResourceTypeGeneral,
     TechnicalAccessibility,
     Theme,
@@ -75,7 +84,10 @@ __all__ = (
     "AnyPrimitiveType",
     "APIType",
     "AssetsPath",
+    "BibliographicResourceType",
     "CET",
+    "ConsentStatus",
+    "ConsentType",
     "DataProcessingState",
     "DataType",
     "EMAIL_PATTERN",
@@ -84,6 +96,8 @@ __all__ = (
     "EXTRACTED_IDENTIFIER_CLASSES",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
+    "ExtractedBibliographicResourceIdentifier",
+    "ExtractedConsentIdentifier",
     "ExtractedContactPointIdentifier",
     "ExtractedDistributionIdentifier",
     "ExtractedIdentifier",
@@ -107,6 +121,8 @@ __all__ = (
     "MERGED_IDENTIFIER_CLASSES",
     "MergedAccessPlatformIdentifier",
     "MergedActivityIdentifier",
+    "MergedBibliographicResourceIdentifier",
+    "MergedConsentIdentifier",
     "MergedContactPointIdentifier",
     "MergedDistributionIdentifier",
     "MergedIdentifier",
@@ -121,6 +137,8 @@ __all__ = (
     "NESTED_MODEL_CLASSES_BY_NAME",
     "NESTED_MODEL_CLASSES",
     "PathWrapper",
+    "PersonalData",
+    "ResourceCreationMethod",
     "ResourceTypeGeneral",
     "Sink",
     "split_to_caps",
@@ -138,6 +156,7 @@ __all__ = (
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
+    "Year",
     "YearMonth",
     "YearMonthDay",
     "YearMonthDayTime",
@@ -152,6 +171,8 @@ NESTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyNestedModel]]] = {
 AnyMergedIdentifier = (
     MergedAccessPlatformIdentifier
     | MergedActivityIdentifier
+    | MergedBibliographicResourceIdentifier
+    | MergedConsentIdentifier
     | MergedContactPointIdentifier
     | MergedDistributionIdentifier
     | MergedOrganizationalUnitIdentifier
@@ -172,6 +193,8 @@ MERGED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedIdentifier]]] =
 AnyExtractedIdentifier = (
     ExtractedAccessPlatformIdentifier
     | ExtractedActivityIdentifier
+    | ExtractedBibliographicResourceIdentifier
+    | ExtractedConsentIdentifier
     | ExtractedContactPointIdentifier
     | ExtractedDistributionIdentifier
     | ExtractedOrganizationalUnitIdentifier

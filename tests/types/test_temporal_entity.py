@@ -10,10 +10,12 @@ from mex.common.types import (
     UTC,
     TemporalEntity,
     TemporalEntityPrecision,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
 )
+from mex.common.types.temporal_entity import YEAR_MONTH_DAY_REGEX
 
 
 @pytest.mark.parametrize(
@@ -59,7 +61,7 @@ def test_temporal_entity_type_errors(
             YearMonth,
             ("1999-02",),
             {"precision": TemporalEntityPrecision.DAY},
-            "Expected precision level to be one of 'year', 'month'",
+            "Expected precision level to be 'month'",
         ),
         (
             YearMonthDay,
@@ -128,7 +130,12 @@ def test_temporal_entity_value_errors(
             {"tzinfo": UTC},
             'TemporalEntity("1999-01-20T22:58:17Z")',
         ),
-        (TemporalEntity, ("1994-12-30",), {}, 'TemporalEntity("1994-12-30")'),
+        (
+            TemporalEntity,
+            ("1994-12-30",),
+            {},
+            'TemporalEntity("1994-12-30")',
+        ),
         (
             TemporalEntity,
             ("1999-01-20T22:58:17Z",),
@@ -188,10 +195,10 @@ def test_temporal_entity_value_errors(
             'TemporalEntity("2004-11-19")',
         ),
         (
-            YearMonth,
+            Year,
             (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
             {"precision": TemporalEntityPrecision.YEAR},
-            'YearMonth("2004")',
+            'Year("2004")',
         ),
     ],
     ids=[
@@ -256,7 +263,8 @@ def test_temporal_entity_repr() -> None:
         repr(TemporalEntity(2018, 3, 2, 13, 0, 1))
         == 'TemporalEntity("2018-03-02T12:00:01Z")'
     )
-    assert repr(YearMonth("2022")) == 'YearMonth("2022")'
+    assert repr(Year("2022")) == 'Year("2022")'
+    assert repr(YearMonth("2022-10")) == 'YearMonth("2022-10")'
     assert repr(YearMonthDay("2022-10-03")) == 'YearMonthDay("2022-10-03")'
     assert (
         repr(YearMonthDayTime("2018-03-02T12:00:01Z"))
@@ -273,8 +281,7 @@ def test_temporal_entity_schema() -> None:
         "properties": {
             "birthday": {
                 "examples": ["2014-08-24"],
-                "format": "date",
-                "pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+                "pattern": YEAR_MONTH_DAY_REGEX,
                 "title": "YearMonthDay",
                 "type": "string",
             }
