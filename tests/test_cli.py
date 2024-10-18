@@ -16,6 +16,8 @@ from mex.common.settings import BaseSettings
 class MyStr(str):
     """Dummy string subclass for _field_to_option test."""
 
+    __slots__ = ()
+
 
 class MyEnum(Enum):
     """Dummy enum class for _field_to_option test."""
@@ -110,7 +112,10 @@ class MyEnum(Enum):
             create_model(
                 "OptionalFlagSettings",
                 __base__=BaseSettings,
-                optional_flag=(bool, Field(False, description="This flag is optional")),
+                optional_flag=(
+                    bool,
+                    Field(default=False, description="This flag is optional"),
+                ),
             ),
             {
                 "name": "optional_flag",
@@ -169,7 +174,7 @@ class MyEnum(Enum):
                 __base__=BaseSettings,
                 union_field=(
                     bool | str,
-                    Field(True, description="String or boolean"),
+                    Field(default=True, description="String or boolean"),
                 ),
             ),
             {

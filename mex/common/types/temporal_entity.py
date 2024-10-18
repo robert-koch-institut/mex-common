@@ -53,11 +53,11 @@ TIME_PRECISIONS = [
 
 CET = timezone("CET")  # default assumed timezone
 UTC = timezone("UTC")  # required output timezone
-
 YEAR_MONTH_DAY_TIME_REGEX = r"^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"  # noqa: E501
 YEAR_MONTH_DAY_REGEX = r"^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$"
 YEAR_MONTH_REGEX = r"\d{4}-(?:0[1-9]|1[0-2])$"
 YEAR_REGEX = r"^\d{4}$"
+MAX_DATETIME_ARGUMENTS = 7
 
 
 @total_ordering
@@ -69,9 +69,7 @@ class TemporalEntity:
     precision: TemporalEntityPrecision
     date_time: datetime
     STR_SCHEMA_PATTERN = r".*"
-    ALLOWED_PRECISION_LEVELS = [
-        key for key in TemporalEntityPrecision.__members__.values()
-    ]
+    ALLOWED_PRECISION_LEVELS = list(TemporalEntityPrecision.__members__.values())
     JSON_SCHEMA_CONFIG: dict[str, str | list[str]] = {
         "examples": [
             "2011",
@@ -97,7 +95,7 @@ class TemporalEntity:
         tzinfo: tzinfo | None = None,
     ) -> None: ...  # pragma: no cover
 
-    def __init__(
+    def __init__(  # noqa: PLR0912
         self,
         *args: Union[int, str, date, datetime, "TemporalEntity"],
         precision: TemporalEntityPrecision | None = None,
@@ -122,18 +120,19 @@ class TemporalEntity:
             TemporalEntity(2009, 9, 30, 23, 59, 5, tzinfo=timezone("CET"))
             TemporalEntity(TemporalEntity(2000))
         """
-        if len(args) > 7:
-            raise TypeError(
-                f"Temporal entity takes at most 7 arguments ({len(args)} given)"
+        if len(args) > MAX_DATETIME_ARGUMENTS:
+            msg = (
+                f"Temporal entity takes at most {MAX_DATETIME_ARGUMENTS} arguments "
+                f"({len(args)} given)"
             )
+            raise TypeError(msg)
 
         if len(args) == 1 and isinstance(
             args[0], str | date | datetime | TemporalEntity
         ):
             if tzinfo:
-                raise TypeError(
-                    "Temporal entity does not accept tzinfo in parsing mode"
-                )
+                msg = "Temporal entity does not accept tzinfo in parsing mode"
+                raise TypeError(msg)
             if isinstance(args[0], TemporalEntity):
                 date_time, parsed_precision = self._parse_temporal_entity(args[0])
             elif isinstance(args[0], datetime):
@@ -146,10 +145,11 @@ class TemporalEntity:
             args = cast(tuple[int, ...], args)
             date_time, parsed_precision = self._parse_integers(*args, tzinfo=tzinfo)
         else:
-            raise TypeError(
+            msg = (
                 "Temporal entity takes a single str, date, datetime or "
                 "TemporalEntity argument or up to 7 integers"
             )
+            raise TypeError(msg)
 
         if precision:
             self._validate_precision(precision)
@@ -226,7 +226,7 @@ class TemporalEntity:
         if tzinfo is None:
             tzinfo = CET
         padded = tuple(a or d for a, d in zip_longest(args, (1970, 1, 1, 0, 0, 0, 0)))
-        date_time = datetime(*padded, tzinfo=tzinfo)  # type: ignore
+        date_time = datetime(*padded, tzinfo=tzinfo)  # type: ignore[arg-type,misc]
         precision = TEMPORAL_ENTITY_PRECISIONS_BY_ARG_LENGTH[len(args)]
         return date_time, precision
 
@@ -266,12 +266,14 @@ class TemporalEntity:
         value: date,
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a date and assume the precision is days."""
-        return datetime(value.year, value.month, value.day), TemporalEntityPrecision.DAY
+        return datetime(
+            value.year, value.month, value.day, tzinfo=CET
+        ), TemporalEntityPrecision.DAY
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Return whether the given other value is the same as this one."""
         try:
-            other_temporal = TemporalEntity(other)
+            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
         except TypeError:
             return False
         return bool(

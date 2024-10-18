@@ -1,7 +1,10 @@
 from functools import cache
+from typing import cast
 
 from mex.common.connector.http import HTTPConnector
 from mex.common.settings import BaseSettings
+
+_PROPS = "info|aliases|labels|descriptions|datatype|claims|sitelinks|sitelinks/urls"
 
 
 class WikidataQueryServiceConnector(HTTPConnector):
@@ -34,10 +37,8 @@ class WikidataQueryServiceConnector(HTTPConnector):
             "User-Agent": f"{settings.mex_web_user_agent}",
             "Api-User-Agent": f"{settings.mex_web_user_agent}",
         }
-
         results = self.request("GET", params=params, headers=headers)
-
-        return results["results"]["bindings"]  # type: ignore
+        return cast(list[dict[str, dict[str, str]]], results["results"]["bindings"])
 
 
 class WikidataAPIConnector(HTTPConnector):
@@ -69,18 +70,7 @@ class WikidataAPIConnector(HTTPConnector):
             "action": "wbgetentities",
             "format": "json",
             "ids": item_id,
-            "props": "|".join(
-                [
-                    "info",
-                    "aliases",
-                    "labels",
-                    "descriptions",
-                    "datatype",
-                    "claims",
-                    "sitelinks",
-                    "sitelinks/urls",
-                ]
-            ),
+            "props": _PROPS,
             "formatversion": "2",
         }
         headers = {
@@ -88,4 +78,4 @@ class WikidataAPIConnector(HTTPConnector):
             "Api-User-Agent": f"{settings.mex_web_user_agent}",
         }
         results = self.request("GET", params=params, headers=headers)
-        return results["entities"][item_id]  # type: ignore
+        return cast(dict[str, str], results["entities"][item_id])

@@ -42,8 +42,6 @@ class _OptionalLists(_Stem):
 
 class _OptionalValues(_Stem):
     accessService: MergedAccessPlatformIdentifier | None = None
-    accessURL: Link | None = None
-    downloadURL: Link | None = None
     license: License | None = None
     mediaType: MIMEType | None = None
     modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None

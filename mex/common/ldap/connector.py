@@ -43,7 +43,8 @@ class LDAPConnector(BaseConnector):
         )
         self._connection = connection.__enter__()
         if not self._is_service_available():
-            raise MExError(f"LDAP service not available at url: {host}:{port}")
+            msg = f"LDAP service not available at url: {host}:{port}"
+            raise MExError(msg)
 
     def _is_service_available(self) -> bool:
         try:
@@ -197,15 +198,17 @@ class LDAPConnector(BaseConnector):
             )
         )
         if not functional_accounts:
-            raise EmptySearchResultError(
+            msg = (
                 "Cannot find AD functional account for filters "
                 f"'objectGUID: {objectGUID}, {filters}'"
             )
+            raise EmptySearchResultError(msg)
         if len(functional_accounts) > 1:
-            raise FoundMoreThanOneError(
+            msg = (
                 "Found multiple AD functional accounts for filters "
                 f"'objectGUID: {objectGUID}, {filters}'"
             )
+            raise FoundMoreThanOneError(msg)
         return functional_accounts[0]
 
     def get_person(
@@ -235,15 +238,17 @@ class LDAPConnector(BaseConnector):
             )
         )
         if not persons:
-            raise EmptySearchResultError(
+            msg = (
                 f"Cannot find AD person for filters 'objectGUID: {objectGUID}, "
                 f"employeeID: {employeeID}, {filters}'"
             )
+            raise EmptySearchResultError(msg)
         if len(persons) > 1:
-            raise FoundMoreThanOneError(
+            msg = (
                 f"Found multiple AD persons for filters 'objectGUID: {objectGUID}, "
                 f"employeeID: {employeeID}, {filters}'"
             )
+            raise FoundMoreThanOneError(msg)
         return persons[0]
 
     def get_unit(self, **filters: str) -> LDAPUnit:
@@ -260,9 +265,9 @@ class LDAPConnector(BaseConnector):
         """
         units = list(self.get_units(**filters))
         if not units:
-            raise EmptySearchResultError(f"Cannot find AD unit for filters '{filters}'")
+            msg = f"Cannot find AD unit for filters '{filters}'"
+            raise EmptySearchResultError(msg)
         if len(units) > 1:
-            raise FoundMoreThanOneError(
-                f"Found multiple AD units for filters '{filters}'"
-            )
+            msg = f"Found multiple AD units for filters '{filters}'"
+            raise FoundMoreThanOneError(msg)
         return units[0]

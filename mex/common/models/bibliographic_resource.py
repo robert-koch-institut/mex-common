@@ -121,12 +121,7 @@ class _OptionalLists(_Stem):
     abstract: list[Text] = []
     alternateIdentifier: list[str] = []
     alternativeTitle: list[Text] = []
-    bibliographicResourceType: list[
-        Annotated[
-            BibliographicResourceType,
-            Field(examples=["https://mex.rki.de/item/bibliographic-resource-type-1"]),
-        ]
-    ] = []
+    bibliographicResourceType: list[BibliographicResourceType] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     distribution: list[MergedDistributionIdentifier] = []
     editor: list[MergedPersonIdentifier] = []
@@ -134,9 +129,7 @@ class _OptionalLists(_Stem):
     isbnIssn: list[IsbnIssnStr] = []
     journal: list[Text] = []
     keyword: list[Text] = []
-    language: list[
-        Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
-    ] = []
+    language: list[Language] = []
     publisher: list[MergedOrganizationIdentifier] = []
     subtitle: list[Text] = []
     titleOfBook: list[Text] = []
@@ -158,9 +151,7 @@ class _OptionalValues(_Stem):
     edition: EditionStr | None = None
     issue: VolumeOrIssueStr | None = None
     issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
-    license: (
-        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
-    ) = None
+    license: License | None = None
     pages: (
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
         | None
@@ -174,36 +165,20 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
-    accessRestriction: Annotated[
-        AccessRestriction,
-        Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-    ]
+    accessRestriction: AccessRestriction
 
 
 class _SparseValues(_Stem):
-    accessRestriction: (
-        Annotated[
-            AccessRestriction,
-            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-        ]
-        | None
-    ) = None
+    accessRestriction: AccessRestriction | None = None
 
 
 class _VariadicValues(_Stem):
-    accessRestriction: list[
-        Annotated[
-            AccessRestriction,
-            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-        ]
-    ] = []
+    accessRestriction: list[AccessRestriction] = []
     doi: list[DoiStr] = []
     edition: list[EditionStr] = []
     issue: list[VolumeOrIssueStr] = []
     issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
-    license: list[
-        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])]
-    ] = []
+    license: list[License] = []
     pages: list[
         Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
     ] = []

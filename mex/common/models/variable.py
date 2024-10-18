@@ -22,6 +22,10 @@ from mex.common.types import (
     Text,
 )
 
+CodingSystemStr = Annotated[
+    str,
+    Field(examples=["SF-36 Version 1"]),
+]
 DataTypeStr = Annotated[
     str,
     Field(examples=["integer", "string", "image", "int55", "number"]),
@@ -81,25 +85,12 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
-    codingSystem: (
-        Annotated[
-            str,
-            Field(examples=["SF-36 Version 1"]),
-        ]
-        | None
-    ) = None
+    codingSystem: CodingSystemStr | None = None
     dataType: DataTypeStr | None = None
 
 
 class _VariadicValues(_Stem):
-    codingSystem: list[
-        Annotated[
-            str,
-            Field(
-                examples=["SF-36 Version 1"],
-            ),
-        ]
-    ] = []
+    codingSystem: list[CodingSystemStr] = []
     dataType: list[DataTypeStr] = []
 
 

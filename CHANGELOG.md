@@ -13,14 +13,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- make ruff linter config opt-out, instead of opt-in
+- make instances of extracted data hashable
+- BREAKING: Wikidata convenience function refactored and renamed to 'helper'
+- wikidata helper function split between mex-common and mex-extractors
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.38.0] - 2024-10-11
+
+### Added
+
+- add pattern constants for vocabs, emails, urls and ids to types module
+- add regex pattern to json schema of identifier fields
+- automatically add examples and useScheme to json schema of enum fields
+
+### Changes
+
 - BREAKING: use `identifier` instead of `stableTargetId` to get merged item from backend
 - ensure identifier unions are typed to generic `Identifier` instead of the first match
-- simplify pydantic schema configuration for all types
+  to signal that we don't actually know which of the union types is correct
+- unify pydantic schema configuration for all types
 - consistently parse emails, identifiers and temporals in models to their type, not str
 - consistently serialize emails, ids and temporals in models to str, not their type
-- make instances of Link type hashable
-- make instances of extracted data hashable
-- wikidata helper function split between mex-common and mex-extractors
+- make instances of Link type hashable, to harmonize them with Text models
 
 ### Deprecated
 
@@ -33,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: drop support for parsing UUIDs as Identifiers, this was unused
 - BREAKING: drop support for parsing Links from markdown syntax, this was unused
 - BREAKING: remove pydantic1-style `validate` methods from all type models
-- BREAKING: Wikidata convenience function refactored and renamed to 'helper'
+- BREAKING: `BackendApiConnector.post_models` in favor of `post_extracted_items`
 
 ### Fixed
 
