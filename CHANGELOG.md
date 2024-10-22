@@ -9,9 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- helper function for primary source look up
+
 ### Changes
 
 - make ruff linter config opt-out, instead of opt-in
+- make instances of extracted data hashable
+- BREAKING: Wikidata convenience function refactored and renamed to 'helper'
+- wikidata helper function split between mex-common and mex-extractors
+- code de-duplication: fixture extracted_primary_sources now uses function-part of primary sources helper
 
 ### Deprecated
 
