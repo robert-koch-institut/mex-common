@@ -9,21 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- added new consent and bibliography reference models and vocabs
+- added doi field to resource models
 - helper function for primary source look up
 
 ### Changes
 
+- upgrade mex-model dependency to version 3
 - make ruff linter config opt-out, instead of opt-in
 - make instances of extracted data hashable
 - BREAKING: Wikidata convenience function refactored and renamed to 'helper'
 - wikidata helper function split between mex-common and mex-extractors
 - code de-duplication: fixture extracted_primary_sources now uses function-part of primary sources helper
+- split up YearMonth and Year temporal types and improved patterns
+- applied all changes to model fields according to model v3
+- update LOINC pattern
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix temporal entity schemas
 
 ### Security
 
