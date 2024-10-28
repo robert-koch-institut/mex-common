@@ -2,7 +2,7 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
@@ -158,7 +158,7 @@ class _OptionalValues(_Stem):
     ) = None
     publicationPlace: PublicationPlaceStr | None = None
     publicationYear: Year | None = None
-    respositoryURL: Link | None = None
+    repositoryURL: Link | None = None
     section: SectionStr | None = None
     volume: VolumeOrIssueStr | None = None
     volumeOfSeries: VolumeOrIssueStr | None = None
@@ -184,7 +184,7 @@ class _VariadicValues(_Stem):
     ] = []
     publicationPlace: list[PublicationPlaceStr] = []
     publicationYear: list[Year] = []
-    respositoryURL: list[Link] = []
+    repositoryURL: list[Link] = []
     section: list[SectionStr] = []
     volume: list[VolumeOrIssueStr] = []
     volumeOfSeries: list[VolumeOrIssueStr] = []
@@ -202,8 +202,18 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
     entityType: Annotated[
         Literal["ExtractedBibliographicResource"], Field(alias="$type", frozen=True)
     ] = "ExtractedBibliographicResource"
-    identifier: Annotated[ExtractedBibliographicResourceIdentifier, Field(frozen=True)]
-    stableTargetId: MergedBibliographicResourceIdentifier
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def identifier(self) -> ExtractedBibliographicResourceIdentifier:
+        """Return the computed identifier for this extracted data item."""
+        return self._get_identifier(ExtractedBibliographicResourceIdentifier)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def stableTargetId(self) -> MergedBibliographicResourceIdentifier:  # noqa: N802
+        """Return the computed stableTargetId for this extracted data item."""
+        return self._get_stable_target_id(MergedBibliographicResourceIdentifier)
 
 
 class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
@@ -264,7 +274,7 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     publicationPlace: list[MergedPrimarySourceIdentifier] = []
     publicationYear: list[MergedPrimarySourceIdentifier] = []
     publisher: list[MergedPrimarySourceIdentifier] = []
-    respositoryURL: list[MergedPrimarySourceIdentifier] = []
+    repositoryURL: list[MergedPrimarySourceIdentifier] = []
     section: list[MergedPrimarySourceIdentifier] = []
     subtitle: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []
