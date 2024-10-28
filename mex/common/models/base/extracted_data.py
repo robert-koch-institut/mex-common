@@ -53,6 +53,8 @@ class ExtractedData(BaseEntity):
             ),
             examples=["123456", "item-501", "D7/x4/zz.final3"],
             min_length=1,
+            max_length=1000,
+            pattern=r"^[^\n\r]+$",
             frozen=True,
         ),
     ]
@@ -94,3 +96,7 @@ class ExtractedData(BaseEntity):
             .assign(self.hadPrimarySource, self.identifierInPrimarySource)
             .stableTargetId
         )
+
+    def __hash__(self) -> int:
+        """Calculates a hash value to make the object cachable."""
+        return hash(f"{self.hadPrimarySource}\n{self.identifierInPrimarySource}")
