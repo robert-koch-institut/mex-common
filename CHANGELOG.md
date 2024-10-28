@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.39.0] - 2024-10-28
+
+### Added
+
 - added new consent and bibliography reference models and vocabs
 - added doi field to resource models
 - helper function for primary source look up
@@ -25,15 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - applied all changes to model fields according to model v3
 - update LOINC pattern
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - fix temporal entity schemas
-
-### Security
 
 ## [0.38.0] - 2024-10-11
 
