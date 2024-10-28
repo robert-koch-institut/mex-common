@@ -11,18 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- upgrade mex-model dependency to version 3.1
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [0.40.0] - 2024-10-28
+
+### Changes
+
+- upgrade mex-model dependency to version 3.1
+
+### Fixed
+
 - fix typo in `repositoryURL` of bibliographic resources
 - make identifier and stableTargetId of ExtractedBibliographicResource computed fields
-
-### Security
 
 ## [0.39.0] - 2024-10-28
 
