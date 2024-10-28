@@ -80,7 +80,7 @@ class ExtractedActivityIdentifier(ExtractedIdentifier):
 
 
 class ExtractedBibliographicResourceIdentifier(ExtractedIdentifier):
-    """Identifier for bibliographic resources."""
+    """Identifier for extracted bibliographic resources."""
 
 
 class ExtractedConsentIdentifier(ExtractedIdentifier):
