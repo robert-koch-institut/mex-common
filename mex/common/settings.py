@@ -186,6 +186,11 @@ class BaseSettings(PydanticBaseSettings):
         "services ",
         validation_alias="MEX_WEB_USER_AGENT",
     )
+    orcid_api_url: AnyUrl = Field(
+        Url("https://sandbox.orcid.org/"),
+        description="URL of orcid api.",
+        validation_alias="MEX_WIKI_QUERY_SERVICE_URL",
+    )
 
     def text(self) -> str:
         """Dump the current settings into a readable table."""
