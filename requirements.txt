@@ -1,5 +1,5 @@
 cruft==2.15.0
 mex-release @ git+https://github.com/robert-koch-institut/mex-release.git
-pdm==2.19.3
+pdm==2.19.1
 pre-commit==4.0.1
 wheel==0.44.0
