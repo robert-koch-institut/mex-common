@@ -65,7 +65,7 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
-    endpointDescription: list[Link]
+    endpointDescription: list[Link] = []
     endpointType: list[APIType] = []
     endpointURL: list[Link] = []
     technicalAccessibility: list[TechnicalAccessibility] = []
