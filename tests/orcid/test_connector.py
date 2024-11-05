@@ -1,28 +1,250 @@
-import requests  # noqa: INP001
+import pytest  # noqa: INP001
+
+from mex.common.orcid.connector import OrcidConnector
+
+expected_vyvy = {
+    "last-modified-date": None,
+    "name": {
+        "created-date": {"value": 1729001670037},
+        "last-modified-date": {"value": 1730814244255},
+        "given-names": {"value": "VyVy"},
+        "family-name": {"value": "Tran Ngoc"},
+        "credit-name": None,
+        "source": None,
+        "visibility": "public",
+        "path": "0009-0004-3041-5706",
+    },
+    "other-names": {
+        "last-modified-date": None,
+        "other-name": [],
+        "path": "/0009-0004-3041-5706/other-names",
+    },
+    "biography": None,
+    "researcher-urls": {
+        "last-modified-date": None,
+        "researcher-url": [],
+        "path": "/0009-0004-3041-5706/researcher-urls",
+    },
+    "emails": {
+        "last-modified-date": None,
+        "email": [],
+        "path": "/0009-0004-3041-5706/email",
+    },
+    "addresses": {
+        "last-modified-date": None,
+        "address": [],
+        "path": "/0009-0004-3041-5706/address",
+    },
+    "keywords": {
+        "last-modified-date": None,
+        "keyword": [],
+        "path": "/0009-0004-3041-5706/keywords",
+    },
+    "external-identifiers": {
+        "last-modified-date": None,
+        "external-identifier": [],
+        "path": "/0009-0004-3041-5706/external-identifiers",
+    },
+    "path": "/0009-0004-3041-5706/person",
+}
 
 
-def test_api() -> None:
-    # ORCID iD of the researcher
-    orcid_id = "0000-0002-1597-7258"
-    api_url = f"https://pub.orcid.org/v3.0/{orcid_id}/works"
-    access_token = "0e80a4e4-4a06-4f0a-a353-77c6fb62e1be"  # noqa: S105
-    # Set headers for the request
-    headers = {"Accept": "application/json", "Authorization": f"Bearer {access_token}"}
+@pytest.mark.parametrize(
+    ("string_id", "expected"),
+    [
+        ("0009-0004-3041-5706", expected_vyvy),
+        ("0009-0004-3041-576", {"result": None, "num-found": 0}),
+        (
+            "Max Mustermann",
+            {
+                "result": [
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-9056-5667",
+                            "path": "0000-0002-9056-5667",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-7523-2549",
+                            "path": "0000-0002-7523-2549",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0006-0442-1402",
+                            "path": "0009-0006-0442-1402",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0003-3648-8952",
+                            "path": "0000-0003-3648-8952",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-3372-2005",
+                            "path": "0000-0002-3372-2005",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-8130-5791",
+                            "path": "0000-0002-8130-5791",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0001-7659-8932",
+                            "path": "0000-0001-7659-8932",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-8858-5618",
+                            "path": "0000-0002-8858-5618",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0005-5828-7053",
+                            "path": "0009-0005-5828-7053",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0005-0959-5447",
+                            "path": "0009-0005-0959-5447",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0000-4002-171X",
+                            "path": "0009-0000-4002-171X",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0004-5716-2091",
+                            "path": "0009-0004-5716-2091",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-5969-8955",
+                            "path": "0000-0002-5969-8955",
+                            "host": "orcid.org",
+                        }
+                    },
+                ],
+                "num-found": 13,
+            },
+        ),
+    ],
+    ids=["existing person", "non-existing person", "not an identifier"],
+)
+def test_get_person_details_by_orcid_id(string_id, expected) -> None:
+    orcidapi = OrcidConnector.get()
+    result = orcidapi.get_person_details_by_orcid_id(orcid_id=string_id)
+    assert result == expected
 
-    # Make the request to ORCID API
-    response = requests.get(api_url, headers=headers, timeout=5)
-    assert response.status_code == 200
-    if response.status_code == 200:
-        orcid_data = response.json()  # noqa: F841
 
-
-def test_simple_call() -> None:
-    url = "https://sandbox.orcid.org/oauth/authorize?client_id=APP-Q0MJ2SJAAVUW563V&response_type=code&scope=%2Fauthenticate&redirect_uri=https:%2F%2Fwww.rki.de%2F"
-
-    payload = {}
-    headers = {
-        "Cookie": "AWSELB=43655BD9169005A277CE30781A8B0A8EC55EDF15FAF4A895D4C48C69709A4303B5A780A3E0214269B310AABB09334AB147CEE82589FCEC70F7FC34893BACF19F25FB503711; AWSELBCORS=43655BD9169005A277CE30781A8B0A8EC55EDF15FAF4A895D4C48C69709A4303B5A780A3E0214269B310AABB09334AB147CEE82589FCEC70F7FC34893BACF19F25FB503711"
-    }
-
-    response = requests.request("GET", url, headers=headers, data=payload, timeout=5)
-    assert response.status_code == 200
+@pytest.mark.parametrize(
+    ("family_name", "given_names", "expected"),
+    [
+        ("Tran Ngoc", "Vyvy", expected_vyvy),
+        (
+            "Mustermann",
+            "Max",
+            {
+                "result": [
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0005-5828-7053",
+                            "path": "0009-0005-5828-7053",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0003-3648-8952",
+                            "path": "0000-0003-3648-8952",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-7523-2549",
+                            "path": "0000-0002-7523-2549",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-9056-5667",
+                            "path": "0000-0002-9056-5667",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0002-3372-2005",
+                            "path": "0000-0002-3372-2005",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0000-0001-7659-8932",
+                            "path": "0000-0001-7659-8932",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0005-0959-5447",
+                            "path": "0009-0005-0959-5447",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0000-4002-171X",
+                            "path": "0009-0000-4002-171X",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0006-0442-1402",
+                            "path": "0009-0006-0442-1402",
+                            "host": "orcid.org",
+                        }
+                    },
+                ],
+                "num-found": 9,
+            },
+        ),
+        ("Defgh", "Abc", {"result": None, "num-found": 0}),
+    ],
+    ids=["existing person", "multiple results", "non-existing person"],
+)
+def test_search_person_by_givenname(family_name, given_names, expected) -> None:
+    orcidapi = OrcidConnector.get()
+    result = orcidapi.get_person_details_by_name(
+        given_names=given_names, family_name=family_name
+    )
+    assert result == expected

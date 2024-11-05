@@ -187,9 +187,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_WEB_USER_AGENT",
     )
     orcid_api_url: AnyUrl = Field(
-        Url("https://sandbox.orcid.org/"),
-        description="URL of orcid api.",
-        validation_alias="MEX_WIKI_QUERY_SERVICE_URL",
+        Url("https://pub.orcid.org/v3.0/"), description="URL of orcid api."
     )
 
     def text(self) -> str:
