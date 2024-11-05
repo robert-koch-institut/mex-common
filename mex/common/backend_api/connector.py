@@ -179,7 +179,7 @@ class BackendApiConnector(HTTPConnector):
             A single merged item
         """
         response = self.request(
-            method="GET",
+            method="POST",
             endpoint=f"preview-item/{stable_target_id}",
             payload=rule_set,
         )
