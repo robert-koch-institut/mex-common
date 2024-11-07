@@ -99,7 +99,7 @@ def get_unit_merged_ids_by_emails(
                 and email_dict[lower_email] != extracted_unit.stableTargetId
             ):
                 msg = (
-                    f"Conflict: email {email} is associated with merged unit IDs "
+                    f"Conflict: email '{email}' is associated with merged unit IDs "
                     f"{email_dict[lower_email]} and {extracted_unit.stableTargetId}."
                 )
                 raise MExError(msg)

@@ -65,8 +65,9 @@ def test_get_unit_merged_ids_by_emails_error(
     erroneus_extracted_child_unit.email.append("PARENT@example.com")
 
     msg = (
-        "MExError: Conflict: email PARENT@example.com is associated with "
-        "merged unit IDs 6rqNvZSApUHlz8GkkVP48 and hIiJpZXVppHvoyeP0QtAoS."
+        f"MExError: Conflict: email 'PARENT@example.com' is associated with "
+        f"merged unit IDs {erroneus_extracted_child_unit.stableTargetId} and "
+        f"{extracted_parent_unit.stableTargetId}."
     )
     with pytest.raises(MExError, match=msg):
         get_unit_merged_ids_by_emails(
