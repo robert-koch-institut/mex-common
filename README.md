@@ -9,7 +9,7 @@ Common library for MEx python projects.
 [![open-code](https://github.com/robert-koch-institut/mex-common/actions/workflows/open-code.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-common)
 [![testing](https://github.com/robert-koch-institut/mex-common/actions/workflows/testing.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/testing.yml)
 
-## project
+## Project
 
 The Metadata Exchange (MEx) project is committed to improve the retrieval of RKI
 research data and projects. How? By focusing on metadata: instead of providing the
@@ -39,13 +39,14 @@ data Findable, Accessible, Interoperable and Reusable.
 **Contact** \
 For more information, please feel free to email us at [mex@rki.de](mailto:mex@rki.de).
 
-### Publisher of this document
+### Publisher
+
 **Robert Koch-Institut** \
 Nordufer 20 \
 13353 Berlin \
 Germany
 
-## package
+## Package
 
 The `mex-common` library is a software development toolkit that is used by multiple
 components within the MEx project. It contains utilities for building pipelines like a
@@ -53,14 +54,14 @@ common commandline interface, logging and configuration setup. It also provides 
 auxiliary connectors that can be used to fetch data from external services and a
 re-usable implementation of the MEx metadata schema as pydantic models.
 
-## license
+## License
 
 This package is licensed under the [MIT license](/LICENSE). All other software
 components of the MEx project are open-sourced under the same license as well.
 
-## development
+## Development
 
-### installation
+### Installation
 
 - on unix, consider using pyenv https://github.com/pyenv/pyenv
   - get pyenv `curl https://pyenv.run | bash`
@@ -73,13 +74,13 @@ components of the MEx project are open-sourced under the same license as well.
   - switch version `pyenv global 3.11`
   - run `.\mex.bat install`
 
-### linting and testing
+### Linting and testing
 
 - run all linters with `pdm lint`
 - run only unit tests with `pdm unit`
 - run unit and integration tests with `pdm test`
 
-### updating dependencies
+### Updating dependencies
 
 - update boilerplate files with `cruft update`
 - update global requirements in `requirements.txt` manually
