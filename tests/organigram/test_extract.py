@@ -1,3 +1,6 @@
+import pytest
+
+from mex.common.exceptions import MExError
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.extract import (
     extract_organigram_units,
@@ -52,3 +55,20 @@ def test_get_unit_merged_ids_by_emails(
         "pu@example.com": extracted_parent_unit.stableTargetId,
         # child unit has no emails
     }
+
+
+def test_get_unit_merged_ids_by_emails_error(
+    extracted_child_unit: ExtractedOrganizationalUnit,
+    extracted_parent_unit: ExtractedOrganizationalUnit,
+) -> None:
+    erroneus_extracted_child_unit = extracted_child_unit
+    erroneus_extracted_child_unit.email.append("PARENT@example.com")
+
+    msg = (
+        "MExError: Conflict: email PARENT@example.com is associated with "
+        "merged unit IDs 6rqNvZSApUHlz8GkkVP48 and hIiJpZXVppHvoyeP0QtAoS."
+    )
+    with pytest.raises(MExError, match=msg):
+        get_unit_merged_ids_by_emails(
+            [erroneus_extracted_child_unit, extracted_parent_unit]
+        )
