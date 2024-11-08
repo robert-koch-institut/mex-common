@@ -22,18 +22,18 @@ dependencies = [
     "requests>=2.32.3,<3",
 ]
 optional-dependencies.dev = [
-    "ipdb>=0.13.13,<1",
-    "pandas-stubs>=2.2.3,<3",
-    "mypy>=1.11.2,<2",
+    "ipdb>=0.13,<1",
+    "pandas-stubs>=2,<3",
+    "mypy>=1,<2",
     "pytest-cov>=6,<7",
-    "pytest-random-order>=1.1.1,<2",
-    "pytest-xdist>=3.6.1,<4",
-    "pytest>=8.3.3,<9",
-    "ruff>=0.6.9,<1",
-    "sphinx>=8.0.2,<9",
-    "types-ldap3>=2.9.13,<3",
-    "types-pytz>=2024.1.0,<2025",
-    "types-requests>=2.32.0,<3",
+    "pytest-random-order>=1,<2",
+    "pytest-xdist>=3,<4",
+    "pytest>=8,<9",
+    "ruff>=0.7,<1",
+    "sphinx>=8,<9",
+    "types-ldap3>=2,<3",
+    "types-pytz>=2024,<2025",
+    "types-requests>=2,<3",
 ]
 
 [tool.cruft]
@@ -95,6 +95,7 @@ show-fixes = true
 [tool.ruff.format]
 docstring-code-format = true
 
+
 [tool.ruff.lint]
 ignore = [
     "AIR",     # Disable airflow specific rules (we are not using airflow)
@@ -111,6 +112,7 @@ ignore = [
     "DJ",      # Disable django specific checks (we are not using django)
     "FBT",     # Disable boolean type hint checks (for more flexibility)
     "FIX",     # Allow committing with open TODOs (don't punish committers)
+    "ISC001",  # Disable checks for implicitly concatenated strings (formatter compat)
     "N805",    # Allow first argument of a method to be non-self (pydantic compat)
     "N815",    # Allow mixedCase variables in class scope (model compat)
     "PTH123",  # Allow using builtin open method (simpler than pathlib)
@@ -123,10 +125,10 @@ select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/**" = [
-    "INP001",   # Docs do not need to be a package
+    "INP001",   # Docs folder does not need to be a package
 ]
-"mex/common/testing/**" = [
-    "ARG001",   # Allow unused function arguments for pytest plugin
+"scripts/**" = [
+    "INP001",   # Scripts folder does not need to be a package
 ]
 "tests/**" = [
     "ARG005",   # Allow unused lambda arguments for mocking
