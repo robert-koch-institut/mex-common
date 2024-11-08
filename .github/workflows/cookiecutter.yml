@@ -48,6 +48,8 @@ jobs:
 
       - name: Configure git
         env:
+          MEX_BOT_EMAIL: ${{ vars.MEX_BOT_EMAIL }}
+          MEX_BOT_USER: ${{ vars.MEX_BOT_USER }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
         run: |
