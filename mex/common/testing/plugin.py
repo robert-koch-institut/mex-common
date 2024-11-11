@@ -76,7 +76,8 @@ def settings() -> BaseSettings:
 
 @pytest.fixture(autouse=True)
 def isolate_settings(
-    isolate_assets_dir: None, isolate_work_dir: None
+    isolate_assets_dir: None,  # noqa: ARG001
+    isolate_work_dir: None,  # noqa: ARG001
 ) -> Generator[None, None, None]:
     """Automatically reset the settings singleton store."""
     SETTINGS_STORE.reset()
@@ -157,7 +158,7 @@ def mocked_wikidata(
     # mock search_wikidata_with_query
 
     def get_data_by_query(
-        self: WikidataQueryServiceConnector, query: str
+        _self: WikidataQueryServiceConnector, _query: str
     ) -> list[dict[str, dict[str, str]]]:
         return [
             {
@@ -181,7 +182,7 @@ def mocked_wikidata(
     # mock get_wikidata_org_with_org_id
 
     def get_wikidata_item_details_by_id(
-        self: WikidataAPIConnector, item_id: str
+        _self: WikidataAPIConnector, _item_id: str
     ) -> dict[str, str]:
         return wikidata_organization_raw
 
