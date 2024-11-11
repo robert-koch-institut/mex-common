@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- switch HTTP method for preview endpoint to `POST`
+- add optional values to variadic values for distribution models
+- make `endpointDescription` optional for variadic access platform models
+
 ### Security
 
 ## [0.40.0] - 2024-10-28

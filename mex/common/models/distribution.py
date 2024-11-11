@@ -76,7 +76,11 @@ class _SparseValues(_Stem):
 
 class _VariadicValues(_Stem):
     accessRestriction: list[AccessRestriction] = []
+    accessService: list[MergedAccessPlatformIdentifier] = []
     issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    license: list[License] = []
+    mediaType: list[MIMEType] = []
+    modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     title: list[
         Annotated[
             str,
