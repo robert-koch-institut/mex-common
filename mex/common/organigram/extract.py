@@ -52,10 +52,12 @@ def get_unit_merged_ids_by_synonyms(
     """Return a mapping from unit alt_label and label to their merged IDs.
 
     There will be multiple entries per unit mapping to the same merged ID.
-    But if the same entry mapps to different merged IDs, an error is thrown.
 
     Args:
         extracted_units: Iterable of extracted units
+
+    Raises:
+        MExError: If the same entry maps to different merged IDs
 
     Returns:
         Mapping from unit synonyms to stableTargetIds
@@ -82,10 +84,13 @@ def get_unit_merged_ids_by_emails(
     """Return a mapping from unit emails to their merged IDs.
 
     There may be multiple emails per unit mapping to the same merged ID.
-    But if the same email mapps to different merged IDs, an error is thrown.
+    But if the same email maps to different merged IDs, an error is thrown.
 
     Args:
         extracted_units: Iterable of extracted units
+
+    Raises:
+        MExError: If the same entry maps to different merged IDs
 
     Returns:
         Mapping from lowercased `email` to stableTargetIds

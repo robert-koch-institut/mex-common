@@ -8,6 +8,7 @@ from mex.common.organigram.extract import (
     get_unit_merged_ids_by_synonyms,
 )
 from mex.common.organigram.models import OrganigramUnit
+from mex.common.types import Text
 
 
 def test_extract_organigram_units(
@@ -41,6 +42,24 @@ def test_get_unit_merged_ids_by_synonyms(
         "PRNT Abteilung": parent_id,
         "parent-unit": parent_id,
     }
+
+
+def test_get_unit_merged_ids_by_synonyms_error(
+    extracted_child_unit: ExtractedOrganizationalUnit,
+    extracted_parent_unit: ExtractedOrganizationalUnit,
+) -> None:
+    erroneus_extracted_child_unit = extracted_child_unit
+    erroneus_extracted_child_unit.name.append(Text(value="PARENT Dept."))
+
+    msg = (
+        f"MExError: Conflict: label 'PARENT Dept.' is associated with "
+        f"merged unit IDs {erroneus_extracted_child_unit.stableTargetId} and "
+        f"{extracted_parent_unit.stableTargetId}."
+    )
+    with pytest.raises(MExError, match=msg):
+        get_unit_merged_ids_by_synonyms(
+            [erroneus_extracted_child_unit, extracted_parent_unit]
+        )
 
 
 def test_get_unit_merged_ids_by_emails(
