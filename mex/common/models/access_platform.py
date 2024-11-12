@@ -141,9 +141,9 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveAccessPlatform
-    subtractive: SubtractiveAccessPlatform
-    preventive: PreventiveAccessPlatform
+    additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
+    subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
+    preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
 
 
 class AccessPlatformRuleSetRequest(_BaseRuleSet):

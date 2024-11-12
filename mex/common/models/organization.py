@@ -170,9 +170,9 @@ class PreventiveOrganization(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveOrganization
-    subtractive: SubtractiveOrganization
-    preventive: PreventiveOrganization
+    additive: AdditiveOrganization = AdditiveOrganization()
+    subtractive: SubtractiveOrganization = SubtractiveOrganization()
+    preventive: PreventiveOrganization = PreventiveOrganization()
 
 
 class OrganizationRuleSetRequest(_BaseRuleSet):

@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from mex.common.models.base.entity import BaseEntity
 
 
@@ -15,3 +17,8 @@ class PreventiveRule(BaseEntity):
 
 class RuleSet(BaseEntity):
     """Base class for a set of an additive, subtractive and preventive rule."""
+
+    if TYPE_CHECKING:  # pragma: no cover
+        additive: AdditiveRule
+        subtractive: SubtractiveRule
+        preventive: PreventiveRule

@@ -285,9 +285,9 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveBibliographicResource
-    subtractive: SubtractiveBibliographicResource
-    preventive: PreventiveBibliographicResource
+    additive: AdditiveBibliographicResource = AdditiveBibliographicResource()
+    subtractive: SubtractiveBibliographicResource = SubtractiveBibliographicResource()
+    preventive: PreventiveBibliographicResource = PreventiveBibliographicResource()
 
 
 class BibliographicResourceRuleSetRequest(_BaseRuleSet):

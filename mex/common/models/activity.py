@@ -174,9 +174,9 @@ class PreventiveActivity(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveActivity
-    subtractive: SubtractiveActivity
-    preventive: PreventiveActivity
+    additive: AdditiveActivity = AdditiveActivity()
+    subtractive: SubtractiveActivity = SubtractiveActivity()
+    preventive: PreventiveActivity = PreventiveActivity()
 
 
 class ActivityRuleSetRequest(_BaseRuleSet):

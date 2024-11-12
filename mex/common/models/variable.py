@@ -161,9 +161,9 @@ class PreventiveVariable(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveVariable
-    subtractive: SubtractiveVariable
-    preventive: PreventiveVariable
+    additive: AdditiveVariable = AdditiveVariable()
+    subtractive: SubtractiveVariable = SubtractiveVariable()
+    preventive: PreventiveVariable = PreventiveVariable()
 
 
 class VariableRuleSetRequest(_BaseRuleSet):

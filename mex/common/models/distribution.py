@@ -161,9 +161,9 @@ class PreventiveDistribution(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveDistribution
-    subtractive: SubtractiveDistribution
-    preventive: PreventiveDistribution
+    additive: AdditiveDistribution = AdditiveDistribution()
+    subtractive: SubtractiveDistribution = SubtractiveDistribution()
+    preventive: PreventiveDistribution = PreventiveDistribution()
 
 
 class DistributionRuleSetRequest(_BaseRuleSet):
