@@ -149,9 +149,12 @@ __all__ = (
     "TemporalEntityPrecision",
     "Text",
     "TextLanguage",
+    "AnyVocabularyEnum",
     "Theme",
     "URL_PATTERN",
     "UTC",
+    "VOCABULARY_ENUMS_BY_NAME",
+    "VOCABULARY_ENUMS",
     "VOCABULARY_PATTERN",
     "VocabularyEnum",
     "VocabularyLoader",
@@ -161,6 +164,32 @@ __all__ = (
     "YearMonthDay",
     "YearMonthDayTime",
 )
+
+AnyVocabularyEnum = (
+    AccessRestriction
+    | ActivityType
+    | AnonymizationPseudonymization
+    | APIType
+    | BibliographicResourceType
+    | ConsentStatus
+    | ConsentType
+    | DataProcessingState
+    | Frequency
+    | Language
+    | License
+    | MIMEType
+    | PersonalData
+    | ResourceCreationMethod
+    | ResourceTypeGeneral
+    | TechnicalAccessibility
+    | Theme
+)
+VOCABULARY_ENUMS: Final[list[type[AnyVocabularyEnum]]] = list(
+    get_args(AnyVocabularyEnum)
+)
+VOCABULARY_ENUMS_BY_NAME: Final[dict[str, type[AnyVocabularyEnum]]] = {
+    cls.__name__: cls for cls in VOCABULARY_ENUMS
+}
 
 AnyNestedModel = Link | Text
 NESTED_MODEL_CLASSES: Final[list[type[AnyNestedModel]]] = list(get_args(AnyNestedModel))
