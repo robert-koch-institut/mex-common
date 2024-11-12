@@ -1,6 +1,7 @@
 import json
 from collections.abc import Generator, Iterable
 
+from mex.common.exceptions import MExError
 from mex.common.logging import watch
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
@@ -55,14 +56,26 @@ def get_unit_merged_ids_by_synonyms(
     Args:
         extracted_units: Iterable of extracted units
 
+    Raises:
+        MExError: If the same entry maps to different merged IDs
+
     Returns:
         Mapping from unit synonyms to stableTargetIds
     """
-    return {
-        synonym: MergedOrganizationalUnitIdentifier(extracted_unit.stableTargetId)
-        for extracted_unit in extracted_units
-        for synonym in _get_synonyms(extracted_unit)
-    }
+    synonym_dict: dict[str, MergedOrganizationalUnitIdentifier] = {}
+    for extracted_unit in extracted_units:
+        for synonym in _get_synonyms(extracted_unit):
+            if (
+                synonym in synonym_dict
+                and synonym_dict[synonym] != extracted_unit.stableTargetId
+            ):
+                msg = (
+                    f"Conflict: label '{synonym}' is associated with merged unit IDs "
+                    f"{synonym_dict[synonym]} and {extracted_unit.stableTargetId}."
+                )
+                raise MExError(msg)
+            synonym_dict[synonym] = extracted_unit.stableTargetId
+    return synonym_dict
 
 
 def get_unit_merged_ids_by_emails(
@@ -75,11 +88,24 @@ def get_unit_merged_ids_by_emails(
     Args:
         extracted_units: Iterable of extracted units
 
+    Raises:
+        MExError: If the same entry maps to different merged IDs
+
     Returns:
         Mapping from lowercased `email` to stableTargetIds
     """
-    return {
-        email.lower(): MergedOrganizationalUnitIdentifier(extracted_unit.stableTargetId)
-        for extracted_unit in extracted_units
-        for email in extracted_unit.email
-    }
+    email_dict: dict[str, MergedOrganizationalUnitIdentifier] = {}
+    for extracted_unit in extracted_units:
+        for email in extracted_unit.email:
+            lower_email = email.lower()
+            if (
+                lower_email in email_dict
+                and email_dict[lower_email] != extracted_unit.stableTargetId
+            ):
+                msg = (
+                    f"Conflict: email '{email}' is associated with merged unit IDs "
+                    f"{email_dict[lower_email]} and {extracted_unit.stableTargetId}."
+                )
+                raise MExError(msg)
+            email_dict[lower_email] = extracted_unit.stableTargetId
+    return email_dict
