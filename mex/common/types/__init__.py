@@ -191,6 +191,14 @@ VOCABULARY_ENUMS_BY_NAME: Final[dict[str, type[AnyVocabularyEnum]]] = {
     cls.__name__: cls for cls in VOCABULARY_ENUMS
 }
 
+AnyTemporalEntity = Year | YearMonth | YearMonthDay | YearMonthDayTime
+TEMPORAL_ENTITIES: Final[list[type[AnyTemporalEntity]]] = list(
+    get_args(AnyTemporalEntity)
+)
+TEMPORAL_ENTITIES_BY_NAME: Final[dict[str, type[AnyTemporalEntity]]] = {
+    cls.__name__: cls for cls in TEMPORAL_ENTITIES
+}
+
 AnyNestedModel = Link | Text
 NESTED_MODEL_CLASSES: Final[list[type[AnyNestedModel]]] = list(get_args(AnyNestedModel))
 NESTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyNestedModel]]] = {
