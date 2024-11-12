@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- organigram extraction checks for duplicate emails/labels in different organigram units
 
+- organigram extraction checks for duplicate emails/labels in different organigram units
 - add vocabulary and temporal unions and lookups to `mex.common.types`
 - add `mex.common.fields` with field type by class name lookups
 
