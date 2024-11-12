@@ -84,7 +84,6 @@ def get_unit_merged_ids_by_emails(
     """Return a mapping from unit emails to their merged IDs.
 
     There may be multiple emails per unit mapping to the same merged ID.
-    But if the same email maps to different merged IDs, an error is thrown.
 
     Args:
         extracted_units: Iterable of extracted units
