@@ -140,7 +140,7 @@ class BackendApiConnector(HTTPConnector):
             identifier: The merged item's identifier
 
         Raises:
-            MExError: If no merged item was found
+            HTTPError: If no merged item was found
 
         Returns:
             A single merged item
