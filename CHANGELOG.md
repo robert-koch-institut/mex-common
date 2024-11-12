@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add vocabulary and temporal unions and lookups to `mex.common.types`
+- add `mex.common.fields` with field type by class name lookups
+
 ### Changes
 
-- add default empty rules to all of the rule-set models
-- add vocabulary union and lookups to `mex.common.types`
+- set default empty rules to all of the rule-set models
 
 ### Deprecated
 
