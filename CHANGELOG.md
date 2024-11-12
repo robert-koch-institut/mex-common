@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- add default empty rules to all of the rule-set models
+- add vocabulary union and lookups to `mex.common.types`
+
 ### Deprecated
 
 ### Removed
