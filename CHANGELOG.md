@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - organigram extraction checks for duplicate emails/labels in different organigram units
 
 ### Changes
+
+- upgrade mex-model dependency to version 3.2
 
 ### Deprecated
 
@@ -46,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - make instances of extracted data hashable
 - BREAKING: Wikidata convenience function refactored and renamed to 'helper'
 - wikidata helper function split between mex-common and mex-extractors
-- code de-duplication: fixture extracted_primary_sources now uses function-part of primary sources helper
+- code de-duplication: fixture extracted_primary_sources uses function-part of helper
 - split up YearMonth and Year temporal types and improved patterns
 - applied all changes to model fields according to model v3
 - update LOINC pattern
