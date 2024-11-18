@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- organigram extraction checks for duplicate emails/labels in different organigram units
-
 ### Changes
-
-- upgrade mex-model dependency to version 3.2
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.41.0] - 2024-11-18
+
+### Added
+
+- organigram extraction checks for duplicate emails/labels in different organigram units
+
+### Changes
+
+- upgrade mex-model dependency to version 3.2
 
 ## [0.40.0] - 2024-10-28
 
