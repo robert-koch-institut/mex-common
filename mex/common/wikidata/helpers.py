@@ -2,6 +2,7 @@ from functools import cache
 
 from mex.common.exceptions import MExError
 from mex.common.models.organization import ExtractedOrganization
+from mex.common.models.primary_source import ExtractedPrimarySource
 from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
 from mex.common.wikidata.extract import search_organization_by_label
 from mex.common.wikidata.transform import (
@@ -12,6 +13,7 @@ from mex.common.wikidata.transform import (
 @cache
 def get_extracted_organization_from_wikidata(
     query_string: str,
+    wikidata_primary_source: ExtractedPrimarySource | None = None,
 ) -> ExtractedOrganization | None:
     """Get extracted organization matching the query string.
 
@@ -19,7 +21,7 @@ def get_extracted_organization_from_wikidata(
 
     Args:
         query_string: query string to search in wikidata
-        wikidata_primary_source: wikidata primary source
+        wikidata_primary_source: optional wikidata primary source
 
     Returns:
         ExtractedOrganization if one matching organization is found in
@@ -31,7 +33,8 @@ def get_extracted_organization_from_wikidata(
     if found_organization is None:
         return None
 
-    wikidata_primary_source = get_extracted_primary_source_by_name("wikidata")
+    if not wikidata_primary_source:
+        wikidata_primary_source = get_extracted_primary_source_by_name("wikidata")
     if not wikidata_primary_source:
         msg = "Primary source for wikidata not found"
         raise MExError(msg)

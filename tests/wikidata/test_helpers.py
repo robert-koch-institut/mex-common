@@ -37,4 +37,4 @@ def test_get_extracted_organization_from_wikidata_for_nonsensequery_and_exceptio
         assert returned is None
 
     except MExError:
-        pytest.fail("Primary Source Wikidata not found")
+        pytest.fail("Primary source for wikidata not found")
