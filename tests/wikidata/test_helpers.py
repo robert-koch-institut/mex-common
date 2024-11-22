@@ -21,9 +21,16 @@ def test_get_extracted_organization_from_wikidata(
         )
     )
 
-    # organization found and transformed
-    returned = get_extracted_organization_from_wikidata("Robert Koch-Institut")
-    assert returned == extracted_wikidata_organization
+    # test with passing the wikidata primary source: organization found and transformed
+    assert extracted_wikidata_organization == get_extracted_organization_from_wikidata(
+        "Robert Koch-Institut",
+        wikidata_primary_source,
+    )
+
+    # test w/o passing the wikidata primary source: organization found and transformed
+    assert extracted_wikidata_organization == get_extracted_organization_from_wikidata(
+        "Robert Koch-Institut",
+    )
 
 
 @pytest.mark.integration
@@ -37,4 +44,4 @@ def test_get_extracted_organization_from_wikidata_for_nonsensequery_and_exceptio
         assert returned is None
 
     except MExError:
-        pytest.fail("Primary Source Wikidata not found")
+        pytest.fail("Primary source for wikidata not found")
