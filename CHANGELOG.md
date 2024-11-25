@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add `mex.common.fields` with field type by class name lookups
 
 ### Changes
+- wikidata helper now optionally accepts wikidata primary source
 
 - set default empty rules to all of the rule-set models
 
