@@ -64,7 +64,7 @@ MAX_DATETIME_ARGUMENTS = 7
 class TemporalEntity:
     """Custom temporal entity with precision detection and timezone normalization."""
 
-    __slots__ = ("precision", "date_time")
+    __slots__ = ("date_time", "precision")
 
     precision: TemporalEntityPrecision
     date_time: datetime
@@ -266,9 +266,10 @@ class TemporalEntity:
         value: date,
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a date and assume the precision is days."""
-        return datetime(
-            value.year, value.month, value.day, tzinfo=CET
-        ), TemporalEntityPrecision.DAY
+        return (
+            datetime(value.year, value.month, value.day, tzinfo=CET),
+            TemporalEntityPrecision.DAY,
+        )
 
     def __eq__(self, other: object) -> bool:
         """Return whether the given other value is the same as this one."""
