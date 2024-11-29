@@ -76,7 +76,11 @@ class _SparseValues(_Stem):
 
 class _VariadicValues(_Stem):
     accessRestriction: list[AccessRestriction] = []
+    accessService: list[MergedAccessPlatformIdentifier] = []
     issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    license: list[License] = []
+    mediaType: list[MIMEType] = []
+    modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     title: list[
         Annotated[
             str,
@@ -157,9 +161,9 @@ class PreventiveDistribution(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveDistribution
-    subtractive: SubtractiveDistribution
-    preventive: PreventiveDistribution
+    additive: AdditiveDistribution = AdditiveDistribution()
+    subtractive: SubtractiveDistribution = SubtractiveDistribution()
+    preventive: PreventiveDistribution = PreventiveDistribution()
 
 
 class DistributionRuleSetRequest(_BaseRuleSet):

@@ -9,14 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add vocabulary and temporal unions and lookups to `mex.common.types`
+- add `mex.common.fields` with field type by class name lookups
+
 ### Changes
+
 - wikidata helper now optionally accepts wikidata primary source
+- set default empty rules to all of the rule-set models
+- pin pydantic to sub 2.10 (for now) because of breaking changes
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- switch HTTP method for preview endpoint to `POST`
+- add optional values to variadic values for distribution models
+- make `endpointDescription` optional for variadic access platform models
 
 ### Security
 

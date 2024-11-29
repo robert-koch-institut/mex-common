@@ -98,9 +98,9 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveVariableGroup
-    subtractive: SubtractiveVariableGroup
-    preventive: PreventiveVariableGroup
+    additive: AdditiveVariableGroup = AdditiveVariableGroup()
+    subtractive: SubtractiveVariableGroup = SubtractiveVariableGroup()
+    preventive: PreventiveVariableGroup = PreventiveVariableGroup()
 
 
 class VariableGroupRuleSetRequest(_BaseRuleSet):

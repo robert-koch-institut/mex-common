@@ -328,9 +328,9 @@ class PreventiveResource(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveResource
-    subtractive: SubtractiveResource
-    preventive: PreventiveResource
+    additive: AdditiveResource = AdditiveResource()
+    subtractive: SubtractiveResource = SubtractiveResource()
+    preventive: PreventiveResource = PreventiveResource()
 
 
 class ResourceRuleSetRequest(_BaseRuleSet):

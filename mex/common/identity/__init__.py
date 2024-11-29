@@ -4,7 +4,7 @@ from mex.common.identity.registry import get_provider, register_provider
 
 __all__ = (
     "BaseProvider",
-    "get_provider",
     "Identity",
+    "get_provider",
     "register_provider",
 )

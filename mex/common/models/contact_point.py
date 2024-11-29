@@ -94,9 +94,9 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveContactPoint
-    subtractive: SubtractiveContactPoint
-    preventive: PreventiveContactPoint
+    additive: AdditiveContactPoint = AdditiveContactPoint()
+    subtractive: SubtractiveContactPoint = SubtractiveContactPoint()
+    preventive: PreventiveContactPoint = PreventiveContactPoint()
 
 
 class ContactPointRuleSetRequest(_BaseRuleSet):
