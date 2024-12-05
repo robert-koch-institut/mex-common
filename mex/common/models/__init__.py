@@ -21,6 +21,7 @@ Each entity type `T` is modelled for the following use cases:
 - `BaseT` defines all fields according to `mex-model` except for provenance fields
 - `ExtractedT` defines an automatically extracted metadata item including provenance
 - `MergedT` defines the result of merging extracted items and rules into a single item
+- `PreviewT` defines a preview of a merged item without enforcing cardinality validation
 
 - `AdditiveT` defines a rule to add values to specific fields of a merged item
 - `SubtractiveT` defines a rule to subtract (or block) specific values for specific
@@ -54,6 +55,7 @@ These private classes are used to compose the public classes like so:
 - BaseT: _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
 - ExtractedT: BaseT, ExtractedData
 - MergedT: BaseT, MergedItem
+- PreviewT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
 
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
@@ -78,6 +80,7 @@ from mex.common.models.access_platform import (
     ExtractedAccessPlatform,
     MergedAccessPlatform,
     PreventiveAccessPlatform,
+    PreviewAccessPlatform,
     SubtractiveAccessPlatform,
 )
 from mex.common.models.activity import (
@@ -88,13 +91,14 @@ from mex.common.models.activity import (
     ExtractedActivity,
     MergedActivity,
     PreventiveActivity,
+    PreviewActivity,
     SubtractiveActivity,
 )
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.field_info import GenericFieldInfo
 from mex.common.models.base.filter import generate_entity_filter_schema
 from mex.common.models.base.mapping import generate_mapping_schema
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.models.bibliographic_resource import (
@@ -105,6 +109,7 @@ from mex.common.models.bibliographic_resource import (
     ExtractedBibliographicResource,
     MergedBibliographicResource,
     PreventiveBibliographicResource,
+    PreviewBibliographicResource,
     SubtractiveBibliographicResource,
 )
 from mex.common.models.consent import (
@@ -115,6 +120,7 @@ from mex.common.models.consent import (
     ExtractedConsent,
     MergedConsent,
     PreventiveConsent,
+    PreviewConsent,
     SubtractiveConsent,
 )
 from mex.common.models.contact_point import (
@@ -125,6 +131,7 @@ from mex.common.models.contact_point import (
     ExtractedContactPoint,
     MergedContactPoint,
     PreventiveContactPoint,
+    PreviewContactPoint,
     SubtractiveContactPoint,
 )
 from mex.common.models.distribution import (
@@ -135,6 +142,7 @@ from mex.common.models.distribution import (
     ExtractedDistribution,
     MergedDistribution,
     PreventiveDistribution,
+    PreviewDistribution,
     SubtractiveDistribution,
 )
 from mex.common.models.organization import (
@@ -145,6 +153,7 @@ from mex.common.models.organization import (
     OrganizationRuleSetRequest,
     OrganizationRuleSetResponse,
     PreventiveOrganization,
+    PreviewOrganization,
     SubtractiveOrganization,
 )
 from mex.common.models.organizational_unit import (
@@ -155,6 +164,7 @@ from mex.common.models.organizational_unit import (
     OrganizationalUnitRuleSetRequest,
     OrganizationalUnitRuleSetResponse,
     PreventiveOrganizationalUnit,
+    PreviewOrganizationalUnit,
     SubtractiveOrganizationalUnit,
 )
 from mex.common.models.person import (
@@ -165,6 +175,7 @@ from mex.common.models.person import (
     PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreventivePerson,
+    PreviewPerson,
     SubtractivePerson,
 )
 from mex.common.models.primary_source import (
@@ -173,6 +184,7 @@ from mex.common.models.primary_source import (
     ExtractedPrimarySource,
     MergedPrimarySource,
     PreventivePrimarySource,
+    PreviewPrimarySource,
     PrimarySourceRuleSetRequest,
     PrimarySourceRuleSetResponse,
     SubtractivePrimarySource,
@@ -183,6 +195,7 @@ from mex.common.models.resource import (
     ExtractedResource,
     MergedResource,
     PreventiveResource,
+    PreviewResource,
     ResourceRuleSetRequest,
     ResourceRuleSetResponse,
     SubtractiveResource,
@@ -193,6 +206,7 @@ from mex.common.models.variable import (
     ExtractedVariable,
     MergedVariable,
     PreventiveVariable,
+    PreviewVariable,
     SubtractiveVariable,
     VariableRuleSetRequest,
     VariableRuleSetResponse,
@@ -203,6 +217,7 @@ from mex.common.models.variable_group import (
     ExtractedVariableGroup,
     MergedVariableGroup,
     PreventiveVariableGroup,
+    PreviewVariableGroup,
     SubtractiveVariableGroup,
     VariableGroupRuleSetRequest,
     VariableGroupRuleSetResponse,
@@ -334,6 +349,20 @@ __all__ = (
     "PreventiveRule",
     "PreventiveVariable",
     "PreventiveVariableGroup",
+    "PreviewAccessPlatform",
+    "PreviewActivity",
+    "PreviewBibliographicResource",
+    "PreviewConsent",
+    "PreviewContactPoint",
+    "PreviewDistribution",
+    "PreviewItem",
+    "PreviewOrganization",
+    "PreviewOrganizationalUnit",
+    "PreviewPerson",
+    "PreviewPrimarySource",
+    "PreviewResource",
+    "PreviewVariable",
+    "PreviewVariableGroup",
     "PrimarySourceRuleSetRequest",
     "PrimarySourceRuleSetResponse",
     "ResourceRuleSetRequest",
@@ -424,6 +453,28 @@ AnyMergedModel = (
 MERGED_MODEL_CLASSES: Final[list[type[AnyMergedModel]]] = list(get_args(AnyMergedModel))
 MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
     cls.__name__: cls for cls in MERGED_MODEL_CLASSES
+}
+
+AnyPreviewModel = (
+    PreviewAccessPlatform
+    | PreviewActivity
+    | PreviewBibliographicResource
+    | PreviewConsent
+    | PreviewContactPoint
+    | PreviewDistribution
+    | PreviewOrganization
+    | PreviewOrganizationalUnit
+    | PreviewPerson
+    | PreviewPrimarySource
+    | PreviewResource
+    | PreviewVariable
+    | PreviewVariableGroup
+)
+PREVIEW_MODEL_CLASSES: Final[list[type[AnyPreviewModel]]] = list(
+    get_args(AnyPreviewModel)
+)
+PREVIEW_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPreviewModel]]] = {
+    cls.__name__: cls for cls in PREVIEW_MODEL_CLASSES
 }
 
 AnyAdditiveModel = (

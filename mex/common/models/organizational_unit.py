@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -84,6 +84,17 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
     entityType: Annotated[
         Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "MergedOrganizationalUnit"
+    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
+
+
+class PreviewOrganizationalUnit(
+    _OptionalLists, _SparseLists, _OptionalValues, PreviewItem
+):
+    """Preview for merging all extracted data and rules for an organizational unit."""
+
+    entityType: Annotated[
+        Literal["PreviewOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "PreviewOrganizationalUnit"
     identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
 
 

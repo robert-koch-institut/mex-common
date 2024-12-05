@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -107,6 +107,15 @@ class MergedPerson(BasePerson, MergedItem):
     entityType: Annotated[
         Literal["MergedPerson"], Field(alias="$type", frozen=True)
     ] = "MergedPerson"
+    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+
+
+class PreviewPerson(_OptionalLists, PreviewItem):
+    """Preview for merging all extracted data and rules for a person."""
+
+    entityType: Annotated[
+        Literal["PreviewPerson"], Field(alias="$type", frozen=True)
+    ] = "PreviewPerson"
     identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
 
 

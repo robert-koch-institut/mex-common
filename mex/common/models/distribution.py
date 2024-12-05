@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -122,6 +122,15 @@ class MergedDistribution(BaseDistribution, MergedItem):
     entityType: Annotated[
         Literal["MergedDistribution"], Field(alias="$type", frozen=True)
     ] = "MergedDistribution"
+    identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
+
+
+class PreviewDistribution(_OptionalLists, _OptionalValues, _SparseValues, PreviewItem):
+    """Preview for merging all extracted data and rules for a distribution."""
+
+    entityType: Annotated[
+        Literal["PreviewDistribution"], Field(alias="$type", frozen=True)
+    ] = "PreviewDistribution"
     identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
 
 

@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -222,6 +222,17 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
     entityType: Annotated[
         Literal["MergedBibliographicResource"], Field(alias="$type", frozen=True)
     ] = "MergedBibliographicResource"
+    identifier: Annotated[MergedBibliographicResourceIdentifier, Field(frozen=True)]
+
+
+class PreviewBibliographicResource(
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+):
+    """Preview for merging all extracted data and rules for a bibliographic resource."""
+
+    entityType: Annotated[
+        Literal["PreviewBibliographicResource"], Field(alias="$type", frozen=True)
+    ] = "PreviewBibliographicResource"
     identifier: Annotated[MergedBibliographicResourceIdentifier, Field(frozen=True)]
 
 

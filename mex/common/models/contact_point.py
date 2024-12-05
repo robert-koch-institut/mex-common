@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -65,6 +65,15 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
     entityType: Annotated[
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
+    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+
+
+class PreviewContactPoint(_SparseLists, PreviewItem):
+    """Preview for merging all extracted data and rules for a contact point."""
+
+    entityType: Annotated[
+        Literal["PreviewContactPoint"], Field(alias="$type", frozen=True)
+    ] = "PreviewContactPoint"
     identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
 
 

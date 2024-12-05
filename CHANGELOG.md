@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add preview models for merged items without cardinality validation
+- add `BackendApiConnector.fetch_preview_items` for fetching previews
+
 ### Changes
 
 ### Deprecated

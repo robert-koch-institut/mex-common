@@ -8,7 +8,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -126,6 +126,15 @@ class MergedActivity(BaseActivity, MergedItem):
     entityType: Annotated[
         Literal["MergedActivity"], Field(alias="$type", frozen=True)
     ] = "MergedActivity"
+    identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
+
+
+class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
+    """Preview for merging all extracted data and rules for an activity."""
+
+    entityType: Annotated[
+        Literal["PreviewActivity"], Field(alias="$type", frozen=True)
+    ] = "PreviewActivity"
     identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
 
 
