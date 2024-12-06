@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -101,6 +101,17 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     entityType: Annotated[
         Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "MergedAccessPlatform"
+    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+
+
+class PreviewAccessPlatform(
+    _OptionalLists, _OptionalValues, _SparseValues, PreviewItem
+):
+    """Preview for merging all extracted data and rules for an access platform."""
+
+    entityType: Annotated[
+        Literal["PreviewAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "PreviewAccessPlatform"
     identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
 
 

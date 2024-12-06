@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -101,6 +101,15 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     entityType: Annotated[
         Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "MergedPrimarySource"
+    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+
+
+class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
+    """Preview for merging all extracted data and rules for a primary source."""
+
+    entityType: Annotated[
+        Literal["PreviewPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "PreviewPrimarySource"
     identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
 
 

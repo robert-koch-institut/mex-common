@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -68,6 +68,15 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
     entityType: Annotated[
         Literal["MergedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "MergedVariableGroup"
+    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
+
+
+class PreviewVariableGroup(_SparseLists, PreviewItem):
+    """Preview for merging all extracted data and rules for a variable group."""
+
+    entityType: Annotated[
+        Literal["PreviewVariableGroup"], Field(alias="$type", frozen=True)
+    ] = "PreviewVariableGroup"
     identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
 
 

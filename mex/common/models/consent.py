@@ -5,7 +5,7 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem
+from mex.common.models.base.merged_item import MergedItem, PreviewItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -81,6 +81,15 @@ class MergedConsent(BaseConsent, MergedItem):
     entityType: Annotated[
         Literal["MergedConsent"], Field(alias="$type", frozen=True)
     ] = "MergedConsent"
+    identifier: Annotated[MergedConsentIdentifier, Field(frozen=True)]
+
+
+class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
+    """Preview for merging all extracted data and rules for a consent."""
+
+    entityType: Annotated[
+        Literal["PreviewConsent"], Field(alias="$type", frozen=True)
+    ] = "PreviewConsent"
     identifier: Annotated[MergedConsentIdentifier, Field(frozen=True)]
 
 
