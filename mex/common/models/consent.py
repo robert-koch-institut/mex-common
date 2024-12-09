@@ -7,6 +7,7 @@ from pydantic import Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -65,22 +66,31 @@ class ExtractedConsent(BaseConsent, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedConsentIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedConsentIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedConsentIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedConsentIdentifier)
 
 
 class MergedConsent(BaseConsent, MergedItem):
-    """The result of merging all extracted data and rules for a consent."""
+    """The result of merging all extracted items and rules for a consent."""
 
     entityType: Annotated[
         Literal["MergedConsent"], Field(alias="$type", frozen=True)
     ] = "MergedConsent"
+    identifier: Annotated[MergedConsentIdentifier, Field(frozen=True)]
+
+
+class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
+    """Preview for merging all extracted items and rules for a consent."""
+
+    entityType: Annotated[
+        Literal["PreviewConsent"], Field(alias="$type", frozen=True)
+    ] = "PreviewConsent"
     identifier: Annotated[MergedConsentIdentifier, Field(frozen=True)]
 
 

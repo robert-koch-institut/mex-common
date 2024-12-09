@@ -7,6 +7,7 @@ from pydantic import Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -91,22 +92,31 @@ class ExtractedPerson(BasePerson, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedPersonIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedPersonIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedPersonIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedPersonIdentifier)
 
 
 class MergedPerson(BasePerson, MergedItem):
-    """The result of merging all extracted data and rules for a person."""
+    """The result of merging all extracted items and rules for a person."""
 
     entityType: Annotated[
         Literal["MergedPerson"], Field(alias="$type", frozen=True)
     ] = "MergedPerson"
+    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+
+
+class PreviewPerson(_OptionalLists, PreviewItem):
+    """Preview for merging all extracted items and rules for a person."""
+
+    entityType: Annotated[
+        Literal["PreviewPerson"], Field(alias="$type", frozen=True)
+    ] = "PreviewPerson"
     identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
 
 

@@ -6,12 +6,11 @@ from mex.common.models.base.model import BaseModel
 
 
 class BaseEntity(BaseModel):
-    """Abstract base model for extracted data, merged item and rule set classes.
+    """Base model for extracted item, preview item, merged item, rule-related classes.
 
-    This class gives type hints for an `identifier` field, the frozen `entityType` field
-    and the frozen class variable `stemType`.
-    Subclasses should implement all three fields while setting the correct identifier
-    type as well as the correct literal values for the entity and stem types.
+    This class gives type hints for the frozen `entityType` field and the frozen class
+    variable `stemType`.
+    Subclasses should implement both fields and set the correct literal values.
     """
 
     model_config = ConfigDict(

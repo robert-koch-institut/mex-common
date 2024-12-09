@@ -5,6 +5,7 @@ from pydantic import Field, TypeAdapter
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
+    AnyPreviewModel,
     AnyRuleSetResponse,
     BaseModel,
 )
@@ -31,6 +32,13 @@ class MergedItemsResponse(BaseModel):
     total: int
 
 
+class PreviewItemsResponse(BaseModel):
+    """Response model for a list of preview items including a total count."""
+
+    items: list[AnyPreviewModel]
+    total: int
+
+
 class IdentifiersResponse(BaseModel):
     """Response models for a list of identifiers."""
 
@@ -43,4 +51,3 @@ MergedModelTypeAdapter: TypeAdapter[AnyMergedModel] = TypeAdapter(
 RuleSetResponseTypeAdapter: TypeAdapter[AnyRuleSetResponse] = TypeAdapter(
     Annotated[AnyRuleSetResponse, Field(discriminator="entityType")]
 )
-BulkInsertResponse = IdentifiersResponse  # deprecated

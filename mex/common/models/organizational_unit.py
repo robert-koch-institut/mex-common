@@ -7,6 +7,7 @@ from pydantic import Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -68,22 +69,33 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedOrganizationalUnitIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedOrganizationalUnitIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
-    """The result of merging all extracted data and rules for an organizational unit."""
+    """The result of merging all extracted items and rules for an organizational unit."""  # noqa: E501
 
     entityType: Annotated[
         Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "MergedOrganizationalUnit"
+    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
+
+
+class PreviewOrganizationalUnit(
+    _OptionalLists, _SparseLists, _OptionalValues, PreviewItem
+):
+    """Preview for merging all extracted items and rules for an organizational unit."""
+
+    entityType: Annotated[
+        Literal["PreviewOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "PreviewOrganizationalUnit"
     identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
 
 

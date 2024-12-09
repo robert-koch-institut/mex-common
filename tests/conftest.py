@@ -9,6 +9,7 @@ from mex.common.models import (
     PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreventivePerson,
+    PreviewPerson,
     SubtractivePerson,
 )
 from mex.common.types import (
@@ -61,6 +62,16 @@ def merged_person() -> MergedPerson:
             MergedOrganizationalUnitIdentifier.generate(seed=101),
         ],
         orcidId=["https://orcid.org/0000-0002-9079-593X"],
+    )
+
+
+@pytest.fixture
+def preview_person() -> PreviewPerson:
+    """Return a dummy preview person for testing purposes."""
+    return PreviewPerson(
+        identifier=MergedPersonIdentifier.generate(seed=876),
+        affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
+        email=[Email("TintzmannM@rki.de")],
     )
 
 

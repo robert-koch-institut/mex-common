@@ -40,13 +40,13 @@ class ExtractedThing(BaseThing, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedThingIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedThingIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedThingIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedThingIdentifier)
 
 
