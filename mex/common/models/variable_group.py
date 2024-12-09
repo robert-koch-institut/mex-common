@@ -5,8 +5,9 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem, PreviewItem
+from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -52,18 +53,18 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedVariableGroupIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableGroupIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedVariableGroupIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedVariableGroupIdentifier)
 
 
 class MergedVariableGroup(BaseVariableGroup, MergedItem):
-    """The result of merging all extracted data and rules for a variable group."""
+    """The result of merging all extracted items and rules for a variable group."""
 
     entityType: Annotated[
         Literal["MergedVariableGroup"], Field(alias="$type", frozen=True)
@@ -72,7 +73,7 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
 
 
 class PreviewVariableGroup(_SparseLists, PreviewItem):
-    """Preview for merging all extracted data and rules for a variable group."""
+    """Preview for merging all extracted items and rules for a variable group."""
 
     entityType: Annotated[
         Literal["PreviewVariableGroup"], Field(alias="$type", frozen=True)

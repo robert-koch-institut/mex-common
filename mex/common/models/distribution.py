@@ -5,8 +5,9 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem, PreviewItem
+from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -106,18 +107,18 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedDistributionIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedDistributionIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedDistributionIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
 class MergedDistribution(BaseDistribution, MergedItem):
-    """The result of merging all extracted data and rules for a distribution."""
+    """The result of merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[
         Literal["MergedDistribution"], Field(alias="$type", frozen=True)
@@ -126,7 +127,7 @@ class MergedDistribution(BaseDistribution, MergedItem):
 
 
 class PreviewDistribution(_OptionalLists, _OptionalValues, _SparseValues, PreviewItem):
-    """Preview for merging all extracted data and rules for a distribution."""
+    """Preview for merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[
         Literal["PreviewDistribution"], Field(alias="$type", frozen=True)

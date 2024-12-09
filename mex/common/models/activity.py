@@ -8,8 +8,9 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem, PreviewItem
+from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -110,18 +111,18 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedActivityIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedActivityIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedActivityIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedActivityIdentifier)
 
 
 class MergedActivity(BaseActivity, MergedItem):
-    """The result of merging all extracted data and rules for an activity."""
+    """The result of merging all extracted items and rules for an activity."""
 
     entityType: Annotated[
         Literal["MergedActivity"], Field(alias="$type", frozen=True)
@@ -130,7 +131,7 @@ class MergedActivity(BaseActivity, MergedItem):
 
 
 class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
-    """Preview for merging all extracted data and rules for an activity."""
+    """Preview for merging all extracted items and rules for an activity."""
 
     entityType: Annotated[
         Literal["PreviewActivity"], Field(alias="$type", frozen=True)

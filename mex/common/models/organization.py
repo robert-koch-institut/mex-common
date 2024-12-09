@@ -8,8 +8,9 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.merged_item import MergedItem, PreviewItem
+from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -117,18 +118,18 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedOrganizationIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedOrganizationIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedOrganizationIdentifier)
 
 
 class MergedOrganization(BaseOrganization, MergedItem):
-    """The result of merging all extracted data and rules for an organization."""
+    """The result of merging all extracted items and rules for an organization."""
 
     entityType: Annotated[
         Literal["MergedOrganization"], Field(alias="$type", frozen=True)
@@ -137,7 +138,7 @@ class MergedOrganization(BaseOrganization, MergedItem):
 
 
 class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
-    """Preview for merging all extracted data and rules for an organization."""
+    """Preview for merging all extracted items and rules for an organization."""
 
     entityType: Annotated[
         Literal["PreviewOrganization"], Field(alias="$type", frozen=True)

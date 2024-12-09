@@ -98,7 +98,7 @@ from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.field_info import GenericFieldInfo
 from mex.common.models.base.filter import generate_entity_filter_schema
 from mex.common.models.base.mapping import generate_mapping_schema
-from mex.common.models.base.merged_item import MergedItem, PreviewItem
+from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.models.bibliographic_resource import (
@@ -309,7 +309,6 @@ __all__ = (
     "ExtractedOrganizationalUnit",
     "ExtractedPerson",
     "ExtractedPrimarySource",
-    "ExtractedPrimarySourceIdentifier",
     "ExtractedResource",
     "ExtractedVariable",
     "ExtractedVariableGroup",
@@ -325,7 +324,6 @@ __all__ = (
     "MergedOrganizationalUnit",
     "MergedPerson",
     "MergedPrimarySource",
-    "MergedPrimarySourceIdentifier",
     "MergedResource",
     "MergedVariable",
     "MergedVariableGroup",
@@ -355,7 +353,6 @@ __all__ = (
     "PreviewConsent",
     "PreviewContactPoint",
     "PreviewDistribution",
-    "PreviewItem",
     "PreviewOrganization",
     "PreviewOrganizationalUnit",
     "PreviewPerson",
@@ -385,8 +382,6 @@ __all__ = (
     "VariableGroupRuleSetResponse",
     "VariableRuleSetRequest",
     "VariableRuleSetResponse",
-    "generate_entity_filter_schema",
-    "generate_mapping_schema",
 )
 
 MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")

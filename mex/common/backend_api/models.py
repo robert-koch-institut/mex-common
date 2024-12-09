@@ -51,4 +51,3 @@ MergedModelTypeAdapter: TypeAdapter[AnyMergedModel] = TypeAdapter(
 RuleSetResponseTypeAdapter: TypeAdapter[AnyRuleSetResponse] = TypeAdapter(
     Annotated[AnyRuleSetResponse, Field(discriminator="entityType")]
 )
-BulkInsertResponse = IdentifiersResponse  # deprecated
