@@ -9,11 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.43.0] - 2024-12-10
+
+### Added
+
 - add preview models for merged items without cardinality validation
 - BREAKING: preview models are now part of all `mex.common.fields` lookups
 - add `BackendApiConnector.fetch_preview_items` for fetching previews
-
-### Changes
 
 ### Deprecated
 
@@ -31,10 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - removed unused module export of `mex.common.models.generate_mapping_schema`
 - drop export `models.ExtractedPrimarySourceIdentifier`, import from `types` instead
 - drop export `models.MergedPrimarySourceIdentifier`, import from `types` instead
-
-### Fixed
-
-### Security
 
 ## [0.42.0] - 2024-12-02
 
