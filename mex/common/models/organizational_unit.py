@@ -123,9 +123,9 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveOrganizationalUnit
-    subtractive: SubtractiveOrganizationalUnit
-    preventive: PreventiveOrganizationalUnit
+    additive: AdditiveOrganizationalUnit = AdditiveOrganizationalUnit()
+    subtractive: SubtractiveOrganizationalUnit = SubtractiveOrganizationalUnit()
+    preventive: PreventiveOrganizationalUnit = PreventiveOrganizationalUnit()
 
 
 class OrganizationalUnitRuleSetRequest(_BaseRuleSet):

@@ -143,9 +143,9 @@ class PreventivePerson(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditivePerson
-    subtractive: SubtractivePerson
-    preventive: PreventivePerson
+    additive: AdditivePerson = AdditivePerson()
+    subtractive: SubtractivePerson = SubtractivePerson()
+    preventive: PreventivePerson = PreventivePerson()
 
 
 class PersonRuleSetRequest(_BaseRuleSet):

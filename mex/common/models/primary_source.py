@@ -137,9 +137,9 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditivePrimarySource
-    subtractive: SubtractivePrimarySource
-    preventive: PreventivePrimarySource
+    additive: AdditivePrimarySource = AdditivePrimarySource()
+    subtractive: SubtractivePrimarySource = SubtractivePrimarySource()
+    preventive: PreventivePrimarySource = PreventivePrimarySource()
 
 
 class PrimarySourceRuleSetRequest(_BaseRuleSet):

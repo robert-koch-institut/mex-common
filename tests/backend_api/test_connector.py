@@ -181,7 +181,7 @@ def test_preview_merged_item_mocked(
     assert response == merged_person
 
     assert mocked_backend.call_args == call(
-        "GET",
+        "POST",
         "http://localhost:8080/v0/preview-item/NGwfzG8ROsrvIiQIVDVy",
         None,
         headers={

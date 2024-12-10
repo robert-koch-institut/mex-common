@@ -113,9 +113,9 @@ class PreventiveConsent(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveConsent
-    subtractive: SubtractiveConsent
-    preventive: PreventiveConsent
+    additive: AdditiveConsent = AdditiveConsent()
+    subtractive: SubtractiveConsent = SubtractiveConsent()
+    preventive: PreventiveConsent = PreventiveConsent()
 
 
 class ConsentRuleSetRequest(_BaseRuleSet):
