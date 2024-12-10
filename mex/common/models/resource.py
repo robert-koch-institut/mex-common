@@ -7,6 +7,7 @@ from pydantic import AfterValidator, Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -233,22 +234,33 @@ class ExtractedResource(BaseResource, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedResourceIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedResourceIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedResourceIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedResourceIdentifier)
 
 
 class MergedResource(BaseResource, MergedItem):
-    """The result of merging all extracted data and rules for a resource."""
+    """The result of merging all extracted items and rules for a resource."""
 
     entityType: Annotated[
         Literal["MergedResource"], Field(alias="$type", frozen=True)
     ] = "MergedResource"
+    identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]
+
+
+class PreviewResource(
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+):
+    """Preview for merging all extracted items and rules for a resource."""
+
+    entityType: Annotated[
+        Literal["PreviewResource"], Field(alias="$type", frozen=True)
+    ] = "PreviewResource"
     identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]
 
 

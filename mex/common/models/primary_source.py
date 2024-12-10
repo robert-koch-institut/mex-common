@@ -7,6 +7,7 @@ from pydantic import AfterValidator, Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -85,22 +86,31 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedPrimarySourceIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedPrimarySourceIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedPrimarySourceIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedPrimarySourceIdentifier)
 
 
 class MergedPrimarySource(BasePrimarySource, MergedItem):
-    """The result of merging all extracted data and rules for a primary source."""
+    """The result of merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
         Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "MergedPrimarySource"
+    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+
+
+class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
+    """Preview for merging all extracted items and rules for a primary source."""
+
+    entityType: Annotated[
+        Literal["PreviewPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "PreviewPrimarySource"
     identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
 
 

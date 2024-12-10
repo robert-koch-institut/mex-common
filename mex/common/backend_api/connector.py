@@ -8,6 +8,7 @@ from mex.common.backend_api.models import (
     IdentifiersResponse,
     MergedItemsResponse,
     MergedModelTypeAdapter,
+    PreviewItemsResponse,
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
@@ -184,6 +185,40 @@ class BackendApiConnector(HTTPConnector):
             payload=rule_set,
         )
         return MergedModelTypeAdapter.validate_python(response)
+
+    def fetch_preview_items(
+        self,
+        query_string: str | None,
+        entity_type: list[str] | None,
+        skip: int,
+        limit: int,
+    ) -> PreviewItemsResponse:
+        """Fetch merged item previews that match the given set of filters.
+
+        Args:
+            query_string: Full-text search query
+            entity_type: The item's entityType
+            skip: How many items to skip for pagination
+            limit: How many items to return in one page
+
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
+
+        Returns:
+            One page of preview items and the total count that was matched
+        """
+        # Note: this is forward-compat for MX-1649, backend might not support this yet!
+        response = self.request(
+            method="GET",
+            endpoint="preview-item",
+            params={
+                "q": query_string,
+                "entityType": entity_type,
+                "skip": str(skip),
+                "limit": str(limit),
+            },
+        )
+        return PreviewItemsResponse.model_validate(response)
 
     def get_rule_set(
         self,

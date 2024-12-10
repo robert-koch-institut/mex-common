@@ -14,7 +14,7 @@ _ExtractedIdentifierT = TypeVar("_ExtractedIdentifierT", bound=ExtractedIdentifi
 
 
 class ExtractedData(BaseEntity):
-    """Base model for all extracted data classes.
+    """Base model for all extracted item classes.
 
     This class adds two important attributes for metadata provenance: `hadPrimarySource`
     and `identifierInPrimarySource`, which are used to uniquely identify an
@@ -98,5 +98,5 @@ class ExtractedData(BaseEntity):
         )
 
     def __hash__(self) -> int:
-        """Calculates a hash value to make the object cachable."""
+        """Calculates a hash value to make the object cacheable."""
         return hash(f"{self.hadPrimarySource}\n{self.identifierInPrimarySource}")
