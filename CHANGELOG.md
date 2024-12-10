@@ -9,11 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add preview models for merged items without cardinality validation
+- BREAKING: preview models are now part of all `mex.common.fields` lookups
+- add `BackendApiConnector.fetch_preview_items` for fetching previews
+
 ### Changes
 
 ### Deprecated
 
+- stop using `ExtractedData`, use `AnyExtractedModel` instead
+- stop using `MergedItem`, use `AnyMergedModel` instead
+- stop using `AdditiveRule`, use `AnyAdditiveRule` instead
+- stop using `SubtractiveRule`, use `AnySubtractiveRule` instead
+- stop using `PreventiveRule`, use `AnyPreventiveRule` instead
+- stop using `BaseEntity`, use a concrete union instead
+
 ### Removed
+
+- removed deprecated `BulkInsertResponse` as alias for `IdentifiersResponse`
+- removed unused module export of `mex.common.models.generate_entity_filter_schema`
+- removed unused module export of `mex.common.models.generate_mapping_schema`
+- drop export `models.ExtractedPrimarySourceIdentifier`, import from `types` instead
+- drop export `models.MergedPrimarySourceIdentifier`, import from `types` instead
 
 ### Fixed
 
