@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- added methods for extracting persons by name or ID from ldap
 
 ### Changes
+
+- updated ldap search from name and familyname to one single attribute "displayname"
 
 ### Deprecated
 
