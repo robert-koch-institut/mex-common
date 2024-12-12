@@ -116,38 +116,34 @@ def get_merged_ids_by_query_string(
 
 
 def get_persons_by_name(
-    surname: str = "*",
-    given_name: str = "*",
+    display_name: str = "*",
     **filters: str,
 ) -> Generator[LDAPPerson, None, None]:
     """Get all ldap persons matching the filters.
 
     Args:
-        given_name: Given name of a person, defaults to non-null.
-        surname: Surname of a person, defaults to non-null.
+        display_name: Full name of the searched person, defaults to non-null.
         **filters: Additional filters.
 
     Returns:
         Generator for LDAP persons.
     """
     connector = LDAPConnector.get()
-    return connector.get_persons(surname, given_name, **filters)
+    return connector.get_persons(displayName=display_name, **filters)
 
 
 def get_count_of_found_persons_by_name(
-    surname: str = "*",
-    given_name: str = "*",
+    display_name: str = "*",
     **filters: str,
 ) -> int:
     """Get total count of found ldap persons.
 
     Args:
-        given_name: Given name of a person, defaults to non-null.
-        surname: Surname of a person, defaults to non-null.
+        display_name: Full name of the searched person, defaults to non-null.
         **filters: Additional filters.
 
     Returns:
           count of found persons.
     """
     connector = LDAPConnector.get()
-    return len(list(connector.get_persons(surname, given_name, **filters)))
+    return len(list(connector.get_persons(displayName=display_name, **filters)))
