@@ -1,4 +1,3 @@
-from typing import cast
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -9,6 +8,7 @@ from mex.common.backend_api.models import (
     IdentifiersResponse,
     MergedItemsResponse,
     MergedModelTypeAdapter,
+    PreviewItemsResponse,
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
@@ -19,7 +19,6 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.settings import BaseSettings
-from mex.common.types import AnyExtractedIdentifier
 
 
 class BackendApiConnector(HTTPConnector):
@@ -40,27 +39,6 @@ class BackendApiConnector(HTTPConnector):
         """Set the backend api url with the version path."""
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
-
-    def post_models(
-        self,
-        extracted_items: list[AnyExtractedModel],
-    ) -> list[AnyExtractedIdentifier]:
-        """Post extracted models to the backend in bulk.
-
-        Args:
-            extracted_items: Extracted models to post
-
-        Raises:
-            HTTPError: If post was not accepted, crashes or times out
-
-        Returns:
-            Identifiers of posted extracted models
-        """
-        # XXX deprecated method, please use `post_extracted_models` instead
-        return cast(
-            list[AnyExtractedIdentifier],
-            self.post_extracted_items(extracted_items).identifiers,
-        )
 
     def post_extracted_items(
         self,
@@ -141,7 +119,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             One page of merged items and the total count that was matched
         """
-        # XXX this endpoint will only return faux merged items for now (MX-1382)
         response = self.request(
             method="GET",
             endpoint="merged-item",
@@ -156,25 +133,25 @@ class BackendApiConnector(HTTPConnector):
 
     def get_merged_item(
         self,
-        stable_target_id: str,
+        identifier: str,
     ) -> AnyMergedModel:
-        """Return one merged item for the given `stableTargetId`.
+        """Return one merged item for the given `identifier`.
 
         Args:
-            stable_target_id: The merged item's identifier
+            identifier: The merged item's identifier
 
         Raises:
-            MExError: If no merged item was found
+            HTTPError: If no merged item was found
 
         Returns:
             A single merged item
         """
-        # XXX stop-gap until the backend has a proper get merged item endpoint (MX-1669)
+        # TODO(ND): stop-gap until backend has proper get merged item endpoint (MX-1669)
         response = self.request(
             method="GET",
             endpoint="merged-item",
             params={
-                "stableTargetId": stable_target_id,
+                "identifier": identifier,
                 "limit": "1",
             },
         )
@@ -182,7 +159,8 @@ class BackendApiConnector(HTTPConnector):
         try:
             return response_model.items[0]
         except IndexError:
-            raise HTTPError("merged item was not found") from None
+            msg = "merged item was not found"
+            raise HTTPError(msg) from None
 
     def preview_merged_item(
         self,
@@ -201,13 +179,46 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A single merged item
         """
-        # XXX experimental method until the backend has a preview endpoint (MX-1406)
         response = self.request(
-            method="GET",
+            method="POST",
             endpoint=f"preview-item/{stable_target_id}",
             payload=rule_set,
         )
         return MergedModelTypeAdapter.validate_python(response)
+
+    def fetch_preview_items(
+        self,
+        query_string: str | None,
+        entity_type: list[str] | None,
+        skip: int,
+        limit: int,
+    ) -> PreviewItemsResponse:
+        """Fetch merged item previews that match the given set of filters.
+
+        Args:
+            query_string: Full-text search query
+            entity_type: The item's entityType
+            skip: How many items to skip for pagination
+            limit: How many items to return in one page
+
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
+
+        Returns:
+            One page of preview items and the total count that was matched
+        """
+        # Note: this is forward-compat for MX-1649, backend might not support this yet!
+        response = self.request(
+            method="GET",
+            endpoint="preview-item",
+            params={
+                "q": query_string,
+                "entityType": entity_type,
+                "skip": str(skip),
+                "limit": str(limit),
+            },
+        )
+        return PreviewItemsResponse.model_validate(response)
 
     def get_rule_set(
         self,
@@ -224,7 +235,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A set of three rules
         """
-        # XXX experimental method until the backend has a rule-set endpoint (MX-1416)
         response = self.request(
             method="GET",
             endpoint=f"rule-set/{stable_target_id}",

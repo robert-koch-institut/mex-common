@@ -3,13 +3,13 @@ default_language_version:
   python: python3.11
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.4
+    rev: v0.8.0
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: pretty-format-json
         name: json
@@ -25,7 +25,7 @@ repos:
       - id: fix-byte-order-marker
         name: byte-order
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.17.1
+    rev: 2.20.1
     hooks:
       - id: pdm-lock-check
         name: pdm

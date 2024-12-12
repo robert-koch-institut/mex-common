@@ -5,12 +5,13 @@ import pytest
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import ExtractedItemsRequest
+from mex.common.backend_api.models import ExtractedItemsRequest, PreviewItemsResponse
 from mex.common.models import (
     ExtractedPerson,
     MergedPerson,
     PersonRuleSetRequest,
     PersonRuleSetResponse,
+    PreviewPerson,
 )
 from mex.common.testing import Joker
 
@@ -133,7 +134,7 @@ def test_get_merged_item_mocked(
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
-            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "identifier": "NGwfzG8ROsrvIiQIVDVy",
             "limit": "1",
         },
         headers={
@@ -156,7 +157,7 @@ def test_get_merged_item_error_mocked(mocked_backend: MagicMock) -> None:
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
-            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
+            "identifier": "NGwfzG8ROsrvIiQIVDVy",
             "limit": "1",
         },
         headers={
@@ -181,7 +182,7 @@ def test_preview_merged_item_mocked(
     assert response == merged_person
 
     assert mocked_backend.call_args == call(
-        "GET",
+        "POST",
         "http://localhost:8080/v0/preview-item/NGwfzG8ROsrvIiQIVDVy",
         None,
         headers={
@@ -194,6 +195,36 @@ def test_preview_merged_item_mocked(
     assert (
         json.loads(mocked_backend.call_args.kwargs["data"])
         == rule_set_request.model_dump()
+    )
+
+
+def test_fetch_preview_items_mocked(
+    mocked_backend: MagicMock,
+    preview_person: PreviewPerson,
+) -> None:
+    preview_response = PreviewItemsResponse(items=[preview_person], total=92)
+    mocked_return = preview_response.model_dump()
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_preview_items("foobar", None, 1, 0)
+
+    assert response == preview_response
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/preview-item",
+        {
+            "q": "foobar",
+            "entityType": None,
+            "skip": "1",
+            "limit": "0",
+        },
+        timeout=10,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
     )
 
 

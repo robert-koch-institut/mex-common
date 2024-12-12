@@ -106,8 +106,8 @@ def test_base_model_listyness_fix(
 ) -> None:
     try:
         model = ComplexDummyModel.model_validate(data)
-    except Exception as error:
-        assert str(expected) in str(error)
+    except Exception as error:  # noqa: BLE001
+        assert str(expected) in str(error)  # noqa: PT017
     else:
         actual = model.model_dump()
         for key, value in expected.items():
@@ -125,7 +125,7 @@ def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
     with pytest.raises(
         ValidationError, match="Input should be a valid dictionary or instance of Pet"
     ):
-        Shelter(inhabitants="foo")  # type: ignore
+        Shelter(inhabitants="foo")  # type: ignore[call-arg]
 
 
 class Computer(BaseModel):

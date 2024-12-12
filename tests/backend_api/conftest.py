@@ -6,7 +6,7 @@ from pytest import MonkeyPatch
 from mex.common.backend_api.connector import BackendApiConnector
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_backend(monkeypatch: MonkeyPatch) -> MagicMock:
     """Return the mocked request dispatch method of backend connector."""
     mocked_send_request = MagicMock(

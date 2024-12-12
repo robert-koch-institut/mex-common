@@ -26,32 +26,32 @@ def test_assign() -> None:
 
     new_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
-    assert new_identity.model_dump() == dict(
-        hadPrimarySource=had_primary_source,
-        identifierInPrimarySource=identifier_in_primary_source,
-        stableTargetId=Joker(),
-        identifier=Joker(),
-    )
+    assert new_identity.model_dump() == {
+        "hadPrimarySource": had_primary_source,
+        "identifierInPrimarySource": identifier_in_primary_source,
+        "stableTargetId": Joker(),
+        "identifier": Joker(),
+    }
 
     found_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
-    assert found_identity.model_dump() == dict(
-        hadPrimarySource=had_primary_source,
-        identifierInPrimarySource=identifier_in_primary_source,
-        stableTargetId=new_identity.stableTargetId,
-        identifier=new_identity.identifier,
-    )
+    assert found_identity.model_dump() == {
+        "hadPrimarySource": had_primary_source,
+        "identifierInPrimarySource": identifier_in_primary_source,
+        "stableTargetId": new_identity.stableTargetId,
+        "identifier": new_identity.identifier,
+    }
 
     provider.close()
     provider = MemoryIdentityProvider.get()
     fresh_identity = provider.assign(had_primary_source, identifier_in_primary_source)
 
-    assert fresh_identity.model_dump() == dict(
-        hadPrimarySource=had_primary_source,
-        identifierInPrimarySource=identifier_in_primary_source,
-        stableTargetId=new_identity.stableTargetId,
-        identifier=new_identity.identifier,
-    )
+    assert fresh_identity.model_dump() == {
+        "hadPrimarySource": had_primary_source,
+        "identifierInPrimarySource": identifier_in_primary_source,
+        "stableTargetId": new_identity.stableTargetId,
+        "identifier": new_identity.identifier,
+    }
 
 
 def test_fetch_empty() -> None:

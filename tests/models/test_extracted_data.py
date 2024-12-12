@@ -40,13 +40,13 @@ class ExtractedThing(BaseThing, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedThingIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedThingIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedThingIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedThingIdentifier)
 
 
@@ -85,3 +85,14 @@ def test_extracted_data_stores_identity_in_provider() -> None:
     assert len(identities) == 1
     assert str(thing.identifier) == identities[0].identifier
     assert str(thing.stableTargetId) == identities[0].stableTargetId
+
+
+def test_hash_function():
+    hps1 = MergedPrimarySourceIdentifier.generate(seed=123456)
+    hps2 = MergedPrimarySourceIdentifier.generate(seed=234567)
+    thing1 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
+    thing2 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")
+    thing3 = ExtractedThing(hadPrimarySource=hps2, identifierInPrimarySource="567")
+
+    assert hash(thing1) == hash(thing2)
+    assert hash(thing1) != hash(thing3)

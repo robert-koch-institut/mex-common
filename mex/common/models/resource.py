@@ -2,11 +2,12 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field, computed_field
+from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -19,25 +20,52 @@ from mex.common.types import (
     DataProcessingState,
     ExtractedResourceIdentifier,
     Frequency,
+    Identifier,
     Language,
     License,
     Link,
     MergedAccessPlatformIdentifier,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
+    PersonalData,
+    ResourceCreationMethod,
     ResourceTypeGeneral,
     Text,
     Theme,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
 )
-from mex.common.types.identifier import MergedPrimarySourceIdentifier
+
+DoiStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "https://doi.org/10.1007/978-1-0716-2441-8_7",
+            "https://doi.org/10.2807/1560-7917.ES.2022.27.46.2200849",
+            "https://doi.org/10.3389/fmicb.2022.868887",
+            "http://dx.doi.org/10.25646/5147",
+            "https://doi.org/10.1016/j.vaccine.2022.11.065",
+        ],
+        pattern=r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Z0-9]+)$",
+    ),
+]
+LoincIdStr = Annotated[
+    str,
+    Field(
+        examples=["https://loinc.org/95209-3", "https://loinc.org/LA26211-5"],
+        pattern=r"^https://loinc.org/([a-zA-z]*)|(([0-9]*(-[0-9])*))$",
+        json_schema_extra={"format": "uri"},
+    ),
+]
 
 
 class _Stem(BaseModel):
@@ -47,13 +75,9 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     accessPlatform: list[MergedAccessPlatformIdentifier] = []
     alternativeTitle: list[Text] = []
-    anonymizationPseudonymization: list[
-        Annotated[
-            AnonymizationPseudonymization,
-            Field(
-                examples=["https://mex.rki.de/item/anonymization-pseudonymization-1"]
-            ),
-        ]
+    anonymizationPseudonymization: list[AnonymizationPseudonymization] = []
+    conformsTo: list[
+        Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-10"])]
     ] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     contributor: list[MergedPersonIdentifier] = []
@@ -62,14 +86,13 @@ class _OptionalLists(_Stem):
     distribution: list[MergedDistributionIdentifier] = []
     documentation: list[Link] = []
     externalPartner: list[MergedOrganizationIdentifier] = []
+    hasLegalBasis: list[Text] = []
     icd10code: list[str] = []
     instrumentToolOrApparatus: list[Text] = []
     isPartOf: list[MergedResourceIdentifier] = []
     keyword: list[Text] = []
-    language: list[
-        Annotated[Language, Field(examples=["https://mex.rki.de/item/language-1"])]
-    ] = []
-    loincId: list[str] = []
+    language: list[Language] = []
+    loincId: list[LoincIdStr] = []
     meshId: list[
         Annotated[
             str,
@@ -82,43 +105,31 @@ class _OptionalLists(_Stem):
     ] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
-    publication: list[Link] = []
+    populationCoverage: list[Text] = []
+    publication: list[MergedBibliographicResourceIdentifier] = []
     publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: list[Text] = []
-    resourceTypeGeneral: list[
-        Annotated[
-            ResourceTypeGeneral,
-            Field(
-                examples=["https://mex.rki.de/item/resource-type-general-1"],
-            ),
-        ]
-    ] = []
+    resourceCreationMethod: list[ResourceCreationMethod] = []
+    resourceTypeGeneral: list[ResourceTypeGeneral] = []
     resourceTypeSpecific: list[Text] = []
     rights: list[Text] = []
     spatial: list[Text] = []
-    stateOfDataProcessing: list[
-        Annotated[
-            DataProcessingState,
-            Field(
-                examples=["https://mex.rki.de/item/data-processing-state-1"],
-            ),
-        ]
-    ] = []
+    stateOfDataProcessing: list[DataProcessingState] = []
 
 
 class _RequiredLists(_Stem):
     contact: Annotated[
         list[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier
+            Annotated[
+                MergedOrganizationalUnitIdentifier
+                | MergedPersonIdentifier
+                | MergedContactPointIdentifier,
+                AfterValidator(Identifier),
+            ]
         ],
         Field(min_length=1),
     ]
-    theme: Annotated[
-        list[Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]],
-        Field(min_length=1),
-    ]
+    theme: Annotated[list[Theme], Field(min_length=1)]
     title: Annotated[list[Text], Field(min_length=1)]
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
@@ -127,32 +138,33 @@ class _RequiredLists(_Stem):
 
 class _SparseLists(_Stem):
     contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier
+        Annotated[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+            AfterValidator(Identifier),
+        ]
     ] = []
-    theme: list[
-        Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
-    ] = []
+    theme: list[Theme] = []
     title: list[Text] = []
     unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
 
 
 class _OptionalValues(_Stem):
-    accrualPeriodicity: (
-        Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
-        | None
-    ) = None
-    created: YearMonthDayTime | YearMonthDay | YearMonth | None = None
-    license: (
-        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
-    ) = None
-    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    accrualPeriodicity: Frequency | None = None
+    created: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
+    doi: DoiStr | None = None
+    hasPersonalData: PersonalData | None = None
+    license: License | None = None
+    maxTypicalAge: Annotated[int, Field(examples=["99", "21"])] | None = None
+    minTypicalAge: Annotated[int, Field(examples=["0", "18"])] | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     sizeOfDataBasis: str | None = None
     temporal: (
         YearMonthDayTime
         | YearMonthDay
         | YearMonth
+        | Year
         | Annotated[
             str,
             Field(
@@ -170,48 +182,29 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
-    accessRestriction: Annotated[
-        AccessRestriction,
-        Field(
-            examples=["https://mex.rki.de/item/access-restriction-1"],
-        ),
-    ]
+    accessRestriction: AccessRestriction
 
 
 class _SparseValues(_Stem):
-    accessRestriction: (
-        Annotated[
-            AccessRestriction,
-            Field(
-                examples=["https://mex.rki.de/item/access-restriction-1"],
-            ),
-        ]
-        | None
-    ) = None
+    accessRestriction: AccessRestriction | None = None
 
 
 class _VariadicValues(_Stem):
-    accessRestriction: list[
-        Annotated[
-            AccessRestriction,
-            Field(
-                examples=["https://mex.rki.de/item/access-restriction-1"],
-            ),
-        ]
-    ] = []
-    accrualPeriodicity: list[
-        Annotated[Frequency, Field(examples=["https://mex.rki.de/item/frequency-1"])]
-    ] = []
-    created: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
-    license: list[
-        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])]
-    ] = []
-    modified: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    accessRestriction: list[AccessRestriction] = []
+    accrualPeriodicity: list[Frequency] = []
+    created: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    doi: list[DoiStr] = []
+    hasPersonalData: list[PersonalData] = []
+    license: list[License] = []
+    maxTypicalAge: list[Annotated[int, Field(examples=["99", "21"])]] = []
+    minTypicalAge: list[Annotated[int, Field(examples=["0", "18"])]] = []
+    modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     sizeOfDataBasis: list[str] = []
     temporal: list[
         YearMonthDayTime
         | YearMonthDay
         | YearMonth
+        | Year
         | Annotated[
             str,
             Field(
@@ -241,22 +234,33 @@ class ExtractedResource(BaseResource, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedResourceIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedResourceIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedResourceIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedResourceIdentifier)
 
 
 class MergedResource(BaseResource, MergedItem):
-    """The result of merging all extracted data and rules for a resource."""
+    """The result of merging all extracted items and rules for a resource."""
 
     entityType: Annotated[
         Literal["MergedResource"], Field(alias="$type", frozen=True)
     ] = "MergedResource"
+    identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]
+
+
+class PreviewResource(
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+):
+    """Preview for merging all extracted items and rules for a resource."""
+
+    entityType: Annotated[
+        Literal["PreviewResource"], Field(alias="$type", frozen=True)
+    ] = "PreviewResource"
     identifier: Annotated[MergedResourceIdentifier, Field(frozen=True)]
 
 
@@ -291,15 +295,19 @@ class PreventiveResource(_Stem, PreventiveRule):
     accrualPeriodicity: list[MergedPrimarySourceIdentifier] = []
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
     anonymizationPseudonymization: list[MergedPrimarySourceIdentifier] = []
+    conformsTo: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
     contributingUnit: list[MergedPrimarySourceIdentifier] = []
     contributor: list[MergedPrimarySourceIdentifier] = []
     created: list[MergedPrimarySourceIdentifier] = []
+    doi: list[MergedPrimarySourceIdentifier] = []
     creator: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
     distribution: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
     externalPartner: list[MergedPrimarySourceIdentifier] = []
+    hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
+    hasPersonalData: list[MergedPrimarySourceIdentifier] = []
     icd10code: list[MergedPrimarySourceIdentifier] = []
     instrumentToolOrApparatus: list[MergedPrimarySourceIdentifier] = []
     isPartOf: list[MergedPrimarySourceIdentifier] = []
@@ -307,13 +315,17 @@ class PreventiveResource(_Stem, PreventiveRule):
     language: list[MergedPrimarySourceIdentifier] = []
     license: list[MergedPrimarySourceIdentifier] = []
     loincId: list[MergedPrimarySourceIdentifier] = []
+    maxTypicalAge: list[MergedPrimarySourceIdentifier] = []
     meshId: list[MergedPrimarySourceIdentifier] = []
     method: list[MergedPrimarySourceIdentifier] = []
     methodDescription: list[MergedPrimarySourceIdentifier] = []
+    minTypicalAge: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
+    populationCoverage: list[MergedPrimarySourceIdentifier] = []
     publication: list[MergedPrimarySourceIdentifier] = []
     publisher: list[MergedPrimarySourceIdentifier] = []
     qualityInformation: list[MergedPrimarySourceIdentifier] = []
+    resourceCreationMethod: list[MergedPrimarySourceIdentifier] = []
     resourceTypeGeneral: list[MergedPrimarySourceIdentifier] = []
     resourceTypeSpecific: list[MergedPrimarySourceIdentifier] = []
     rights: list[MergedPrimarySourceIdentifier] = []
@@ -328,9 +340,9 @@ class PreventiveResource(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveResource
-    subtractive: SubtractiveResource
-    preventive: PreventiveResource
+    additive: AdditiveResource = AdditiveResource()
+    subtractive: SubtractiveResource = SubtractiveResource()
+    preventive: PreventiveResource = PreventiveResource()
 
 
 class ResourceRuleSetRequest(_BaseRuleSet):

@@ -9,6 +9,7 @@ from mex.common.models import (
     PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreventivePerson,
+    PreviewPerson,
     SubtractivePerson,
 )
 from mex.common.types import (
@@ -64,7 +65,17 @@ def merged_person() -> MergedPerson:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
+def preview_person() -> PreviewPerson:
+    """Return a dummy preview person for testing purposes."""
+    return PreviewPerson(
+        identifier=MergedPersonIdentifier.generate(seed=876),
+        affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
+        email=[Email("TintzmannM@rki.de")],
+    )
+
+
+@pytest.fixture
 def rule_set_request() -> PersonRuleSetRequest:
     """Return a dummy person rule set request for testing purposes."""
     return PersonRuleSetRequest(
@@ -74,7 +85,7 @@ def rule_set_request() -> PersonRuleSetRequest:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def rule_set_response() -> PersonRuleSetResponse:
     """Return a dummy person rule set response for testing purposes."""
     return PersonRuleSetResponse(

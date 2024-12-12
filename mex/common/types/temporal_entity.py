@@ -53,26 +53,23 @@ TIME_PRECISIONS = [
 
 CET = timezone("CET")  # default assumed timezone
 UTC = timezone("UTC")  # required output timezone
-TEMPORAL_ENTITY_REGEX = (
-    r"^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}Z)?)?)?$"  # optional resolution
-)
-YEAR_MONTH_DAY_TIME_REGEX = r"^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"
-YEAR_MONTH_DAY_REGEX = r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
-YEAR_MONTH_REGEX = r"^(?:\d{4}|(?:\d{4}-(?:0[1-9]|1[0-2])))$"
+YEAR_MONTH_DAY_TIME_REGEX = r"^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"  # noqa: E501
+YEAR_MONTH_DAY_REGEX = r"^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$"
+YEAR_MONTH_REGEX = r"\d{4}-(?:0[1-9]|1[0-2])$"
+YEAR_REGEX = r"^\d{4}$"
+MAX_DATETIME_ARGUMENTS = 7
 
 
 @total_ordering
 class TemporalEntity:
     """Custom temporal entity with precision detection and timezone normalization."""
 
-    __slots__ = ("precision", "date_time")
+    __slots__ = ("date_time", "precision")
 
     precision: TemporalEntityPrecision
     date_time: datetime
-    STR_SCHEMA_PATTERN = TEMPORAL_ENTITY_REGEX
-    ALLOWED_PRECISION_LEVELS = [
-        key for key in TemporalEntityPrecision.__members__.values()
-    ]
+    STR_SCHEMA_PATTERN = r".*"
+    ALLOWED_PRECISION_LEVELS = list(TemporalEntityPrecision.__members__.values())
     JSON_SCHEMA_CONFIG: dict[str, str | list[str]] = {
         "examples": [
             "2011",
@@ -98,7 +95,7 @@ class TemporalEntity:
         tzinfo: tzinfo | None = None,
     ) -> None: ...  # pragma: no cover
 
-    def __init__(
+    def __init__(  # noqa: PLR0912
         self,
         *args: Union[int, str, date, datetime, "TemporalEntity"],
         precision: TemporalEntityPrecision | None = None,
@@ -123,18 +120,19 @@ class TemporalEntity:
             TemporalEntity(2009, 9, 30, 23, 59, 5, tzinfo=timezone("CET"))
             TemporalEntity(TemporalEntity(2000))
         """
-        if len(args) > 7:
-            raise TypeError(
-                f"Temporal entity takes at most 7 arguments ({len(args)} given)"
+        if len(args) > MAX_DATETIME_ARGUMENTS:
+            msg = (
+                f"Temporal entity takes at most {MAX_DATETIME_ARGUMENTS} arguments "
+                f"({len(args)} given)"
             )
+            raise TypeError(msg)
 
         if len(args) == 1 and isinstance(
             args[0], str | date | datetime | TemporalEntity
         ):
             if tzinfo:
-                raise TypeError(
-                    "Temporal entity does not accept tzinfo in parsing mode"
-                )
+                msg = "Temporal entity does not accept tzinfo in parsing mode"
+                raise TypeError(msg)
             if isinstance(args[0], TemporalEntity):
                 date_time, parsed_precision = self._parse_temporal_entity(args[0])
             elif isinstance(args[0], datetime):
@@ -147,10 +145,11 @@ class TemporalEntity:
             args = cast(tuple[int, ...], args)
             date_time, parsed_precision = self._parse_integers(*args, tzinfo=tzinfo)
         else:
-            raise TypeError(
+            msg = (
                 "Temporal entity takes a single str, date, datetime or "
                 "TemporalEntity argument or up to 7 integers"
             )
+            raise TypeError(msg)
 
         if precision:
             self._validate_precision(precision)
@@ -193,27 +192,20 @@ class TemporalEntity:
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add validation and serialization rules."""
-        from_str_schema = core_schema.chain_schema(
-            [
-                core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
-                core_schema.no_info_plain_validator_function(
-                    cls.validate,
-                ),
-            ]
-        )
-        from_anything_schema = core_schema.chain_schema(
-            [
-                core_schema.no_info_plain_validator_function(cls.validate),
-                core_schema.is_instance_schema(cls),
-            ]
-        )
-        serialization_schema = core_schema.plain_serializer_function_ser_schema(
-            lambda instance: str(instance)
-        )
         return core_schema.json_or_python_schema(
-            json_schema=from_str_schema,
-            python_schema=from_anything_schema,
-            serialization=serialization_schema,
+            json_schema=core_schema.chain_schema(
+                [
+                    core_schema.str_schema(pattern=cls.STR_SCHEMA_PATTERN),
+                    core_schema.no_info_plain_validator_function(cls),
+                ]
+            ),
+            python_schema=core_schema.chain_schema(
+                [
+                    core_schema.is_instance_schema(cls | date | str | TemporalEntity),
+                    core_schema.no_info_plain_validator_function(cls),
+                ]
+            ),
+            serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
         )
 
     @classmethod
@@ -221,17 +213,10 @@ class TemporalEntity:
         cls, core_schema_: core_schema.CoreSchema, handler: GetJsonSchemaHandler
     ) -> json_schema.JsonSchemaValue:
         """Modify the json schema to add a title, examples and an optional format."""
-        json_schema = handler(core_schema_)
-        json_schema["title"] = cls.__name__
-        json_schema.update(cls.JSON_SCHEMA_CONFIG)
-        return json_schema
-
-    @classmethod
-    def validate(cls, value: Any) -> "TemporalEntity":
-        """Parse any value and try to convert it into a temporal entity."""
-        if isinstance(value, cls | date | str | TemporalEntity):
-            return cls(value)
-        raise TypeError(f"Cannot parse {type(value)} as {cls.__name__}")
+        json_schema_ = handler(core_schema_)
+        json_schema_["title"] = cls.__name__
+        json_schema_.update(cls.JSON_SCHEMA_CONFIG)
+        return json_schema_
 
     @staticmethod
     def _parse_integers(
@@ -241,7 +226,7 @@ class TemporalEntity:
         if tzinfo is None:
             tzinfo = CET
         padded = tuple(a or d for a, d in zip_longest(args, (1970, 1, 1, 0, 0, 0, 0)))
-        date_time = datetime(*padded, tzinfo=tzinfo)  # type: ignore
+        date_time = datetime(*padded, tzinfo=tzinfo)  # type: ignore[arg-type,misc]
         precision = TEMPORAL_ENTITY_PRECISIONS_BY_ARG_LENGTH[len(args)]
         return date_time, precision
 
@@ -281,25 +266,29 @@ class TemporalEntity:
         value: date,
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a date and assume the precision is days."""
-        return datetime(value.year, value.month, value.day), TemporalEntityPrecision.DAY
+        return (
+            datetime(value.year, value.month, value.day, tzinfo=CET),
+            TemporalEntityPrecision.DAY,
+        )
 
     def __eq__(self, other: object) -> bool:
         """Return whether the given other value is the same as this one."""
         try:
-            other = self.validate(other)
+            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
         except TypeError:
             return False
         return bool(
-            self.date_time == other.date_time and self.precision == other.precision
+            self.date_time == other_temporal.date_time
+            and self.precision == other_temporal.precision
         )
 
     def __gt__(self, other: Any) -> bool:
         """Return whether the given other value is the greater than this one."""
         try:
-            other = self.validate(other)
+            other_temporal = TemporalEntity(other)
         except TypeError:
             raise NotImplementedError from None
-        return bool(self.date_time > other.date_time)
+        return bool(self.date_time > other_temporal.date_time)
 
     def __str__(self) -> str:
         """Render temporal entity with format fitting for its precision."""
@@ -308,19 +297,24 @@ class TemporalEntity:
         )
 
     def __repr__(self) -> str:
-        """Render a presentation showing this is not just a datetime."""
+        """Overwrite the default representation."""
         return f'{self.__class__.__name__}("{self}")'
 
 
+class Year(TemporalEntity):
+    """Parser for temporal entities with year-precision."""
+
+    STR_SCHEMA_PATTERN = YEAR_REGEX
+    ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.YEAR]
+    JSON_SCHEMA_CONFIG = {"examples": ["2024"]}
+
+
 class YearMonth(TemporalEntity):
-    """Parser for temporal entities with year-precision or month-precision."""
+    """Parser for temporal entities with month-precision."""
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_REGEX
-    ALLOWED_PRECISION_LEVELS = [
-        TemporalEntityPrecision.YEAR,
-        TemporalEntityPrecision.MONTH,
-    ]
-    JSON_SCHEMA_CONFIG = {"examples": ["2011", "2019-03"]}
+    ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.MONTH]
+    JSON_SCHEMA_CONFIG = {"examples": ["2019-03"]}
 
 
 class YearMonthDay(TemporalEntity):
@@ -328,7 +322,7 @@ class YearMonthDay(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_REGEX
     ALLOWED_PRECISION_LEVELS = [TemporalEntityPrecision.DAY]
-    JSON_SCHEMA_CONFIG = {"examples": ["2014-08-24"], "format": "date"}
+    JSON_SCHEMA_CONFIG = {"examples": ["2014-08-24"]}
 
 
 class YearMonthDayTime(TemporalEntity):
@@ -336,13 +330,13 @@ class YearMonthDayTime(TemporalEntity):
 
     STR_SCHEMA_PATTERN = YEAR_MONTH_DAY_TIME_REGEX
     ALLOWED_PRECISION_LEVELS = TIME_PRECISIONS
-    JSON_SCHEMA_CONFIG = {"examples": ["2022-09-30T20:48:35Z"], "format": "date-time"}
+    JSON_SCHEMA_CONFIG = {"examples": ["2022-09-30T20:48:35Z"]}
 
 
 TEMPORAL_ENTITY_CLASSES_BY_PRECISION: dict[
-    TemporalEntityPrecision, type[YearMonth | YearMonthDay | YearMonthDayTime]
+    TemporalEntityPrecision, type[Year | YearMonth | YearMonthDay | YearMonthDayTime]
 ] = {
-    TemporalEntityPrecision.YEAR: YearMonth,
+    TemporalEntityPrecision.YEAR: Year,
     TemporalEntityPrecision.MONTH: YearMonth,
     TemporalEntityPrecision.DAY: YearMonthDay,
     TemporalEntityPrecision.HOUR: YearMonthDayTime,

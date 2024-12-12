@@ -1,4 +1,3 @@
-import re
 import string
 from typing import Any, Self
 from uuid import UUID, uuid4
@@ -6,48 +5,41 @@ from uuid import UUID, uuid4
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
 
-MEX_ID_ALPHABET = string.ascii_letters + string.digits
-MEX_ID_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
-UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+_ALPHABET = string.ascii_letters + string.digits
+IDENTIFIER_PATTERN = r"^[a-zA-Z0-9]{14,22}$"
 
 
 class Identifier(str):
     """Common identifier class based on UUID version 4."""
+
+    __slots__ = ()
 
     @classmethod
     def generate(cls, seed: int | None = None) -> Self:
         """Generate a new identifier from a seed or random UUID version 4."""
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
-        alpha_len = len(MEX_ID_ALPHABET)
+        alpha_len = len(_ALPHABET)
         if seed is None:
             number = uuid4().int
         else:
             number = UUID(int=seed, version=4).int
         while number:
             number, digit = divmod(number, alpha_len)
-            output += MEX_ID_ALPHABET[digit]
+            output += _ALPHABET[digit]
         return cls(output[::-1])
-
-    @classmethod
-    def validate(cls, value: Any) -> Self:
-        """Validate a string, UUID or Identifier."""
-        if isinstance(value, str | UUID | Identifier):
-            value = str(value)
-            if re.match(MEX_ID_PATTERN, value):
-                return cls(value)
-            if re.match(UUID_PATTERN, value):
-                return cls.generate(seed=UUID(value).int)
-            raise ValueError(f"Invalid identifier format: {value}")
-        raise ValueError(f"Cannot parse {type(value)} as {cls.__name__}")
 
     @classmethod
     def __get_pydantic_core_schema__(
         cls, source_type: Any, handler: GetCoreSchemaHandler
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add the ID regex."""
-        return core_schema.no_info_before_validator_function(
-            cls.validate, core_schema.str_schema(pattern=MEX_ID_PATTERN)
+        return core_schema.chain_schema(
+            [
+                core_schema.str_schema(pattern=IDENTIFIER_PATTERN),
+                core_schema.no_info_plain_validator_function(cls),
+            ],
+            serialization=core_schema.to_string_ser_schema(when_used="unless-none"),
         )
 
     @classmethod
@@ -58,11 +50,12 @@ class Identifier(str):
         json_schema_ = handler(core_schema_)
         json_schema_ = handler.resolve_ref_schema(json_schema_)
         json_schema_["title"] = cls.__name__
+        json_schema_["pattern"] = IDENTIFIER_PATTERN
         return json_schema_
 
     def __repr__(self) -> str:
         """Overwrite the default representation."""
-        return f"{self.__class__.__name__}({super().__str__().__repr__()})"
+        return f'{self.__class__.__name__}("{self}")'
 
 
 # We have technically-identical subclasses of identifier types (one per entity-type).
@@ -84,6 +77,14 @@ class ExtractedAccessPlatformIdentifier(ExtractedIdentifier):
 
 class ExtractedActivityIdentifier(ExtractedIdentifier):
     """Identifier for extracted activities."""
+
+
+class ExtractedBibliographicResourceIdentifier(ExtractedIdentifier):
+    """Identifier for extracted bibliographic resources."""
+
+
+class ExtractedConsentIdentifier(ExtractedIdentifier):
+    """Identifier for extracted consents."""
 
 
 class ExtractedContactPointIdentifier(ExtractedIdentifier):
@@ -132,6 +133,14 @@ class MergedAccessPlatformIdentifier(MergedIdentifier):
 
 class MergedActivityIdentifier(MergedIdentifier):
     """Identifier for merged activities."""
+
+
+class MergedBibliographicResourceIdentifier(MergedIdentifier):
+    """Identifier for merged bibliographic resources."""
+
+
+class MergedConsentIdentifier(MergedIdentifier):
+    """Identifier for merged consents."""
 
 
 class MergedContactPointIdentifier(MergedIdentifier):

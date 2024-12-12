@@ -100,15 +100,16 @@ def transform_ldap_person_to_mex_person(
         if d and (unit := units_by_identifier_in_primary_source.get(d.lower()))
     ]
     if not member_of:
-        raise MExError(
+        msg = (
             "No unit or department found for LDAP department "
             f"'{ldap_person.department}' or departmentNumber "
             f"'{ldap_person.departmentNumber}'"
         )
+        raise MExError(msg)
     return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
-        affiliation=[],  # TODO resolve organization for person.company/RKI
+        affiliation=[],  # TODO(HS): resolve organization for person.company/RKI
         email=ldap_person.mail,
         familyName=[ldap_person.sn],
         fullName=[ldap_person.displayName] if ldap_person.displayName else [],
@@ -184,11 +185,11 @@ def analyse_person_string(string: str) -> list[PersonName]:
         return [name for strings in split for name in analyse_person_string(strings)]
 
     # split on comma if there is more than one
-    if len(split := re.split(r",", string)) > 2:
+    if len(split := re.split(r",", string)) > 2:  # noqa: PLR2004
         return [name for strings in split for name in analyse_person_string(strings)]
 
     # split on single commas only if there are more than three words
-    if len(split := re.split(r",", string)) == 2 and string.strip().count(" ") > 2:
+    if len(split := re.split(r",", string)) == 2 and string.strip().count(" ") > 2:  # noqa: PLR2004
         return [name for strings in split for name in analyse_person_string(strings)]
 
     # split into surname and given name
@@ -209,7 +210,7 @@ def analyse_person_string(string: str) -> list[PersonName]:
         return [PersonName(surname=split[0], full_name=full_name)]
 
     # return surname and given name
-    if len(split) == 2:
+    if len(split) == 2:  # noqa: PLR2004
         return [PersonName(surname=split[1], given_name=split[0], full_name=full_name)]
 
     # found no one

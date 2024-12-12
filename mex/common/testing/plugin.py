@@ -19,10 +19,7 @@ from requests import Response
 
 from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
-from mex.common.primary_source.extract import extract_seed_primary_sources
-from mex.common.primary_source.transform import (
-    transform_seed_primary_sources_to_extracted_primary_sources,
-)
+from mex.common.primary_source.helpers import get_all_extracted_primary_sources
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.wikidata.connector import (
     WikidataAPIConnector,
@@ -79,7 +76,8 @@ def settings() -> BaseSettings:
 
 @pytest.fixture(autouse=True)
 def isolate_settings(
-    isolate_assets_dir: None, isolate_work_dir: None
+    isolate_assets_dir: None,  # noqa: ARG001
+    isolate_work_dir: None,  # noqa: ARG001
 ) -> Generator[None, None, None]:
     """Automatically reset the settings singleton store."""
     SETTINGS_STORE.reset()
@@ -121,13 +119,7 @@ def faker_session_locale() -> list[str]:
 @pytest.fixture()
 def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
-    seed_primary_sources = extract_seed_primary_sources()
-    extracted_primary_sources = (
-        transform_seed_primary_sources_to_extracted_primary_sources(
-            seed_primary_sources
-        )
-    )
-    return {p.identifierInPrimarySource: p for p in extracted_primary_sources}
+    return get_all_extracted_primary_sources()
 
 
 @pytest.fixture
@@ -166,7 +158,7 @@ def mocked_wikidata(
     # mock search_wikidata_with_query
 
     def get_data_by_query(
-        self: WikidataQueryServiceConnector, query: str
+        _self: WikidataQueryServiceConnector, _query: str
     ) -> list[dict[str, dict[str, str]]]:
         return [
             {
@@ -190,7 +182,7 @@ def mocked_wikidata(
     # mock get_wikidata_org_with_org_id
 
     def get_wikidata_item_details_by_id(
-        self: WikidataAPIConnector, item_id: str
+        _self: WikidataAPIConnector, _item_id: str
     ) -> dict[str, str]:
         return wikidata_organization_raw
 

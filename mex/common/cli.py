@@ -137,13 +137,13 @@ def _callback(
         func()
     except (Abort, BdbQuit, Exit, KeyboardInterrupt):  # pragma: no cover
         context.exit(130)
-    except Exception as error:
+    except Exception:
         # an error occurred, let's print the traceback
         logger.error(click.style(format_exc(), fg="red"))
         if settings.debug:  # pragma: no cover
             # if we are in debug mode, jump into interactive debugging.
             pdb.post_mortem(sys.exc_info()[2])
-            raise error
+            raise
         # if not in debug mode, exit with code 1.
         logger.error("exit")
         context.exit(1)

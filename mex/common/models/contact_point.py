@@ -7,6 +7,7 @@ from pydantic import Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -49,22 +50,31 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedContactPointIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedContactPointIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedContactPointIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedContactPointIdentifier)
 
 
 class MergedContactPoint(BaseContactPoint, MergedItem):
-    """The result of merging all extracted data and rules for a contact point."""
+    """The result of merging all extracted items and rules for a contact point."""
 
     entityType: Annotated[
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
+    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+
+
+class PreviewContactPoint(_SparseLists, PreviewItem):
+    """Preview for merging all extracted items and rules for a contact point."""
+
+    entityType: Annotated[
+        Literal["PreviewContactPoint"], Field(alias="$type", frozen=True)
+    ] = "PreviewContactPoint"
     identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
 
 
@@ -94,9 +104,9 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveContactPoint
-    subtractive: SubtractiveContactPoint
-    preventive: PreventiveContactPoint
+    additive: AdditiveContactPoint = AdditiveContactPoint()
+    subtractive: SubtractiveContactPoint = SubtractiveContactPoint()
+    preventive: PreventiveContactPoint = PreventiveContactPoint()
 
 
 class ContactPointRuleSetRequest(_BaseRuleSet):

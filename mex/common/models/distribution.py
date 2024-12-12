@@ -7,6 +7,7 @@ from pydantic import Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -20,10 +21,9 @@ from mex.common.types import (
     Link,
     MergedAccessPlatformIdentifier,
     MergedDistributionIdentifier,
-    MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
@@ -37,49 +37,20 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    author: list[MergedPersonIdentifier] = []
-    contactPerson: list[MergedPersonIdentifier] = []
-    dataCurator: list[MergedPersonIdentifier] = []
-    dataManager: list[MergedPersonIdentifier] = []
-    otherContributor: list[MergedPersonIdentifier] = []
-    projectLeader: list[MergedPersonIdentifier] = []
-    projectManager: list[MergedPersonIdentifier] = []
-    researcher: list[MergedPersonIdentifier] = []
-
-
-class _RequiredLists(_Stem):
-    publisher: Annotated[list[MergedOrganizationIdentifier], Field(min_length=1)]
-
-
-class _SparseLists(_Stem):
-    publisher: list[MergedOrganizationIdentifier] = []
+    accessURL: list[Link] = []
+    downloadURL: list[Link] = []
 
 
 class _OptionalValues(_Stem):
     accessService: MergedAccessPlatformIdentifier | None = None
-    accessURL: Link | None = None
-    downloadURL: Link | None = None
-    license: (
-        Annotated[License, Field(examples=["https://mex.rki.de/item/license-1"])] | None
-    ) = None
-    mediaType: (
-        Annotated[
-            MIMEType,
-            Field(
-                examples=["https://mex.rki.de/item/mime-type-1"],
-            ),
-        ]
-        | None
-    ) = None
-    modified: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    license: License | None = None
+    mediaType: MIMEType | None = None
+    modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
 
 
 class _RequiredValues(_Stem):
-    accessRestriction: Annotated[
-        AccessRestriction,
-        Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-    ]
-    issued: YearMonthDayTime | YearMonthDay | YearMonth
+    accessRestriction: AccessRestriction
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | Year
     title: Annotated[
         str,
         Field(
@@ -90,14 +61,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
-    accessRestriction: (
-        Annotated[
-            AccessRestriction,
-            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-        ]
-        | None
-    ) = None
-    issued: YearMonthDayTime | YearMonthDay | YearMonth | None = None
+    accessRestriction: AccessRestriction | None = None
+    issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     title: (
         Annotated[
             str,
@@ -111,13 +76,12 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
-    accessRestriction: list[
-        Annotated[
-            AccessRestriction,
-            Field(examples=["https://mex.rki.de/item/access-restriction-1"]),
-        ]
-    ] = []
-    issued: list[YearMonthDayTime | YearMonthDay | YearMonth] = []
+    accessRestriction: list[AccessRestriction] = []
+    accessService: list[MergedAccessPlatformIdentifier] = []
+    issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    license: list[License] = []
+    mediaType: list[MIMEType] = []
+    modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     title: list[
         Annotated[
             str,
@@ -129,9 +93,7 @@ class _VariadicValues(_Stem):
     ] = []
 
 
-class BaseDistribution(
-    _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
-):
+class BaseDistribution(_OptionalLists, _OptionalValues, _RequiredValues):
     """All fields for a valid distribution except for provenance."""
 
 
@@ -145,18 +107,18 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedDistributionIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedDistributionIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedDistributionIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
 class MergedDistribution(BaseDistribution, MergedItem):
-    """The result of merging all extracted data and rules for a distribution."""
+    """The result of merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[
         Literal["MergedDistribution"], Field(alias="$type", frozen=True)
@@ -164,8 +126,17 @@ class MergedDistribution(BaseDistribution, MergedItem):
     identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
 
 
+class PreviewDistribution(_OptionalLists, _OptionalValues, _SparseValues, PreviewItem):
+    """Preview for merging all extracted items and rules for a distribution."""
+
+    entityType: Annotated[
+        Literal["PreviewDistribution"], Field(alias="$type", frozen=True)
+    ] = "PreviewDistribution"
+    identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
+
+
 class AdditiveDistribution(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
+    _OptionalLists, _OptionalValues, _SparseValues, AdditiveRule
 ):
     """Rule to add values to merged distribution items."""
 
@@ -174,9 +145,7 @@ class AdditiveDistribution(
     ] = "AdditiveDistribution"
 
 
-class SubtractiveDistribution(
-    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
-):
+class SubtractiveDistribution(_OptionalLists, _VariadicValues, SubtractiveRule):
     """Rule to subtract values from merged distribution items."""
 
     entityType: Annotated[
@@ -193,27 +162,18 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     accessRestriction: list[MergedPrimarySourceIdentifier] = []
     accessService: list[MergedPrimarySourceIdentifier] = []
     accessURL: list[MergedPrimarySourceIdentifier] = []
-    author: list[MergedPrimarySourceIdentifier] = []
-    contactPerson: list[MergedPrimarySourceIdentifier] = []
-    dataCurator: list[MergedPrimarySourceIdentifier] = []
-    dataManager: list[MergedPrimarySourceIdentifier] = []
     downloadURL: list[MergedPrimarySourceIdentifier] = []
     issued: list[MergedPrimarySourceIdentifier] = []
     license: list[MergedPrimarySourceIdentifier] = []
     mediaType: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
-    otherContributor: list[MergedPrimarySourceIdentifier] = []
-    projectLeader: list[MergedPrimarySourceIdentifier] = []
-    projectManager: list[MergedPrimarySourceIdentifier] = []
-    publisher: list[MergedPrimarySourceIdentifier] = []
-    researcher: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveDistribution
-    subtractive: SubtractiveDistribution
-    preventive: PreventiveDistribution
+    additive: AdditiveDistribution = AdditiveDistribution()
+    subtractive: SubtractiveDistribution = SubtractiveDistribution()
+    preventive: PreventiveDistribution = PreventiveDistribution()
 
 
 class DistributionRuleSetRequest(_BaseRuleSet):

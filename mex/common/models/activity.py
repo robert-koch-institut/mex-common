@@ -5,11 +5,12 @@ This may be a project, an area of work or an administrative procedure.
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field, computed_field
+from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -19,8 +20,10 @@ from mex.common.models.base.rules import (
 from mex.common.types import (
     ActivityType,
     ExtractedActivityIdentifier,
+    Identifier,
     Link,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -28,6 +31,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
     Theme,
+    Year,
     YearMonth,
     YearMonthDay,
 )
@@ -39,36 +43,38 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     abstract: list[Text] = []
-    activityType: list[
-        Annotated[
-            ActivityType, Field(examples=["https://mex.rki.de/item/activity-type-1"])
-        ]
-    ] = []
+    activityType: list[ActivityType] = []
     alternativeTitle: list[Text] = []
     documentation: list[Link] = []
-    end: list[YearMonthDay | YearMonth] = []
-    externalAssociate: list[MergedOrganizationIdentifier | MergedPersonIdentifier] = []
+    end: list[YearMonthDay | YearMonth | Year] = []
+    externalAssociate: list[
+        Annotated[
+            MergedOrganizationIdentifier | MergedPersonIdentifier,
+            AfterValidator(Identifier),
+        ]
+    ] = []
     funderOrCommissioner: list[MergedOrganizationIdentifier] = []
     fundingProgram: list[str] = []
     involvedPerson: list[MergedPersonIdentifier] = []
     involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
     isPartOfActivity: list[MergedActivityIdentifier] = []
-    publication: list[Link] = []
+    publication: list[MergedBibliographicResourceIdentifier] = []
     shortName: list[Text] = []
-    start: list[YearMonthDay | YearMonth] = []
+    start: list[YearMonthDay | YearMonth | Year] = []
     succeeds: list[MergedActivityIdentifier] = []
-    theme: list[
-        Annotated[Theme, Field(examples=["https://mex.rki.de/item/theme-1"])]
-    ] = []
+    theme: list[Theme] = []
     website: list[Link] = []
 
 
 class _RequiredLists(_Stem):
     contact: Annotated[
         list[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
+            Annotated[
+                MergedOrganizationalUnitIdentifier
+                | MergedPersonIdentifier
+                | MergedContactPointIdentifier,
+                AfterValidator(Identifier),
+            ]
         ],
         Field(min_length=1),
     ]
@@ -80,9 +86,12 @@ class _RequiredLists(_Stem):
 
 class _SparseLists(_Stem):
     contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier,
+        Annotated[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+            AfterValidator(Identifier),
+        ]
     ] = []
     responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
     title: list[Text] = []
@@ -102,22 +111,31 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedActivityIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedActivityIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedActivityIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedActivityIdentifier)
 
 
 class MergedActivity(BaseActivity, MergedItem):
-    """The result of merging all extracted data and rules for an activity."""
+    """The result of merging all extracted items and rules for an activity."""
 
     entityType: Annotated[
         Literal["MergedActivity"], Field(alias="$type", frozen=True)
     ] = "MergedActivity"
+    identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
+
+
+class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
+    """Preview for merging all extracted items and rules for an activity."""
+
+    entityType: Annotated[
+        Literal["PreviewActivity"], Field(alias="$type", frozen=True)
+    ] = "PreviewActivity"
     identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
 
 
@@ -166,9 +184,9 @@ class PreventiveActivity(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveActivity
-    subtractive: SubtractiveActivity
-    preventive: PreventiveActivity
+    additive: AdditiveActivity = AdditiveActivity()
+    subtractive: SubtractiveActivity = SubtractiveActivity()
+    preventive: PreventiveActivity = PreventiveActivity()
 
 
 class ActivityRuleSetRequest(_BaseRuleSet):

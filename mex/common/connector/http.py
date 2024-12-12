@@ -5,7 +5,7 @@ from typing import Any, Literal, cast
 
 import backoff
 import requests
-from requests import HTTPError, RequestException, Response
+from requests import HTTPError, RequestException, Response, codes
 
 from mex.common.connector import BaseConnector
 from mex.common.settings import BaseSettings
@@ -30,7 +30,7 @@ class HTTPConnector(BaseConnector):
         """Create and set request session."""
         settings = BaseSettings.get()
         self.session = requests.Session()
-        self.session.verify = settings.verify_session  # type: ignore
+        self.session.verify = settings.verify_session  # type: ignore[assignment]
 
     def _set_authentication(self) -> None:
         """Authenticate to the host."""
@@ -94,23 +94,25 @@ class HTTPConnector(BaseConnector):
                 response=response,
             ) from error
 
-        if response.status_code == 204:
+        if response.status_code == codes.no_content:
             return {}
         return cast(dict[str, Any], response.json())
 
     @backoff.on_predicate(
         backoff.fibo,
-        lambda response: cast(Response, response).status_code >= 500,
+        lambda response: cast(Response, response).status_code
+        >= codes.internal_server_error,
         max_tries=4,
     )
     @backoff.on_predicate(
         backoff.fibo,
-        lambda response: cast(Response, response).status_code == 429,
+        lambda response: cast(Response, response).status_code
+        == codes.too_many_requests,
         max_tries=10,
     )
     @backoff.on_predicate(
         backoff.fibo,
-        lambda response: cast(Response, response).status_code == 403,
+        lambda response: cast(Response, response).status_code == codes.forbidden,
         max_tries=10,
     )
     @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)

@@ -7,6 +7,7 @@ from pydantic import Field, computed_field
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -14,7 +15,6 @@ from mex.common.models.base.rules import (
     SubtractiveRule,
 )
 from mex.common.types import (
-    DataType,
     ExtractedVariableIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
@@ -22,6 +22,15 @@ from mex.common.types import (
     MergedVariableIdentifier,
     Text,
 )
+
+CodingSystemStr = Annotated[
+    str,
+    Field(examples=["SF-36 Version 1"]),
+]
+DataTypeStr = Annotated[
+    str,
+    Field(examples=["integer", "string", "image", "int55", "number"]),
+]
 
 
 class _Stem(BaseModel):
@@ -77,43 +86,13 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
-    codingSystem: (
-        Annotated[
-            str,
-            Field(
-                examples=["SF-36 Version 1"],
-            ),
-        ]
-        | None
-    ) = None
-    dataType: (
-        Annotated[
-            DataType,
-            Field(
-                examples=["https://mex.rki.de/item/data-type-1"],
-            ),
-        ]
-        | None
-    ) = None
+    codingSystem: CodingSystemStr | None = None
+    dataType: DataTypeStr | None = None
 
 
 class _VariadicValues(_Stem):
-    codingSystem: list[
-        Annotated[
-            str,
-            Field(
-                examples=["SF-36 Version 1"],
-            ),
-        ]
-    ] = []
-    dataType: list[
-        Annotated[
-            DataType,
-            Field(
-                examples=["https://mex.rki.de/item/data-type-1"],
-            ),
-        ]
-    ] = []
+    codingSystem: list[CodingSystemStr] = []
+    dataType: list[DataTypeStr] = []
 
 
 class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
@@ -130,22 +109,31 @@ class ExtractedVariable(BaseVariable, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedVariableIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedVariableIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedVariableIdentifier)
 
 
 class MergedVariable(BaseVariable, MergedItem):
-    """The result of merging all extracted data and rules for a variable."""
+    """The result of merging all extracted items and rules for a variable."""
 
     entityType: Annotated[
         Literal["MergedVariable"], Field(alias="$type", frozen=True)
     ] = "MergedVariable"
+    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+
+
+class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
+    """Preview for merging all extracted items and rules for a variable."""
+
+    entityType: Annotated[
+        Literal["PreviewVariable"], Field(alias="$type", frozen=True)
+    ] = "PreviewVariable"
     identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
 
 
@@ -183,9 +171,9 @@ class PreventiveVariable(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveVariable
-    subtractive: SubtractiveVariable
-    preventive: PreventiveVariable
+    additive: AdditiveVariable = AdditiveVariable()
+    subtractive: SubtractiveVariable = SubtractiveVariable()
+    preventive: PreventiveVariable = PreventiveVariable()
 
 
 class VariableRuleSetRequest(_BaseRuleSet):

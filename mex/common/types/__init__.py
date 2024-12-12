@@ -1,10 +1,12 @@
 from typing import Final, Literal, get_args
 
-from mex.common.types.email import Email
+from mex.common.types.email import EMAIL_PATTERN, Email
 from mex.common.types.identifier import (
-    MEX_ID_PATTERN,
+    IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,
     ExtractedActivityIdentifier,
+    ExtractedBibliographicResourceIdentifier,
+    ExtractedConsentIdentifier,
     ExtractedContactPointIdentifier,
     ExtractedDistributionIdentifier,
     ExtractedIdentifier,
@@ -18,6 +20,8 @@ from mex.common.types.identifier import (
     Identifier,
     MergedAccessPlatformIdentifier,
     MergedActivityIdentifier,
+    MergedBibliographicResourceIdentifier,
+    MergedConsentIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedIdentifier,
@@ -40,22 +44,28 @@ from mex.common.types.temporal_entity import (
     UTC,
     TemporalEntity,
     TemporalEntityPrecision,
+    Year,
     YearMonth,
     YearMonthDay,
     YearMonthDayTime,
 )
 from mex.common.types.text import Text, TextLanguage
 from mex.common.types.vocabulary import (
+    VOCABULARY_PATTERN,
     AccessRestriction,
     ActivityType,
     AnonymizationPseudonymization,
     APIType,
+    BibliographicResourceType,
+    ConsentStatus,
+    ConsentType,
     DataProcessingState,
-    DataType,
     Frequency,
     Language,
     License,
     MIMEType,
+    PersonalData,
+    ResourceCreationMethod,
     ResourceTypeGeneral,
     TechnicalAccessibility,
     Theme,
@@ -65,6 +75,23 @@ from mex.common.types.vocabulary import (
 )
 
 __all__ = (
+    "CET",
+    "EMAIL_PATTERN",
+    "EXTRACTED_IDENTIFIER_CLASSES",
+    "EXTRACTED_IDENTIFIER_CLASSES_BY_NAME",
+    "IDENTIFIER_PATTERN",
+    "MERGED_IDENTIFIER_CLASSES",
+    "MERGED_IDENTIFIER_CLASSES_BY_NAME",
+    "NESTED_MODEL_CLASSES",
+    "NESTED_MODEL_CLASSES_BY_NAME",
+    "TEMPORAL_ENTITY_CLASSES_BY_PRECISION",
+    "TEMPORAL_ENTITY_FORMATS_BY_PRECISION",
+    "URL_PATTERN",
+    "UTC",
+    "VOCABULARY_ENUMS",
+    "VOCABULARY_ENUMS_BY_NAME",
+    "VOCABULARY_PATTERN",
+    "APIType",
     "AccessRestriction",
     "ActivityType",
     "AnonymizationPseudonymization",
@@ -72,21 +99,23 @@ __all__ = (
     "AnyMergedIdentifier",
     "AnyNestedModel",
     "AnyPrimitiveType",
-    "APIType",
+    "AnyVocabularyEnum",
     "AssetsPath",
-    "CET",
+    "BibliographicResourceType",
+    "ConsentStatus",
+    "ConsentType",
     "DataProcessingState",
     "DataType",
     "Email",
-    "EXTRACTED_IDENTIFIER_CLASSES_BY_NAME",
-    "EXTRACTED_IDENTIFIER_CLASSES",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
+    "ExtractedBibliographicResourceIdentifier",
+    "ExtractedConsentIdentifier",
     "ExtractedContactPointIdentifier",
     "ExtractedDistributionIdentifier",
     "ExtractedIdentifier",
-    "ExtractedOrganizationalUnitIdentifier",
     "ExtractedOrganizationIdentifier",
+    "ExtractedOrganizationalUnitIdentifier",
     "ExtractedPersonIdentifier",
     "ExtractedPrimarySourceIdentifier",
     "ExtractedResourceIdentifier",
@@ -100,44 +129,75 @@ __all__ = (
     "Link",
     "LinkLanguage",
     "LiteralStringType",
-    "MERGED_IDENTIFIER_CLASSES_BY_NAME",
-    "MERGED_IDENTIFIER_CLASSES",
+    "MIMEType",
     "MergedAccessPlatformIdentifier",
     "MergedActivityIdentifier",
+    "MergedBibliographicResourceIdentifier",
+    "MergedConsentIdentifier",
     "MergedContactPointIdentifier",
     "MergedDistributionIdentifier",
     "MergedIdentifier",
-    "MergedOrganizationalUnitIdentifier",
     "MergedOrganizationIdentifier",
+    "MergedOrganizationalUnitIdentifier",
     "MergedPersonIdentifier",
     "MergedPrimarySourceIdentifier",
     "MergedResourceIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
-    "MEX_ID_PATTERN",
-    "MIMEType",
-    "NESTED_MODEL_CLASSES_BY_NAME",
-    "NESTED_MODEL_CLASSES",
     "PathWrapper",
+    "PersonalData",
+    "ResourceCreationMethod",
     "ResourceTypeGeneral",
     "Sink",
-    "split_to_caps",
     "TechnicalAccessibility",
-    "TEMPORAL_ENTITY_CLASSES_BY_PRECISION",
-    "TEMPORAL_ENTITY_FORMATS_BY_PRECISION",
     "TemporalEntity",
     "TemporalEntityPrecision",
     "Text",
     "TextLanguage",
     "Theme",
-    "UTC",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
+    "Year",
     "YearMonth",
     "YearMonthDay",
     "YearMonthDayTime",
+    "split_to_caps",
 )
+
+AnyVocabularyEnum = (
+    AccessRestriction
+    | ActivityType
+    | AnonymizationPseudonymization
+    | APIType
+    | BibliographicResourceType
+    | ConsentStatus
+    | ConsentType
+    | DataProcessingState
+    | Frequency
+    | Language
+    | License
+    | MIMEType
+    | PersonalData
+    | ResourceCreationMethod
+    | ResourceTypeGeneral
+    | TechnicalAccessibility
+    | Theme
+)
+VOCABULARY_ENUMS: Final[list[type[AnyVocabularyEnum]]] = list(
+    get_args(AnyVocabularyEnum)
+)
+VOCABULARY_ENUMS_BY_NAME: Final[dict[str, type[AnyVocabularyEnum]]] = {
+    cls.__name__: cls for cls in VOCABULARY_ENUMS
+}
+
+AnyTemporalEntity = Year | YearMonth | YearMonthDay | YearMonthDayTime
+TEMPORAL_ENTITIES: Final[list[type[AnyTemporalEntity]]] = list(
+    get_args(AnyTemporalEntity)
+)
+TEMPORAL_ENTITIES_BY_NAME: Final[dict[str, type[AnyTemporalEntity]]] = {
+    cls.__name__: cls for cls in TEMPORAL_ENTITIES
+}
 
 AnyNestedModel = Link | Text
 NESTED_MODEL_CLASSES: Final[list[type[AnyNestedModel]]] = list(get_args(AnyNestedModel))
@@ -148,6 +208,8 @@ NESTED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyNestedModel]]] = {
 AnyMergedIdentifier = (
     MergedAccessPlatformIdentifier
     | MergedActivityIdentifier
+    | MergedBibliographicResourceIdentifier
+    | MergedConsentIdentifier
     | MergedContactPointIdentifier
     | MergedDistributionIdentifier
     | MergedOrganizationalUnitIdentifier
@@ -168,6 +230,8 @@ MERGED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedIdentifier]]] =
 AnyExtractedIdentifier = (
     ExtractedAccessPlatformIdentifier
     | ExtractedActivityIdentifier
+    | ExtractedBibliographicResourceIdentifier
+    | ExtractedConsentIdentifier
     | ExtractedContactPointIdentifier
     | ExtractedDistributionIdentifier
     | ExtractedOrganizationalUnitIdentifier

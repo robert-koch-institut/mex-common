@@ -1,39 +1,39 @@
 [project]
 name = "mex-common"
-version = "0.37.0"
+version = "0.43.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
-requires-python = "<3.13,>=3.11"
+requires-python = ">=3.11,<3.13"
 dependencies = [
-    "backoff>=2.2.1,<3",
-    "click>=8.1.7,<9",
-    "langdetect>=1.0.9,<2",
-    "ldap3>=2.9.1,<3",
-    "mex-model@git+https://github.com/robert-koch-institut/mex-model.git@2.5.0",
-    "numpy>=2.0.1,<3",
-    "pandas>=2.2.2,<3",
-    "pyarrow>=17.0.0,<18",
-    "pydantic-settings>=2.4.0,<3",
-    "pydantic>=2.8.2,<3",
-    "pytz>=2024.1,<2024.2",
-    "requests>=2.32.3,<3",
+    "backoff>=2,<3",
+    "click>=8,<9",
+    "langdetect>=1,<2",
+    "ldap3>=2,<3",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.3.2",
+    "numpy>=2,<3",
+    "pandas>=2,<3",
+    "pyarrow>=18,<19",
+    "pydantic-settings>=2,<3",
+    "pydantic>=2,<2.10",
+    "pytz>=2024,<2024.2",
+    "requests>=2,<3",
 ]
 optional-dependencies.dev = [
-    "ipdb>=0.13.13,<1",
-    "pandas-stubs>=2.2.2,<3",
-    "mypy>=1.11.0,<2",
-    "pytest-cov>=5.0.0,<6",
-    "pytest-random-order>=1.1.1,<2",
-    "pytest-xdist>=3.6.1,<4",
-    "pytest>=8.3.1,<9",
-    "ruff>=0.5.4,<1",
-    "sphinx>=8.0.2,<9",
-    "types-ldap3>=2.9.13,<3",
-    "types-pytz>=2024.1.0,<2025",
-    "types-requests>=2.32.0,<3",
+    "ipdb>=0.13,<1",
+    "pandas-stubs>=2,<3",
+    "mypy>=1,<2",
+    "pytest-cov>=6,<7",
+    "pytest-random-order>=1,<2",
+    "pytest-xdist>=3,<4",
+    "pytest>=8,<9",
+    "ruff>=0.8,<1",
+    "sphinx>=8,<9",
+    "types-ldap3>=2,<3",
+    "types-pytz>=2024,<2025",
+    "types-requests>=2,<3",
 ]
 
 [tool.cruft]
@@ -97,48 +97,57 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 ignore = [
-    "D100",   # Allow missing module docstring for brevity
-    "D104",   # Allow missing package docstring for brevity
-    "D106",   # Allow missing nested class docstring (eg pydantic Config)
-    "D203",   # Disallow blank line before class docstring (inverse of D211)
-    "D213",   # Disallow multi-line docstring starting at second line (inverse of D212)
-    "D406",   # Allow section name ending with newline (google style compat)
-    "D407",   # Allow missing dashed underline after section (google style compat)
-    "D413",   # Allow missing blank line after last section (google style compat)
-    "N805",   # Allow first argument of a method to be non-self (pydantic compat)
-    "N815",   # Allow mixedCase variables in class scope (model compat)
-    "RUF012", # Allow mutable class attributes (pydantic compat)
+    "AIR",     # Disable airflow specific rules (we are not using airflow)
+    "ANN",     # Disable all annotations checks (handled by mypy)
+    "COM",     # Disable flake8-commas checks (let ruff format handle that)
+    "CPY",     # Disable copyright notice checks (we have LICENSE files)
+    "D100",    # Allow missing module docstring (for brevity and speed)
+    "D104",    # Allow missing package docstring (for brevity and speed)
+    "D203",    # Disallow blank line before class docstring (inverse of D211)
+    "D213",    # Disallow multi-line docstring starting at second line (inverse of D212)
+    "D406",    # Allow section name ending with newline (google style compat)
+    "D407",    # Allow missing dashed underline after section (google style compat)
+    "D413",    # Allow missing blank line after last section (google style compat)
+    "DJ",      # Disable django specific checks (we are not using django)
+    "FBT",     # Disable boolean type hint checks (for more flexibility)
+    "FIX",     # Allow committing with open TODOs (don't punish committers)
+    "ISC001",  # Disable checks for implicitly concatenated strings (formatter compat)
+    "N805",    # Allow first argument of a method to be non-self (pydantic compat)
+    "N815",    # Allow mixedCase variables in class scope (model compat)
+    "PTH123",  # Allow using builtin open method (simpler than pathlib)
+    "RUF012",  # Allow mutable class attributes (pydantic compat)
+    "SIM108",  # Allow explicit if-else instead of ternary (easier to read)
+    "TD003",   # Allow TODOs without ticket link (don't punish TODO writers)
+    "TRY003",  # Allow long exception message at the raise site (for pydantic)
 ]
-select = [
-    "A",    # Flake8 builtin shaddow
-    "B",    # BugBear bug and issue finder
-    "C90",  # McCabe complexity checker
-    "D",    # Python docstring style checker
-    "E",    # Python code style errors
-    "ERA",  # Commented-out code detector
-    "F",    # Pyflakes passive python checker
-    "I",    # Isort import utility
-    "N",    # Pep8 naming conventions
-    "PERF", # Lint performance anti-patterns
-    "RET",  # Flake8 return statement checker
-    "RUF",  # Ruff-specific rules
-    "S",    # Bandit automated security testing
-    "T10",  # Flake8 debug statement checker
-    "T20",  # Flake8 print statement checker
-    "UP",   # PyUpgrade syntax recommender
-    "W",    # Python code style warnings
-]
+select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = [
-    "D101", # Allow missing docstring in public class for tests
-    "D102", # Allow missing docstring in public method for tests
-    "D103", # Allow missing docstring in public function for tests
-    "D107", # Allow missing docstring in `__init__` for tests
-    "E501", # Allow line too long in tests
-    "N807", # Allow mocking `__init__` for tests
-    "S101", # Allow use of `assert` in tests
+"docs/**" = [
+    "INP001",   # Docs folder does not need to be a package
 ]
+"scripts/**" = [
+    "INP001",   # Scripts folder does not need to be a package
+]
+"tests/**" = [
+    "ARG005",   # Allow unused lambda arguments for mocking
+    "D101",     # Allow missing docstring in public class
+    "D102",     # Allow missing docstring in public method
+    "D103",     # Allow missing docstring in public function
+    "D107",     # Allow missing docstring in `__init__`
+    "E501",     # Allow longer lines with test data
+    "ISC",      # Allow implicitly concatenated strings
+    "N807",     # Allow mocking `__init__`
+    "PLR0915",  # Allow functions with many statements
+    "PLR2004",  # Allow comparing with static values
+    "PT004",    # Allow public fixtures without returns
+    "PT013",    # Allow more flexible pytest imports
+    "S101",     # Allow use of `assert` in tests
+    "SLF",      # Allow private member access
+]
+
+[tool.ruff.lint.flake8-import-conventions.extend-aliases]
+"reflex" = "rx"
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]
@@ -147,5 +156,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend==2.4.1"]
+requires = ["pdm-backend==2.4.3"]
 build-backend = "pdm.backend"

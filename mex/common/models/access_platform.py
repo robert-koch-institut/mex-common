@@ -2,11 +2,12 @@
 
 from typing import Annotated, ClassVar, Literal
 
-from pydantic import Field, computed_field
+from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
+from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
@@ -16,15 +17,16 @@ from mex.common.models.base.rules import (
 from mex.common.types import (
     APIType,
     ExtractedAccessPlatformIdentifier,
+    Identifier,
     Link,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
+    MergedPrimarySourceIdentifier,
     TechnicalAccessibility,
     Text,
 )
-from mex.common.types.identifier import MergedPrimarySourceIdentifier
 
 
 class _Stem(BaseModel):
@@ -36,9 +38,12 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
     contact: list[
-        MergedOrganizationalUnitIdentifier
-        | MergedPersonIdentifier
-        | MergedContactPointIdentifier
+        Annotated[
+            MergedOrganizationalUnitIdentifier
+            | MergedPersonIdentifier
+            | MergedContactPointIdentifier,
+            AfterValidator(Identifier),
+        ]
     ] = []
     description: list[Text] = []
     landingPage: list[Link] = []
@@ -48,39 +53,23 @@ class _OptionalLists(_Stem):
 
 class _OptionalValues(_Stem):
     endpointDescription: Link | None = None
-    endpointType: (
-        Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
-        | None
-    ) = None
+    endpointType: APIType | None = None
     endpointURL: Link | None = None
 
 
 class _RequiredValues(_Stem):
-    technicalAccessibility: Annotated[
-        TechnicalAccessibility,
-        Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
-    ]
+    technicalAccessibility: TechnicalAccessibility
 
 
 class _SparseValues(_Stem):
-    technicalAccessibility: Annotated[
-        TechnicalAccessibility | None,
-        Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
-    ] = None
+    technicalAccessibility: TechnicalAccessibility | None = None
 
 
 class _VariadicValues(_Stem):
-    endpointDescription: list[Link]
-    endpointType: list[
-        Annotated[APIType, Field(examples=["https://mex.rki.de/item/api-type-1"])]
-    ] = []
+    endpointDescription: list[Link] = []
+    endpointType: list[APIType] = []
     endpointURL: list[Link] = []
-    technicalAccessibility: list[
-        Annotated[
-            TechnicalAccessibility,
-            Field(examples=["https://mex.rki.de/item/technical-accessibility-1"]),
-        ]
-    ] = []
+    technicalAccessibility: list[TechnicalAccessibility] = []
 
 
 class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
@@ -97,22 +86,33 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedAccessPlatformIdentifier:
-        """Return the computed identifier for this extracted data item."""
+        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedAccessPlatformIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedAccessPlatformIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted data item."""
+        """Return the computed stableTargetId for this extracted item."""
         return self._get_stable_target_id(MergedAccessPlatformIdentifier)
 
 
 class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
-    """The result of merging all extracted data and rules for an access platform."""
+    """The result of merging all extracted items and rules for an access platform."""
 
     entityType: Annotated[
         Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "MergedAccessPlatform"
+    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+
+
+class PreviewAccessPlatform(
+    _OptionalLists, _OptionalValues, _SparseValues, PreviewItem
+):
+    """Preview for merging all extracted items and rules for an access platform."""
+
+    entityType: Annotated[
+        Literal["PreviewAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "PreviewAccessPlatform"
     identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
 
 
@@ -153,9 +153,9 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
-    additive: AdditiveAccessPlatform
-    subtractive: SubtractiveAccessPlatform
-    preventive: PreventiveAccessPlatform
+    additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
+    subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
+    preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
 
 
 class AccessPlatformRuleSetRequest(_BaseRuleSet):
