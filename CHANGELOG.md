@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated ldap search from name and familyname to one single attribute "displayname"
+
 ### Deprecated
 
 ### Removed
