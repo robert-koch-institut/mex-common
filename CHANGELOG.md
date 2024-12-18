@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: change type of distribution.title to an array of texts
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.45.0] - 2024-12-18
+
+### Changes
+
+- BREAKING: change type of distribution.title to an array of texts
 
 ## [0.44.0] - 2024-12-12
 
