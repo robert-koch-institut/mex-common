@@ -23,6 +23,7 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
+    Text,
     Year,
     YearMonth,
     YearMonthDay,
@@ -41,6 +42,14 @@ class _OptionalLists(_Stem):
     downloadURL: list[Link] = []
 
 
+class _RequiredLists(_Stem):
+    title: Annotated[list[Text], Field(min_length=1)]
+
+
+class _SparseLists(_Stem):
+    title: list[Text] = []
+
+
 class _OptionalValues(_Stem):
     accessService: MergedAccessPlatformIdentifier | None = None
     license: License | None = None
@@ -51,28 +60,11 @@ class _OptionalValues(_Stem):
 class _RequiredValues(_Stem):
     accessRestriction: AccessRestriction
     issued: YearMonthDayTime | YearMonthDay | YearMonth | Year
-    title: Annotated[
-        str,
-        Field(
-            examples=["theNameOfTheFile"],
-            min_length=1,
-        ),
-    ]
 
 
 class _SparseValues(_Stem):
     accessRestriction: AccessRestriction | None = None
     issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
-    title: (
-        Annotated[
-            str,
-            Field(
-                examples=["theNameOfTheFile"],
-                min_length=1,
-            ),
-        ]
-        | None
-    ) = None
 
 
 class _VariadicValues(_Stem):
@@ -82,18 +74,11 @@ class _VariadicValues(_Stem):
     license: list[License] = []
     mediaType: list[MIMEType] = []
     modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
-    title: list[
-        Annotated[
-            str,
-            Field(
-                examples=["theNameOfTheFile"],
-                min_length=1,
-            ),
-        ]
-    ] = []
 
 
-class BaseDistribution(_OptionalLists, _OptionalValues, _RequiredValues):
+class BaseDistribution(
+    _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
+):
     """All fields for a valid distribution except for provenance."""
 
 
@@ -126,7 +111,9 @@ class MergedDistribution(BaseDistribution, MergedItem):
     identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
 
 
-class PreviewDistribution(_OptionalLists, _OptionalValues, _SparseValues, PreviewItem):
+class PreviewDistribution(
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+):
     """Preview for merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[
@@ -136,7 +123,7 @@ class PreviewDistribution(_OptionalLists, _OptionalValues, _SparseValues, Previe
 
 
 class AdditiveDistribution(
-    _OptionalLists, _OptionalValues, _SparseValues, AdditiveRule
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 ):
     """Rule to add values to merged distribution items."""
 
@@ -145,7 +132,9 @@ class AdditiveDistribution(
     ] = "AdditiveDistribution"
 
 
-class SubtractiveDistribution(_OptionalLists, _VariadicValues, SubtractiveRule):
+class SubtractiveDistribution(
+    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
+):
     """Rule to subtract values from merged distribution items."""
 
     entityType: Annotated[
