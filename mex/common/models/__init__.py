@@ -95,7 +95,6 @@ from mex.common.models.activity import (
     SubtractiveActivity,
 )
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.field_info import GenericFieldInfo
 from mex.common.models.base.filter import generate_entity_filter_schema
 from mex.common.models.base.mapping import generate_mapping_schema
 from mex.common.models.base.merged_item import MergedItem
@@ -312,7 +311,6 @@ __all__ = (
     "ExtractedResource",
     "ExtractedVariable",
     "ExtractedVariableGroup",
-    "GenericFieldInfo",
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedBibliographicResource",
