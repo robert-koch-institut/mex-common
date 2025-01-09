@@ -4,7 +4,7 @@ from mex.common.orcid.connector import OrcidConnector
 
 
 @pytest.mark.parametrize(
-    ("familyName", "givenNames", "expected"),
+    ("family_name", "given_names", "expected"),
     [
         (
             "Tran Ngoc",
@@ -78,6 +78,13 @@ from mex.common.orcid.connector import OrcidConnector
                     },
                     {
                         "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0006-9954-421X",
+                            "path": "0009-0006-9954-421X",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
                             "uri": "https://orcid.org/0009-0000-4002-171X",
                             "path": "0009-0000-4002-171X",
                             "host": "orcid.org",
@@ -90,13 +97,6 @@ from mex.common.orcid.connector import OrcidConnector
                             "host": "orcid.org",
                         }
                     },
-                    {
-                        "orcid-identifier": {
-                            "uri": "https://orcid.org/0009-0006-9954-421X",
-                            "path": "0009-0006-9954-421X",
-                            "host": "orcid.org",
-                        }
-                    },
                 ],
                 "num-found": 10,
             },
@@ -105,7 +105,7 @@ from mex.common.orcid.connector import OrcidConnector
     ],
     ids=["existing person", "multiple results", "non-existing person"],
 )
-def test_search_person_by_name(family_name, given_names, expected) -> None:
+def test_fetch_person_by_name(family_name, given_names, expected) -> None:
     orcidapi = OrcidConnector.get()
     filters = {}
     filters["given-names"] = given_names
@@ -114,3 +114,34 @@ def test_search_person_by_name(family_name, given_names, expected) -> None:
     num_found = search_response.get("num-found", 0)
     assert num_found == expected["num-found"]
     assert search_response == expected
+
+
+@pytest.mark.parametrize(
+    ("filters", "expected"),
+    [
+        (
+            {"given-names": "Josiah", "family-name": "Carberry"},
+            "given-names:Josiah AND family-name:Carberry",
+        ),
+        (
+            {"givennames": "Josiah", "familyname": "Carberry"},
+            "givennames:Josiah AND familyname:Carberry",
+        ),
+    ],
+    ids=["valid_query", "non_valid_query"],
+)
+def test_build_query(filters, expected) -> None:
+    orcid_api = OrcidConnector.get()
+    built_query = orcid_api.build_query(filters=filters)
+    assert built_query == expected
+
+
+@pytest.mark.parametrize(
+    ("orcidid", "expected"),
+    [("0000-0002-1825-0097", True), ("1000-0002-1825-0097", False)],
+    ids=["valid_query", "non_valid_query"],
+)
+def test_check_id_exists(orcidid, expected) -> None:
+    orcidapi = OrcidConnector.get()
+    id_exists = orcidapi.check_orcid_id_exists(orcidid)
+    assert id_exists == expected
