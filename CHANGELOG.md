@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- BREAKING: add nested models (Text, Link) to *all* lookups in `mex.common.fields`
+
 ### Changes
+
+- BREAKING: move `GenericFieldInfo` from `models.base.field_info` to `utils`
+- BREAKING: move `get_all_fields` from `BaseModel` to `utils` to support all base models
 
 ### Deprecated
 

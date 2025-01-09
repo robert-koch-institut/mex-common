@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError, computed_field
 
-from mex.common.models import BaseModel, GenericFieldInfo
+from mex.common.models import BaseModel
 
 
 class ComplexDummyModel(BaseModel):
@@ -166,13 +166,6 @@ def test_field_assignment_on_model_with_computed_field() -> None:
 
     # non-computed field works as expected
     computer.ram = 32
-
-
-def test_get_all_fields_on_model_with_computed_field() -> None:
-    assert Computer.get_all_fields() == {
-        "cpus": GenericFieldInfo(alias=None, annotation=int, frozen=True),
-        "ram": GenericFieldInfo(alias=None, annotation=int, frozen=False),
-    }
 
 
 class DummyBaseModel(BaseModel):

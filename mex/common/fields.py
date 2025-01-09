@@ -8,6 +8,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     MERGED_IDENTIFIER_CLASSES,
+    NESTED_MODEL_CLASSES_BY_NAME,
     TEMPORAL_ENTITIES,
     VOCABULARY_ENUMS,
     Email,
@@ -15,13 +16,18 @@ from mex.common.types import (
     LiteralStringType,
     Text,
 )
-from mex.common.utils import contains_only_types, group_fields_by_class_name
+from mex.common.utils import (
+    contains_only_types,
+    get_all_fields,
+    group_fields_by_class_name,
+)
 
 # all models classes
 ALL_MODEL_CLASSES_BY_NAME = {
     **ADDITIVE_MODEL_CLASSES_BY_NAME,
     **EXTRACTED_MODEL_CLASSES_BY_NAME,
     **MERGED_MODEL_CLASSES_BY_NAME,
+    **NESTED_MODEL_CLASSES_BY_NAME,
     **PREVIEW_MODEL_CLASSES_BY_NAME,
     **PREVENTIVE_MODEL_CLASSES_BY_NAME,
     **SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
@@ -92,7 +98,7 @@ MUTABLE_FIELDS_BY_CLASS_NAME = {
     name: sorted(
         {
             field_name
-            for field_name in cls.get_all_fields()
+            for field_name in get_all_fields(cls)
             if field_name
             not in (
                 *FROZEN_FIELDS_BY_CLASS_NAME[name],
@@ -110,7 +116,7 @@ MERGEABLE_FIELDS_BY_CLASS_NAME = {
     name: sorted(
         {
             field_name
-            for field_name in cls.model_fields
+            for field_name in get_all_fields(cls)
             if field_name
             not in (
                 *FROZEN_FIELDS_BY_CLASS_NAME[name],
@@ -126,7 +132,7 @@ FINAL_FIELDS_BY_CLASS_NAME = {
     name: sorted(
         {
             field_name
-            for field_name in cls.get_all_fields()
+            for field_name in get_all_fields(cls)
             if field_name in FROZEN_FIELDS_BY_CLASS_NAME[name]
             and field_name
             not in (
