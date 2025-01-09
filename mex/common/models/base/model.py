@@ -15,10 +15,9 @@ from pydantic import (
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
-from mex.common.models.base.field_info import GenericFieldInfo
 from mex.common.models.base.schema import JsonSchemaGenerator
 from mex.common.transform import MExEncoder
-from mex.common.utils import get_inner_types
+from mex.common.utils import get_all_fields, get_inner_types
 
 
 class BaseModel(PydanticBaseModel):
@@ -34,29 +33,6 @@ class BaseModel(PydanticBaseModel):
         validate_default=True,
         validate_assignment=True,
     )
-
-    @classmethod
-    @cache
-    def get_all_fields(cls) -> dict[str, GenericFieldInfo]:
-        """Return a combined dict of defined and computed fields."""
-        return {
-            **{
-                name: GenericFieldInfo(
-                    alias=info.alias,
-                    annotation=info.annotation,
-                    frozen=bool(info.frozen),
-                )
-                for name, info in cls.model_fields.items()
-            },
-            **{
-                name: GenericFieldInfo(
-                    alias=info.alias,
-                    annotation=info.return_type,
-                    frozen=True,
-                )
-                for name, info in cls.model_computed_fields.items()
-            },
-        }
 
     @classmethod
     def model_json_schema(
@@ -90,7 +66,7 @@ class BaseModel(PydanticBaseModel):
         """Build a cached mapping from field alias to field names."""
         return {
             field_info.alias or field_name: field_name
-            for field_name, field_info in cls.get_all_fields().items()
+            for field_name, field_info in get_all_fields(cls).items()
         }
 
     @classmethod
@@ -98,7 +74,7 @@ class BaseModel(PydanticBaseModel):
     def _get_list_field_names(cls) -> list[str]:
         """Build a cached list of fields that look like lists."""
         field_names = []
-        for field_name, field_info in cls.get_all_fields().items():
+        for field_name, field_info in get_all_fields(cls).items():
             field_types = get_inner_types(field_info.annotation, unpack_list=False)
             if any(
                 isinstance(field_type, type) and issubclass(field_type, list)
@@ -112,7 +88,7 @@ class BaseModel(PydanticBaseModel):
     def _get_field_names_allowing_none(cls) -> list[str]:
         """Build a cached list of fields can be set to None."""
         field_names: list[str] = []
-        for field_name, field_info in cls.get_all_fields().items():
+        for field_name, field_info in get_all_fields(cls).items():
             validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
             try:
                 validator.validate_python(None)
@@ -232,7 +208,7 @@ class BaseModel(PydanticBaseModel):
         if isinstance(data, MutableMapping):
             for name, value in data.items():
                 field_name = cls._get_alias_lookup().get(name, name)
-                if field_name in cls.get_all_fields():
+                if field_name in get_all_fields(cls):
                     data[name] = cls._fix_value_listyness_for_field(field_name, value)
         return handler(data)
 

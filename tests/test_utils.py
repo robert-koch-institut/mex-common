@@ -5,6 +5,7 @@ from types import NoneType
 from typing import Annotated, Any, Literal
 
 import pytest
+from pydantic import computed_field
 from pydantic.fields import FieldInfo
 
 from mex.common.models import BaseModel
@@ -14,9 +15,11 @@ from mex.common.types import (
     MergedPersonIdentifier,
 )
 from mex.common.utils import (
+    GenericFieldInfo,
     any_contains_any,
     contains_any,
     contains_only_types,
+    get_all_fields,
     get_inner_types,
     group_fields_by_class_name,
     grouper,
@@ -124,6 +127,22 @@ def test_get_inner_types(
     annotation: Any, flags: dict[str, bool], expected_types: list[type]
 ) -> None:
     assert list(get_inner_types(annotation, **flags)) == expected_types
+
+
+class Computer(BaseModel):
+    ram: int = 16
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def cpus(self) -> int:
+        return 42
+
+
+def test_get_all_fields_on_model_with_computed_field() -> None:
+    assert get_all_fields(Computer) == {
+        "cpus": GenericFieldInfo(alias=None, annotation=int, frozen=True),
+        "ram": GenericFieldInfo(alias=None, annotation=int, frozen=False),
+    }
 
 
 def test_group_fields_by_class_name() -> None:

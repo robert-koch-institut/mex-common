@@ -180,7 +180,7 @@ def test_get_merged_ids_by_query_string(
 
 def test_get_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons = get_persons_by_name(surname="Sample", given_name="Sam")
+    persons = get_persons_by_name(display_name="Sam Sample")
     persons_list = list(persons)
     expected = {
         "company": "RKI",
@@ -204,7 +204,5 @@ def test_get_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
 
 def test_get_count_of_found_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons_count = get_count_of_found_persons_by_name(
-        surname="Sample", given_name="Sam"
-    )
+    persons_count = get_count_of_found_persons_by_name(display_name="Sam Sample")
     assert persons_count == 1

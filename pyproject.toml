@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "0.43.0"
+version = "0.46.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -12,7 +12,7 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.3.2",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.4.0",
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=18,<19",

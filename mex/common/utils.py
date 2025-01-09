@@ -1,26 +1,25 @@
 import re
 from collections.abc import Callable, Container, Generator, Iterable, Iterator, Mapping
+from dataclasses import dataclass
 from functools import cache
 from itertools import zip_longest
 from random import random
 from time import sleep
 from types import NoneType, UnionType
-from typing import (
-    TYPE_CHECKING,
-    Annotated,
-    Any,
-    Literal,
-    TypeVar,
-    Union,
-    get_args,
-    get_origin,
-)
+from typing import Annotated, Any, Literal, TypeVar, Union, get_args, get_origin
 
-if TYPE_CHECKING:  # pragma: no cover
-    from mex.common.models import GenericFieldInfo
-    from mex.common.models.base.model import BaseModel
+from pydantic import BaseModel
 
 T = TypeVar("T")
+
+
+@dataclass
+class GenericFieldInfo:
+    """Abstraction class for unifying `FieldInfo` and `ComputedFieldInfo` objects."""
+
+    alias: str | None
+    annotation: type[Any] | None
+    frozen: bool
 
 
 def contains_any(base: Container[T], tokens: Iterable[T]) -> bool:
@@ -39,7 +38,7 @@ def any_contains_any(bases: Iterable[Container[T] | None], tokens: Iterable[T]) 
     return False
 
 
-def contains_only_types(field: "GenericFieldInfo", *types: type) -> bool:
+def contains_only_types(field: GenericFieldInfo, *types: type) -> bool:
     """Return whether a `field` is annotated as one of the given `types`.
 
     Unions, lists and type annotations are checked for their inner types and only the
@@ -108,9 +107,32 @@ def get_inner_types(
         yield NoneType
 
 
+@cache
+def get_all_fields(model: BaseModel) -> dict[str, GenericFieldInfo]:
+    """Return a combined dict of defined and computed fields of a given model."""
+    return {
+        **{
+            name: GenericFieldInfo(
+                alias=info.alias,
+                annotation=info.annotation,
+                frozen=bool(info.frozen),
+            )
+            for name, info in model.model_fields.items()
+        },
+        **{
+            name: GenericFieldInfo(
+                alias=info.alias,
+                annotation=info.return_type,
+                frozen=True,
+            )
+            for name, info in model.model_computed_fields.items()
+        },
+    }
+
+
 def group_fields_by_class_name(
-    model_classes_by_name: Mapping[str, type["BaseModel"]],
-    predicate: Callable[["GenericFieldInfo"], bool],
+    model_classes_by_name: Mapping[str, type[BaseModel]],
+    predicate: Callable[[GenericFieldInfo], bool],
 ) -> dict[str, list[str]]:
     """Group the field names by model class and filter them by the given predicate.
 
@@ -125,7 +147,7 @@ def group_fields_by_class_name(
         name: sorted(
             {
                 field_name
-                for field_name, field_info in cls.get_all_fields().items()
+                for field_name, field_info in get_all_fields(cls).items()
                 if predicate(field_info)
             }
         )
