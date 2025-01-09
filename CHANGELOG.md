@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Connector class for retrieving ORCID data by ID or name
+- methods to transform from OcidPerson to mex person
 
 ### Changes
 
