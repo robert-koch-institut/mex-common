@@ -8,22 +8,28 @@ if TYPE_CHECKING:  # pragma: no cover
     from mex.common.models import AnyExtractedModel
 
 
-class GenericRule(BaseModel, extra="forbid"):
+class BaseMappingRule(BaseModel, extra="forbid"):
     """Generic mapping rule model."""
 
-    forValues: list[str] | None = None
-    setValues: list[Any] | None = None
-    rule: str | None = None
+    forValues: Annotated[list[str] | None, Field(title="forValues")] = None
+    setValues: Annotated[list[Any] | None, Field(title="setValues")] = None
+    rule: Annotated[str | None, Field(title="rule")] = None
 
 
-class GenericField(BaseModel, extra="forbid"):
-    """Generic Field model."""
+class BaseMappingField(BaseModel, extra="forbid"):
+    """Generic mapping field model."""
 
-    fieldInPrimarySource: str
-    locationInPrimarySource: str | None = None
-    examplesInPrimarySource: list[str] | None = None
-    mappingRules: Annotated[list[GenericRule], Field(min_length=1)]
-    comment: str | None = None
+    fieldInPrimarySource: Annotated[str, Field(title="fieldInPrimarySource")]
+    locationInPrimarySource: Annotated[
+        str | None, Field(title="locationInPrimarySource")
+    ] = None
+    examplesInPrimarySource: Annotated[
+        list[str] | None, Field(title="examplesInPrimarySource")
+    ] = None
+    mappingRules: Annotated[
+        list[BaseMappingRule], Field(min_length=1, title="mappingRules")
+    ]
+    comment: Annotated[str | None, Field(title="comment")] = None
 
 
 def generate_mapping_schema(
@@ -51,30 +57,39 @@ def generate_mapping_schema(
         else:
             rule_type = list[field_info.annotation]  # type: ignore[name-defined]
 
-        rule_model: type[GenericRule] = create_model(
-            f"{field_name.capitalize()}MappingRule",
-            __base__=(GenericRule,),
+        field_class_name = field_name[0].upper() + field_name[1:]
+
+        rule_model: type[BaseMappingRule] = create_model(
+            f"{field_class_name}MappingRule",
+            __base__=(BaseMappingRule,),
             setValues=(
-                rule_type | None,
+                Annotated[rule_type | None, Field(title="setValues")],
                 None,
             ),
         )
-        rule_model.__doc__ = str(
-            f"Mapping rule schema of field {field_name.capitalize()}."
-        )
+        rule_model.__doc__ = str(f"Mapping rule schema for field {field_name}.")
         # then update the mappingRules type in the field in primary source schema
-        field_model: type[GenericField] = create_model(
-            f"{field_name.capitalize()}FieldsInPrimarySource",
-            __base__=(GenericField,),
-            mappingRules=(list[rule_model], Field(..., min_length=1)),  # type: ignore[valid-type]
+        field_model: type[BaseMappingField] = create_model(
+            f"{field_class_name}MappingField",
+            __base__=(BaseMappingField,),
+            mappingRules=(
+                list[rule_model],  # type: ignore[valid-type]
+                Field(..., min_length=1, title="mappingRules"),
+            ),
         )
         field_model.__doc__ = str(
-            f"Mapping schema for {field_name.capitalize()} fields in primary source."
+            f"Mapping schema for {field_name} fields in primary source."
         )
         if field_info.is_required():
-            fields[field_name] = (list[field_model], ...)  # type: ignore[valid-type]
+            fields[field_name] = (
+                Annotated[list[field_model], Field(title=field_name)],  # type: ignore[valid-type]
+                ...,
+            )
         else:
-            fields[field_name] = (list[field_model], None)  # type: ignore[valid-type]
+            fields[field_name] = (
+                Annotated[list[field_model], Field(title=field_name)],  # type: ignore[valid-type]
+                [],
+            )
     mapping_name = ensure_postfix(extracted_model.stemType, "Mapping")
     mapping_model: type[BaseModel] = create_model(mapping_name, **fields)
     mapping_model.__doc__ = (
@@ -82,3 +97,48 @@ def generate_mapping_schema(
         f"{extracted_model.__name__}."
     )
     return mapping_model
+
+
+def _materialize_mapping_schemas() -> None:
+    import json
+    from pathlib import Path
+    from subprocess import run
+
+    from mex.common.models import MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME
+
+    out_dir = Path.cwd()
+
+    for name, model in MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME.items():
+        with open(
+            out_dir / f"{name}_MappingSchema.json",
+            "w",
+            encoding="utf-8",
+        ) as fh:
+            fh.write(
+                json.dumps(
+                    model.model_json_schema(),
+                    ensure_ascii=False,
+                    indent=4,
+                )
+                + "\n"
+            )
+        print("written", out_dir / f"{name}_MappingSchema.json")  # noqa: T201
+        run(  # noqa: S603
+            [  # noqa: S607
+                "datamodel-codegen",
+                "--input",
+                out_dir / f"{name}_MappingSchema.json",
+                "--input-file-type",
+                "jsonschema",
+                "--output",
+                out_dir / f"{name}.py",
+            ],
+            check=False,
+        )
+        print("written", out_dir / f"{name}.py")  # noqa: T201
+
+        break
+
+
+if __name__ == "__main__":
+    _materialize_mapping_schemas()

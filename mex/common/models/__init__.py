@@ -63,8 +63,8 @@ These private classes are used to compose the public classes like so:
 - TRuleSetRequest: bundle of all three rules for one type used to create new rules
 - TRuleSetResponse: bundle of all three rules for one type including a `stableTargetId`
 
-- ExtractedTEntityFilter: all BaseT fields re-typed as a list of EntityFilter
-- ExtractedTMapping: all BaseT fields re-typed as lists of subclasses of GenericField
+- ExtractedTEntityFilter: all BaseT fields re-typed as a list of entity filters
+- ExtractedTMapping: all BaseT fields re-typed as lists of mapping fields
 
 In addition to the classes themselves, `mex.common.models` also exposes various
 lists of models, lookups by class name and typing for unions of models.
