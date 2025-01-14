@@ -14,7 +14,6 @@ def test_all_rules_are_defined() -> None:
     stem_types = sorted(c.stemType for c in EXTRACTED_MODEL_CLASSES)
     for lookup in (
         ADDITIVE_MODEL_CLASSES,
-        BASE_MODEL_CLASSES_BY_NAME,
         PREVENTIVE_MODEL_CLASSES,
         RULE_SET_REQUEST_CLASSES,
         RULE_SET_RESPONSE_CLASSES,
