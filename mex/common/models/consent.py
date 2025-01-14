@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -143,3 +145,37 @@ class ConsentRuleSetResponse(_BaseRuleSet):
         Literal["ConsentRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "ConsentRuleSetResponse"
     stableTargetId: MergedConsentIdentifier
+
+
+class ConsentMapping(_Stem, BaseMapping):
+    """Mapping for describing a consent transformation."""
+
+    entityType: Annotated[
+        Literal["ConsentMapping"], Field(alias="$type", frozen=True)
+    ] = "ConsentMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    hasConsentStatus: Annotated[list[MappingField[ConsentStatus]], Field(min_length=1)]
+    hasDataSubject: Annotated[
+        list[MappingField[MergedPersonIdentifier]], Field(min_length=1)
+    ]
+    isIndicatedAtTime: Annotated[
+        list[MappingField[YearMonthDayTime]], Field(min_length=1)
+    ]
+    hasConsentType: list[MappingField[ConsentType | None]] = []
+
+
+class ConsentFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for consent items."""
+
+    entityType: Annotated[
+        Literal["ConsentFilter"], Field(alias="$type", frozen=True)
+    ] = "ConsentFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    hasConsentType: list[FilterField] = []
+    hasConsentStatus: list[FilterField] = []
+    hasDataSubject: list[FilterField] = []
+    isIndicatedAtTime: list[FilterField] = []

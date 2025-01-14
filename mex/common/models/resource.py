@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -45,6 +47,7 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 
+ConformsToStr = Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-10"])]
 DoiStr = Annotated[
     str,
     Field(
@@ -66,6 +69,33 @@ LoincIdStr = Annotated[
         json_schema_extra={"format": "uri"},
     ),
 ]
+MeshIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$",
+        examples=["http://id.nlm.nih.gov/mesh/D001604"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+TemporalStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "2022-01 bis 2022-03",
+            "Sommer 2023",
+            "nach 2013",
+            "1998-2008",
+        ]
+    ),
+]
+AnyContactIdentifier = Annotated[
+    MergedOrganizationalUnitIdentifier
+    | MergedPersonIdentifier
+    | MergedContactPointIdentifier,
+    AfterValidator(Identifier),
+]
+MaxTypicalAgeInt = Annotated[int, Field(examples=["99", "21"])]
+MinTypicalAgeInt = Annotated[int, Field(examples=["0", "18"])]
 
 
 class _Stem(BaseModel):
@@ -76,9 +106,7 @@ class _OptionalLists(_Stem):
     accessPlatform: list[MergedAccessPlatformIdentifier] = []
     alternativeTitle: list[Text] = []
     anonymizationPseudonymization: list[AnonymizationPseudonymization] = []
-    conformsTo: list[
-        Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-10"])]
-    ] = []
+    conformsTo: list[ConformsToStr] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     contributor: list[MergedPersonIdentifier] = []
     creator: list[MergedPersonIdentifier] = []
@@ -93,16 +121,7 @@ class _OptionalLists(_Stem):
     keyword: list[Text] = []
     language: list[Language] = []
     loincId: list[LoincIdStr] = []
-    meshId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$",
-                examples=["http://id.nlm.nih.gov/mesh/D001604"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
+    meshId: list[MeshIdStr] = []
     method: list[Text] = []
     methodDescription: list[Text] = []
     populationCoverage: list[Text] = []
@@ -118,17 +137,7 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
-    contact: Annotated[
-        list[
-            Annotated[
-                MergedOrganizationalUnitIdentifier
-                | MergedPersonIdentifier
-                | MergedContactPointIdentifier,
-                AfterValidator(Identifier),
-            ]
-        ],
-        Field(min_length=1),
-    ]
+    contact: Annotated[list[AnyContactIdentifier], Field(min_length=1)]
     theme: Annotated[list[Theme], Field(min_length=1)]
     title: Annotated[list[Text], Field(min_length=1)]
     unitInCharge: Annotated[
@@ -137,14 +146,7 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
-    contact: list[
-        Annotated[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
-            AfterValidator(Identifier),
-        ]
-    ] = []
+    contact: list[AnyContactIdentifier] = []
     theme: list[Theme] = []
     title: list[Text] = []
     unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
@@ -156,27 +158,12 @@ class _OptionalValues(_Stem):
     doi: DoiStr | None = None
     hasPersonalData: PersonalData | None = None
     license: License | None = None
-    maxTypicalAge: Annotated[int, Field(examples=["99", "21"])] | None = None
-    minTypicalAge: Annotated[int, Field(examples=["0", "18"])] | None = None
+    maxTypicalAge: MaxTypicalAgeInt | None = None
+    minTypicalAge: MinTypicalAgeInt | None = None
     modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     sizeOfDataBasis: str | None = None
     temporal: (
-        YearMonthDayTime
-        | YearMonthDay
-        | YearMonth
-        | Year
-        | Annotated[
-            str,
-            Field(
-                examples=[
-                    "2022-01 bis 2022-03",
-                    "Sommer 2023",
-                    "nach 2013",
-                    "1998-2008",
-                ]
-            ),
-        ]
-        | None
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
     ) = None
     wasGeneratedBy: MergedActivityIdentifier | None = None
 
@@ -196,26 +183,12 @@ class _VariadicValues(_Stem):
     doi: list[DoiStr] = []
     hasPersonalData: list[PersonalData] = []
     license: list[License] = []
-    maxTypicalAge: list[Annotated[int, Field(examples=["99", "21"])]] = []
-    minTypicalAge: list[Annotated[int, Field(examples=["0", "18"])]] = []
+    maxTypicalAge: list[MaxTypicalAgeInt] = []
+    minTypicalAge: list[MinTypicalAgeInt] = []
     modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     sizeOfDataBasis: list[str] = []
     temporal: list[
-        YearMonthDayTime
-        | YearMonthDay
-        | YearMonth
-        | Year
-        | Annotated[
-            str,
-            Field(
-                examples=[
-                    "2022-01 bis 2022-03",
-                    "Sommer 2023",
-                    "nach 2013",
-                    "1998-2008",
-                ]
-            ),
-        ]
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr
     ] = []
     wasGeneratedBy: list[MergedActivityIdentifier] = []
 
@@ -360,3 +333,137 @@ class ResourceRuleSetResponse(_BaseRuleSet):
         Literal["ResourceRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "ResourceRuleSetResponse"
     stableTargetId: MergedResourceIdentifier
+
+
+class ResourceMapping(_Stem, BaseMapping):
+    """Mapping for describing a resource transformation."""
+
+    entityType: Annotated[
+        Literal["ResourceMapping"], Field(alias="$type", frozen=True)
+    ] = "ResourceMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    accessRestriction: Annotated[
+        list[MappingField[AccessRestriction]], Field(min_length=1)
+    ]
+    accrualPeriodicity: list[MappingField[Frequency | None]] = []
+    created: list[
+        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
+    ] = []
+    doi: list[MappingField[DoiStr | None]] = []
+    hasPersonalData: list[MappingField[PersonalData | None]] = []
+    license: list[MappingField[License | None]] = []
+    maxTypicalAge: list[MappingField[MaxTypicalAgeInt | None]] = []
+    minTypicalAge: list[MappingField[MinTypicalAgeInt | None]] = []
+    modified: list[
+        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
+    ] = []
+    sizeOfDataBasis: list[MappingField[str | None]] = []
+    temporal: list[
+        MappingField[
+            YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
+        ]
+    ] = []
+    wasGeneratedBy: list[MappingField[MergedActivityIdentifier | None]] = []
+    contact: Annotated[
+        list[MappingField[list[AnyContactIdentifier]]],
+        Field(min_length=1),
+    ]
+    theme: Annotated[list[MappingField[list[Theme]]], Field(min_length=1)]
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    unitInCharge: Annotated[
+        list[MappingField[list[MergedOrganizationalUnitIdentifier]]],
+        Field(min_length=1),
+    ]
+    accessPlatform: list[MappingField[list[MergedAccessPlatformIdentifier]]] = []
+    alternativeTitle: list[MappingField[list[Text]]] = []
+    anonymizationPseudonymization: list[
+        MappingField[list[AnonymizationPseudonymization]]
+    ] = []
+    conformsTo: list[MappingField[list[ConformsToStr]]] = []
+    contributingUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    contributor: list[MappingField[list[MergedPersonIdentifier]]] = []
+    creator: list[MappingField[list[MergedPersonIdentifier]]] = []
+    description: list[MappingField[list[Text]]] = []
+    distribution: list[MappingField[list[MergedDistributionIdentifier]]] = []
+    documentation: list[MappingField[list[Link]]] = []
+    externalPartner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    hasLegalBasis: list[MappingField[list[Text]]] = []
+    icd10code: list[MappingField[list[str]]] = []
+    instrumentToolOrApparatus: list[MappingField[list[Text]]] = []
+    isPartOf: list[MappingField[list[MergedResourceIdentifier]]] = []
+    keyword: list[MappingField[list[Text]]] = []
+    language: list[MappingField[list[Language]]] = []
+    loincId: list[MappingField[list[LoincIdStr]]] = []
+    meshId: list[MappingField[list[MeshIdStr]]] = []
+    method: list[MappingField[list[Text]]] = []
+    methodDescription: list[MappingField[list[Text]]] = []
+    populationCoverage: list[MappingField[list[Text]]] = []
+    publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
+    publisher: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    qualityInformation: list[MappingField[list[Text]]] = []
+    resourceCreationMethod: list[MappingField[list[ResourceCreationMethod]]] = []
+    resourceTypeGeneral: list[MappingField[list[ResourceTypeGeneral]]] = []
+    resourceTypeSpecific: list[MappingField[list[Text]]] = []
+    rights: list[MappingField[list[Text]]] = []
+    spatial: list[MappingField[list[Text]]] = []
+    stateOfDataProcessing: list[MappingField[list[DataProcessingState]]] = []
+
+
+class ResourceFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for resource items."""
+
+    entityType: Annotated[
+        Literal["ResourceFilter"], Field(alias="$type", frozen=True)
+    ] = "ResourceFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    accessPlatform: list[FilterField] = []
+    accessRestriction: list[FilterField] = []
+    accrualPeriodicity: list[FilterField] = []
+    alternativeTitle: list[FilterField] = []
+    anonymizationPseudonymization: list[FilterField] = []
+    conformsTo: list[FilterField] = []
+    contact: list[FilterField] = []
+    contributingUnit: list[FilterField] = []
+    contributor: list[FilterField] = []
+    created: list[FilterField] = []
+    doi: list[FilterField] = []
+    creator: list[FilterField] = []
+    description: list[FilterField] = []
+    distribution: list[FilterField] = []
+    documentation: list[FilterField] = []
+    externalPartner: list[FilterField] = []
+    hasLegalBasis: list[FilterField] = []
+    hasPersonalData: list[FilterField] = []
+    icd10code: list[FilterField] = []
+    instrumentToolOrApparatus: list[FilterField] = []
+    isPartOf: list[FilterField] = []
+    keyword: list[FilterField] = []
+    language: list[FilterField] = []
+    license: list[FilterField] = []
+    loincId: list[FilterField] = []
+    maxTypicalAge: list[FilterField] = []
+    meshId: list[FilterField] = []
+    method: list[FilterField] = []
+    methodDescription: list[FilterField] = []
+    minTypicalAge: list[FilterField] = []
+    modified: list[FilterField] = []
+    populationCoverage: list[FilterField] = []
+    publication: list[FilterField] = []
+    publisher: list[FilterField] = []
+    qualityInformation: list[FilterField] = []
+    resourceCreationMethod: list[FilterField] = []
+    resourceTypeGeneral: list[FilterField] = []
+    resourceTypeSpecific: list[FilterField] = []
+    rights: list[FilterField] = []
+    sizeOfDataBasis: list[FilterField] = []
+    spatial: list[FilterField] = []
+    stateOfDataProcessing: list[FilterField] = []
+    temporal: list[FilterField] = []
+    theme: list[FilterField] = []
+    title: list[FilterField] = []
+    unitInCharge: list[FilterField] = []
+    wasGeneratedBy: list[FilterField] = []

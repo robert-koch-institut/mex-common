@@ -8,6 +8,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -36,6 +38,17 @@ from mex.common.types import (
     YearMonthDay,
 )
 
+AnyExternalAssociateIdentifier = Annotated[
+    MergedOrganizationIdentifier | MergedPersonIdentifier,
+    AfterValidator(Identifier),
+]
+AnyContactIdentifier = Annotated[
+    MergedOrganizationalUnitIdentifier
+    | MergedPersonIdentifier
+    | MergedContactPointIdentifier,
+    AfterValidator(Identifier),
+]
+
 
 class _Stem(BaseModel):
     stemType: ClassVar[Annotated[Literal["Activity"], Field(frozen=True)]] = "Activity"
@@ -47,12 +60,7 @@ class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
     documentation: list[Link] = []
     end: list[YearMonthDay | YearMonth | Year] = []
-    externalAssociate: list[
-        Annotated[
-            MergedOrganizationIdentifier | MergedPersonIdentifier,
-            AfterValidator(Identifier),
-        ]
-    ] = []
+    externalAssociate: list[AnyExternalAssociateIdentifier] = []
     funderOrCommissioner: list[MergedOrganizationIdentifier] = []
     fundingProgram: list[str] = []
     involvedPerson: list[MergedPersonIdentifier] = []
@@ -67,17 +75,7 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
-    contact: Annotated[
-        list[
-            Annotated[
-                MergedOrganizationalUnitIdentifier
-                | MergedPersonIdentifier
-                | MergedContactPointIdentifier,
-                AfterValidator(Identifier),
-            ]
-        ],
-        Field(min_length=1),
-    ]
+    contact: Annotated[list[AnyContactIdentifier], Field(min_length=1)]
     responsibleUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
     ]
@@ -85,14 +83,7 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
-    contact: list[
-        Annotated[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
-            AfterValidator(Identifier),
-        ]
-    ] = []
+    contact: list[AnyContactIdentifier] = []
     responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
     title: list[Text] = []
 
@@ -204,3 +195,70 @@ class ActivityRuleSetResponse(_BaseRuleSet):
         Literal["ActivityRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "ActivityRuleSetResponse"
     stableTargetId: MergedActivityIdentifier
+
+
+class ActivityMapping(_Stem, BaseMapping):
+    """Mapping for describing a activity transformation."""
+
+    entityType: Annotated[
+        Literal["ActivityMapping"], Field(alias="$type", frozen=True)
+    ] = "ActivityMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    contact: Annotated[
+        list[MappingField[list[AnyContactIdentifier]]], Field(min_length=1)
+    ]
+    responsibleUnit: Annotated[
+        list[MappingField[list[MergedOrganizationalUnitIdentifier]]],
+        Field(min_length=1),
+    ]
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    abstract: list[MappingField[list[Text]]] = []
+    activityType: list[MappingField[list[ActivityType]]] = []
+    alternativeTitle: list[MappingField[list[Text]]] = []
+    documentation: list[MappingField[list[Link]]] = []
+    end: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
+    externalAssociate: list[MappingField[list[AnyExternalAssociateIdentifier]]] = []
+    funderOrCommissioner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    fundingProgram: list[MappingField[list[str]]] = []
+    involvedPerson: list[MappingField[list[MergedPersonIdentifier]]] = []
+    involvedUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    isPartOfActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
+    publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
+    shortName: list[MappingField[list[Text]]] = []
+    start: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
+    succeeds: list[MappingField[list[MergedActivityIdentifier]]] = []
+    theme: list[MappingField[list[Theme]]] = []
+    website: list[MappingField[list[Link]]] = []
+
+
+class ActivityFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for activity items."""
+
+    entityType: Annotated[
+        Literal["ActivityFilter"], Field(alias="$type", frozen=True)
+    ] = "ActivityFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    abstract: list[FilterField] = []
+    activityType: list[FilterField] = []
+    alternativeTitle: list[FilterField] = []
+    contact: list[FilterField] = []
+    documentation: list[FilterField] = []
+    end: list[FilterField] = []
+    externalAssociate: list[FilterField] = []
+    funderOrCommissioner: list[FilterField] = []
+    fundingProgram: list[FilterField] = []
+    involvedPerson: list[FilterField] = []
+    involvedUnit: list[FilterField] = []
+    isPartOfActivity: list[FilterField] = []
+    publication: list[FilterField] = []
+    responsibleUnit: list[FilterField] = []
+    shortName: list[FilterField] = []
+    start: list[FilterField] = []
+    succeeds: list[FilterField] = []
+    theme: list[FilterField] = []
+    title: list[FilterField] = []
+    website: list[FilterField] = []

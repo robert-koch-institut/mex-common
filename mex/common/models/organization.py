@@ -8,6 +8,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -24,6 +26,55 @@ from mex.common.types import (
     Text,
 )
 
+GeprisIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$",
+        examples=["https://gepris.dfg.de/gepris/institution/10179"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+GndIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://d\-nb\.info/gnd/[-X0-9]{3,10}$",
+        examples=["https://d-nb.info/gnd/17690-4"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+IsniIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
+        examples=["https://isni.org/isni/0000000109403744"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+RorIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://ror\.org/[a-z0-9]{9}$",
+        examples=["https://ror.org/01k5qnb77"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+ViafIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://viaf\.org/viaf/[0-9]{2,22}$",
+        examples=["https://viaf.org/viaf/123556639"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+WikidataIdStr = Annotated[
+    str,
+    Field(
+        examples=["http://www.wikidata.org/entity/Q679041"],
+        pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
+        json_schema_extra={"format": "uri"},
+    ),
+]
+
 
 class _Stem(BaseModel):
     stemType: ClassVar[Annotated[Literal["Organization"], Field(frozen=True)]] = (
@@ -33,67 +84,13 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     alternativeName: list[Text] = []
-    geprisId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$",
-                examples=["https://gepris.dfg.de/gepris/institution/10179"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
-    gndId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://d\-nb\.info/gnd/[-X0-9]{3,10}$",
-                examples=["https://d-nb.info/gnd/17690-4"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
-    isniId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
-                examples=["https://isni.org/isni/0000000109403744"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
-    rorId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://ror\.org/[a-z0-9]{9}$",
-                examples=["https://ror.org/01k5qnb77"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
+    geprisId: list[GeprisIdStr] = []
+    gndId: list[GndIdStr] = []
+    isniId: list[IsniIdStr] = []
+    rorId: list[RorIdStr] = []
     shortName: list[Text] = []
-    viafId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://viaf\.org/viaf/[0-9]{2,22}$",
-                examples=["https://viaf.org/viaf/123556639"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
-    wikidataId: list[
-        Annotated[
-            str,
-            Field(
-                examples=["http://www.wikidata.org/entity/Q679041"],
-                pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
+    viafId: list[ViafIdStr] = []
+    wikidataId: list[WikidataIdStr] = []
 
 
 class _RequiredLists(_Stem):
@@ -200,3 +197,43 @@ class OrganizationRuleSetResponse(_BaseRuleSet):
         Literal["OrganizationRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "OrganizationRuleSetResponse"
     stableTargetId: MergedOrganizationIdentifier
+
+
+class OrganizationMapping(_Stem, BaseMapping):
+    """Mapping for describing a organization transformation."""
+
+    entityType: Annotated[
+        Literal["OrganizationMapping"], Field(alias="$type", frozen=True)
+    ] = "OrganizationMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    officialName: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    alternativeName: list[MappingField[list[Text]]] = []
+    geprisId: list[MappingField[list[GeprisIdStr]]] = []
+    gndId: list[MappingField[list[GndIdStr]]] = []
+    isniId: list[MappingField[list[IsniIdStr]]] = []
+    rorId: list[MappingField[list[RorIdStr]]] = []
+    shortName: list[MappingField[list[Text]]] = []
+    viafId: list[MappingField[list[ViafIdStr]]] = []
+    wikidataId: list[MappingField[list[WikidataIdStr]]] = []
+
+
+class OrganizationFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for organization items."""
+
+    entityType: Annotated[
+        Literal["OrganizationFilter"], Field(alias="$type", frozen=True)
+    ] = "OrganizationFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    alternativeName: list[FilterField] = []
+    geprisId: list[FilterField] = []
+    gndId: list[FilterField] = []
+    isniId: list[FilterField] = []
+    officialName: list[FilterField] = []
+    rorId: list[FilterField] = []
+    shortName: list[FilterField] = []
+    viafId: list[FilterField] = []
+    wikidataId: list[FilterField] = []

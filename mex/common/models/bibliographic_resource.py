@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -75,6 +77,7 @@ IsbnIssnStr = Annotated[
         ],
     ),
 ]
+PagesStr = Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
 PublicationPlaceStr = Annotated[
     str,
     Field(
@@ -153,10 +156,7 @@ class _OptionalValues(_Stem):
     issue: VolumeOrIssueStr | None = None
     issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
     license: License | None = None
-    pages: (
-        Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
-        | None
-    ) = None
+    pages: PagesStr | None = None
     publicationPlace: PublicationPlaceStr | None = None
     publicationYear: Year | None = None
     repositoryURL: Link | None = None
@@ -180,9 +180,7 @@ class _VariadicValues(_Stem):
     issue: list[VolumeOrIssueStr] = []
     issued: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
     license: list[License] = []
-    pages: list[
-        Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
-    ] = []
+    pages: list[PagesStr] = []
     publicationPlace: list[PublicationPlaceStr] = []
     publicationYear: list[Year] = []
     repositoryURL: list[Link] = []
@@ -319,3 +317,93 @@ class BibliographicResourceRuleSetResponse(_BaseRuleSet):
         Field(alias="$type", frozen=True),
     ] = "BibliographicResourceRuleSetResponse"
     stableTargetId: MergedBibliographicResourceIdentifier
+
+
+class BibliographicResourceMapping(_Stem, BaseMapping):
+    """Mapping for describing a bibliographic resource transformation."""
+
+    entityType: Annotated[
+        Literal["BibliographicResourceMapping"], Field(alias="$type", frozen=True)
+    ] = "BibliographicResourceMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    accessRestriction: Annotated[
+        list[MappingField[AccessRestriction]], Field(min_length=1)
+    ]
+    doi: list[MappingField[DoiStr | None]] = []
+    edition: list[MappingField[EditionStr | None]] = []
+    issue: list[MappingField[VolumeOrIssueStr | None]] = []
+    issued: list[
+        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
+    ] = []
+    license: list[MappingField[License | None]] = []
+    pages: list[MappingField[PagesStr | None]] = []
+    publicationPlace: list[MappingField[PublicationPlaceStr | None]] = []
+    publicationYear: list[MappingField[Year | None]] = []
+    repositoryURL: list[MappingField[Link | None]] = []
+    section: list[MappingField[SectionStr | None]] = []
+    volume: list[MappingField[VolumeOrIssueStr | None]] = []
+    volumeOfSeries: list[MappingField[VolumeOrIssueStr | None]] = []
+    creator: Annotated[
+        list[MappingField[list[MergedPersonIdentifier]]], Field(min_length=1)
+    ]
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    abstract: list[MappingField[list[Text]]] = []
+    alternateIdentifier: list[MappingField[list[str]]] = []
+    alternativeTitle: list[MappingField[list[Text]]] = []
+    bibliographicResourceType: list[MappingField[list[BibliographicResourceType]]] = []
+    contributingUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    distribution: list[MappingField[list[MergedDistributionIdentifier]]] = []
+    editor: list[MappingField[list[MergedPersonIdentifier]]] = []
+    editorOfSeries: list[MappingField[list[MergedPersonIdentifier]]] = []
+    isbnIssn: list[MappingField[list[IsbnIssnStr]]] = []
+    journal: list[MappingField[list[Text]]] = []
+    keyword: list[MappingField[list[Text]]] = []
+    language: list[MappingField[list[Language]]] = []
+    publisher: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    subtitle: list[MappingField[list[Text]]] = []
+    titleOfBook: list[MappingField[list[Text]]] = []
+    titleOfSeries: list[MappingField[list[Text]]] = []
+
+
+class BibliographicResourceFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for bibliographic resource items."""
+
+    entityType: Annotated[
+        Literal["BibliographicResourceFilter"], Field(alias="$type", frozen=True)
+    ] = "BibliographicResourceFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    abstract: list[FilterField] = []
+    accessRestriction: list[FilterField] = []
+    alternateIdentifier: list[FilterField] = []
+    alternativeTitle: list[FilterField] = []
+    bibliographicResourceType: list[FilterField] = []
+    contributingUnit: list[FilterField] = []
+    creator: list[FilterField] = []
+    distribution: list[FilterField] = []
+    doi: list[FilterField] = []
+    edition: list[FilterField] = []
+    editor: list[FilterField] = []
+    editorOfSeries: list[FilterField] = []
+    isbnIssn: list[FilterField] = []
+    issue: list[FilterField] = []
+    issued: list[FilterField] = []
+    journal: list[FilterField] = []
+    keyword: list[FilterField] = []
+    language: list[FilterField] = []
+    license: list[FilterField] = []
+    pages: list[FilterField] = []
+    publicationPlace: list[FilterField] = []
+    publicationYear: list[FilterField] = []
+    publisher: list[FilterField] = []
+    repositoryURL: list[FilterField] = []
+    section: list[FilterField] = []
+    subtitle: list[FilterField] = []
+    title: list[FilterField] = []
+    titleOfBook: list[FilterField] = []
+    titleOfSeries: list[FilterField] = []
+    volume: list[FilterField] = []
+    volumeOfSeries: list[FilterField] = []

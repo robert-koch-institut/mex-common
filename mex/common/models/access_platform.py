@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -28,6 +30,13 @@ from mex.common.types import (
     Text,
 )
 
+AnyContactIdentifier = Annotated[
+    MergedOrganizationalUnitIdentifier
+    | MergedPersonIdentifier
+    | MergedContactPointIdentifier,
+    AfterValidator(Identifier),
+]
+
 
 class _Stem(BaseModel):
     stemType: ClassVar[Annotated[Literal["AccessPlatform"], Field(frozen=True)]] = (
@@ -37,14 +46,7 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
-    contact: list[
-        Annotated[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
-            AfterValidator(Identifier),
-        ]
-    ] = []
+    contact: list[AnyContactIdentifier] = []
     description: list[Text] = []
     landingPage: list[Link] = []
     title: list[Text] = []
@@ -173,3 +175,47 @@ class AccessPlatformRuleSetResponse(_BaseRuleSet):
         Literal["AccessPlatformRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformRuleSetResponse"
     stableTargetId: MergedAccessPlatformIdentifier
+
+
+class AccessPlatformMapping(_Stem, BaseMapping):
+    """Mapping for describing an access platform transformation."""
+
+    entityType: Annotated[
+        Literal["AccessPlatformMapping"], Field(alias="$type", frozen=True)
+    ] = "AccessPlatformMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    technicalAccessibility: Annotated[
+        list[MappingField[TechnicalAccessibility]], Field(min_length=1)
+    ]
+    endpointDescription: list[MappingField[Link | None]] = []
+    endpointType: list[MappingField[APIType | None]] = []
+    endpointURL: list[MappingField[Link | None]] = []
+    alternativeTitle: list[MappingField[list[Text]]] = []
+    contact: list[MappingField[list[AnyContactIdentifier]]] = []
+    description: list[MappingField[list[Text]]] = []
+    landingPage: list[MappingField[list[Link]]] = []
+    title: list[MappingField[list[Text]]] = []
+    unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+
+
+class AccessPlatformFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for access platform items."""
+
+    entityType: Annotated[
+        Literal["AccessPlatformFilter"], Field(alias="$type", frozen=True)
+    ] = "AccessPlatformFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    alternativeTitle: list[FilterField] = []
+    contact: list[FilterField] = []
+    description: list[FilterField] = []
+    endpointDescription: list[FilterField] = []
+    endpointType: list[FilterField] = []
+    endpointURL: list[FilterField] = []
+    landingPage: list[FilterField] = []
+    technicalAccessibility: list[FilterField] = []
+    title: list[FilterField] = []
+    unitInCharge: list[FilterField] = []
