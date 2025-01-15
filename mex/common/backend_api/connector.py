@@ -1,3 +1,4 @@
+from typing import ClassVar
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -22,9 +23,9 @@ from mex.common.settings import BaseSettings
 
 
 class BackendApiConnector(HTTPConnector):
-    """Connector class to handle interaction with the Backend API."""
+    """Connector class to handle interaction with the backend HTTP API."""
 
-    API_VERSION = "v0"
+    API_VERSION: ClassVar[str] = "v0"
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the API is available."""
@@ -207,7 +208,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             One page of preview items and the total count that was matched
         """
-        # Note: this is forward-compat for MX-1649, backend might not support this yet!
         response = self.request(
             method="GET",
             endpoint="preview-item",

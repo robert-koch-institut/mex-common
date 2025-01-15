@@ -2,6 +2,7 @@ from typing import Annotated
 
 from pydantic import Field, TypeAdapter
 
+from mex.common.identity.models import Identity
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
@@ -37,6 +38,12 @@ class PreviewItemsResponse(BaseModel):
 
     items: list[AnyPreviewModel]
     total: int
+
+
+class IdentitiesResponse(BaseModel):
+    """Response models for a list of identities."""
+
+    items: list[Identity]
 
 
 class IdentifiersResponse(BaseModel):

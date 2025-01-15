@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add backend identity provider implementation
+- allow backend and graph as identity provider setting
+
 ### Changes
 
 ### Deprecated

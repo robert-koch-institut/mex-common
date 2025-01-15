@@ -1,7 +1,7 @@
 import json
 from abc import abstractmethod
 from collections.abc import Mapping
-from typing import Any, Literal, cast
+from typing import Any, ClassVar, Literal, cast
 
 import backoff
 import requests
@@ -15,7 +15,7 @@ from mex.common.transform import MExEncoder
 class HTTPConnector(BaseConnector):
     """Base class for requests-based HTTP connectors."""
 
-    TIMEOUT = 10
+    TIMEOUT: ClassVar[int] = 10
 
     url: str = ""
 
