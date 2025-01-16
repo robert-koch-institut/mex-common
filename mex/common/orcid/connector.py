@@ -35,3 +35,18 @@ class OrcidConnector(HTTPConnector):
         """Perform a search query against the ORCID API."""
         query = OrcidConnector.build_query(filters)
         return self.request(method="GET", endpoint="search", params={"q": query})
+
+
+def get_data_by_id(orcid_id: str) -> dict[str, Any]:
+    """Retrieve data by UNIQUE ORCID ID.
+
+    Args:
+        orcid_id: Uniqe identifier in ORCID system.
+
+    Returns:
+        Personal data of the single matching id.
+    """
+    orcidapi = OrcidConnector.get()
+    # or endpoint = f"{orcid_id}/person"
+    endpoint = f"{orcid_id}/record"
+    return dict(orcidapi.request(method="GET", endpoint=endpoint))

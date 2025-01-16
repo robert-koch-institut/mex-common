@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remodeled OrcidPerson in `persony.py`
 - using `OrdicPerson`'s orcidid.uri for transformation instead stitiching it together
 - fetch method in OrcidConnector accepts directly filters + passes query als param to search-endpoint
--
+- moved `get_data_by_id` from extract to connector
 ### Deprecated
 
 ### Removed

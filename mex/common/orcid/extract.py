@@ -1,24 +1,9 @@
 from typing import Any
 
 from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
-from mex.common.orcid.connector import OrcidConnector
+from mex.common.orcid.connector import OrcidConnector, get_data_by_id
 from mex.common.orcid.models.person import OrcidRecord
 from mex.common.orcid.transform import map_orcid_data_to_orcid_record
-
-
-def get_data_by_id(orcid_id: str) -> dict[str, Any]:
-    """Retrieve data by UNIQUE ORCID ID.
-
-    Args:
-        orcid_id: Uniqe identifier in ORCID system.
-
-    Returns:
-        Personal data of the single matching id.
-    """
-    orcidapi = OrcidConnector.get()
-    # or endpoint = f"{orcid_id}/person"
-    endpoint = f"{orcid_id}/record"
-    return dict(orcidapi.request(method="GET", endpoint=endpoint))
 
 
 def get_data_by_name(

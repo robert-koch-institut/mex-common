@@ -2,8 +2,8 @@ import pytest
 from requests import HTTPError
 
 from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
+from mex.common.orcid.connector import get_data_by_id
 from mex.common.orcid.extract import (
-    get_data_by_id,
     get_data_by_name,
     get_orcid_record_by_id,
     get_orcid_record_by_name,
