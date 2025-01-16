@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: convert post_to_backend_api to BackendApiSink
 - BREAKING: convert write_ndjson to NdjsonSink
 - backend and ndjson sinks log progress only in batches
+- increase timeout and decrease chunk size for backend API sink
 
 ### Deprecated
 

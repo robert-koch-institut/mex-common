@@ -12,7 +12,8 @@ from mex.common.utils import grouper
 class BackendApiSink(BaseSink, BackendApiConnector):
     """Sink to load models to the Backend API."""
 
-    CHUNK_SIZE = 100
+    CHUNK_SIZE = 50
+    TIMEOUT = 30
 
     def load(
         self,
