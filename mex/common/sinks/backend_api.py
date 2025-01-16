@@ -32,4 +32,4 @@ class BackendApiSink(BaseSink, BackendApiConnector):
             response = self.post_extracted_items(model_list)
             total_count += len(model_list)
             yield from cast(list[AnyExtractedIdentifier], response.identifiers)
-            logger.info("NdJsonSink - written %s models", total_count)
+            logger.info("BackendApiSink - written %s models", total_count)
