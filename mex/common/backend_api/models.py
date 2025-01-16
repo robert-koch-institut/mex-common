@@ -1,49 +1,24 @@
-from typing import Annotated
+from typing import Annotated, Generic, TypeVar
 
 from pydantic import Field, TypeAdapter
 
-from mex.common.identity.models import Identity
-from mex.common.models import (
-    AnyExtractedModel,
-    AnyMergedModel,
-    AnyPreviewModel,
-    AnyRuleSetResponse,
-    BaseModel,
-)
+from mex.common.models import AnyMergedModel, AnyRuleSetResponse, BaseModel
 from mex.common.types import Identifier
 
-
-class ExtractedItemsRequest(BaseModel):
-    """Request model for a list of extracted items."""
-
-    items: list[AnyExtractedModel]
+T = TypeVar("T")
 
 
-class ExtractedItemsResponse(BaseModel):
-    """Response model for a list of extracted items including a total count."""
+class ItemsContainer(BaseModel, Generic[T]):
+    """Generic container that contains items."""
 
-    items: list[AnyExtractedModel]
+    items: list[T]
+
+
+class PaginatedItemsContainer(BaseModel, Generic[T]):
+    """Generic container that contains items and has a total item count."""
+
+    items: list[T]
     total: int
-
-
-class MergedItemsResponse(BaseModel):
-    """Response model for a list of merged items including a total count."""
-
-    items: list[AnyMergedModel]
-    total: int
-
-
-class PreviewItemsResponse(BaseModel):
-    """Response model for a list of preview items including a total count."""
-
-    items: list[AnyPreviewModel]
-    total: int
-
-
-class IdentitiesResponse(BaseModel):
-    """Response models for a list of identities."""
-
-    items: list[Identity]
 
 
 class IdentifiersResponse(BaseModel):

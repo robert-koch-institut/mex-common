@@ -1,7 +1,7 @@
 from functools import cache
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import IdentitiesResponse
+from mex.common.backend_api.models import ItemsContainer
 from mex.common.identity.base import BaseProvider
 from mex.common.identity.models import Identity
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
@@ -51,4 +51,4 @@ class BackendApiIdentityProvider(BaseProvider, BackendApiConnector):
                 ]
             },
         )
-        return IdentitiesResponse.model_validate(response).items
+        return ItemsContainer[Identity].model_validate(response).items

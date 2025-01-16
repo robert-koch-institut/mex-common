@@ -1,14 +1,16 @@
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from mex.common.sinks.backend_api import BackendApiSink
-from mex.common.sinks.base import BaseSink
-from mex.common.sinks.ndjson import NdJsonSink
+from mex.common.sinks.ndjson import NdjsonSink
 from mex.common.types import Sink
 
-_SINK_REGISTRY: Final[dict[Sink, type[BaseSink]]] = {}
+if TYPE_CHECKING:
+    from mex.common.sinks.base import BaseSink
+
+_SINK_REGISTRY: Final[dict[Sink, type["BaseSink"]]] = {}
 
 
-def register_sink(key: Sink, sink_cls: type[BaseSink]) -> None:
+def register_sink(key: Sink, sink_cls: type["BaseSink"]) -> None:
     """Register an implementation of a sink function to a settings key.
 
     Args:
@@ -24,7 +26,7 @@ def register_sink(key: Sink, sink_cls: type[BaseSink]) -> None:
     _SINK_REGISTRY[key] = sink_cls
 
 
-def get_sink() -> BaseSink:
+def get_sink() -> "BaseSink":
     """Get a sink function that serves all configured `sink` destinations.
 
     Raises:
@@ -41,4 +43,4 @@ def get_sink() -> BaseSink:
 
 # register the default providers shipped with mex-common
 register_sink(Sink.BACKEND, BackendApiSink)
-register_sink(Sink.NDJSON, NdJsonSink)
+register_sink(Sink.NDJSON, NdjsonSink)

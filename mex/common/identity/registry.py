@@ -1,14 +1,18 @@
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from mex.common.identity.backend_api import BackendApiIdentityProvider
-from mex.common.identity.base import BaseProvider
 from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.types import IdentityProvider
 
-_PROVIDER_REGISTRY: Final[dict[IdentityProvider, type[BaseProvider]]] = {}
+if TYPE_CHECKING:
+    from mex.common.identity.base import BaseProvider
+
+_PROVIDER_REGISTRY: Final[dict[IdentityProvider, type["BaseProvider"]]] = {}
 
 
-def register_provider(key: IdentityProvider, provider_cls: type[BaseProvider]) -> None:
+def register_provider(
+    key: IdentityProvider, provider_cls: type["BaseProvider"]
+) -> None:
     """Register an implementation of an identity provider to a settings key.
 
     Args:
@@ -24,7 +28,7 @@ def register_provider(key: IdentityProvider, provider_cls: type[BaseProvider]) -
     _PROVIDER_REGISTRY[key] = provider_cls
 
 
-def get_provider() -> BaseProvider:
+def get_provider() -> "BaseProvider":
     """Get an instance of the identity provider as configured by `identity_provider`.
 
     Raises:

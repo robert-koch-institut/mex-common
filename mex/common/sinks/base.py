@@ -5,7 +5,6 @@ from itertools import tee
 from mex.common.connector import BaseConnector
 from mex.common.models import AnyExtractedModel
 from mex.common.settings import BaseSettings
-from mex.common.sinks.registry import _SINK_REGISTRY
 from mex.common.types import Identifier
 
 
@@ -27,6 +26,9 @@ class MultiSink(BaseSink):
 
     def __init__(self) -> None:
         """Instantiate the multi sink singleton."""
+        # break import cycle, sigh
+        from mex.common.sinks.registry import _SINK_REGISTRY
+
         settings = BaseSettings.get()
         for sink in settings.sink:
             if sink in _SINK_REGISTRY:
