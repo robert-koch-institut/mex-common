@@ -12,13 +12,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - methods to transform from OcidPerson to mex person
 
 ### Changes
-
+- added validation_alias to orcid url in `settings.py`
+- remodeled OrcidPerson in `persony.py`
+- using `OrdicPerson`'s orcidid.uri for transformation instead stitiching it together
+- fetch method in OrcidConnector accepts directly filters + passes query als param to search-endpoint
+-
 ### Deprecated
 
 ### Removed
-
+- ``mapToOrcidPerson`` and `reduce_metadata` deleted. Replaced with model.validate fct
 ### Fixed
-
+- in `connector.py` for orcid: apply for url rstrip
+- `test_extract.py` in primary source: Set assertion to 5 (added orcid as ps)
 ### Security
 
 ## [0.46.0] - 2025-01-09

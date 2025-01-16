@@ -1,83 +1,84 @@
 import pytest
 
-from mex.common.orcid.extract import get_data_by_id
-from mex.common.orcid.models.person import FamilyName, GivenNames, OrcidPerson
+from mex.common.orcid.models.person import (
+    OrcidEmail,
+    OrcidEmails,
+    OrcidFamilyName,
+    OrcidGivenNames,
+    OrcidIdentifier,
+    OrcidName,
+    OrcidPerson,
+    OrcidRecord,
+)
 from mex.common.orcid.transform import (
-    map_to_orcid_person,
-    reduce_metadata,
+    map_orcid_data_to_orcid_record,
     transform_orcid_person_to_mex_person,
 )
-
-
-@pytest.mark.parametrize(
-    ("orcid_id", "reduced_data"),
-    [
-        (
-            "0000-0002-1825-0097",
-            {
-                "orcid-identifier": {"path": "0000-0002-1825-0097"},
-                "person": {
-                    "name": {
-                        "given-names": {"value": "Josiah"},
-                        "family-name": {"value": "Carberry"},
-                        "visibility": "public",
-                    },
-                    "emails": {
-                        "last-modified-date": None,
-                        "email": [],
-                        "path": "/0000-0002-1825-0097/email",
-                    },
-                },
-            },
-        ),
-        ("0009-0004-3041-576", {"result": None, "num-found": 0}),
-        (
-            "invalid-orcid-id",
-            {"result": None, "num-found": 0},
-        ),
-    ],
-    ids=["existing person", "non-existing person", "invalid characters"],
-)
-def test_reduce_metadata(orcid_id, reduced_data):
-    orcid_data = get_data_by_id(orcid_id)
-    result = reduce_metadata(orcid_data)
-    assert result == reduced_data
 
 
 @pytest.mark.parametrize(
     ("orcid_person", "expected_mex_person"),
     [
         (
-            OrcidPerson(
-                orcid_identifier="0000-0002-1825-0097",
-                email=["test@example.com"],
-                given_names=GivenNames(given_names="Josiah", visibility="public"),
-                family_name=FamilyName(family_name="Carberry", visibility="public"),
+            OrcidRecord(
+                orcid_identifier=OrcidIdentifier(
+                    path="0000-0002-1825-0097",
+                    uri="https://orcid.org/0000-0002-1825-0097",
+                ),
+                person=OrcidPerson(
+                    orcid_identifier="0000-0002-1825-0097",
+                    emails=OrcidEmails(email=[OrcidEmail(email=["test@example.com"])]),
+                    name=OrcidName(
+                        given_names=OrcidGivenNames(value="Josiah"),
+                        family_name=OrcidFamilyName(value="Carberry"),
+                        visibility="public",
+                    ),
+                ),
             ),
             {
                 "hadPrimarySource": "Naj2hOJq9FNRkkMWa5Qd0",
                 "identifierInPrimarySource": "0000-0002-1825-0097",
+                "affiliation": [],
                 "email": ["test@example.com"],
                 "familyName": ["Carberry"],
+                "fullName": [],
                 "givenName": ["Josiah"],
+                "isniId": [],
+                "memberOf": [],
                 "orcidId": ["https://orcid.org/0000-0002-1825-0097"],
+                "entityType": "ExtractedPerson",
                 "identifier": "YpTEbqCI50OzL4Nmqtla2",
                 "stableTargetId": "VsesmNpZUOi6dklUaXWMv",
             },
         ),
         (
-            OrcidPerson(
-                orcid_identifier="0000-0002-9876-5432",
-                email=[],
-                given_names=GivenNames(given_names="John", visibility="public"),
-                family_name=FamilyName(family_name="Doe", visibility="public"),
+            OrcidRecord(
+                orcid_identifier=OrcidIdentifier(
+                    path="0000-0002-9876-5432",
+                    uri="https://orcid.org/0000-0002-9876-5432",
+                ),
+                person=OrcidPerson(
+                    orcid_identifier="0000-0002-9876-5432",
+                    emails=OrcidEmails(email=[OrcidEmail(email=[])]),
+                    name=OrcidName(
+                        given_names=OrcidGivenNames(value="John"),
+                        family_name=OrcidFamilyName(value="Doe"),
+                        visibility="public",
+                    ),
+                ),
             ),
             {
                 "hadPrimarySource": "Naj2hOJq9FNRkkMWa5Qd0",
                 "identifierInPrimarySource": "0000-0002-9876-5432",
+                "affiliation": [],
+                "email": [],
                 "familyName": ["Doe"],
+                "fullName": [],
                 "givenName": ["John"],
+                "isniId": [],
+                "memberOf": [],
                 "orcidId": ["https://orcid.org/0000-0002-9876-5432"],
+                "entityType": "ExtractedPerson",
                 "identifier": "cwOd1omDQ8ePMflUVfXmH6",
                 "stableTargetId": "cPgmFF42nbFoEMWtuHaQw7",
             },
@@ -90,10 +91,7 @@ def test_reduce_metadata(orcid_id, reduced_data):
 )
 def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person):
     mex_person = transform_orcid_person_to_mex_person(orcid_person)
-    assert (
-        mex_person.model_dump(exclude_none=True, exclude_defaults=True)
-        == expected_mex_person
-    )
+    assert mex_person.model_dump() == expected_mex_person
 
 
 @pytest.mark.parametrize(
@@ -101,68 +99,97 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
     [
         (
             {
-                "orcid-identifier": {"path": "0000-0002-1825-0097"},
+                "orcid_identifier": {
+                    "path": "0000-0002-1825-0097",
+                    "uri": "https://orcid.org/0000-0002-1825-0097",
+                },
+                "person": {
+                    "emails": {"email": [{"email": "test@example.com"}]},
+                    "name": {
+                        "family_name": {"value": "Carberry"},
+                        "given_names": {"value": "Josiah"},
+                        "visibility": "public",
+                    },
+                },
+            },
+            OrcidRecord(
+                orcid_identifier=OrcidIdentifier(
+                    path="0000-0002-1825-0097",
+                    uri="https://orcid.org/0000-0002-1825-0097",
+                ),
+                person=OrcidPerson(
+                    emails=OrcidEmails(email=[OrcidEmail(email="test@example.com")]),
+                    name=OrcidName(
+                        family_name=OrcidFamilyName(value="Carberry"),
+                        given_names=OrcidGivenNames(value="Josiah"),
+                        visibility="public",
+                    ),
+                ),
+            ),
+        ),
+        (
+            {
+                "orcid-identifier": {
+                    "path": "0000-0002-1825-0097",
+                    "uri": "https://orcid.org/0000-0002-1825-0097",
+                },
                 "person": {
                     "name": {
                         "given-names": {"value": "Josiah"},
                         "family-name": {"value": "Carberry"},
                         "visibility": "public",
                     },
-                    "emails": {
-                        "email": ["test@example.com"],
-                    },
+                    "emails": {"email": []},
                 },
             },
-            OrcidPerson(
-                orcid_identifier="0000-0002-1825-0097",
-                email=["test@example.com"],
-                given_names=GivenNames(given_names="Josiah", visibility="public"),
-                family_name=FamilyName(family_name="Carberry", visibility="public"),
+            OrcidRecord(
+                orcid_identifier=OrcidIdentifier(
+                    path="0000-0002-1825-0097",
+                    uri="https://orcid.org/0000-0002-1825-0097",
+                ),
+                person=OrcidPerson(
+                    emails=OrcidEmails(email=[]),
+                    name=OrcidName(
+                        family_name=OrcidFamilyName(value="Carberry"),
+                        given_names=OrcidGivenNames(value="Josiah"),
+                        visibility="public",
+                    ),
+                ),
             ),
         ),
         (
             {
-                "orcid-identifier": {"path": "0000-0002-1825-0097"},
-                "person": {
-                    "name": {
-                        "given-names": {"value": "Josiah"},
-                        "family-name": {"value": "Carberry"},
-                        "visibility": "public",
-                    },
-                    "emails": {},
+                "orcid-identifier": {
+                    "path": "0000-0002-1825-0097",
+                    "uri": "https://orcid.org/0000-0002-1825-0097",
                 },
-            },
-            OrcidPerson(
-                orcid_identifier="0000-0002-1825-0097",
-                email=[],
-                given_names=GivenNames(given_names="Josiah", visibility="public"),
-                family_name=FamilyName(family_name="Carberry", visibility="public"),
-            ),
-        ),
-        (
-            {
-                "orcid-identifier": {"path": "0000-0002-1825-0097"},
                 "person": {
                     "name": {
                         "given-names": {"value": "Josiah"},
                         "family-name": {"value": "Carberry"},
                         "visibility": "private",
                     },
-                    "emails": {
-                        "email": ["test@example.com"],
-                    },
+                    "emails": {"email": [{"email": "test@example.com"}]},
                 },
             },
-            OrcidPerson(
-                orcid_identifier="0000-0002-1825-0097",
-                email=["test@example.com"],
-                given_names=GivenNames(given_names="Josiah", visibility="private"),
-                family_name=FamilyName(family_name="Carberry", visibility="private"),
+            OrcidRecord(
+                orcid_identifier=OrcidIdentifier(
+                    path="0000-0002-1825-0097",
+                    uri="https://orcid.org/0000-0002-1825-0097",
+                ),
+                person=OrcidPerson(
+                    emails=OrcidEmails(email=[OrcidEmail(email=["test@example.com"])]),
+                    name=OrcidName(
+                        given_names=OrcidGivenNames(value="Josiah"),
+                        family_name=OrcidFamilyName(value="Carberry"),
+                        visibility="private",
+                    ),
+                ),
             ),
         ),
     ],
     ids=["valid data", "missing email field", "visibility is private"],
 )
-def test_map_to_orcid_person(orcid_data, expected_result):
-    result = map_to_orcid_person(orcid_data)
+def test_map_orcid_data_to_orcid_record(orcid_data, expected_result):
+    result = map_orcid_data_to_orcid_record(orcid_data)
     assert result == expected_result

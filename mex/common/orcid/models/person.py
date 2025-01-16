@@ -3,29 +3,54 @@ from pydantic import Field
 from mex.common.models import BaseModel
 
 
-class GivenNames(BaseModel):
-    """Model class for given names."""
+class OrcidIdentifier(BaseModel):
+    """Model class for OrcidID."""
 
-    given_names: str | None = Field(alias="given-names")
-    visibility: str | None = None
+    path: str
+    uri: str
 
 
-class FamilyName(BaseModel):
-    """Model class for family name."""
+class OrcidEmail(BaseModel):
+    """Model class for Orcid email."""
 
-    family_name: str | None = Field(alias="family-name")
-    visibility: str | None = None
+    email: list[str]
+
+
+class OrcidEmails(BaseModel):
+    """Model class for Orcid emails."""
+
+    email: list[OrcidEmail]
+
+
+class OrcidFamilyName(BaseModel):
+    """Model class for orcid family names."""
+
+    value: str
+
+
+class OrcidGivenNames(BaseModel):
+    """Model class for Orcid given names."""
+
+    value: str
+
+
+class OrcidName(BaseModel):
+    """Model class for Orcid name."""
+
+    family_name: OrcidFamilyName = Field(alias="family-name")
+    given_names: OrcidGivenNames = Field(alias="given-names")
+    visibility: str
 
 
 class OrcidPerson(BaseModel):
-    """Model class for ORCID Person."""
+    """Model class for Orcid person."""
 
-    orcid_identifier: str = Field(alias="orcid-identifier")
-    email: list[str] | None = Field(alias="email")
-    given_names: GivenNames
-    family_name: FamilyName
+    emails: OrcidEmails
+    name: OrcidName
 
-    @staticmethod
-    def get_orcid_fields() -> tuple[str, ...]:
-        """Return the fields that should be fetched for an ORCID person."""
-        return tuple(sorted(OrcidPerson.__annotations__))
+
+class OrcidRecord(BaseModel):
+    """Model class for Orcid record."""
+
+    orcid_identifier: OrcidIdentifier = Field(alias="orcid-identifier")
+    person: OrcidPerson

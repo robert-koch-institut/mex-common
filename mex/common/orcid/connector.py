@@ -16,22 +16,22 @@ class OrcidConnector(HTTPConnector):
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the host is available."""
-        url = self.url + "search"
+        url = f"{self.url.rstrip('/')}/search"
         response = self._send_request("HEAD", url=url, params={})
         response.raise_for_status()
 
-    def check_orcid_id_exists(self, orcid_id: str) -> Any:
+    def check_orcid_id_exists(self, orcid_id: str) -> bool:
         """Search for an ORCID person by ORCID ID."""
-        query = f"orcid:{orcid_id}"
-        response = self.fetch(query)
-        return response.get("num-found", 0) != 0
+        query_dict = {"orcid": orcid_id}
+        response = self.fetch(query_dict)
+        return bool(response.get("num-found", 0))
 
     @staticmethod
     def build_query(filters: dict[str, Any]) -> str:
         """Construct the ORCID API query string."""
         return " AND ".join([f"{key}:{value}" for key, value in filters.items()])
 
-    def fetch(self, query: str) -> dict[str, Any]:
+    def fetch(self, filters: dict[str, Any]) -> dict[str, Any]:
         """Perform a search query against the ORCID API."""
-        endpoint = f"search/?q={query}"
-        return self.request(method="GET", endpoint=endpoint)
+        query = OrcidConnector.build_query(filters)
+        return self.request(method="GET", endpoint="search", params={"q": query})

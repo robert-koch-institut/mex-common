@@ -78,13 +78,6 @@ from mex.common.orcid.connector import OrcidConnector
                     },
                     {
                         "orcid-identifier": {
-                            "uri": "https://orcid.org/0009-0006-9954-421X",
-                            "path": "0009-0006-9954-421X",
-                            "host": "orcid.org",
-                        }
-                    },
-                    {
-                        "orcid-identifier": {
                             "uri": "https://orcid.org/0009-0000-4002-171X",
                             "path": "0009-0000-4002-171X",
                             "host": "orcid.org",
@@ -94,6 +87,13 @@ from mex.common.orcid.connector import OrcidConnector
                         "orcid-identifier": {
                             "uri": "https://orcid.org/0009-0006-0442-1402",
                             "path": "0009-0006-0442-1402",
+                            "host": "orcid.org",
+                        }
+                    },
+                    {
+                        "orcid-identifier": {
+                            "uri": "https://orcid.org/0009-0006-9954-421X",
+                            "path": "0009-0006-9954-421X",
                             "host": "orcid.org",
                         }
                     },
@@ -110,7 +110,7 @@ def test_fetch_person_by_name(family_name, given_names, expected) -> None:
     filters = {}
     filters["given-names"] = given_names
     filters["family-name"] = family_name
-    search_response = orcidapi.fetch(OrcidConnector.build_query(filters))
+    search_response = orcidapi.fetch(filters=filters)
     num_found = search_response.get("num-found", 0)
     assert num_found == expected["num-found"]
     assert search_response == expected
