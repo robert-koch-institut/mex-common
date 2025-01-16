@@ -7,7 +7,7 @@ from mex.common.identity.models import Identity
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
 
-class BackendIdentityProvider(BaseProvider, BackendApiConnector):
+class BackendApiIdentityProvider(BaseProvider, BackendApiConnector):
     """Identity provider that communicates with the backend HTTP API."""
 
     @cache  # noqa: B019

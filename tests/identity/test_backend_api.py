@@ -5,7 +5,7 @@ import requests
 from pytest import MonkeyPatch
 
 from mex.common.identity import Identity
-from mex.common.identity.backend import BackendIdentityProvider
+from mex.common.identity.backend_api import BackendApiIdentityProvider
 from mex.common.models import ExtractedContactPoint
 from mex.common.types import MergedPrimarySourceIdentifier
 
@@ -18,10 +18,10 @@ def mocked_backend_identity_provider(monkeypatch: MonkeyPatch) -> MagicMock:
     )
     mocked_session.headers = {}
 
-    def set_mocked_session(self: BackendIdentityProvider) -> None:
+    def set_mocked_session(self: BackendApiIdentityProvider) -> None:
         self.session = mocked_session
 
-    monkeypatch.setattr(BackendIdentityProvider, "_set_session", set_mocked_session)
+    monkeypatch.setattr(BackendApiIdentityProvider, "_set_session", set_mocked_session)
     return mocked_session
 
 
@@ -39,7 +39,7 @@ def test_assign_mocked(
     mocked_response.json = MagicMock(return_value=mocked_data)
     mocked_backend_identity_provider.request = MagicMock(return_value=mocked_response)
 
-    provider = BackendIdentityProvider.get()
+    provider = BackendApiIdentityProvider.get()
     identity_first = provider.assign(
         had_primary_source=MergedPrimarySourceIdentifier.generate(seed=961),
         identifier_in_primary_source="test",
@@ -80,7 +80,7 @@ def test_fetch_mocked(
     mocked_response.json = MagicMock(return_value=mocked_data)
     mocked_backend_identity_provider.request = MagicMock(return_value=mocked_response)
 
-    provider = BackendIdentityProvider.get()
+    provider = BackendApiIdentityProvider.get()
 
     contact_point = ExtractedContactPoint(
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=961),
