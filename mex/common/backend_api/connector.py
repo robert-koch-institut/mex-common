@@ -1,4 +1,3 @@
-from typing import ClassVar
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -22,9 +21,9 @@ from mex.common.settings import BaseSettings
 
 
 class BackendApiConnector(HTTPConnector):
-    """Connector class to handle interaction with the backend HTTP API."""
+    """Connector class to handle interaction with the Backend API."""
 
-    API_VERSION: ClassVar[str] = "v0"
+    API_VERSION = "v0"
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the API is available."""
