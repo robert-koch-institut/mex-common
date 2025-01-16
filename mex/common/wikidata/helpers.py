@@ -1,7 +1,8 @@
 from functools import cache
 
 from mex.common.exceptions import MExError
-from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
+from mex.common.models.organization import ExtractedOrganization
+from mex.common.models.primary_source import ExtractedPrimarySource
 from mex.common.primary_source.helpers import get_extracted_primary_source_by_name
 from mex.common.wikidata.extract import search_organization_by_label
 from mex.common.wikidata.transform import (
