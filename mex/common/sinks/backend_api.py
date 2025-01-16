@@ -2,34 +2,27 @@ from collections.abc import Generator, Iterable
 from typing import cast
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import logger
+from mex.common.logging import watch
 from mex.common.models import AnyExtractedModel
-from mex.common.sinks.base import BaseSink
 from mex.common.types import AnyExtractedIdentifier
 from mex.common.utils import grouper
 
 
-class BackendApiSink(BaseSink, BackendApiConnector):
-    """Sink to load models to the Backend API."""
+@watch
+def post_to_backend_api(
+    models: Iterable[AnyExtractedModel], chunk_size: int = 100
+) -> Generator[AnyExtractedIdentifier, None, None]:
+    """Load models to the Backend API using bulk insertion.
 
-    CHUNK_SIZE = 100
+    Args:
+        models: Iterable of extracted models
+        chunk_size: Optional size to chunks to post in one request
 
-    def load(
-        self,
-        models: Iterable[AnyExtractedModel],
-    ) -> Generator[AnyExtractedIdentifier, None, None]:
-        """Load models to the Backend API using bulk insertion.
-
-        Args:
-            models: Iterable of extracted models
-
-        Returns:
-            Generator for identifiers of posted models
-        """
-        total_count = 0
-        for chunk in grouper(self.CHUNK_SIZE, models):
-            model_list = [model for model in chunk if model is not None]
-            response = self.post_extracted_items(model_list)
-            total_count += len(model_list)
-            yield from cast(list[AnyExtractedIdentifier], response.identifiers)
-            logger.info("BackendApiSink - written %s models", total_count)
+    Returns:
+        Generator for identifiers of posted models
+    """
+    connector = BackendApiConnector.get()
+    for chunk in grouper(chunk_size, models):
+        model_list = [model for model in chunk if model is not None]
+        response = connector.post_extracted_items(model_list)
+        yield from cast(list[AnyExtractedIdentifier], response.identifiers)
