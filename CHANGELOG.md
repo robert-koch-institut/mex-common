@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add a sink registry with `register_sink` and `get_sink` functions
+- add a `MultiSink` implementation, akin to `mex.extractors.load`
+
 ### Changes
+
+- BREAKING: convert post_to_backend_api to BackendApiSink
+- BREAKING: convert write_ndjson to NdjsonSink
 
 ### Deprecated
 
