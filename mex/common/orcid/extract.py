@@ -1,46 +1,6 @@
-from typing import Any
-
-from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
-from mex.common.orcid.connector import OrcidConnector, get_data_by_id
+from mex.common.orcid.connector import get_data_by_id, get_data_by_name
 from mex.common.orcid.models.person import OrcidRecord
 from mex.common.orcid.transform import map_orcid_data_to_orcid_record
-
-
-def get_data_by_name(
-    given_names: str = "*",
-    family_name: str = "*",
-    **filters: str,
-) -> dict[str, Any]:
-    """Get ORCID record of a single person for the given filters.
-
-    Args:
-        given_names: Given name of a person, defaults to non-null
-        family_name: Surname of a person, defaults to non-null
-        **filters: Key-value pairs representing ORCID search filters.
-
-    Raises:
-        EmptySearchResultError
-        FoundMoreThanOneError
-
-    Returns:
-        Orcid data of the single matching person by name.
-    """
-    orcidapi = OrcidConnector.get()
-    if given_names:
-        filters["given-names"] = given_names
-    if family_name:
-        filters["family-name"] = family_name
-    search_response = orcidapi.fetch(filters=filters)
-    num_found = search_response.get("num-found", 0)
-    if num_found == 0:
-        msg = f"Cannot find orcid person for filters {filters}'"
-        raise EmptySearchResultError(msg)
-    if num_found > 1:
-        msg = f"Found multiple orcid persons for filters {filters}'"
-        raise FoundMoreThanOneError(msg)
-
-    orcid_id = search_response["result"][0]["orcid-identifier"]["path"]
-    return get_data_by_id(orcid_id)
 
 
 def get_orcid_record_by_name(
