@@ -15,3 +15,7 @@ class EmptySearchResultError(MExError):
 
 class FoundMoreThanOneError(MExError):
     """Found more than one."""
+
+
+class MergingError(MExError):
+    """Creating a merged item from extracted items and rules failed."""
