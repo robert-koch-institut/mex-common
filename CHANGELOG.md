@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- merging logic to mex-common
+
 ### Changes
 
 ### Deprecated
