@@ -153,4 +153,5 @@ def create_merged_item(
     try:
         return cls.model_validate(merged_dict)
     except ValidationError as error:
-        raise MergingError from error
+        msg = "Could not validate merged model."
+        raise MergingError(msg) from error
