@@ -39,7 +39,7 @@ def test_prune_list_in_dict() -> None:
     prune_list_in_dict(dict_, "prune-me", ["1", "2"])
     assert dict_ == {
         "existing-key": ["leave-me-alone"],
-        "prune-me": ["foo", "42"],
+        "prune-me": ["42", "foo"],
     }
 
     prune_list_in_dict(dict_, "prune-me", "foo")
