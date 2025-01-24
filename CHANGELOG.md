@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.47.0] - 2025-01-23
+
+### Added
+
+- merging logic to mex-common
+
 ## [0.46.0] - 2025-01-09
 
 ### Added

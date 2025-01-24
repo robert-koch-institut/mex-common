@@ -15,8 +15,10 @@ on:
         required: true
 
 env:
-  PIP_NO_OPTION: on
+  PDM_CHECK_UPDATE: False
+  PIP_DISABLE_PIP_VERSION_CHECK: on
   PIP_NO_CLEAN: on
+  PIP_NO_INPUT: on
   PIP_PREFER_BINARY: on
 
 permissions:
@@ -84,6 +86,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          ref: ${{ needs.release.outputs.tag }}
 
       - name: Cache requirements
         uses: actions/cache@v4
@@ -106,7 +109,6 @@ jobs:
       - name: Build wheel and sdist distros and create a github release
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
-          PDM_CHECK_UPDATE: False
         run: |
           gh release create ${{ needs.release.outputs.tag }} --generate-notes --latest --verify-tag
           pdm build --dest dist
