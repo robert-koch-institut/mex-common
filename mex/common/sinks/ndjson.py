@@ -31,7 +31,7 @@ class NdjsonSink(BaseSink):
         self,
         models: Iterable[AnyExtractedModel],
     ) -> Generator[AnyExtractedIdentifier, None, None]:
-        """Write the incoming models into a new-line delimited JSON file.
+        """Write models into a new-line delimited JSON file.
 
         Args:
             models: Iterable of extracted models to write
