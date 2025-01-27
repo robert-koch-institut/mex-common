@@ -13,22 +13,27 @@ from mex.common.models import (
     ActivityRuleSetRequest,
     AdditiveOrganizationalUnit,
     AdditivePerson,
+    AdditiveResource,
     AnyExtractedModel,
     AnyRuleSetRequest,
     ContactPointRuleSetRequest,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedPerson,
+    ExtractedResource,
     PersonRuleSetRequest,
     PreventiveContactPoint,
     PreventivePerson,
+    PreventiveResource,
+    ResourceRuleSetRequest,
     SubtractiveActivity,
     SubtractiveContactPoint,
     SubtractiveOrganizationalUnit,
     SubtractivePerson,
+    SubtractiveResource,
 )
 from mex.common.testing import Joker
-from mex.common.types import Identifier, Text, TextLanguage
+from mex.common.types import AccessRestriction, Identifier, Text, TextLanguage, Theme
 
 
 def test_merge_extracted_items_and_apply_preventive_rule() -> None:
@@ -121,6 +126,34 @@ def test_apply_subtractive_rule() -> None:
 @pytest.mark.parametrize(
     ("extracted_items", "rule_set", "validate_cardinality", "expected"),
     [
+        (
+            [
+                ExtractedResource(
+                    identifierInPrimarySource="r1",
+                    hadPrimarySource=Identifier.generate(seed=42),
+                    accessRestriction=AccessRestriction["OPEN"],
+                    contact=[Identifier.generate(seed=999)],
+                    unitInCharge=[Identifier.generate(seed=999)],
+                    theme=[Theme["PUBLIC_HEALTH"]],
+                    title=[Text(value="Dummy resource")],
+                )
+            ],
+            ResourceRuleSetRequest(
+                additive=AdditiveResource(),
+                subtractive=SubtractiveResource(),
+                preventive=PreventiveResource(),
+            ),
+            True,
+            {
+                "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
+                "contact": ["bFQoRhcVH5DIax"],
+                "theme": ["https://mex.rki.de/item/theme-1"],
+                "title": [{"value": "Dummy resource", "language": TextLanguage.EN}],
+                "unitInCharge": ["bFQoRhcVH5DIax"],
+                "entityType": "MergedResource",
+                "identifier": "bFQoRhcVH5DHU6",
+            },
+        ),
         (
             [
                 ExtractedPerson(
@@ -295,6 +328,7 @@ def test_apply_subtractive_rule() -> None:
         ),
     ],
     ids=(
+        "single extracted item",
         "extracted items and rule set",
         "only rule set",
         "only extracted items",

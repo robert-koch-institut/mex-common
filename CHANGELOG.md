@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.47.1] - 2025-01-24
+
+### Fixed
+
+- skip None values when merging extracted and rule items
+
 ## [0.47.0] - 2025-01-23
 
 ### Added
