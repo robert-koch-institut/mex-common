@@ -41,7 +41,7 @@ class _MultiSink(BaseSink):
     ) -> Generator[Identifier, None, None]:
         """Load models to multiple sinks simultaneously."""
         for sink, model_gen in zip(
-            self._sinks, tee(models, len(self._sinks)), strict=False
+            self._sinks, tee(models, len(self._sinks)), strict=True
         ):
             yield from sink.load(model_gen)
 
