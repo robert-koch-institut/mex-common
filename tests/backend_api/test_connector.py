@@ -40,7 +40,7 @@ def test_post_extracted_items_mocked(
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
-        timeout=10,
+        timeout=BackendApiConnector.INGEST_TIMEOUT,
         data=Joker(),
     )
     assert (
