@@ -16,14 +16,39 @@ def test_extend_list_in_dict() -> None:
         "new-key": ["single-value"],
     }
 
+    extend_list_in_dict(dict_, "existing-key", None)
+    assert dict_ == {
+        "existing-key": ["already-here", "another-value"],
+        "new-key": ["single-value"],
+    }
+
+    extend_list_in_dict(dict_, "another-key", None)
+    assert dict_ == {
+        "existing-key": ["already-here", "another-value"],
+        "new-key": ["single-value"],
+        "another-key": [],
+    }
+
 
 def test_prune_list_in_dict() -> None:
     dict_ = {
+        "existing-key": ["leave-me-alone"],
+        "prune-me": ["1", "2", "42", "foo"],
+    }
+
+    prune_list_in_dict(dict_, "prune-me", ["1", "2"])
+    assert dict_ == {
         "existing-key": ["leave-me-alone"],
         "prune-me": ["42", "foo"],
     }
 
     prune_list_in_dict(dict_, "prune-me", "foo")
+    assert dict_ == {
+        "existing-key": ["leave-me-alone"],
+        "prune-me": ["42"],
+    }
+
+    prune_list_in_dict(dict_, "prune-me", None)
     assert dict_ == {
         "existing-key": ["leave-me-alone"],
         "prune-me": ["42"],
