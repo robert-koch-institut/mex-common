@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- port backend identity provider implementation from editor/extractors to common
+
 ### Changes
+
+- allow backend and graph as identity provider setting to simplify setting subclasses,
+  even though graph is not implemented in mex-common
+- BREAKING: make backend api connector response models generic, to keep DRY
 
 ### Deprecated
 
