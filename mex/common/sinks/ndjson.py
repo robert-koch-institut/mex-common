@@ -54,11 +54,12 @@ class NdjsonSink(BaseSink):
                         writer = open(file_name, "a+", encoding="utf-8")  # noqa: SIM115
                         file_handles[class_name] = fh = stack.enter_context(writer)
                         logger.info(
-                            "NdjsonSink - writing %s to file %s",
+                            "%s - writing %s to file %s",
+                            type(self).__name__,
                             class_name,
                             file_name.as_posix(),
                         )
                     fh.write(f"{json.dumps(model, sort_keys=True, cls=MExEncoder)}\n")
                     total_count += 1
                     yield model.identifier
-                logger.info("NdjsonSink - written %s models", total_count)
+                logger.info("%s - written %s models", type(self).__name__, total_count)
