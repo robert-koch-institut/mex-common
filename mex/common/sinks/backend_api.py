@@ -9,11 +9,10 @@ from mex.common.types import AnyExtractedIdentifier
 from mex.common.utils import grouper
 
 
-class BackendApiSink(BaseSink, BackendApiConnector):
+class BackendApiSink(BaseSink):
     """Sink to load models to the Backend API."""
 
     CHUNK_SIZE = 50
-    TIMEOUT = 30
 
     def load(
         self,
@@ -28,9 +27,10 @@ class BackendApiSink(BaseSink, BackendApiConnector):
             Generator for identifiers of posted models
         """
         total_count = 0
+        connector = BackendApiConnector.get()
         for chunk in grouper(self.CHUNK_SIZE, models):
             model_list = [model for model in chunk if model is not None]
-            response = self.post_extracted_items(model_list)
+            response = connector.post_extracted_items(model_list)
             total_count += len(model_list)
             yield from cast(list[AnyExtractedIdentifier], response.identifiers)
             logger.info("%s - written %s models", type(self).__name__, total_count)

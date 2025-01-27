@@ -25,6 +25,7 @@ class BackendApiConnector(HTTPConnector):
     """Connector class to handle interaction with the Backend API."""
 
     API_VERSION = "v0"
+    INGEST_TIMEOUT = 30
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the API is available."""
@@ -59,6 +60,7 @@ class BackendApiConnector(HTTPConnector):
             method="POST",
             endpoint="ingest",
             payload=ExtractedItemsRequest(items=extracted_items),
+            timeout=self.INGEST_TIMEOUT,
         )
         return IdentifiersResponse.model_validate(response)
 
