@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - new (partially generic) classes for defining Mapping and Filter fields and rules
+- add a sink registry with `register_sink` and `get_sink` functions
+- add a multi-sink implementation, akin to `mex.extractors.load`
 
 ### Changes
 
 - BREAKING: replaced dynamic Mapping and Filter classes with static ones
-- add a sink registry with `register_sink` and `get_sink` functions
-- add a multi-sink implementation, akin to `mex.extractors.load`
 - BREAKING: convert post_to_backend_api to BackendApiSink
 - BREAKING: convert write_ndjson to NdjsonSink
 - backend and ndjson sinks log progress only in batches
