@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.48.0] - 2025-01-28
+
+### Added
+
 - add a sink registry with `register_sink` and `get_sink` functions
 - add a multi-sink implementation, akin to `mex.extractors.load`
 
@@ -22,14 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - allow backend and graph as identity provider setting to simplify setting subclasses,
   even though graph is not implemented in mex-common
 - BREAKING: make backend api connector response models generic, to keep DRY
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.47.1] - 2025-01-24
 
