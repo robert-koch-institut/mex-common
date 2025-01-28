@@ -5,7 +5,7 @@ from pydantic import UUID4
 
 from mex.common.models import ExtractedData
 from mex.common.settings import BaseSettings
-from mex.common.sinks.ndjson import write_ndjson
+from mex.common.sinks.ndjson import NdjsonSink
 from mex.common.types import Identifier, TemporalEntity
 
 
@@ -21,7 +21,7 @@ class ExtractedThing(ExtractedData):
     ts_attr: TemporalEntity | None = None
 
 
-def test_write_ndjson() -> None:
+def test_sink_load() -> None:
     settings = BaseSettings.get()
 
     test_models = [
@@ -37,7 +37,8 @@ def test_write_ndjson() -> None:
         ),
     ]
 
-    ids = list(write_ndjson(test_models))
+    sink = NdjsonSink.get()
+    ids = list(sink.load(test_models))
     assert len(ids)
 
     with open(settings.work_dir / "ExtractedThing.ndjson") as handle:
