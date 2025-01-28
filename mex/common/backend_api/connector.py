@@ -3,18 +3,17 @@ from urllib.parse import urljoin
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.models import (
-    ExtractedItemsRequest,
-    ExtractedItemsResponse,
     IdentifiersResponse,
-    MergedItemsResponse,
+    ItemsContainer,
     MergedModelTypeAdapter,
-    PreviewItemsResponse,
+    PaginatedItemsContainer,
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
+    AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
 )
@@ -58,7 +57,7 @@ class BackendApiConnector(HTTPConnector):
         response = self.request(
             method="POST",
             endpoint="ingest",
-            payload=ExtractedItemsRequest(items=extracted_items),
+            payload=ItemsContainer[AnyExtractedModel](items=extracted_items),
         )
         return IdentifiersResponse.model_validate(response)
 
@@ -69,7 +68,7 @@ class BackendApiConnector(HTTPConnector):
         entity_type: list[str] | None,
         skip: int,
         limit: int,
-    ) -> ExtractedItemsResponse:
+    ) -> PaginatedItemsContainer[AnyExtractedModel]:
         """Fetch extracted items that match the given set of filters.
 
         Args:
@@ -96,7 +95,7 @@ class BackendApiConnector(HTTPConnector):
                 "limit": str(limit),
             },
         )
-        return ExtractedItemsResponse.model_validate(response)
+        return PaginatedItemsContainer[AnyExtractedModel].model_validate(response)
 
     def fetch_merged_items(
         self,
@@ -104,7 +103,7 @@ class BackendApiConnector(HTTPConnector):
         entity_type: list[str] | None,
         skip: int,
         limit: int,
-    ) -> MergedItemsResponse:
+    ) -> PaginatedItemsContainer[AnyMergedModel]:
         """Fetch merged items that match the given set of filters.
 
         Args:
@@ -129,7 +128,7 @@ class BackendApiConnector(HTTPConnector):
                 "limit": str(limit),
             },
         )
-        return MergedItemsResponse.model_validate(response)
+        return PaginatedItemsContainer[AnyMergedModel].model_validate(response)
 
     def get_merged_item(
         self,
@@ -155,7 +154,9 @@ class BackendApiConnector(HTTPConnector):
                 "limit": "1",
             },
         )
-        response_model = MergedItemsResponse.model_validate(response)
+        response_model = PaginatedItemsContainer[AnyMergedModel].model_validate(
+            response
+        )
         try:
             return response_model.items[0]
         except IndexError:
@@ -192,7 +193,7 @@ class BackendApiConnector(HTTPConnector):
         entity_type: list[str] | None,
         skip: int,
         limit: int,
-    ) -> PreviewItemsResponse:
+    ) -> PaginatedItemsContainer[AnyPreviewModel]:
         """Fetch merged item previews that match the given set of filters.
 
         Args:
@@ -207,7 +208,6 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             One page of preview items and the total count that was matched
         """
-        # Note: this is forward-compat for MX-1649, backend might not support this yet!
         response = self.request(
             method="GET",
             endpoint="preview-item",
@@ -218,7 +218,7 @@ class BackendApiConnector(HTTPConnector):
                 "limit": str(limit),
             },
         )
-        return PreviewItemsResponse.model_validate(response)
+        return PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
 
     def get_rule_set(
         self,

@@ -8,16 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Connector class for retrieving ORCID data by ID or name
-- methods to transform from OcidPerson to mex person
+
+- port backend identity provider implementation from editor/extractors to common
 
 ### Changes
-- added validation_alias to orcid url in `settings.py`
-- remodeled OrcidPerson in `persony.py`
-- using `OrdicPerson`'s orcidid.uri for transformation instead stitiching it together
-- fetch method in OrcidConnector accepts directly filters + passes query als param to search-endpoint
-- moved `get_data_by_id` from extract to connector
-- move `get_data_by_name` from extract to connector
+
+- allow backend and graph as identity provider setting to simplify setting subclasses,
+  even though graph is not implemented in mex-common
+- BREAKING: make backend api connector response models generic, to keep DRY
+
 ### Deprecated
 
 ### Removed
@@ -26,6 +25,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - in `connector.py` for orcid: apply for url rstrip
 - `test_extract.py` in primary source: Set assertion to 5 (added orcid as ps)
 ### Security
+
+## [0.47.1] - 2025-01-24
+
+### Fixed
+
+- skip None values when merging extracted and rule items
+
+## [0.47.0] - 2025-01-23
+
+### Added
+
+- merging logic to mex-common
 
 ## [0.46.0] - 2025-01-09
 
