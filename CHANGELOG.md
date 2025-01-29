@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.49.0] - 2025-01-29
+
+### Added
+
 - new (partially generic) classes for defining Mapping and Filter fields and rules
 
 ### Changes
@@ -19,12 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - use FILTER_MODEL_CLASSES_BY_NAME instead of FILTER_MODEL_BY_EXTRACTED_CLASS_NAME
 - use MAPPING_MODEL_CLASSES_BY_NAME instead of MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.48.0] - 2025-01-28
 
