@@ -200,7 +200,7 @@ class OrganizationRuleSetResponse(_BaseRuleSet):
 
 
 class OrganizationMapping(_Stem, BaseMapping):
-    """Mapping for describing a organization transformation."""
+    """Mapping for describing an organization transformation."""
 
     entityType: Annotated[
         Literal["OrganizationMapping"], Field(alias="$type", frozen=True)
