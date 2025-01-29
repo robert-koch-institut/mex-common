@@ -207,15 +207,4 @@ class AccessPlatformFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["AccessPlatformFilter"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    alternativeTitle: list[FilterField] = []
-    contact: list[FilterField] = []
-    description: list[FilterField] = []
-    endpointDescription: list[FilterField] = []
-    endpointType: list[FilterField] = []
-    endpointURL: list[FilterField] = []
-    landingPage: list[FilterField] = []
-    technicalAccessibility: list[FilterField] = []
-    title: list[FilterField] = []
-    unitInCharge: list[FilterField] = []
+    fields: list[FilterField] = []

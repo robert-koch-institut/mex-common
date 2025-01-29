@@ -63,7 +63,7 @@ These private classes are used to compose the public classes like so:
 - TRuleSetRequest: bundle of all three rules for one type used to create new rules
 - TRuleSetResponse: bundle of all three rules for one type including a `stableTargetId`
 
-- TFilter: all BaseT fields re-typed as a list of filter field definitions
+- TFilter: a single field containing a list of filter rule definitions
 - TMapping: all BaseT fields re-typed as lists of mapping fields with `setValues` type
 
 In addition to the classes themselves, `mex.common.models` also exposes various

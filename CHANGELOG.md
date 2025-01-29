@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: reduce Filter classes to a single list field of `FilterField` items
+
 ### Deprecated
 
 ### Removed
