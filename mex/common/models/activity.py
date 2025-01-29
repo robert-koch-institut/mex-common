@@ -198,7 +198,7 @@ class ActivityRuleSetResponse(_BaseRuleSet):
 
 
 class ActivityMapping(_Stem, BaseMapping):
-    """Mapping for describing a activity transformation."""
+    """Mapping for describing an activity transformation."""
 
     entityType: Annotated[
         Literal["ActivityMapping"], Field(alias="$type", frozen=True)
