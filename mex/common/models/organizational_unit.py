@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -155,3 +157,39 @@ class OrganizationalUnitRuleSetResponse(_BaseRuleSet):
         Literal["OrganizationalUnitRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitRuleSetResponse"
     stableTargetId: MergedOrganizationalUnitIdentifier
+
+
+class OrganizationalUnitMapping(_Stem, BaseMapping):
+    """Mapping for describing an organizational unit transformation."""
+
+    entityType: Annotated[
+        Literal["OrganizationalUnitMapping"], Field(alias="$type", frozen=True)
+    ] = "OrganizationalUnitMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
+    name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    alternativeName: list[MappingField[list[Text]]] = []
+    email: list[MappingField[list[Email]]] = []
+    shortName: list[MappingField[list[Text]]] = []
+    unitOf: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    website: list[MappingField[list[Link]]] = []
+
+
+class OrganizationalUnitFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for organizational unit items."""
+
+    entityType: Annotated[
+        Literal["OrganizationalUnitFilter"], Field(alias="$type", frozen=True)
+    ] = "OrganizationalUnitFilter"
+    hadPrimarySource: list[FilterField] = []
+    identifierInPrimarySource: list[FilterField] = []
+    alternativeName: list[FilterField] = []
+    email: list[FilterField] = []
+    name: list[FilterField] = []
+    parentUnit: list[FilterField] = []
+    shortName: list[FilterField] = []
+    unitOf: list[FilterField] = []
+    website: list[FilterField] = []
