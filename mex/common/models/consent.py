@@ -173,9 +173,4 @@ class ConsentFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ConsentFilter"], Field(alias="$type", frozen=True)
     ] = "ConsentFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    hasConsentType: list[FilterField] = []
-    hasConsentStatus: list[FilterField] = []
-    hasDataSubject: list[FilterField] = []
-    isIndicatedAtTime: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

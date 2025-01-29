@@ -209,12 +209,4 @@ class VariableFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["VariableFilter"], Field(alias="$type", frozen=True)
     ] = "VariableFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    belongsTo: list[FilterField] = []
-    codingSystem: list[FilterField] = []
-    dataType: list[FilterField] = []
-    description: list[FilterField] = []
-    label: list[FilterField] = []
-    usedIn: list[FilterField] = []
-    valueSet: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

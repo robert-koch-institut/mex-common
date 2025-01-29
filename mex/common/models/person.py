@@ -199,13 +199,4 @@ class PersonFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["PersonFilter"], Field(alias="$type", frozen=True)
     ] = "PersonFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    affiliation: list[FilterField] = []
-    email: list[FilterField] = []
-    familyName: list[FilterField] = []
-    fullName: list[FilterField] = []
-    givenName: list[FilterField] = []
-    isniId: list[FilterField] = []
-    memberOf: list[FilterField] = []
-    orcidId: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

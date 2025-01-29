@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- reduce Filter classes to a single list field of `FilterField` items
+
 ### Security
 
 ## [0.49.0] - 2025-01-29

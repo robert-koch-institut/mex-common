@@ -4,14 +4,14 @@ from pydantic import BaseModel, Field
 
 
 class FilterRule(BaseModel, extra="forbid"):
-    """Entity filter rule model."""
+    """A single filter rule to apply."""
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
     rule: Annotated[str | None, Field(title="rule")] = None
 
 
 class FilterField(BaseModel, extra="forbid"):
-    """Entity filter field model."""
+    """Filter definition for one field in the primary source."""
 
     fieldInPrimarySource: Annotated[str | None, Field(title="fieldInPrimarySource")] = (
         None
@@ -22,7 +22,7 @@ class FilterField(BaseModel, extra="forbid"):
     examplesInPrimarySource: Annotated[
         list[str] | None, Field(title="examplesInPrimarySource")
     ] = None
-    mappingRules: Annotated[list[FilterRule], Field(min_length=1, title="mappingRules")]
+    filterRules: Annotated[list[FilterRule], Field(min_length=1, title="filterRules")]
     comment: Annotated[str | None, Field(title="comment")] = None
 
 

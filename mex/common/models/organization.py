@@ -226,14 +226,4 @@ class OrganizationFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["OrganizationFilter"], Field(alias="$type", frozen=True)
     ] = "OrganizationFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    alternativeName: list[FilterField] = []
-    geprisId: list[FilterField] = []
-    gndId: list[FilterField] = []
-    isniId: list[FilterField] = []
-    officialName: list[FilterField] = []
-    rorId: list[FilterField] = []
-    shortName: list[FilterField] = []
-    viafId: list[FilterField] = []
-    wikidataId: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

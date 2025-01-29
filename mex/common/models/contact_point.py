@@ -147,6 +147,4 @@ class ContactPointFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ContactPointFilter"], Field(alias="$type", frozen=True)
     ] = "ContactPointFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    email: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []
