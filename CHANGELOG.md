@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- do not wrap field types in `setValues` in mapping rules in another list
-
 ### Security
+
+## [0.49.2] - 2025-01-29
+
+### Fixed
+
+- do not wrap field types in `setValues` in mapping rules in another list
 
 ## [0.49.1] - 2025-01-29
 
