@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-model to 3.5.1
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix regex pattern for GndIdStr in organization models
 
 ### Security
 
