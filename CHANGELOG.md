@@ -10,20 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - new (partially generic) classes for defining Mapping and Filter fields and rules
-- add a sink registry with `register_sink` and `get_sink` functions
-- add a multi-sink implementation, akin to `mex.extractors.load`
 
 ### Changes
 
 - BREAKING: replaced dynamic Mapping and Filter classes with static ones
-- BREAKING: convert post_to_backend_api to BackendApiSink
-- BREAKING: convert write_ndjson to NdjsonSink
-- backend and ndjson sinks log progress only in batches
-- increase timeout and decrease chunk size for backend API sink
-- port backend identity provider implementation from editor/extractors to common
-- allow backend and graph as identity provider setting to simplify setting subclasses,
-  even though graph is not implemented in mex-common
-- BREAKING: make backend api connector response models generic, to keep DRY
 
 ### Deprecated
 
@@ -35,6 +25,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.48.0] - 2025-01-28
+
+### Added
+
+- add a sink registry with `register_sink` and `get_sink` functions
+- add a multi-sink implementation, akin to `mex.extractors.load`
+
+### Changes
+
+- BREAKING: convert post_to_backend_api to BackendApiSink
+- BREAKING: convert write_ndjson to NdjsonSink
+- backend and ndjson sinks log progress only in batches
+- increase timeout and decrease chunk size for backend API sink
+- port backend identity provider implementation from editor/extractors to common
+- allow backend and graph as identity provider setting to simplify setting subclasses,
+  even though graph is not implemented in mex-common
+- BREAKING: make backend api connector response models generic, to keep DRY
 
 ## [0.47.1] - 2025-01-24
 
