@@ -21,6 +21,10 @@ class ExtractedThing(ExtractedData):
     ts_attr: TemporalEntity | None = None
 
 
+class RuleThing:
+    pass
+
+
 def test_sink_load() -> None:
     settings = BaseSettings.get()
 
