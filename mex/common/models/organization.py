@@ -37,7 +37,7 @@ GeprisIdStr = Annotated[
 GndIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://d\-nb\.info/gnd/[-X0-9]{3,10}$",
+        pattern=r"^https://d-nb\.info/gnd/[-X0-9]{3,10}$",
         examples=["https://d-nb.info/gnd/17690-4"],
         json_schema_extra={"format": "uri"},
     ),

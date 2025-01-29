@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix regex pattern for GndIdStr in organization models
+
 ### Security
 
 ## [0.49.2] - 2025-01-29
