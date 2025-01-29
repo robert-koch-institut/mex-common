@@ -9,7 +9,7 @@ class MappingRule(BaseModel, Generic[T], extra="forbid"):
     """Generic mapping rule model."""
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
-    setValues: Annotated[list[T] | None, Field(title="setValues")] = None
+    setValues: Annotated[T | None, Field(title="setValues")] = None
     rule: Annotated[str | None, Field(title="rule")] = None
 
 

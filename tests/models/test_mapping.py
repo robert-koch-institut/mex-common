@@ -9,7 +9,6 @@ from mex.common.models import (
     MappingField,
     VariableGroupMapping,
 )
-from mex.common.testing import Joker
 
 
 def test_all_mapping_classes_are_defined() -> None:
@@ -205,12 +204,9 @@ def test_mapping_model_schema() -> None:
                     "setValues": {
                         "anyOf": [
                             {
-                                "items": {
-                                    "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                    "title": "MergedPrimarySourceIdentifier",
-                                    "type": "string",
-                                },
-                                "type": "array",
+                                "pattern": "^[a-zA-Z0-9]{14,22}$",
+                                "title": "MergedPrimarySourceIdentifier",
+                                "type": "string",
                             },
                             {"type": "null"},
                         ],
@@ -241,12 +237,9 @@ def test_mapping_model_schema() -> None:
                         "anyOf": [
                             {
                                 "items": {
-                                    "items": {
-                                        "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                        "title": "MergedResourceIdentifier",
-                                        "type": "string",
-                                    },
-                                    "type": "array",
+                                    "pattern": "^[a-zA-Z0-9]{14,22}$",
+                                    "title": "MergedResourceIdentifier",
+                                    "type": "string",
                                 },
                                 "type": "array",
                             },
@@ -277,13 +270,7 @@ def test_mapping_model_schema() -> None:
                     },
                     "setValues": {
                         "anyOf": [
-                            {
-                                "items": {
-                                    "items": {"$ref": "#/$defs/Text"},
-                                    "type": "array",
-                                },
-                                "type": "array",
-                            },
+                            {"items": {"$ref": "#/$defs/Text"}, "type": "array"},
                             {"type": "null"},
                         ],
                         "default": None,
@@ -310,10 +297,7 @@ def test_mapping_model_schema() -> None:
                         "title": "forValues",
                     },
                     "setValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "setValues",
                     },
@@ -327,7 +311,7 @@ def test_mapping_model_schema() -> None:
                 "type": "object",
             },
             "Text": {
-                "description": Joker(),
+                "description": 'Type class for text objects.\n\nTexts can be parsed from nested JSON objects or from raw strings.\n\nExample:\n    Text(value="foo") == Text.model_validate("foo")',
                 "properties": {
                     "value": {"minLength": 1, "title": "Value", "type": "string"},
                     "language": {
