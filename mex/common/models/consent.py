@@ -173,4 +173,4 @@ class ConsentFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ConsentFilter"], Field(alias="$type", frozen=True)
     ] = "ConsentFilter"
-    fields: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

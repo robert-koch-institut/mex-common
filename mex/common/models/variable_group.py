@@ -154,7 +154,4 @@ class VariableGroupFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["VariableGroupFilter"], Field(alias="$type", frozen=True)
     ] = "VariableGroupFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    containedBy: list[FilterField] = []
-    label: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

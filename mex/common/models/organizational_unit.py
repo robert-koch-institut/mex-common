@@ -184,12 +184,4 @@ class OrganizationalUnitFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["OrganizationalUnitFilter"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    alternativeName: list[FilterField] = []
-    email: list[FilterField] = []
-    name: list[FilterField] = []
-    parentUnit: list[FilterField] = []
-    shortName: list[FilterField] = []
-    unitOf: list[FilterField] = []
-    website: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

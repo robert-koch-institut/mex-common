@@ -218,14 +218,4 @@ class DistributionFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["DistributionFilter"], Field(alias="$type", frozen=True)
     ] = "DistributionFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    accessRestriction: list[FilterField] = []
-    accessService: list[FilterField] = []
-    accessURL: list[FilterField] = []
-    downloadURL: list[FilterField] = []
-    issued: list[FilterField] = []
-    license: list[FilterField] = []
-    mediaType: list[FilterField] = []
-    modified: list[FilterField] = []
-    title: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

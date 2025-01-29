@@ -240,4 +240,4 @@ class ActivityFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ActivityFilter"], Field(alias="$type", frozen=True)
     ] = "ActivityFilter"
-    fields: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

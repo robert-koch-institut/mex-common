@@ -207,4 +207,4 @@ class AccessPlatformFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["AccessPlatformFilter"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformFilter"
-    fields: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

@@ -188,13 +188,4 @@ class PrimarySourceFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["PrimarySourceFilter"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceFilter"
-    hadPrimarySource: list[FilterField] = []
-    identifierInPrimarySource: list[FilterField] = []
-    alternativeTitle: list[FilterField] = []
-    contact: list[FilterField] = []
-    description: list[FilterField] = []
-    documentation: list[FilterField] = []
-    locatedAt: list[FilterField] = []
-    title: list[FilterField] = []
-    unitInCharge: list[FilterField] = []
-    version: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

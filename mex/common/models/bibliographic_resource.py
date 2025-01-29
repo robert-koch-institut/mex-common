@@ -374,4 +374,4 @@ class BibliographicResourceFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["BibliographicResourceFilter"], Field(alias="$type", frozen=True)
     ] = "BibliographicResourceFilter"
-    fields: list[FilterField] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []
