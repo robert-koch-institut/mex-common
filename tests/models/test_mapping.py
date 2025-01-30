@@ -1,52 +1,55 @@
-from typing import Annotated, ClassVar, Literal
+from typing import get_origin
 
-from pydantic import Field
+from pydantic_core import PydanticUndefined
 
-from mex.common.models import ExtractedData
-from mex.common.models.base.mapping import generate_mapping_schema
-from mex.common.types import Email, Identifier, MergedOrganizationalUnitIdentifier
-
-
-class ExtractedDummyIdentifier(Identifier):
-    pass
-
-
-class MergedDummyIdentifier(Identifier):
-    pass
+from mex.common.models import (
+    EXTRACTED_MODEL_CLASSES,
+    EXTRACTED_MODEL_CLASSES_BY_NAME,
+    MAPPING_MODEL_CLASSES,
+    MappingField,
+    VariableGroupMapping,
+)
 
 
-class ExtractedDummy(ExtractedData):
-    stemType: ClassVar[Annotated[Literal["Dummy"], Field(frozen=True)]] = "Dummy"
-    entityType: Annotated[
-        Literal["ExtractedDummy"], Field(alias="$type", frozen=True)
-    ] = "ExtractedDummy"
-    identifier: Annotated[ExtractedDummyIdentifier, Field(frozen=True)]
-    stableTargetId: MergedDummyIdentifier
-    dummy_unit: MergedOrganizationalUnitIdentifier | None = None  # not required
-    dummy_str: str
-    dummy_int: int | None = None  # not required
-    dummy_email: Email
-    dummy_list: list[str] = []  # not required
-    dummy_min_length_list: Annotated[list[str], Field(min_length=1)]
+def test_all_mapping_classes_are_defined() -> None:
+    stem_types = sorted(c.stemType for c in EXTRACTED_MODEL_CLASSES)
+    assert sorted(c.stemType for c in MAPPING_MODEL_CLASSES) == stem_types
 
 
-def test_generate_mapping_schema() -> None:
-    schema_model = generate_mapping_schema(ExtractedDummy)
+def test_all_mapping_fields_are_defined() -> None:
+    for mapping_cls in MAPPING_MODEL_CLASSES:
+        extracted_cls = EXTRACTED_MODEL_CLASSES_BY_NAME[
+            f"Extracted{mapping_cls.stemType}"
+        ]
+        assert set(mapping_cls.model_fields) == set(extracted_cls.model_fields)
+        field_defs = {
+            field_name: (field_info.annotation, field_info.default)
+            for field_name, field_info in mapping_cls.model_fields.items()
+            if field_name != "entityType"
+        }
+        assert all(
+            get_origin(annotation) is list
+            and annotation.__args__[0].__bases__[0] is MappingField
+            and default in (PydanticUndefined, [])
+            for annotation, default in field_defs.values()
+        )
 
-    expected = {
+
+def test_mapping_model_schema() -> None:
+    assert VariableGroupMapping.model_json_schema() == {
         "$defs": {
-            "Dummy_emailFieldsInPrimarySource": {
+            "MappingField_MergedPrimarySourceIdentifier_": {
                 "additionalProperties": False,
-                "description": "Mapping schema for Dummy_email fields in primary source.",
                 "properties": {
                     "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "fieldInPrimarySource",
                     },
                     "locationInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Locationinprimarysource",
+                        "title": "locationInPrimarySource",
                     },
                     "examplesInPrimarySource": {
                         "anyOf": [
@@ -54,635 +57,38 @@ def test_generate_mapping_schema() -> None:
                             {"type": "null"},
                         ],
                         "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/Dummy_emailMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "Dummy_emailFieldsInPrimarySource",
-                "type": "object",
-            },
-            "Dummy_emailMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Dummy_email.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "examples": ["info@rki.de"],
-                                    "format": "email",
-                                    "pattern": "^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
-                                    "title": "Email",
-                                    "type": "string",
-                                },
-                                "type": "array",
-                            },
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "Dummy_emailMappingRule",
-                "type": "object",
-            },
-            "Dummy_intFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Dummy_int fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/Dummy_intMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "Dummy_intFieldsInPrimarySource",
-                "type": "object",
-            },
-            "Dummy_intMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Dummy_int.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "anyOf": [{"type": "integer"}, {"type": "null"}]
-                                },
-                                "type": "array",
-                            },
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "Dummy_intMappingRule",
-                "type": "object",
-            },
-            "Dummy_listFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Dummy_list fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/Dummy_listMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "Dummy_listFieldsInPrimarySource",
-                "type": "object",
-            },
-            "Dummy_listMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Dummy_list.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "Dummy_listMappingRule",
-                "type": "object",
-            },
-            "Dummy_min_length_listFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Dummy_min_length_list fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/Dummy_min_length_listMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "Dummy_min_length_listFieldsInPrimarySource",
-                "type": "object",
-            },
-            "Dummy_min_length_listMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Dummy_min_length_list.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "Dummy_min_length_listMappingRule",
-                "type": "object",
-            },
-            "Dummy_strFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Dummy_str fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/Dummy_strMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "Dummy_strFieldsInPrimarySource",
-                "type": "object",
-            },
-            "Dummy_strMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Dummy_str.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "Dummy_strMappingRule",
-                "type": "object",
-            },
-            "Dummy_unitFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Dummy_unit fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/Dummy_unitMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "Dummy_unitFieldsInPrimarySource",
-                "type": "object",
-            },
-            "Dummy_unitMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Dummy_unit.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "anyOf": [
-                                        {
-                                            "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                            "title": "MergedOrganizationalUnitIdentifier",
-                                            "type": "string",
-                                        },
-                                        {"type": "null"},
-                                    ]
-                                },
-                                "type": "array",
-                            },
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "Dummy_unitMappingRule",
-                "type": "object",
-            },
-            "HadprimarysourceFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Hadprimarysource fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/HadprimarysourceMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "HadprimarysourceFieldsInPrimarySource",
-                "type": "object",
-            },
-            "HadprimarysourceMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Hadprimarysource.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                    "title": "MergedPrimarySourceIdentifier",
-                                    "type": "string",
-                                },
-                                "type": "array",
-                            },
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "HadprimarysourceMappingRule",
-                "type": "object",
-            },
-            "IdentifierFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Identifier fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/IdentifierMappingRule"},
-                        "minItems": 1,
-                        "title": "Mappingrules",
-                        "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Comment",
-                    },
-                },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "IdentifierFieldsInPrimarySource",
-                "type": "object",
-            },
-            "IdentifierMappingRule": {
-                "additionalProperties": False,
-                "description": "Mapping rule schema of field Identifier.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                    "title": "ExtractedDummyIdentifier",
-                                    "type": "string",
-                                },
-                                "type": "array",
-                            },
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "IdentifierMappingRule",
-                "type": "object",
-            },
-            "IdentifierinprimarysourceFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Identifierinprimarysource fields in primary source.",
-                "properties": {
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Examplesinprimarysource",
+                        "title": "examplesInPrimarySource",
                     },
                     "mappingRules": {
                         "items": {
-                            "$ref": "#/$defs/IdentifierinprimarysourceMappingRule"
+                            "$ref": "#/$defs/MappingRule_MergedPrimarySourceIdentifier_"
                         },
                         "minItems": 1,
-                        "title": "Mappingrules",
+                        "title": "mappingRules",
                         "type": "array",
                     },
                     "comment": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Comment",
+                        "title": "comment",
                     },
                 },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "IdentifierinprimarysourceFieldsInPrimarySource",
+                "required": ["mappingRules"],
+                "title": "MappingField[MergedPrimarySourceIdentifier]",
                 "type": "object",
             },
-            "IdentifierinprimarysourceMappingRule": {
+            "MappingField_list_MergedResourceIdentifier__": {
                 "additionalProperties": False,
-                "description": "Mapping rule schema of field Identifierinprimarysource.",
-                "properties": {
-                    "forValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Forvalues",
-                    },
-                    "setValues": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "Setvalues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Rule",
-                    },
-                },
-                "title": "IdentifierinprimarysourceMappingRule",
-                "type": "object",
-            },
-            "StabletargetidFieldsInPrimarySource": {
-                "additionalProperties": False,
-                "description": "Mapping schema for Stabletargetid fields in primary source.",
                 "properties": {
                     "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "fieldInPrimarySource",
                     },
                     "locationInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Locationinprimarysource",
+                        "title": "locationInPrimarySource",
                     },
                     "examplesInPrimarySource": {
                         "anyOf": [
@@ -690,27 +96,102 @@ def test_generate_mapping_schema() -> None:
                             {"type": "null"},
                         ],
                         "default": None,
-                        "title": "Examplesinprimarysource",
+                        "title": "examplesInPrimarySource",
                     },
                     "mappingRules": {
-                        "items": {"$ref": "#/$defs/StabletargetidMappingRule"},
+                        "items": {
+                            "$ref": "#/$defs/MappingRule_list_MergedResourceIdentifier__"
+                        },
                         "minItems": 1,
-                        "title": "Mappingrules",
+                        "title": "mappingRules",
                         "type": "array",
                     },
                     "comment": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Comment",
+                        "title": "comment",
                     },
                 },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "StabletargetidFieldsInPrimarySource",
+                "required": ["mappingRules"],
+                "title": "MappingField[list[MergedResourceIdentifier]]",
                 "type": "object",
             },
-            "StabletargetidMappingRule": {
+            "MappingField_list_Text__": {
                 "additionalProperties": False,
-                "description": "Mapping rule schema of field Stabletargetid.",
+                "properties": {
+                    "fieldInPrimarySource": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "fieldInPrimarySource",
+                    },
+                    "locationInPrimarySource": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "locationInPrimarySource",
+                    },
+                    "examplesInPrimarySource": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "examplesInPrimarySource",
+                    },
+                    "mappingRules": {
+                        "items": {"$ref": "#/$defs/MappingRule_list_Text__"},
+                        "minItems": 1,
+                        "title": "mappingRules",
+                        "type": "array",
+                    },
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
+                },
+                "required": ["mappingRules"],
+                "title": "MappingField[list[Text]]",
+                "type": "object",
+            },
+            "MappingField_str_": {
+                "additionalProperties": False,
+                "properties": {
+                    "fieldInPrimarySource": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "fieldInPrimarySource",
+                    },
+                    "locationInPrimarySource": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "locationInPrimarySource",
+                    },
+                    "examplesInPrimarySource": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "examplesInPrimarySource",
+                    },
+                    "mappingRules": {
+                        "items": {"$ref": "#/$defs/MappingRule_str_"},
+                        "minItems": 1,
+                        "title": "mappingRules",
+                        "type": "array",
+                    },
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
+                },
+                "required": ["mappingRules"],
+                "title": "MappingField[str]",
+                "type": "object",
+            },
+            "MappingRule_MergedPrimarySourceIdentifier_": {
+                "additionalProperties": False,
                 "properties": {
                     "forValues": {
                         "anyOf": [
@@ -718,14 +199,46 @@ def test_generate_mapping_schema() -> None:
                             {"type": "null"},
                         ],
                         "default": None,
-                        "title": "Forvalues",
+                        "title": "forValues",
+                    },
+                    "setValues": {
+                        "anyOf": [
+                            {
+                                "pattern": "^[a-zA-Z0-9]{14,22}$",
+                                "title": "MergedPrimarySourceIdentifier",
+                                "type": "string",
+                            },
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "setValues",
+                    },
+                    "rule": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "rule",
+                    },
+                },
+                "title": "MappingRule[MergedPrimarySourceIdentifier]",
+                "type": "object",
+            },
+            "MappingRule_list_MergedResourceIdentifier__": {
+                "additionalProperties": False,
+                "properties": {
+                    "forValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "forValues",
                     },
                     "setValues": {
                         "anyOf": [
                             {
                                 "items": {
                                     "pattern": "^[a-zA-Z0-9]{14,22}$",
-                                    "title": "MergedDummyIdentifier",
+                                    "title": "MergedResourceIdentifier",
                                     "type": "string",
                                 },
                                 "type": "array",
@@ -733,87 +246,135 @@ def test_generate_mapping_schema() -> None:
                             {"type": "null"},
                         ],
                         "default": None,
-                        "title": "Setvalues",
+                        "title": "setValues",
                     },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Rule",
+                        "title": "rule",
                     },
                 },
-                "title": "StabletargetidMappingRule",
+                "title": "MappingRule[list[MergedResourceIdentifier]]",
                 "type": "object",
             },
+            "MappingRule_list_Text__": {
+                "additionalProperties": False,
+                "properties": {
+                    "forValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "forValues",
+                    },
+                    "setValues": {
+                        "anyOf": [
+                            {"items": {"$ref": "#/$defs/Text"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "setValues",
+                    },
+                    "rule": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "rule",
+                    },
+                },
+                "title": "MappingRule[list[Text]]",
+                "type": "object",
+            },
+            "MappingRule_str_": {
+                "additionalProperties": False,
+                "properties": {
+                    "forValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "forValues",
+                    },
+                    "setValues": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "setValues",
+                    },
+                    "rule": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "rule",
+                    },
+                },
+                "title": "MappingRule[str]",
+                "type": "object",
+            },
+            "Text": {
+                "description": 'Type class for text objects.\n\nTexts can be parsed from nested JSON objects or from raw strings.\n\nExample:\n    Text(value="foo") == Text.model_validate("foo")',
+                "properties": {
+                    "value": {"minLength": 1, "title": "Value", "type": "string"},
+                    "language": {
+                        "anyOf": [{"$ref": "#/$defs/TextLanguage"}, {"type": "null"}],
+                        "default": None,
+                    },
+                },
+                "required": ["value"],
+                "title": "Text",
+                "type": "object",
+            },
+            "TextLanguage": {
+                "description": "Possible language tags for `Text` values.",
+                "enum": ["de", "en"],
+                "title": "TextLanguage",
+                "type": "string",
+            },
         },
-        "description": "Schema for mapping the properties of the entity type ExtractedDummy.",
+        "additionalProperties": False,
+        "description": "Mapping for describing a variable group transformation.",
         "properties": {
+            "$type": {
+                "const": "VariableGroupMapping",
+                "default": "VariableGroupMapping",
+                "enum": ["VariableGroupMapping"],
+                "title": "$Type",
+                "type": "string",
+            },
             "hadPrimarySource": {
-                "items": {"$ref": "#/$defs/HadprimarysourceFieldsInPrimarySource"},
+                "items": {
+                    "$ref": "#/$defs/MappingField_MergedPrimarySourceIdentifier_"
+                },
+                "minItems": 1,
                 "title": "Hadprimarysource",
                 "type": "array",
             },
             "identifierInPrimarySource": {
-                "items": {
-                    "$ref": "#/$defs/IdentifierinprimarysourceFieldsInPrimarySource"
-                },
+                "items": {"$ref": "#/$defs/MappingField_str_"},
+                "minItems": 1,
                 "title": "Identifierinprimarysource",
                 "type": "array",
             },
-            "identifier": {
-                "items": {"$ref": "#/$defs/IdentifierFieldsInPrimarySource"},
-                "title": "Identifier",
+            "containedBy": {
+                "items": {
+                    "$ref": "#/$defs/MappingField_list_MergedResourceIdentifier__"
+                },
+                "minItems": 1,
+                "title": "Containedby",
                 "type": "array",
             },
-            "stableTargetId": {
-                "items": {"$ref": "#/$defs/StabletargetidFieldsInPrimarySource"},
-                "title": "Stabletargetid",
-                "type": "array",
-            },
-            "dummy_unit": {
-                "default": None,
-                "items": {"$ref": "#/$defs/Dummy_unitFieldsInPrimarySource"},
-                "title": "Dummy Unit",
-                "type": "array",
-            },
-            "dummy_str": {
-                "items": {"$ref": "#/$defs/Dummy_strFieldsInPrimarySource"},
-                "title": "Dummy Str",
-                "type": "array",
-            },
-            "dummy_int": {
-                "default": None,
-                "items": {"$ref": "#/$defs/Dummy_intFieldsInPrimarySource"},
-                "title": "Dummy Int",
-                "type": "array",
-            },
-            "dummy_email": {
-                "items": {"$ref": "#/$defs/Dummy_emailFieldsInPrimarySource"},
-                "title": "Dummy Email",
-                "type": "array",
-            },
-            "dummy_list": {
-                "default": None,
-                "items": {"$ref": "#/$defs/Dummy_listFieldsInPrimarySource"},
-                "title": "Dummy List",
-                "type": "array",
-            },
-            "dummy_min_length_list": {
-                "items": {"$ref": "#/$defs/Dummy_min_length_listFieldsInPrimarySource"},
-                "title": "Dummy Min Length List",
+            "label": {
+                "items": {"$ref": "#/$defs/MappingField_list_Text__"},
+                "minItems": 1,
+                "title": "Label",
                 "type": "array",
             },
         },
         "required": [
             "hadPrimarySource",
             "identifierInPrimarySource",
-            "identifier",
-            "stableTargetId",
-            "dummy_str",
-            "dummy_email",
-            "dummy_min_length_list",
+            "containedBy",
+            "label",
         ],
-        "title": "DummyMapping",
+        "title": "VariableGroupMapping",
         "type": "object",
     }
-
-    assert schema_model.model_json_schema() == expected

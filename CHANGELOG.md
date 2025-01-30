@@ -9,22 +9,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- port backend identity provider implementation from editor/extractors to common
-- ``OrcidPerson`` class
-
 ### Changes
-
-- allow backend and graph as identity provider setting to simplify setting subclasses,
-  even though graph is not implemented in mex-common
-- BREAKING: make backend api connector response models generic, to keep DRY
 
 ### Deprecated
 
 ### Removed
+
 ### Fixed
-- in `connector.py` for orcid: apply for url rstrip
-- `test_extract.py` in primary source: Set assertion to 5 (added orcid as ps)
+
 ### Security
+
+## [0.49.3] - 2025-01-29
+
+### Changes
+
+- update mex-model to 3.5.1
+
+### Fixed
+
+- fix regex pattern for GndIdStr in organization models
+
+## [0.49.2] - 2025-01-29
+
+### Fixed
+
+- do not wrap field types in `setValues` in mapping rules in another list
+
+## [0.49.1] - 2025-01-29
+
+### Fixed
+
+- reduce Filter classes to a single list field of `FilterField` items
+
+## [0.49.0] - 2025-01-29
+
+### Added
+
+- new (partially generic) classes for defining Mapping and Filter fields and rules
+
+### Changes
+
+- BREAKING: replaced dynamic Mapping and Filter classes with static ones
+
+### Deprecated
+
+- use FILTER_MODEL_CLASSES_BY_NAME instead of FILTER_MODEL_BY_EXTRACTED_CLASS_NAME
+- use MAPPING_MODEL_CLASSES_BY_NAME instead of MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME
+
+## [0.48.0] - 2025-01-28
+
+### Added
+
+- add a sink registry with `register_sink` and `get_sink` functions
+- add a multi-sink implementation, akin to `mex.extractors.load`
+
+### Changes
+
+- BREAKING: convert post_to_backend_api to BackendApiSink
+- BREAKING: convert write_ndjson to NdjsonSink
+- backend and ndjson sinks log progress only in batches
+- increase timeout and decrease chunk size for backend API sink
+- port backend identity provider implementation from editor/extractors to common
+- allow backend and graph as identity provider setting to simplify setting subclasses,
+  even though graph is not implemented in mex-common
+- BREAKING: make backend api connector response models generic, to keep DRY
 
 ## [0.47.1] - 2025-01-24
 
