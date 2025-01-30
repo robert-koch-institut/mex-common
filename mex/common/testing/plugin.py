@@ -12,13 +12,15 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import MagicMock, Mock
 
+import pytest
 import requests
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
-from requests import Response
+from requests import HTTPError, Response
 
 from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
+from mex.common.orcid.connector import OrcidConnector
 from mex.common.primary_source.helpers import get_all_extracted_primary_sources
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.wikidata.connector import (
@@ -191,3 +193,67 @@ def mocked_wikidata(
         "get_wikidata_item_details_by_id",
         get_wikidata_item_details_by_id,
     )
+
+
+@pytest.fixture
+def orcid_person_raw() -> dict[str, Any]:
+    """Return a raw orcid person."""
+    with open(Path(__file__).parent / "test_data" / "orcid_person_raw.json") as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
+def orcid_multiple_matches() -> dict[str, Any]:
+    """Return a raw orcid person."""
+    with open(
+        Path(__file__).parent / "test_data" / "orcid_multiple_matches.json"
+    ) as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
+def mocked_orcid(
+    monkeypatch: pytest.MonkeyPatch,
+    orcid_person_raw: dict[str, Any],
+    orcid_multiple_matches: dict[str, Any],
+) -> None:
+    """Mock orcid connector."""
+    response_query = Mock(spec=Response, status_code=200)
+
+    session = MagicMock(spec=requests.Session)
+    session.get = MagicMock(side_effect=[response_query])
+
+    def mocked_init(self: OrcidConnector) -> None:
+        self.session = session
+
+    monkeypatch.setattr(OrcidConnector, "__init__", mocked_init)
+
+    def check_orcid_id_exists(_self: OrcidConnector, _orcid_id: str) -> bool:
+        return _orcid_id == "0000-0002-1825-0097"
+
+    monkeypatch.setattr(OrcidConnector, "check_orcid_id_exists", check_orcid_id_exists)
+
+    def fetch(_self: OrcidConnector, filters: dict[str, Any]) -> dict[str, Any]:
+        if filters.get("given-names") == "John":
+            return {"num-found": 1, "result": [orcid_person_raw]}
+        if filters.get("given-names") == "Multiple":
+            return orcid_multiple_matches
+        return {"result": None, "num-found": 0}
+
+    monkeypatch.setattr(OrcidConnector, "fetch", fetch)
+
+    def get_data_by_id(orcid_id: str) -> dict[str, Any]:
+        if orcid_id == "0000-0002-1825-0097":
+            return orcid_person_raw
+        msg = "404 Not Found"
+        raise HTTPError(msg)
+
+    monkeypatch.setattr(OrcidConnector, "get_data_by_id", staticmethod(get_data_by_id))
+
+    def build_query(filters: dict[str, Any]) -> str:
+        """Construct the ORCID API query string."""
+        if "givennames" in filters:
+            return "givennames:Josiah AND familyname:Carberry"
+        return "given-names:Josiah AND family-name:Carberry"
+
+    monkeypatch.setattr(OrcidConnector, "build_query", staticmethod(build_query))

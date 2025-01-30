@@ -8,8 +8,6 @@ from mex.common.settings import BaseSettings
 class OrcidConnector(HTTPConnector):
     """Connector class for querying Orcid records."""
 
-    TIMEOUT = 80
-
     def _set_url(self) -> None:
         """Set url of the host."""
         settings = BaseSettings.get()
@@ -37,55 +35,55 @@ class OrcidConnector(HTTPConnector):
         query = OrcidConnector.build_query(filters)
         return self.request(method="GET", endpoint="search", params={"q": query})
 
+    @staticmethod
+    def get_data_by_id(orcid_id: str) -> dict[str, Any]:
+        """Retrieve data by UNIQUE ORCID ID.
 
-def get_data_by_id(orcid_id: str) -> dict[str, Any]:
-    """Retrieve data by UNIQUE ORCID ID.
+        Args:
+            orcid_id: Unique identifier in ORCID system.
 
-    Args:
-        orcid_id: Uniqe identifier in ORCID system.
+        Returns:
+            Personal data of the single matching id.
+        """
+        orcidapi = OrcidConnector.get()
+        # or endpoint = f"{orcid_id}/person"
+        endpoint = f"{orcid_id}/record"
+        return dict(orcidapi.request(method="GET", endpoint=endpoint))
 
-    Returns:
-        Personal data of the single matching id.
-    """
-    orcidapi = OrcidConnector.get()
-    # or endpoint = f"{orcid_id}/person"
-    endpoint = f"{orcid_id}/record"
-    return dict(orcidapi.request(method="GET", endpoint=endpoint))
+    @staticmethod
+    def get_data_by_name(
+        given_names: str = "*",
+        family_name: str = "*",
+        **filters: str,
+    ) -> dict[str, Any]:
+        """Get ORCID record of a single person for the given filters.
 
+        Args:
+            self: Connector.
+            given_names: Given name of a person, defaults to non-null
+            family_name: Surname of a person, defaults to non-null
+            **filters: Key-value pairs representing ORCID search filters.
 
-def get_data_by_name(
-    given_names: str = "*",
-    family_name: str = "*",
-    **filters: str,
-) -> dict[str, Any]:
-    """Get ORCID record of a single person for the given filters.
+        Raises:
+            EmptySearchResultError
+            FoundMoreThanOneError
 
-    Args:
-        self: Connector.
-        given_names: Given name of a person, defaults to non-null
-        family_name: Surname of a person, defaults to non-null
-        **filters: Key-value pairs representing ORCID search filters.
+        Returns:
+            Orcid data of the single matching person by name.
+        """
+        if given_names:
+            filters["given-names"] = given_names
+        if family_name:
+            filters["family-name"] = family_name
+        orcidapi = OrcidConnector.get()
+        search_response = orcidapi.fetch(filters=filters)
+        num_found = search_response.get("num-found", 0)
+        if num_found == 0:
+            msg = f"Cannot find orcid person for filters {filters}'"
+            raise EmptySearchResultError(msg)
+        if num_found > 1:
+            msg = f"Found multiple orcid persons for filters {filters}'"
+            raise FoundMoreThanOneError(msg)
 
-    Raises:
-        EmptySearchResultError
-        FoundMoreThanOneError
-
-    Returns:
-        Orcid data of the single matching person by name.
-    """
-    if given_names:
-        filters["given-names"] = given_names
-    if family_name:
-        filters["family-name"] = family_name
-    orcidapi = OrcidConnector.get()
-    search_response = orcidapi.fetch(filters=filters)
-    num_found = search_response.get("num-found", 0)
-    if num_found == 0:
-        msg = f"Cannot find orcid person for filters {filters}'"
-        raise EmptySearchResultError(msg)
-    if num_found > 1:
-        msg = f"Found multiple orcid persons for filters {filters}'"
-        raise FoundMoreThanOneError(msg)
-
-    orcid_id = search_response["result"][0]["orcid-identifier"]["path"]
-    return get_data_by_id(orcid_id)
+        orcid_id = search_response["result"][0]["orcid-identifier"]["path"]
+        return OrcidConnector.get_data_by_id(orcid_id)

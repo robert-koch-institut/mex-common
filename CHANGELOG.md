@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - port backend identity provider implementation from editor/extractors to common
+- ``OrcidPerson`` class
 
 ### Changes
 
@@ -20,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
-- ``mapToOrcidPerson`` and `reduce_metadata` deleted. Replaced with model.validate fct
 ### Fixed
 - in `connector.py` for orcid: apply for url rstrip
 - `test_extract.py` in primary source: Set assertion to 5 (added orcid as ps)

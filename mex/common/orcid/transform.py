@@ -28,8 +28,12 @@ def transform_orcid_person_to_mex_person(
 
     id_in_primary_source = orcid_record.orcid_identifier.path
     email = orcid_record.person.emails.email[0].email
-    given_names = orcid_record.person.name.given_names.value
-    family_name = orcid_record.person.name.family_name.value
+    if orcid_record.person.name.visibility == "public":
+        given_names = orcid_record.person.name.given_names.value
+        family_name = orcid_record.person.name.family_name.value
+    else:
+        given_names = None
+        family_name = None
     orcid_id = orcid_record.orcid_identifier.uri
 
     return ExtractedPerson(
