@@ -123,6 +123,18 @@ ignore = [
 select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
+"mex/common/connector/http.py" = [
+    "A005",     # Allow custom http connector module to shadow standard-library
+]
+"mex/common/logging.py" = [
+    "A005",     # Allow custom logging module to shadow standard-library
+]
+"mex/common/models/resource.py" = [
+    "A005",     # Allow module for resource models to shadow standard-library
+]
+"mex/common/types/email.py" = [
+    "A005",     # Allow custom email types module to shadow standard-library
+]
 "docs/**" = [
     "INP001",   # Docs folder does not need to be a package
 ]
