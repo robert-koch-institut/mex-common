@@ -25,8 +25,8 @@ from mex.common.orcid.models.person import (
             "Doe",
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
-                    path="0000-0002-1825-0097",
-                    uri="https://orcid.org/0000-0002-1825-0097",
+                    path="0009-0004-3041-5706",
+                    uri="https://orcid.org/0009-0004-3041-5706",
                 ),
                 person=OrcidPerson(
                     emails=OrcidEmails(email=[]),
@@ -73,11 +73,11 @@ def test_get_orcid_record_by_name(given_names, family_name, expected_result, err
     ("orcid_id", "expected_result", "error"),
     [
         (
-            "0000-0002-1825-0097",
+            "0009-0004-3041-5706",
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
-                    path="0000-0002-1825-0097",
-                    uri="https://orcid.org/0000-0002-1825-0097",
+                    path="0009-0004-3041-5706",
+                    uri="https://orcid.org/0009-0004-3041-5706",
                 ),
                 person=OrcidPerson(
                     emails=OrcidEmails(email=[]),

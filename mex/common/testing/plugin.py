@@ -229,7 +229,7 @@ def mocked_orcid(
     monkeypatch.setattr(OrcidConnector, "__init__", mocked_init)
 
     def check_orcid_id_exists(_self: OrcidConnector, _orcid_id: str) -> bool:
-        return _orcid_id == "0000-0002-1825-0097"
+        return _orcid_id == "0009-0004-3041-5706"
 
     monkeypatch.setattr(OrcidConnector, "check_orcid_id_exists", check_orcid_id_exists)
 
@@ -243,7 +243,7 @@ def mocked_orcid(
     monkeypatch.setattr(OrcidConnector, "fetch", fetch)
 
     def get_data_by_id(orcid_id: str) -> dict[str, Any]:
-        if orcid_id == "0000-0002-1825-0097":
+        if orcid_id == "0009-0004-3041-5706":
             return orcid_person_raw
         msg = "404 Not Found"
         raise HTTPError(msg)

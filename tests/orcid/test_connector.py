@@ -50,98 +50,32 @@ def test_check_id_exists(orcidid, expected) -> None:
                 "result": [
                     {
                         "orcid-identifier": {
-                            "uri": "https://orcid.org/0009-0004-3041-5706",
-                            "path": "0009-0004-3041-5706",
                             "host": "orcid.org",
+                            "path": "0009-0004-3041-5706",
+                            "uri": "https://orcid.org/0009-0004-3041-5706",
                         },
-                        "preferences": {"locale": "en"},
-                        "history": {
-                            "creation-method": "DIRECT",
-                            "submission-date": {"value": 1729001669889},
-                            "last-modified-date": {"value": 1730814244260},
-                            "person": {
-                                "name": {
-                                    "created-date": {"value": 1729001670037},
-                                    "last-modified-date": {"value": 1730814244255},
-                                    "given-names": {"value": "John"},
-                                    "family-name": {"value": "Doe"},
-                                    "visibility": "public",
-                                    "path": "0009-0004-3041-5706",
-                                },
-                                "other-names": {
-                                    "other-name": [],
-                                    "path": "/0009-0004-3041-5706/other-names",
-                                },
-                                "researcher-urls": {
-                                    "researcher-url": [],
-                                    "path": "/0009-0004-3041-5706/researcher-urls",
-                                },
-                                "emails": {
-                                    "email": [],
-                                    "path": "/0009-0004-3041-5706/email",
-                                },
-                                "addresses": {
-                                    "address": [],
-                                    "path": "/0009-0004-3041-5706/address",
-                                },
-                                "keywords": {
-                                    "keyword": [],
-                                    "path": "/0009-0004-3041-5706/keywords",
-                                },
-                                "external-identifiers": {
-                                    "external-identifier": [],
-                                    "path": "/0009-0004-3041-5706/external-identifiers",
-                                },
-                                "path": "/0009-0004-3041-5706/person",
+                        "path": "/0009-0004-3041-5706",
+                        "person": {
+                            "emails": {
+                                "email": [],
+                                "path": "/0009-0004-3041-5706/email",
                             },
-                            "activities-summary": {
-                                "distinctions": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/distinctions",
-                                },
-                                "educations": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/educations",
-                                },
-                                "employments": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/employments",
-                                },
-                                "fundings": {
-                                    "group": [],
-                                    "path": "/0009-0004-3041-5706/fundings",
-                                },
-                                "invited-positions": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/invited-positions",
-                                },
-                                "memberships": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/memberships",
-                                },
-                                "peer-reviews": {
-                                    "group": [],
-                                    "path": "/0009-0004-3041-5706/peer-reviews",
-                                },
-                                "qualifications": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/qualifications",
-                                },
-                                "research-resources": {
-                                    "group": [],
-                                    "path": "/0009-0004-3041-5706/research-resources",
-                                },
-                                "services": {
-                                    "affiliation-group": [],
-                                    "path": "/0009-0004-3041-5706/services",
-                                },
-                                "works": {
-                                    "group": [],
-                                    "path": "/0009-0004-3041-5706/works",
-                                },
-                                "path": "/0009-0004-3041-5706/activities",
+                            "name": {
+                                "created-date": {"value": 1729001670037},
+                                "family-name": {"value": "Doe"},
+                                "given-names": {"value": "John"},
+                                "last-modified-date": {"value": 1730814244255},
+                                "path": "0009-0004-3041-5706",
+                                "visibility": "public",
                             },
-                            "path": "/0009-0004-3041-5706",
+                            "other-names": {
+                                "other-name": [],
+                                "path": "/0009-0004-3041-5706/other-names",
+                            },
+                            "researcher-urls": {
+                                "path": "/0009-0004-3041-5706/researcher-urls",
+                                "researcher-url": [],
+                            },
                         },
                     }
                 ],

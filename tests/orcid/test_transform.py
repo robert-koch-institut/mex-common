@@ -22,11 +22,11 @@ from mex.common.orcid.transform import (
         (
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
-                    path="0000-0002-1825-0097",
-                    uri="https://orcid.org/0000-0002-1825-0097",
+                    path="0009-0004-3041-5706",
+                    uri="https://orcid.org/0009-0004-3041-5706",
                 ),
                 person=OrcidPerson(
-                    orcid_identifier="0000-0002-1825-0097",
+                    orcid_identifier="0009-0004-3041-5706",
                     emails=OrcidEmails(email=[OrcidEmail(email=["test@example.com"])]),
                     name=OrcidName(
                         given_names=OrcidGivenNames(value="Josiah"),
@@ -37,7 +37,7 @@ from mex.common.orcid.transform import (
             ),
             {
                 "hadPrimarySource": "Naj2hOJq9FNRkkMWa5Qd0",
-                "identifierInPrimarySource": "0000-0002-1825-0097",
+                "identifierInPrimarySource": "0009-0004-3041-5706",
                 "affiliation": [],
                 "email": ["test@example.com"],
                 "familyName": ["Carberry"],
@@ -45,10 +45,10 @@ from mex.common.orcid.transform import (
                 "givenName": ["Josiah"],
                 "isniId": [],
                 "memberOf": [],
-                "orcidId": ["https://orcid.org/0000-0002-1825-0097"],
+                "orcidId": ["https://orcid.org/0009-0004-3041-5706"],
                 "entityType": "ExtractedPerson",
-                "identifier": "YpTEbqCI50OzL4Nmqtla2",
-                "stableTargetId": "VsesmNpZUOi6dklUaXWMv",
+                "identifier": "eLFbvlVkwRgGxLnS8RywZ3",
+                "stableTargetId": "ccM55btPUrNtYKSLX8cNQP",
             },
         ),
         (
@@ -100,8 +100,8 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
         (
             {
                 "orcid_identifier": {
-                    "path": "0000-0002-1825-0097",
-                    "uri": "https://orcid.org/0000-0002-1825-0097",
+                    "path": "0009-0004-3041-5706",
+                    "uri": "https://orcid.org/0009-0004-3041-5706",
                 },
                 "person": {
                     "emails": {"email": [{"email": "test@example.com"}]},
@@ -114,8 +114,8 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
             },
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
-                    path="0000-0002-1825-0097",
-                    uri="https://orcid.org/0000-0002-1825-0097",
+                    path="0009-0004-3041-5706",
+                    uri="https://orcid.org/0009-0004-3041-5706",
                 ),
                 person=OrcidPerson(
                     emails=OrcidEmails(email=[OrcidEmail(email="test@example.com")]),
@@ -130,8 +130,8 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
         (
             {
                 "orcid-identifier": {
-                    "path": "0000-0002-1825-0097",
-                    "uri": "https://orcid.org/0000-0002-1825-0097",
+                    "path": "0009-0004-3041-5706",
+                    "uri": "https://orcid.org/0009-0004-3041-5706",
                 },
                 "person": {
                     "name": {
@@ -144,8 +144,8 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
             },
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
-                    path="0000-0002-1825-0097",
-                    uri="https://orcid.org/0000-0002-1825-0097",
+                    path="0009-0004-3041-5706",
+                    uri="https://orcid.org/0009-0004-3041-5706",
                 ),
                 person=OrcidPerson(
                     emails=OrcidEmails(email=[]),
@@ -160,8 +160,8 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
         (
             {
                 "orcid-identifier": {
-                    "path": "0000-0002-1825-0097",
-                    "uri": "https://orcid.org/0000-0002-1825-0097",
+                    "path": "0009-0004-3041-5706",
+                    "uri": "https://orcid.org/0009-0004-3041-5706",
                 },
                 "person": {
                     "name": {
@@ -174,8 +174,8 @@ def test_transform_orcid_person_to_mex_person(orcid_person, expected_mex_person)
             },
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
-                    path="0000-0002-1825-0097",
-                    uri="https://orcid.org/0000-0002-1825-0097",
+                    path="0009-0004-3041-5706",
+                    uri="https://orcid.org/0009-0004-3041-5706",
                 ),
                 person=OrcidPerson(
                     emails=OrcidEmails(email=[OrcidEmail(email=["test@example.com"])]),

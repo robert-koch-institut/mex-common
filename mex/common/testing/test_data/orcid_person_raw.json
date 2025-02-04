@@ -1,14 +1,14 @@
 {
     "orcid-identifier": {
         "host": "orcid.org",
-        "path": "0000-0002-1825-0097",
-        "uri": "https://orcid.org/0000-0002-1825-0097"
+        "path": "0009-0004-3041-5706",
+        "uri": "https://orcid.org/0009-0004-3041-5706"
     },
-    "path": "/0000-0002-1825-0097",
+    "path": "/0009-0004-3041-5706",
     "person": {
         "emails": {
             "email": [],
-            "path": "/0000-0002-1825-0097/email"
+            "path": "/0009-0004-3041-5706/email"
         },
         "name": {
             "created-date": {
@@ -23,15 +23,15 @@
             "last-modified-date": {
                 "value": 1730814244255
             },
-            "path": "0000-0002-1825-0097",
+            "path": "0009-0004-3041-5706",
             "visibility": "public"
         },
         "other-names": {
             "other-name": [],
-            "path": "/0000-0002-1825-0097/other-names"
+            "path": "/0009-0004-3041-5706/other-names"
         },
         "researcher-urls": {
-            "path": "/0000-0002-1825-0097/researcher-urls",
+            "path": "/0009-0004-3041-5706/researcher-urls",
             "researcher-url": []
         }
     }
