@@ -9,5 +9,5 @@ def test_joker_eq() -> None:
 
 def test_joker_repr() -> None:
     joker = Joker()
-    assert {"question": "Why so serious?"} == {"question": joker}
+    assert {"question": joker} == {"question": "Why so serious?"}
     assert repr(joker) == "'Why so serious?'"
