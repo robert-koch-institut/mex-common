@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - methods for extracting data from orcid
   - methods to transform from OcidPerson to mex person
   - model class for orcid data
-  - unit tests
+  - unit tests for orcid connector
 
 ### Changes
 
