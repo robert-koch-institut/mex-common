@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar
 
-from mex.common.models import BaseModel
+from pydantic import BaseModel
 
 T = TypeVar("T")
 

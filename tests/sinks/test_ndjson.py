@@ -25,10 +25,22 @@ def test_sink_load() -> None:
     settings = BaseSettings.get()
 
     test_models = [
-        Thing(identifier="1", str_attr="foo"),
-        Thing(identifier="2", str_attr="bar", enum_attr=DummyEnum.NAME),
-        Thing(identifier="3", str_attr="baz", uuid_attr=UUID(int=42, version=4)),
-        Thing(identifier="4", str_attr="dat", ts_attr=TemporalEntity(2000, 1, 1)),
+        Thing(identifier=Identifier.generate(seed=1), str_attr="foo"),
+        Thing(
+            identifier=Identifier.generate(seed=2),
+            str_attr="bar",
+            enum_attr=DummyEnum.NAME,
+        ),
+        Thing(
+            identifier=Identifier.generate(seed=3),
+            str_attr="baz",
+            uuid_attr=UUID(int=42, version=4),
+        ),
+        Thing(
+            identifier=Identifier.generate(seed=4),
+            str_attr="dat",
+            ts_attr=TemporalEntity(2000, 1, 1),
+        ),
     ]
 
     sink = NdjsonSink.get()
