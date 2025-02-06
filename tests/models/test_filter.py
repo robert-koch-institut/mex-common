@@ -1,39 +1,42 @@
-from typing import Annotated, ClassVar, Literal
-
-from pydantic import Field
-
-from mex.common.models import ExtractedData
-from mex.common.models.base.filter import generate_entity_filter_schema
-from mex.common.types import MergedOrganizationalUnitIdentifier
-from mex.common.types.email import Email
+from mex.common.models import (
+    EXTRACTED_MODEL_CLASSES,
+    FILTER_MODEL_CLASSES,
+    FilterField,
+    PersonFilter,
+)
 
 
-class ExtractedDummy(ExtractedData):
-    stemType: ClassVar[Annotated[Literal["Dummy"], Field(frozen=True)]] = "Dummy"
-    entityType: Annotated[
-        Literal["ExtractedDummy"], Field(alias="$type", frozen=True)
-    ] = "ExtractedDummy"
-    dummy_identifier: MergedOrganizationalUnitIdentifier | None = None  # not required
-    dummy_str: str
-    dummy_int: int | None = None  # not required
-    dummy_email: Email
-    dummy_list: list[str] = []  # not required
-    dummy_min_length_list: Annotated[list[str], Field(min_length=1)]
+def test_all_filter_classes_are_defined() -> None:
+    stem_types = sorted(c.stemType for c in EXTRACTED_MODEL_CLASSES)
+    assert sorted(c.stemType for c in FILTER_MODEL_CLASSES) == stem_types
 
 
-def test_entity_filter_schema() -> None:
-    schema_model = generate_entity_filter_schema(ExtractedDummy)
+def test_all_filter_fields_are_defined() -> None:
+    for filter_cls in FILTER_MODEL_CLASSES:
+        field_defs = {
+            field_name: (field_info.annotation, field_info.default)
+            for field_name, field_info in filter_cls.model_fields.items()
+            if field_name != "entityType"
+        }
+        assert field_defs == {"fields": (list[FilterField], [])}
 
-    expected = {
+
+def test_filter_model_schema() -> None:
+    assert PersonFilter.model_json_schema() == {
         "$defs": {
-            "EntityFilter": {
+            "FilterField": {
                 "additionalProperties": False,
-                "description": "Entity filter model.",
+                "description": "Filter definition for one field in the primary source.",
                 "properties": {
-                    "comment": {
+                    "fieldInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Comment",
+                        "title": "fieldInPrimarySource",
+                    },
+                    "locationInPrimarySource": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "locationInPrimarySource",
                     },
                     "examplesInPrimarySource": {
                         "anyOf": [
@@ -41,31 +44,27 @@ def test_entity_filter_schema() -> None:
                             {"type": "null"},
                         ],
                         "default": None,
-                        "title": "Examplesinprimarysource",
+                        "title": "examplesInPrimarySource",
                     },
-                    "fieldInPrimarySource": {
-                        "title": "Fieldinprimarysource",
-                        "type": "string",
-                    },
-                    "locationInPrimarySource": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "Locationinprimarysource",
-                    },
-                    "mappingRules": {
-                        "items": {"$ref": "#/$defs/EntityFilterRule"},
+                    "filterRules": {
+                        "items": {"$ref": "#/$defs/FilterRule"},
                         "minItems": 1,
-                        "title": "Mappingrules",
+                        "title": "filterRules",
                         "type": "array",
                     },
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
                 },
-                "required": ["fieldInPrimarySource", "mappingRules"],
-                "title": "EntityFilter",
+                "required": ["filterRules"],
+                "title": "FilterField",
                 "type": "object",
             },
-            "EntityFilterRule": {
+            "FilterRule": {
                 "additionalProperties": False,
-                "description": "Entity filter rule model.",
+                "description": "A single filter rule to apply.",
                 "properties": {
                     "forValues": {
                         "anyOf": [
@@ -73,29 +72,35 @@ def test_entity_filter_schema() -> None:
                             {"type": "null"},
                         ],
                         "default": None,
-                        "title": "Forvalues",
+                        "title": "forValues",
                     },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
-                        "title": "Rule",
+                        "title": "rule",
                     },
                 },
-                "title": "EntityFilterRule",
+                "title": "FilterRule",
                 "type": "object",
             },
         },
-        "description": "Schema for entity filters for the entity type ExtractedDummy.",
+        "additionalProperties": False,
+        "description": "Class for defining filter rules for person items.",
         "properties": {
-            "ExtractedDummy": {
-                "default": None,
-                "items": {"$ref": "#/$defs/EntityFilter"},
-                "title": "Extracteddummy",
+            "$type": {
+                "const": "PersonFilter",
+                "default": "PersonFilter",
+                "enum": ["PersonFilter"],
+                "title": "$Type",
+                "type": "string",
+            },
+            "fields": {
+                "default": [],
+                "items": {"$ref": "#/$defs/FilterField"},
+                "title": "fields",
                 "type": "array",
-            }
+            },
         },
-        "title": "DummyEntityFilter",
+        "title": "PersonFilter",
         "type": "object",
     }
-
-    assert schema_model.model_json_schema() == expected

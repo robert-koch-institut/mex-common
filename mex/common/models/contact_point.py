@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -124,3 +126,25 @@ class ContactPointRuleSetResponse(_BaseRuleSet):
         Literal["ContactPointRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "ContactPointRuleSetResponse"
     stableTargetId: MergedContactPointIdentifier
+
+
+class ContactPointMapping(_Stem, BaseMapping):
+    """Mapping for describing a contact point transformation."""
+
+    entityType: Annotated[
+        Literal["ContactPointMapping"], Field(alias="$type", frozen=True)
+    ] = "ContactPointMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    email: Annotated[list[MappingField[list[Email]]], Field(min_length=1)]
+
+
+class ContactPointFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for contact point items."""
+
+    entityType: Annotated[
+        Literal["ContactPointFilter"], Field(alias="$type", frozen=True)
+    ] = "ContactPointFilter"
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "0.48.0"
+version = "0.49.3"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -12,7 +12,7 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.4.0",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.5.1",
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=19,<20",
@@ -29,7 +29,7 @@ optional-dependencies.dev = [
     "pytest-random-order>=1,<2",
     "pytest-xdist>=3,<4",
     "pytest>=8,<9",
-    "ruff>=0.8,<1",
+    "ruff>=0.9,<1",
     "sphinx>=8,<9",
     "types-ldap3>=2,<3",
     "types-pytz>=2024,<2025",
@@ -123,6 +123,18 @@ ignore = [
 select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
+"mex/common/connector/http.py" = [
+    "A005",     # Allow custom http connector module to shadow standard-library
+]
+"mex/common/logging.py" = [
+    "A005",     # Allow custom logging module to shadow standard-library
+]
+"mex/common/models/resource.py" = [
+    "A005",     # Allow module for resource models to shadow standard-library
+]
+"mex/common/types/email.py" = [
+    "A005",     # Allow custom email types module to shadow standard-library
+]
 "docs/**" = [
     "INP001",   # Docs folder does not need to be a package
 ]

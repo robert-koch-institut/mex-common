@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -31,6 +33,22 @@ DataTypeStr = Annotated[
     str,
     Field(examples=["integer", "string", "image", "int55", "number"]),
 ]
+ValueSetStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "Ja, stark eingeschränkt",
+            "Ja, etwas eingeschränkt",
+            "Nein, überhaupt nicht eingeschränkt",
+        ],
+    ),
+]
+LabelText = Annotated[
+    Text,
+    Field(
+        examples=[{"language": "de", "value": "Mehrere Treppenabsätze steigen"}],
+    ),
+]
 
 
 class _Stem(BaseModel):
@@ -40,48 +58,19 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     belongsTo: list[MergedVariableGroupIdentifier] = []
     description: list[Text] = []
-    valueSet: list[
-        Annotated[
-            str,
-            Field(
-                examples=[
-                    "Ja, stark eingeschränkt",
-                    "Ja, etwas eingeschränkt",
-                    "Nein, überhaupt nicht eingeschränkt",
-                ],
-            ),
-        ]
-    ] = []
+    valueSet: list[ValueSetStr] = []
 
 
 class _RequiredLists(_Stem):
     label: Annotated[
-        list[
-            Annotated[
-                Text,
-                Field(
-                    examples=[
-                        {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
-                    ],
-                ),
-            ]
-        ],
+        list[LabelText],
         Field(min_length=1),
     ]
     usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
 
 
 class _SparseLists(_Stem):
-    label: list[
-        Annotated[
-            Text,
-            Field(
-                examples=[
-                    {"language": "de", "value": "Mehrere Treppenabsätze steigen"}
-                ],
-            ),
-        ]
-    ] = []
+    label: list[LabelText] = []
     usedIn: list[MergedResourceIdentifier] = []
 
 
@@ -191,3 +180,33 @@ class VariableRuleSetResponse(_BaseRuleSet):
         Literal["VariableRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "VariableRuleSetResponse"
     stableTargetId: MergedVariableIdentifier
+
+
+class VariableMapping(_Stem, BaseMapping):
+    """Mapping for describing a variable transformation."""
+
+    entityType: Annotated[
+        Literal["VariableMapping"], Field(alias="$type", frozen=True)
+    ] = "VariableMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    codingSystem: list[MappingField[CodingSystemStr | None]] = []
+    dataType: list[MappingField[DataTypeStr | None]] = []
+    label: Annotated[list[MappingField[list[LabelText]]], Field(min_length=1)]
+    usedIn: Annotated[
+        list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
+    ]
+    belongsTo: list[MappingField[list[MergedVariableGroupIdentifier]]] = []
+    description: list[MappingField[list[Text]]] = []
+    valueSet: list[MappingField[list[ValueSetStr]]] = []
+
+
+class VariableFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for variable items."""
+
+    entityType: Annotated[
+        Literal["VariableFilter"], Field(alias="$type", frozen=True)
+    ] = "VariableFilter"
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

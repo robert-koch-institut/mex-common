@@ -1,9 +1,11 @@
 [
     {
-        "altLabel": {
-            "de": "alt-de-one",
-            "en": "alt-en-one"
-        },
+        "altLabel": [
+            {
+                "de": "alt-de-one",
+                "en": "alt-en-one"
+            }
+        ],
         "definition": {
             "de": "desc-de-one",
             "en": "desc-en-one"

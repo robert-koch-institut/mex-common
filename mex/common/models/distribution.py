@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -180,3 +182,40 @@ class DistributionRuleSetResponse(_BaseRuleSet):
         Literal["DistributionRuleSetRequest"], Field(alias="$type", frozen=True)
     ] = "DistributionRuleSetRequest"
     stableTargetId: MergedAccessPlatformIdentifier
+
+
+class DistributionMapping(_Stem, BaseMapping):
+    """Mapping for describing a distribution transformation."""
+
+    entityType: Annotated[
+        Literal["DistributionMapping"], Field(alias="$type", frozen=True)
+    ] = "DistributionMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    accessRestriction: Annotated[
+        list[MappingField[AccessRestriction]], Field(min_length=1)
+    ]
+    issued: Annotated[
+        list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]],
+        Field(min_length=1),
+    ]
+    accessService: list[MappingField[MergedAccessPlatformIdentifier | None]] = []
+    license: list[MappingField[License | None]] = []
+    mediaType: list[MappingField[MIMEType | None]] = []
+    modified: list[
+        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
+    ] = []
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    accessURL: list[MappingField[list[Link]]] = []
+    downloadURL: list[MappingField[list[Link]]] = []
+
+
+class DistributionFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for distribution items."""
+
+    entityType: Annotated[
+        Literal["DistributionFilter"], Field(alias="$type", frozen=True)
+    ] = "DistributionFilter"
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

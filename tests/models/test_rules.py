@@ -1,12 +1,25 @@
 from mex.common.models import (
     ADDITIVE_MODEL_CLASSES,
     BASE_MODEL_CLASSES_BY_NAME,
+    EXTRACTED_MODEL_CLASSES,
     PREVENTIVE_MODEL_CLASSES,
     RULE_SET_REQUEST_CLASSES,
     RULE_SET_RESPONSE_CLASSES,
     SUBTRACTIVE_MODEL_CLASSES,
 )
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
+
+
+def test_all_rules_are_defined() -> None:
+    stem_types = sorted(c.stemType for c in EXTRACTED_MODEL_CLASSES)
+    for lookup in (
+        ADDITIVE_MODEL_CLASSES,
+        PREVENTIVE_MODEL_CLASSES,
+        RULE_SET_REQUEST_CLASSES,
+        RULE_SET_RESPONSE_CLASSES,
+        SUBTRACTIVE_MODEL_CLASSES,
+    ):
+        assert sorted(c.stemType for c in lookup) == stem_types
 
 
 def test_additive_models_define_same_fields_as_base_model() -> None:

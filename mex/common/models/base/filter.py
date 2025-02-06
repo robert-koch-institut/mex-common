@@ -1,52 +1,30 @@
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import Annotated
 
-from pydantic import BaseModel, Field, create_model
-
-from mex.common.transform import ensure_postfix
-
-if TYPE_CHECKING:  # pragma: no cover
-    from mex.common.models import AnyExtractedModel
+from pydantic import BaseModel, Field
 
 
-class EntityFilterRule(BaseModel, extra="forbid"):
-    """Entity filter rule model."""
+class FilterRule(BaseModel, extra="forbid"):
+    """A single filter rule to apply."""
 
-    forValues: list[str] | None = None
-    rule: str | None = None
-
-
-class EntityFilter(BaseModel, extra="forbid"):
-    """Entity filter model."""
-
-    fieldInPrimarySource: str
-    locationInPrimarySource: str | None = None
-    examplesInPrimarySource: list[str] | None = None
-    mappingRules: Annotated[list[EntityFilterRule], Field(min_length=1)]
-    comment: str | None = None
+    forValues: Annotated[list[str] | None, Field(title="forValues")] = None
+    rule: Annotated[str | None, Field(title="rule")] = None
 
 
-def generate_entity_filter_schema(
-    extracted_model: type["AnyExtractedModel"],
-) -> type[BaseModel]:
-    """Create a mapping schema for an entity filter for an extracted model class.
+class FilterField(BaseModel, extra="forbid"):
+    """Filter definition for one field in the primary source."""
 
-    Example entity filter: If activity starts before 2016: do not extract.
-
-    Args:
-        extracted_model: a pydantic model for an extracted model class
-
-    Returns:
-        model of the mapping schema for an entity filter
-    """
-    fields: dict[str, Any] = {
-        extracted_model.__name__: (list[EntityFilter], None),
-    }
-    entity_filter_name = ensure_postfix(extracted_model.stemType, "EntityFilter")
-    entity_filter_model: type[BaseModel] = create_model(
-        entity_filter_name,
-        **fields,
+    fieldInPrimarySource: Annotated[str | None, Field(title="fieldInPrimarySource")] = (
+        None
     )
-    entity_filter_model.__doc__ = (
-        f"Schema for entity filters for the entity type {extracted_model.__name__}."
-    )
-    return entity_filter_model
+    locationInPrimarySource: Annotated[
+        str | None, Field(title="locationInPrimarySource")
+    ] = None
+    examplesInPrimarySource: Annotated[
+        list[str] | None, Field(title="examplesInPrimarySource")
+    ] = None
+    filterRules: Annotated[list[FilterRule], Field(min_length=1, title="filterRules")]
+    comment: Annotated[str | None, Field(title="comment")] = None
+
+
+class BaseFilter(BaseModel, extra="forbid"):
+    """Base class for filter implementations."""
