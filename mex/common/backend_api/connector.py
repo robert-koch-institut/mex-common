@@ -41,10 +41,8 @@ class BackendApiConnector(HTTPConnector):
 
     def ingest(
         self,
-        models_or_rule_sets: list[
-            AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse
-        ],
-    ) -> list[AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse]:
+        models_or_rule_sets: list[AnyExtractedModel | AnyRuleSetResponse],
+    ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
         """Post extracted models or rule-sets to the backend in bulk.
 
         Args:
@@ -59,13 +57,13 @@ class BackendApiConnector(HTTPConnector):
         response = self.request(
             method="POST",
             endpoint="ingest",
-            payload=ItemsContainer[
-                AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse
-            ](items=models_or_rule_sets),
+            payload=ItemsContainer[AnyExtractedModel | AnyRuleSetResponse](
+                items=models_or_rule_sets
+            ),
             timeout=self.INGEST_TIMEOUT,
         )
         return (
-            ItemsContainer[AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse]
+            ItemsContainer[AnyExtractedModel | AnyRuleSetResponse]
             .model_validate(response)
             .items
         )

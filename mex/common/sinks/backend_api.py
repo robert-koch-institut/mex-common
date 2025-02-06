@@ -2,7 +2,7 @@ from collections.abc import Generator, Iterable
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
-from mex.common.models import AnyExtractedModel, AnyRuleSetRequest, AnyRuleSetResponse
+from mex.common.models import AnyExtractedModel, AnyRuleSetResponse
 from mex.common.sinks.base import BaseSink
 from mex.common.utils import grouper
 
@@ -14,12 +14,8 @@ class BackendApiSink(BaseSink):
 
     def load(
         self,
-        models_or_rule_sets: Iterable[
-            AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse
-        ],
-    ) -> Generator[
-        AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse, None, None
-    ]:
+        models_or_rule_sets: Iterable[AnyExtractedModel | AnyRuleSetResponse],
+    ) -> Generator[AnyExtractedModel | AnyRuleSetResponse, None, None]:
         """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:

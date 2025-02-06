@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import UUID4
 
-from mex.common.models import ExtractedData
+from mex.common.models import BaseModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks.ndjson import NdjsonSink
 from mex.common.types import Identifier, TemporalEntity
@@ -13,7 +13,7 @@ class DummyEnum(Enum):
     NAME = "value"
 
 
-class ExtractedThing(ExtractedData):
+class Thing(BaseModel):
     identifier: Identifier
     str_attr: str
     enum_attr: DummyEnum | None = None
@@ -21,31 +21,21 @@ class ExtractedThing(ExtractedData):
     ts_attr: TemporalEntity | None = None
 
 
-class RuleThing:
-    pass
-
-
 def test_sink_load() -> None:
     settings = BaseSettings.get()
 
     test_models = [
-        ExtractedThing.model_construct(identifier="1", str_attr="foo"),
-        ExtractedThing.model_construct(
-            identifier="2", str_attr="bar", enum_attr=DummyEnum.NAME
-        ),
-        ExtractedThing.model_construct(
-            identifier="3", str_attr="baz", uuid_attr=UUID(int=42, version=4)
-        ),
-        ExtractedThing.model_construct(
-            identifier="4", str_attr="dat", ts_attr=TemporalEntity(2000, 1, 1)
-        ),
+        Thing(identifier="1", str_attr="foo"),
+        Thing(identifier="2", str_attr="bar", enum_attr=DummyEnum.NAME),
+        Thing(identifier="3", str_attr="baz", uuid_attr=UUID(int=42, version=4)),
+        Thing(identifier="4", str_attr="dat", ts_attr=TemporalEntity(2000, 1, 1)),
     ]
 
     sink = NdjsonSink.get()
     ids = list(sink.load(test_models))
     assert len(ids)
 
-    with open(settings.work_dir / "ExtractedThing.ndjson") as handle:
+    with open(settings.work_dir / "Thing.ndjson") as handle:
         output = handle.read()
 
     expected = """\

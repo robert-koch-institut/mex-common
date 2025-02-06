@@ -2,18 +2,16 @@ import json
 from collections.abc import Generator, Iterable
 from contextlib import ExitStack
 from pathlib import Path
-from typing import IO, Any
+from typing import IO, Any, TypeVar
 
 from mex.common.logging import logger
-from mex.common.models import (
-    AnyExtractedModel,
-    AnyRuleSetRequest,
-    AnyRuleSetResponse,
-)
+from mex.common.models.base.model import BaseModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.utils import grouper
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class NdjsonSink(BaseSink):
@@ -30,30 +28,23 @@ class NdjsonSink(BaseSink):
     def close(self) -> None:
         """Nothing to close, since load already closes all file handles."""
 
-    def load(
-        self,
-        models_or_rule_sets: Iterable[
-            AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse
-        ],
-    ) -> Generator[
-        AnyExtractedModel | AnyRuleSetRequest | AnyRuleSetResponse, None, None
-    ]:
-        """Write models or rule-sets into a new-line delimited JSON file.
+    def load(self, models: Iterable[T]) -> Generator[T, None, None]:
+        """Write any models into a new-line delimited JSON file.
 
         Args:
-            models_or_rule_sets: Extracted models, rule-set requests or responses
+            models: Iterable of any kind of models
 
         Returns:
-            Generator for the loaded models or rules.
+            Generator for the loaded models
         """
         file_handles: dict[str, IO[Any]] = {}
         total_count = 0
         with ExitStack() as stack:
-            for chunk in grouper(self.CHUNK_SIZE, models_or_rule_sets):
-                for model_or_rule_set in chunk:
-                    if model_or_rule_set is None:
+            for chunk in grouper(self.CHUNK_SIZE, models):
+                for model in chunk:
+                    if model is None:
                         continue
-                    class_name = model_or_rule_set.__class__.__name__
+                    class_name = model.__class__.__name__
                     try:
                         fh = file_handles[class_name]
                     except KeyError:
@@ -66,10 +57,8 @@ class NdjsonSink(BaseSink):
                             class_name,
                             file_name.as_posix(),
                         )
-                    dumped_json = json.dumps(
-                        model_or_rule_set, sort_keys=True, cls=MExEncoder
-                    )
+                    dumped_json = json.dumps(model, sort_keys=True, cls=MExEncoder)
                     fh.write(f"{dumped_json}\n")
                     total_count += 1
-                    yield model_or_rule_set
+                    yield model
                 logger.info("%s - written %s items", type(self).__name__, total_count)
