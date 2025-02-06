@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: move ItemsContainer and PaginatedItemsContainer to mex.common.models
+- BREAKING: replace post_extracted_items with ingest and allow AnyRuleSetResponses
+- allow AnyRuleSetResponses as arguments to sinks
+- BREAKING: sinks now yield the models they loaded, instead of just their identifiers
+
 ### Deprecated
 
 ### Removed

@@ -1,11 +1,9 @@
 from collections.abc import Generator, Iterable
-from typing import cast
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
-from mex.common.models import AnyExtractedModel
+from mex.common.models import AnyExtractedModel, AnyRuleSetResponse
 from mex.common.sinks.base import BaseSink
-from mex.common.types import AnyExtractedIdentifier
 from mex.common.utils import grouper
 
 
@@ -16,21 +14,21 @@ class BackendApiSink(BaseSink):
 
     def load(
         self,
-        models: Iterable[AnyExtractedModel],
-    ) -> Generator[AnyExtractedIdentifier, None, None]:
-        """Load models to the Backend API using bulk insertion.
+        models_or_rule_sets: Iterable[AnyExtractedModel | AnyRuleSetResponse],
+    ) -> Generator[AnyExtractedModel | AnyRuleSetResponse, None, None]:
+        """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:
-            models: Iterable of extracted models
+            models_or_rule_sets: Iterable of extracted models or rule-sets
 
         Returns:
-            Generator for identifiers of posted models
+            Generator for posted models
         """
         total_count = 0
         connector = BackendApiConnector.get()
-        for chunk in grouper(self.CHUNK_SIZE, models):
+        for chunk in grouper(self.CHUNK_SIZE, models_or_rule_sets):
             model_list = [model for model in chunk if model is not None]
-            response = connector.post_extracted_items(model_list)
+            connector.ingest(model_list)
             total_count += len(model_list)
-            yield from cast(list[AnyExtractedIdentifier], response.identifiers)
+            yield from model_list
             logger.info("%s - written %s models", type(self).__name__, total_count)

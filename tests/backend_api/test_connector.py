@@ -5,12 +5,13 @@ import pytest
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import ItemsContainer, PaginatedItemsContainer
 from mex.common.models import (
     AnyExtractedModel,
     AnyPreviewModel,
     ExtractedPerson,
+    ItemsContainer,
     MergedPerson,
+    PaginatedItemsContainer,
     PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreviewPerson,
@@ -24,16 +25,16 @@ def test_set_authentication_mocked() -> None:
     assert connector.session.headers["X-API-Key"] == "dummy_write_key"
 
 
-def test_post_extracted_items_mocked(
+def test_ingest_mocked(
     mocked_backend: MagicMock, extracted_person: ExtractedPerson
 ) -> None:
-    mocked_return = {"identifiers": [extracted_person.identifier]}
+    mocked_return = {"items": [extracted_person]}
     mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
-    response = connector.post_extracted_items([extracted_person])
+    response = connector.ingest([extracted_person])
 
-    assert response.identifiers == [extracted_person.identifier]
+    assert response == [extracted_person]
     assert mocked_backend.call_args == call(
         "POST",
         "http://localhost:8080/v0/ingest",

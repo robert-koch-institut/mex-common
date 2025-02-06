@@ -2,15 +2,16 @@ import json
 from collections.abc import Generator, Iterable
 from contextlib import ExitStack
 from pathlib import Path
-from typing import IO, Any
+from typing import IO, Any, TypeVar
 
 from mex.common.logging import logger
-from mex.common.models import AnyExtractedModel
+from mex.common.models.base.model import BaseModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
-from mex.common.types import AnyExtractedIdentifier
 from mex.common.utils import grouper
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class NdjsonSink(BaseSink):
@@ -27,17 +28,14 @@ class NdjsonSink(BaseSink):
     def close(self) -> None:
         """Nothing to close, since load already closes all file handles."""
 
-    def load(
-        self,
-        models: Iterable[AnyExtractedModel],
-    ) -> Generator[AnyExtractedIdentifier, None, None]:
-        """Write models into a new-line delimited JSON file.
+    def load(self, models: Iterable[T]) -> Generator[T, None, None]:
+        """Write any models into a new-line delimited JSON file.
 
         Args:
-            models: Iterable of extracted models to write
+            models: Iterable of any kind of models
 
         Returns:
-            Generator for identifiers of written models
+            Generator for the loaded models
         """
         file_handles: dict[str, IO[Any]] = {}
         total_count = 0
@@ -59,7 +57,8 @@ class NdjsonSink(BaseSink):
                             class_name,
                             file_name.as_posix(),
                         )
-                    fh.write(f"{json.dumps(model, sort_keys=True, cls=MExEncoder)}\n")
+                    dumped_json = json.dumps(model, sort_keys=True, cls=MExEncoder)
+                    fh.write(f"{dumped_json}\n")
                     total_count += 1
-                    yield model.identifier
-                logger.info("%s - written %s models", type(self).__name__, total_count)
+                    yield model
+                logger.info("%s - written %s items", type(self).__name__, total_count)
