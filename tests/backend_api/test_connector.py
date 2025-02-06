@@ -5,12 +5,13 @@ import pytest
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import ItemsContainer, PaginatedItemsContainer
 from mex.common.models import (
     AnyExtractedModel,
     AnyPreviewModel,
     ExtractedPerson,
+    ItemsContainer,
     MergedPerson,
+    PaginatedItemsContainer,
     PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreviewPerson,

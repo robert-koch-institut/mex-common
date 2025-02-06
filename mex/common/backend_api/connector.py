@@ -3,9 +3,7 @@ from urllib.parse import urljoin
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.models import (
-    ItemsContainer,
     MergedModelTypeAdapter,
-    PaginatedItemsContainer,
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
@@ -15,6 +13,8 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ItemsContainer,
+    PaginatedItemsContainer,
 )
 from mex.common.settings import BaseSettings
 

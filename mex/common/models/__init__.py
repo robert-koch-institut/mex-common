@@ -94,6 +94,10 @@ from mex.common.models.activity import (
     PreviewActivity,
     SubtractiveActivity,
 )
+from mex.common.models.base.container import (
+    ItemsContainer,
+    PaginatedItemsContainer,
+)
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import generate_entity_filter_schema
 from mex.common.models.base.mapping import generate_mapping_schema
@@ -311,6 +315,7 @@ __all__ = (
     "ExtractedResource",
     "ExtractedVariable",
     "ExtractedVariableGroup",
+    "ItemsContainer",
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedBibliographicResource",
@@ -329,6 +334,7 @@ __all__ = (
     "OrganizationRuleSetResponse",
     "OrganizationalUnitRuleSetRequest",
     "OrganizationalUnitRuleSetResponse",
+    "PaginatedItemsContainer",
     "PersonRuleSetRequest",
     "PersonRuleSetResponse",
     "PreventiveAccessPlatform",

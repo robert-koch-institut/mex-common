@@ -3,8 +3,7 @@ from unittest.mock import MagicMock, Mock
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import ItemsContainer
-from mex.common.models import ExtractedPerson
+from mex.common.models import ExtractedPerson, ItemsContainer
 from mex.common.sinks.backend_api import BackendApiSink
 
 
