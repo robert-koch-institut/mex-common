@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -25,6 +27,19 @@ from mex.common.types import (
     Text,
 )
 
+VersionStr = Annotated[
+    str,
+    Field(
+        examples=["v1", "2023-01-16", "Schema 9"],
+    ),
+]
+AnyContactIdentifier = Annotated[
+    MergedOrganizationalUnitIdentifier
+    | MergedPersonIdentifier
+    | MergedContactPointIdentifier,
+    AfterValidator(Identifier),
+]
+
 
 class _Stem(BaseModel):
     stemType: ClassVar[Annotated[Literal["PrimarySource"], Field(frozen=True)]] = (
@@ -34,14 +49,7 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     alternativeTitle: list[Text] = []
-    contact: list[
-        Annotated[
-            MergedOrganizationalUnitIdentifier
-            | MergedPersonIdentifier
-            | MergedContactPointIdentifier,
-            AfterValidator(Identifier),
-        ]
-    ] = []
+    contact: list[AnyContactIdentifier] = []
     description: list[Text] = []
     documentation: list[Link] = []
     locatedAt: list[Link] = []
@@ -50,26 +58,11 @@ class _OptionalLists(_Stem):
 
 
 class _OptionalValues(_Stem):
-    version: (
-        Annotated[
-            str,
-            Field(
-                examples=["v1", "2023-01-16", "Schema 9"],
-            ),
-        ]
-        | None
-    ) = None
+    version: VersionStr | None = None
 
 
 class _VariadicValues(_Stem):
-    version: list[
-        Annotated[
-            str,
-            Field(
-                examples=["v1", "2023-01-16", "Schema 9"],
-            ),
-        ]
-    ] = []
+    version: list[VersionStr] = []
 
 
 class BasePrimarySource(_OptionalLists, _OptionalValues):
@@ -167,3 +160,32 @@ class PrimarySourceRuleSetResponse(_BaseRuleSet):
         Literal["PrimarySourceRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceRuleSetResponse"
     stableTargetId: MergedPrimarySourceIdentifier
+
+
+class PrimarySourceMapping(_Stem, BaseMapping):
+    """Mapping for describing a primary source transformation."""
+
+    entityType: Annotated[
+        Literal["PrimarySourceMapping"], Field(alias="$type", frozen=True)
+    ] = "PrimarySourceMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    version: list[MappingField[VersionStr | None]] = []
+    alternativeTitle: list[MappingField[list[Text]]] = []
+    contact: list[MappingField[list[AnyContactIdentifier]]] = []
+    description: list[MappingField[list[Text]]] = []
+    documentation: list[MappingField[list[Link]]] = []
+    locatedAt: list[MappingField[list[Link]]] = []
+    title: list[MappingField[list[Text]]] = []
+    unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+
+
+class PrimarySourceFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for primary source items."""
+
+    entityType: Annotated[
+        Literal["PrimarySourceFilter"], Field(alias="$type", frozen=True)
+    ] = "PrimarySourceFilter"
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

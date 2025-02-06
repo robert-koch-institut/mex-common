@@ -19,6 +19,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.49.3] - 2025-01-29
+
+### Changes
+
+- update mex-model to 3.5.1
+
+### Fixed
+
+- fix regex pattern for GndIdStr in organization models
+
+## [0.49.2] - 2025-01-29
+
+### Fixed
+
+- do not wrap field types in `setValues` in mapping rules in another list
+
+## [0.49.1] - 2025-01-29
+
+### Fixed
+
+- reduce Filter classes to a single list field of `FilterField` items
+
+## [0.49.0] - 2025-01-29
+
+### Added
+
+- new (partially generic) classes for defining Mapping and Filter fields and rules
+
+### Changes
+
+- BREAKING: replaced dynamic Mapping and Filter classes with static ones
+
+### Deprecated
+
+- use FILTER_MODEL_CLASSES_BY_NAME instead of FILTER_MODEL_BY_EXTRACTED_CLASS_NAME
+- use MAPPING_MODEL_CLASSES_BY_NAME instead of MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME
+
 ## [0.48.0] - 2025-01-28
 
 ### Added

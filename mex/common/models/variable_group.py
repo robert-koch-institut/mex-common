@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -128,3 +130,28 @@ class VariableGroupRuleSetResponse(_BaseRuleSet):
         Literal["VariableGroupRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "VariableGroupRuleSetResponse"
     stableTargetId: MergedVariableGroupIdentifier
+
+
+class VariableGroupMapping(_Stem, BaseMapping):
+    """Mapping for describing a variable group transformation."""
+
+    entityType: Annotated[
+        Literal["VariableGroupMapping"], Field(alias="$type", frozen=True)
+    ] = "VariableGroupMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    containedBy: Annotated[
+        list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
+    ]
+    label: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+
+
+class VariableGroupFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for variable group items."""
+
+    entityType: Annotated[
+        Literal["VariableGroupFilter"], Field(alias="$type", frozen=True)
+    ] = "VariableGroupFilter"
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

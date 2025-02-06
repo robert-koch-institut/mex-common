@@ -5,6 +5,8 @@ from typing import Annotated, ClassVar, Literal
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
+from mex.common.models.base.filter import BaseFilter, FilterField
+from mex.common.models.base.mapping import BaseMapping, MappingField
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -23,6 +25,41 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
 )
 
+FamilyNameStr = Annotated[
+    str,
+    Field(
+        examples=["Patapoutian", "Skłodowska-Curie", "Muta Maathai"],
+    ),
+]
+FullNameStr = Annotated[
+    str,
+    Field(
+        examples=["Juturna Felicitás", "M. Berhanu", "Keone Seong-Hyeon"],
+    ),
+]
+GivenNameStr = Annotated[
+    str,
+    Field(
+        examples=["Romāns", "Marie Salomea", "May-Britt"],
+    ),
+]
+IsniIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
+        examples=["https://isni.org/isni/0000000109403744"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+OrcidIdStr = Annotated[
+    str,
+    Field(
+        pattern=r"^https://orcid\.org/[-X0-9]{9,21}$",
+        examples=["https://orcid.org/0000-0002-9079-593X"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+
 
 class _Stem(BaseModel):
     stemType: ClassVar[Annotated[Literal["Person"], Field(frozen=True)]] = "Person"
@@ -31,51 +68,12 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     affiliation: list[MergedOrganizationIdentifier] = []
     email: list[Email] = []
-    familyName: list[
-        Annotated[
-            str,
-            Field(
-                examples=["Patapoutian", "Skłodowska-Curie", "Muta Maathai"],
-            ),
-        ]
-    ] = []
-    fullName: list[
-        Annotated[
-            str,
-            Field(
-                examples=["Juturna Felicitás", "M. Berhanu", "Keone Seong-Hyeon"],
-            ),
-        ]
-    ] = []
-    givenName: list[
-        Annotated[
-            str,
-            Field(
-                examples=["Romāns", "Marie Salomea", "May-Britt"],
-            ),
-        ]
-    ] = []
-    isniId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
-                examples=["https://isni.org/isni/0000000109403744"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ]
-    ] = []
+    familyName: list[FamilyNameStr] = []
+    fullName: list[FullNameStr] = []
+    givenName: list[GivenNameStr] = []
+    isniId: list[IsniIdStr] = []
     memberOf: list[MergedOrganizationalUnitIdentifier] = []
-    orcidId: list[
-        Annotated[
-            str,
-            Field(
-                pattern=r"^https://orcid\.org/[-X0-9]{9,21}$",
-                examples=["https://orcid.org/0000-0002-9079-593X"],
-                json_schema_extra={"format": "uri"},
-            ),
-        ],
-    ] = []
+    orcidId: list[OrcidIdStr] = []
 
 
 class BasePerson(_OptionalLists):
@@ -173,3 +171,32 @@ class PersonRuleSetResponse(_BaseRuleSet):
         Literal["PersonRuleSetResponse"], Field(alias="$type", frozen=True)
     ] = "PersonRuleSetResponse"
     stableTargetId: MergedPersonIdentifier
+
+
+class PersonMapping(_Stem, BaseMapping):
+    """Mapping for describing a person transformation."""
+
+    entityType: Annotated[
+        Literal["PersonMapping"], Field(alias="$type", frozen=True)
+    ] = "PersonMapping"
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    ]
+    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
+    affiliation: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    email: list[MappingField[list[Email]]] = []
+    familyName: list[MappingField[list[FamilyNameStr]]] = []
+    fullName: list[MappingField[list[FullNameStr]]] = []
+    givenName: list[MappingField[list[GivenNameStr]]] = []
+    isniId: list[MappingField[list[IsniIdStr]]] = []
+    memberOf: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    orcidId: list[MappingField[list[OrcidIdStr]]] = []
+
+
+class PersonFilter(_Stem, BaseFilter):
+    """Class for defining filter rules for person items."""
+
+    entityType: Annotated[
+        Literal["PersonFilter"], Field(alias="$type", frozen=True)
+    ] = "PersonFilter"
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

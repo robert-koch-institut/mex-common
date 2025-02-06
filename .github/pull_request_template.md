@@ -1,20 +1,20 @@
-# PR Context
+### PR Context
 <!-- Additional info for the reviewer -->
 
-# Added
+### Added
 <!-- New features and interfaces -->
 
-# Changes
+### Changes
 <!-- Changes in existing functionality -->
 
-# Deprecated
+### Deprecated
 <!-- Soon-to-be removed features -->
 
-# Removed
+### Removed
 <!-- Definitely removed features -->
 
-# Fixed
+### Fixed
 <!-- Fixed bugs -->
 
-# Security
+### Security
 <!-- Fixed vulnerabilities -->
