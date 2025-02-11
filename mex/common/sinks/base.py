@@ -2,7 +2,7 @@ from abc import abstractmethod
 from collections.abc import Generator, Iterable
 
 from mex.common.connector import BaseConnector
-from mex.common.models import AnyExtractedModel, AnyRuleSetResponse
+from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 
 
 class BaseSink(BaseConnector):
@@ -17,9 +17,9 @@ class BaseSink(BaseConnector):
     @abstractmethod
     def load(
         self,
-        models_or_rule_sets: Iterable[AnyExtractedModel | AnyRuleSetResponse],
+        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
     ) -> Generator[
-        AnyExtractedModel | AnyRuleSetResponse, None, None
+        AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None
     ]:  # pragma: no cover
-        """Load extracted models or rule-sets to a destination and yield them."""
+        """Load the given items to a destination and yield them."""
         ...

@@ -7,3 +7,4 @@ class Sink(Enum):
     BACKEND = "backend"
     GRAPH = "graph"
     NDJSON = "ndjson"
+    S3 = "s3"
