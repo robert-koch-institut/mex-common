@@ -30,8 +30,8 @@ Each entity type `T` is modelled for the following use cases:
   contributing to specific fields of a merged item
 - `TRuleSet` classes are used for CRUD operations on a set of three rules
 
-- `ExtractedTEntityFilter` defines how an entity filter specification should look like
-- `ExtractedTMapping` defines how a raw data to extracted item mapping should look like
+- `TFilter` defines how an entity filter specification should look like
+- `TMapping` defines how a raw-data to extracted item mapping should look like
 
 Since these models for different use cases have a lot of overlapping attributes,
 we use a number of intermediate private classes to compose the public classes:
@@ -63,8 +63,8 @@ These private classes are used to compose the public classes like so:
 - TRuleSetRequest: bundle of all three rules for one type used to create new rules
 - TRuleSetResponse: bundle of all three rules for one type including a `stableTargetId`
 
-- ExtractedTEntityFilter: all BaseT fields re-typed as a list of EntityFilter
-- ExtractedTMapping: all BaseT fields re-typed as lists of subclasses of GenericField
+- TFilter: a single field containing a list of filter rule definitions
+- TMapping: all BaseT fields re-typed as lists of mapping fields with `setValues` type
 
 In addition to the classes themselves, `mex.common.models` also exposes various
 lists of models, lookups by class name and typing for unions of models.
@@ -73,6 +73,8 @@ lists of models, lookups by class name and typing for unions of models.
 from typing import Final, get_args
 
 from mex.common.models.access_platform import (
+    AccessPlatformFilter,
+    AccessPlatformMapping,
     AccessPlatformRuleSetRequest,
     AccessPlatformRuleSetResponse,
     AdditiveAccessPlatform,
@@ -84,6 +86,8 @@ from mex.common.models.access_platform import (
     SubtractiveAccessPlatform,
 )
 from mex.common.models.activity import (
+    ActivityFilter,
+    ActivityMapping,
     ActivityRuleSetRequest,
     ActivityRuleSetResponse,
     AdditiveActivity,
@@ -94,15 +98,21 @@ from mex.common.models.activity import (
     PreviewActivity,
     SubtractiveActivity,
 )
+from mex.common.models.base.container import (
+    ItemsContainer,
+    PaginatedItemsContainer,
+)
 from mex.common.models.base.extracted_data import ExtractedData
-from mex.common.models.base.filter import generate_entity_filter_schema
-from mex.common.models.base.mapping import generate_mapping_schema
+from mex.common.models.base.filter import BaseFilter, FilterField, FilterRule
+from mex.common.models.base.mapping import BaseMapping, MappingField, MappingRule
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
     BaseBibliographicResource,
+    BibliographicResourceFilter,
+    BibliographicResourceMapping,
     BibliographicResourceRuleSetRequest,
     BibliographicResourceRuleSetResponse,
     ExtractedBibliographicResource,
@@ -114,6 +124,8 @@ from mex.common.models.bibliographic_resource import (
 from mex.common.models.consent import (
     AdditiveConsent,
     BaseConsent,
+    ConsentFilter,
+    ConsentMapping,
     ConsentRuleSetRequest,
     ConsentRuleSetResponse,
     ExtractedConsent,
@@ -125,6 +137,8 @@ from mex.common.models.consent import (
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
     BaseContactPoint,
+    ContactPointFilter,
+    ContactPointMapping,
     ContactPointRuleSetRequest,
     ContactPointRuleSetResponse,
     ExtractedContactPoint,
@@ -136,6 +150,8 @@ from mex.common.models.contact_point import (
 from mex.common.models.distribution import (
     AdditiveDistribution,
     BaseDistribution,
+    DistributionFilter,
+    DistributionMapping,
     DistributionRuleSetRequest,
     DistributionRuleSetResponse,
     ExtractedDistribution,
@@ -149,6 +165,8 @@ from mex.common.models.organization import (
     BaseOrganization,
     ExtractedOrganization,
     MergedOrganization,
+    OrganizationFilter,
+    OrganizationMapping,
     OrganizationRuleSetRequest,
     OrganizationRuleSetResponse,
     PreventiveOrganization,
@@ -160,6 +178,8 @@ from mex.common.models.organizational_unit import (
     BaseOrganizationalUnit,
     ExtractedOrganizationalUnit,
     MergedOrganizationalUnit,
+    OrganizationalUnitFilter,
+    OrganizationalUnitMapping,
     OrganizationalUnitRuleSetRequest,
     OrganizationalUnitRuleSetResponse,
     PreventiveOrganizationalUnit,
@@ -171,6 +191,8 @@ from mex.common.models.person import (
     BasePerson,
     ExtractedPerson,
     MergedPerson,
+    PersonFilter,
+    PersonMapping,
     PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreventivePerson,
@@ -184,6 +206,8 @@ from mex.common.models.primary_source import (
     MergedPrimarySource,
     PreventivePrimarySource,
     PreviewPrimarySource,
+    PrimarySourceFilter,
+    PrimarySourceMapping,
     PrimarySourceRuleSetRequest,
     PrimarySourceRuleSetResponse,
     SubtractivePrimarySource,
@@ -195,6 +219,8 @@ from mex.common.models.resource import (
     MergedResource,
     PreventiveResource,
     PreviewResource,
+    ResourceFilter,
+    ResourceMapping,
     ResourceRuleSetRequest,
     ResourceRuleSetResponse,
     SubtractiveResource,
@@ -207,6 +233,8 @@ from mex.common.models.variable import (
     PreventiveVariable,
     PreviewVariable,
     SubtractiveVariable,
+    VariableFilter,
+    VariableMapping,
     VariableRuleSetRequest,
     VariableRuleSetResponse,
 )
@@ -218,6 +246,8 @@ from mex.common.models.variable_group import (
     PreventiveVariableGroup,
     PreviewVariableGroup,
     SubtractiveVariableGroup,
+    VariableGroupFilter,
+    VariableGroupMapping,
     VariableGroupRuleSetRequest,
     VariableGroupRuleSetResponse,
 )
@@ -250,8 +280,12 @@ __all__ = (
     "RULE_SET_RESPONSE_CLASSES_BY_NAME",
     "SUBTRACTIVE_MODEL_CLASSES",
     "SUBTRACTIVE_MODEL_CLASSES_BY_NAME",
+    "AccessPlatformFilter",
+    "AccessPlatformMapping",
     "AccessPlatformRuleSetRequest",
     "AccessPlatformRuleSetResponse",
+    "ActivityFilter",
+    "ActivityMapping",
     "ActivityRuleSetRequest",
     "ActivityRuleSetResponse",
     "AdditiveAccessPlatform",
@@ -283,6 +317,8 @@ __all__ = (
     "BaseConsent",
     "BaseContactPoint",
     "BaseDistribution",
+    "BaseFilter",
+    "BaseMapping",
     "BaseModel",
     "BaseOrganization",
     "BaseOrganizationalUnit",
@@ -291,10 +327,18 @@ __all__ = (
     "BaseResource",
     "BaseVariable",
     "BaseVariableGroup",
+    "BibliographicResourceFilter",
+    "BibliographicResourceMapping",
+    "ConsentFilter",
+    "ConsentMapping",
     "ConsentRuleSetRequest",
     "ConsentRuleSetResponse",
+    "ContactPointFilter",
+    "ContactPointMapping",
     "ContactPointRuleSetRequest",
     "ContactPointRuleSetResponse",
+    "DistributionFilter",
+    "DistributionMapping",
     "DistributionRuleSetRequest",
     "DistributionRuleSetResponse",
     "ExtractedAccessPlatform",
@@ -311,6 +355,11 @@ __all__ = (
     "ExtractedResource",
     "ExtractedVariable",
     "ExtractedVariableGroup",
+    "FilterField",
+    "FilterRule",
+    "ItemsContainer",
+    "MappingField",
+    "MappingRule",
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedBibliographicResource",
@@ -325,10 +374,17 @@ __all__ = (
     "MergedResource",
     "MergedVariable",
     "MergedVariableGroup",
+    "OrganizationFilter",
+    "OrganizationMapping",
     "OrganizationRuleSetRequest",
     "OrganizationRuleSetResponse",
+    "OrganizationalUnitFilter",
+    "OrganizationalUnitMapping",
     "OrganizationalUnitRuleSetRequest",
     "OrganizationalUnitRuleSetResponse",
+    "PaginatedItemsContainer",
+    "PersonFilter",
+    "PersonMapping",
     "PersonRuleSetRequest",
     "PersonRuleSetResponse",
     "PreventiveAccessPlatform",
@@ -358,8 +414,12 @@ __all__ = (
     "PreviewResource",
     "PreviewVariable",
     "PreviewVariableGroup",
+    "PrimarySourceFilter",
+    "PrimarySourceMapping",
     "PrimarySourceRuleSetRequest",
     "PrimarySourceRuleSetResponse",
+    "ResourceFilter",
+    "ResourceMapping",
     "ResourceRuleSetRequest",
     "ResourceRuleSetResponse",
     "SubtractiveAccessPlatform",
@@ -376,8 +436,12 @@ __all__ = (
     "SubtractiveRule",
     "SubtractiveVariable",
     "SubtractiveVariableGroup",
+    "VariableFilter",
+    "VariableGroupFilter",
+    "VariableGroupMapping",
     "VariableGroupRuleSetRequest",
     "VariableGroupRuleSetResponse",
+    "VariableMapping",
     "VariableRuleSetRequest",
     "VariableRuleSetResponse",
 )
@@ -586,10 +650,52 @@ RULE_SET_RESPONSE_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleSetResponse]]] = 
     cls.__name__: cls for cls in RULE_SET_RESPONSE_CLASSES
 }
 
-FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {
-    cls.__name__: generate_entity_filter_schema(cls) for cls in EXTRACTED_MODEL_CLASSES
+AnyMappingModel = (
+    AccessPlatformMapping
+    | ActivityMapping
+    | BibliographicResourceMapping
+    | ConsentMapping
+    | ContactPointMapping
+    | DistributionMapping
+    | OrganizationMapping
+    | OrganizationalUnitMapping
+    | PersonMapping
+    | PrimarySourceMapping
+    | ResourceMapping
+    | VariableMapping
+    | VariableGroupMapping
+)
+MAPPING_MODEL_CLASSES: Final[list[type[AnyMappingModel]]] = list(
+    get_args(AnyMappingModel)
+)
+MAPPING_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMappingModel]]] = {
+    cls.__name__: cls for cls in MAPPING_MODEL_CLASSES
+}
+# MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME is deprecated, use MAPPING_MODEL_CLASSES_BY_NAME
+MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME = {
+    f"Extracted{cls.stemType}": cls for cls in MAPPING_MODEL_CLASSES
 }
 
-MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME = {
-    cls.__name__: generate_mapping_schema(cls) for cls in EXTRACTED_MODEL_CLASSES
+AnyFilterModel = (
+    AccessPlatformFilter
+    | ActivityFilter
+    | BibliographicResourceFilter
+    | ConsentFilter
+    | ContactPointFilter
+    | DistributionFilter
+    | OrganizationFilter
+    | OrganizationalUnitFilter
+    | PersonFilter
+    | PrimarySourceFilter
+    | ResourceFilter
+    | VariableFilter
+    | VariableGroupFilter
+)
+FILTER_MODEL_CLASSES: Final[list[type[AnyFilterModel]]] = list(get_args(AnyFilterModel))
+FILTER_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyFilterModel]]] = {
+    cls.__name__: cls for cls in FILTER_MODEL_CLASSES
+}
+# FILTER_MODEL_BY_EXTRACTED_CLASS_NAME is deprecated, use FILTER_MODEL_CLASSES_BY_NAME
+FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {
+    f"Extracted{cls.stemType}": cls for cls in FILTER_MODEL_CLASSES
 }

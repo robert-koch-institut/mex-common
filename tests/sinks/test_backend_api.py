@@ -3,12 +3,11 @@ from unittest.mock import MagicMock, Mock
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import IdentifiersResponse
-from mex.common.models import ExtractedPerson
-from mex.common.sinks.backend_api import post_to_backend_api
+from mex.common.models import ExtractedPerson, ItemsContainer
+from mex.common.sinks.backend_api import BackendApiSink
 
 
-def test_post_to_backend_api_mocked(
+def test_sink_load_mocked(
     extracted_person: ExtractedPerson, monkeypatch: MonkeyPatch
 ) -> None:
     def __init__(self: BackendApiConnector) -> None:
@@ -16,12 +15,11 @@ def test_post_to_backend_api_mocked(
 
     monkeypatch.setattr(BackendApiConnector, "__init__", __init__)
 
-    response = IdentifiersResponse(identifiers=[extracted_person.identifier])
-    post_extracted_items = Mock(return_value=response)
-    monkeypatch.setattr(
-        BackendApiConnector, "post_extracted_items", post_extracted_items
-    )
+    response = ItemsContainer[ExtractedPerson](items=[extracted_person])
+    ingest = Mock(return_value=response)
+    monkeypatch.setattr(BackendApiConnector, "ingest", ingest)
 
-    model_ids = list(post_to_backend_api([extracted_person]))
-    assert model_ids == response.identifiers
-    post_extracted_items.assert_called_once_with([extracted_person])
+    sink = BackendApiSink.get()
+    models_or_rule_sets = list(sink.load([extracted_person]))
+    assert models_or_rule_sets == [extracted_person]
+    ingest.assert_called_once_with([extracted_person])

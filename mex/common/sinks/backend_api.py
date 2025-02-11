@@ -1,28 +1,34 @@
 from collections.abc import Generator, Iterable
-from typing import cast
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import watch
-from mex.common.models import AnyExtractedModel
-from mex.common.types import AnyExtractedIdentifier
+from mex.common.logging import logger
+from mex.common.models import AnyExtractedModel, AnyRuleSetResponse
+from mex.common.sinks.base import BaseSink
 from mex.common.utils import grouper
 
 
-@watch
-def post_to_backend_api(
-    models: Iterable[AnyExtractedModel], chunk_size: int = 100
-) -> Generator[AnyExtractedIdentifier, None, None]:
-    """Load models to the Backend API using bulk insertion.
+class BackendApiSink(BaseSink):
+    """Sink to load models to the Backend API."""
 
-    Args:
-        models: Iterable of extracted models
-        chunk_size: Optional size to chunks to post in one request
+    CHUNK_SIZE = 50
 
-    Returns:
-        Generator for identifiers of posted models
-    """
-    connector = BackendApiConnector.get()
-    for chunk in grouper(chunk_size, models):
-        model_list = [model for model in chunk if model is not None]
-        response = connector.post_extracted_items(model_list)
-        yield from cast(list[AnyExtractedIdentifier], response.identifiers)
+    def load(
+        self,
+        models_or_rule_sets: Iterable[AnyExtractedModel | AnyRuleSetResponse],
+    ) -> Generator[AnyExtractedModel | AnyRuleSetResponse, None, None]:
+        """Load extracted models or rule-sets to the Backend API using bulk insertion.
+
+        Args:
+            models_or_rule_sets: Iterable of extracted models or rule-sets
+
+        Returns:
+            Generator for posted models
+        """
+        total_count = 0
+        connector = BackendApiConnector.get()
+        for chunk in grouper(self.CHUNK_SIZE, models_or_rule_sets):
+            model_list = [model for model in chunk if model is not None]
+            connector.ingest(model_list)
+            total_count += len(model_list)
+            yield from model_list
+            logger.info("%s - written %s models", type(self).__name__, total_count)

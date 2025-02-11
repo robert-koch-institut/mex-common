@@ -38,7 +38,7 @@ class Concept(BaseModel):
     identifier: AnyUrl
     inScheme: AnyUrl
     prefLabel: BilingualText
-    altLabel: BilingualText | None = None
+    altLabel: list[BilingualText] = []
     definition: BilingualText | None = None
 
 
@@ -98,7 +98,7 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
         search_term = normalize(str(search_term))
         for concept in cls.__concepts__:
             searchable_labels = []
-            for label in (concept.prefLabel, concept.altLabel):
+            for label in (concept.prefLabel, *concept.altLabel):
                 if not label:
                     continue
                 if language is None:

@@ -1,20 +1,22 @@
-from collections.abc import Hashable
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
-from mex.common.identity.base import BaseProvider
+from mex.common.identity.backend_api import BackendApiIdentityProvider
 from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.types import IdentityProvider
 
-_PROVIDER_REGISTRY: Final[dict[Hashable, type[BaseProvider]]] = {}
+if TYPE_CHECKING:
+    from mex.common.identity.base import BaseProvider
+
+_PROVIDER_REGISTRY: Final[dict[IdentityProvider, type["BaseProvider"]]] = {}
 
 
-def register_provider(key: Hashable, provider_cls: type[BaseProvider]) -> None:
+def register_provider(
+    key: IdentityProvider, provider_cls: type["BaseProvider"]
+) -> None:
     """Register an implementation of an identity provider to a settings key.
 
     Args:
-        key: Possible value of `Settings.identity_provider`, this will be of type
-            `mex.common.identity.types.IdentityProvider` on the `BaseSettings`
-            but maybe overwritten in other packages that have their own settings
+        key: Possible value of `BaseSettings.identity_provider`
         provider_cls: Implementation of an identity provider
 
     Raises:
@@ -26,7 +28,7 @@ def register_provider(key: Hashable, provider_cls: type[BaseProvider]) -> None:
     _PROVIDER_REGISTRY[key] = provider_cls
 
 
-def get_provider() -> BaseProvider:
+def get_provider() -> "BaseProvider":
     """Get an instance of the identity provider as configured by `identity_provider`.
 
     Raises:
@@ -48,3 +50,4 @@ def get_provider() -> BaseProvider:
 
 # register the default providers shipped with mex-common
 register_provider(IdentityProvider.MEMORY, MemoryIdentityProvider)
+register_provider(IdentityProvider.BACKEND, BackendApiIdentityProvider)
