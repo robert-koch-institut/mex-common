@@ -18,7 +18,7 @@ class BackendApiSink(BaseSink):
         """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:
-            items: Iterable of extracted models or rule-sets
+            items: Iterable of extracted models or merged models or rule-sets
 
         Raises:
             NotImplementedError: When you try to load merged items into the backend
