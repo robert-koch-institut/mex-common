@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add entry for `s3` to sink settings enum
+
 ### Changes
+
+- add `AnyMergedModel` to the allowed types for `Sink.load` methods
+- but let BackendApiSink throw an error, when merged items are loaded
+- make local typevars private and give them speaking names
 
 ### Deprecated
 
