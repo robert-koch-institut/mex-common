@@ -11,7 +11,7 @@ from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.utils import grouper
 
-T = TypeVar("T", bound=BaseModel)
+_LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 
 
 class NdjsonSink(BaseSink):
@@ -28,23 +28,26 @@ class NdjsonSink(BaseSink):
     def close(self) -> None:
         """Nothing to close, since load already closes all file handles."""
 
-    def load(self, models: Iterable[T]) -> Generator[T, None, None]:
-        """Write any models into a new-line delimited JSON file.
+    def load(
+        self,
+        items: Iterable[_LoadItemT],
+    ) -> Generator[_LoadItemT, None, None]:
+        """Write any items into a new-line delimited JSON file.
 
         Args:
-            models: Iterable of any kind of models
+            items: Iterable of any kind of items
 
         Returns:
-            Generator for the loaded models
+            Generator for the loaded items
         """
         file_handles: dict[str, IO[Any]] = {}
         total_count = 0
         with ExitStack() as stack:
-            for chunk in grouper(self.CHUNK_SIZE, models):
-                for model in chunk:
-                    if model is None:
+            for chunk in grouper(self.CHUNK_SIZE, items):
+                for item in chunk:
+                    if item is None:
                         continue
-                    class_name = model.__class__.__name__
+                    class_name = item.__class__.__name__
                     try:
                         fh = file_handles[class_name]
                     except KeyError:
@@ -57,8 +60,8 @@ class NdjsonSink(BaseSink):
                             class_name,
                             file_name.as_posix(),
                         )
-                    dumped_json = json.dumps(model, sort_keys=True, cls=MExEncoder)
+                    dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
                     fh.write(f"{dumped_json}\n")
                     total_count += 1
-                    yield model
+                    yield item
                 logger.info("%s - written %s items", type(self).__name__, total_count)
