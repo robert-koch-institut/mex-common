@@ -1,0 +1,38 @@
+{
+    "orcid-identifier": {
+        "host": "orcid.org",
+        "path": "0000-0003-4634-4047",
+        "uri": "https://orcid.org/0000-0003-4634-4047"
+    },
+    "path": "/0000-0003-4634-4047",
+    "person": {
+        "emails": {
+            "email": [],
+            "path": "/0000-0003-4634-4047/email"
+        },
+        "name": {
+            "created-date": {
+                "value": 1729001670037
+            },
+            "family-name": {
+                "value": "Carberry"
+            },
+            "given-names": {
+                "value": "Jayne"
+            },
+            "last-modified-date": {
+                "value": 1730814244255
+            },
+            "path": "0000-0003-4634-4047",
+            "visibility": "public"
+        },
+        "other-names": {
+            "other-name": [],
+            "path": "/0000-0003-4634-4047/other-names"
+        },
+        "researcher-urls": {
+            "path": "/0000-0003-4634-4047/researcher-urls",
+            "researcher-url": []
+        }
+    }
+}

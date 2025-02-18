@@ -203,6 +203,15 @@ def orcid_person_raw() -> dict[str, Any]:
 
 
 @pytest.fixture
+def orcid_person_jayne_raw() -> dict[str, Any]:
+    """Return a raw orcid person."""
+    with open(
+        Path(__file__).parent / "test_data" / "orcid_person_jayne_raw.json"
+    ) as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
 def orcid_multiple_matches() -> dict[str, Any]:
     """Return a raw orcid person."""
     with open(
@@ -216,6 +225,7 @@ def mocked_orcid(
     monkeypatch: pytest.MonkeyPatch,
     orcid_person_raw: dict[str, Any],
     orcid_multiple_matches: dict[str, Any],
+    orcid_person_jayne_raw: dict[str, Any],
 ) -> None:
     """Mock orcid connector."""
     response_query = Mock(spec=Response, status_code=200)
@@ -228,14 +238,11 @@ def mocked_orcid(
 
     monkeypatch.setattr(OrcidConnector, "__init__", mocked_init)
 
-    def check_orcid_id_exists(_self: OrcidConnector, _orcid_id: str) -> bool:
-        return _orcid_id == "0009-0004-3041-5706"
-
-    monkeypatch.setattr(OrcidConnector, "check_orcid_id_exists", check_orcid_id_exists)
-
     def fetch(_self: OrcidConnector, filters: dict[str, Any]) -> dict[str, Any]:
         if filters.get("given-names") == "John":
             return {"num-found": 1, "result": [orcid_person_raw]}
+        if filters.get("given-and-family-names"):
+            return {"num-found": 1, "result": [orcid_person_jayne_raw]}
         if filters.get("given-names") == "Multiple":
             return orcid_multiple_matches
         return {"result": None, "num-found": 0}
@@ -245,15 +252,9 @@ def mocked_orcid(
     def get_data_by_id(orcid_id: str) -> dict[str, Any]:
         if orcid_id == "0009-0004-3041-5706":
             return orcid_person_raw
+        if orcid_id == "0000-0003-4634-4047":
+            return orcid_person_jayne_raw
         msg = "404 Not Found"
         raise HTTPError(msg)
 
     monkeypatch.setattr(OrcidConnector, "get_data_by_id", staticmethod(get_data_by_id))
-
-    def build_query(filters: dict[str, Any]) -> str:
-        """Construct the ORCID API query string."""
-        if "givennames" in filters:
-            return "givennames:Josiah AND familyname:Carberry"
-        return "given-names:Josiah AND family-name:Carberry"
-
-    monkeypatch.setattr(OrcidConnector, "build_query", staticmethod(build_query))

@@ -14,11 +14,15 @@ from mex.common.orcid.connector import OrcidConnector
             "given-names:Josiah AND family-name:Carberry",
         ),
         (
+            {"given-and-family-names": '"Jayne Carberry"'},
+            'given-and-family-names:"Jayne Carberry"',
+        ),
+        (
             {"givennames": "Josiah", "familyname": "Carberry"},
             "givennames:Josiah AND familyname:Carberry",
         ),
     ],
-    ids=["valid_query", "non_valid_query"],
+    ids=["valid_query", "valid given-and_family-names query", "non_valid_query"],
 )
 def test_build_query(filters, expected) -> None:
     orcid_api = OrcidConnector.get()
@@ -32,12 +36,6 @@ def test_build_query(filters, expected) -> None:
     [("0009-0004-3041-5706", True), ("0002-1825-0097", False)],
     ids=["valid_query", "non_valid_query"],
 )
-def test_check_id_exists(orcidid, expected) -> None:
-    orcidapi = OrcidConnector.get()
-    id_exists = orcidapi.check_orcid_id_exists(orcidid)
-    assert id_exists == expected
-
-
 @pytest.mark.usefixtures("orcid_person_raw")
 @pytest.mark.parametrize(
     ("family_name", "given_names", "expected"),

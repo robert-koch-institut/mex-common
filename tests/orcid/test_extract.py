@@ -62,10 +62,33 @@ from mex.common.orcid.models.person import (
 def test_get_orcid_record_by_name(given_names, family_name, expected_result, error):
     if error:
         with error:
-            get_orcid_record_by_name(given_names, family_name)
+            get_orcid_record_by_name(given_names=given_names, family_name=family_name)
     else:
-        result = get_orcid_record_by_name(given_names, family_name)
+        result = get_orcid_record_by_name(
+            given_names=given_names, family_name=family_name
+        )
         assert result == expected_result
+
+
+@pytest.mark.usefixtures("mocked_orcid")
+def test_get_orcid_record_by_given_and_family_name():
+    name = "Jayne Carberry"
+    result = get_orcid_record_by_name(given_and_family_names=name)
+    expected = {
+        "orcid_identifier": {
+            "path": "0000-0003-4634-4047",
+            "uri": "https://orcid.org/0000-0003-4634-4047",
+        },
+        "person": {
+            "emails": {"email": []},
+            "name": {
+                "family_name": {"value": "Carberry"},
+                "given_names": {"value": "Jayne"},
+                "visibility": "public",
+            },
+        },
+    }
+    assert result.model_dump() == expected
 
 
 @pytest.mark.usefixtures("mocked_orcid")

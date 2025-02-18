@@ -27,7 +27,8 @@ def transform_orcid_person_to_mex_person(
     had_primary_source = primary_source.stableTargetId
 
     id_in_primary_source = orcid_record.orcid_identifier.path
-    email = orcid_record.person.emails.email[0].email
+    emails = orcid_record.person.emails.email
+    email = emails[0].email if emails else None
     if orcid_record.person.name.visibility == "public":
         given_names = orcid_record.person.name.given_names.value
         family_name = orcid_record.person.name.family_name.value
