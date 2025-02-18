@@ -1,9 +1,8 @@
 from abc import abstractmethod
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 
 from mex.common.connector import BaseConnector
-from mex.common.models import AnyExtractedModel
-from mex.common.types import Identifier
+from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 
 
 class BaseSink(BaseConnector):
@@ -17,7 +16,10 @@ class BaseSink(BaseConnector):
 
     @abstractmethod
     def load(
-        self, models: Iterable[AnyExtractedModel]
-    ) -> Iterable[Identifier]:  # pragma: no cover
-        """Iteratively load models to a destination and yield their identifiers."""
+        self,
+        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
+    ) -> Generator[
+        AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None
+    ]:  # pragma: no cover
+        """Load the given items to a destination and yield them."""
         ...

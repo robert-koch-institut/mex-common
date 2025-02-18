@@ -2,12 +2,12 @@ from collections.abc import Generator, Iterable
 from itertools import tee
 from typing import Final
 
-from mex.common.models import AnyExtractedModel
+from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 from mex.common.settings import BaseSettings
 from mex.common.sinks.backend_api import BackendApiSink
 from mex.common.sinks.base import BaseSink
 from mex.common.sinks.ndjson import NdjsonSink
-from mex.common.types import Identifier, Sink
+from mex.common.types import Sink
 
 _SINK_REGISTRY: Final[dict[Sink, type["BaseSink"]]] = {}
 
@@ -37,11 +37,11 @@ class _MultiSink(BaseSink):
 
     def load(
         self,
-        models: Iterable[AnyExtractedModel],
-    ) -> Generator[Identifier, None, None]:
-        """Load models to multiple sinks simultaneously."""
+        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
+    ) -> Generator[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None]:
+        """Load the given items to multiple sinks simultaneously."""
         for sink, model_gen in zip(
-            self._sinks, tee(models, len(self._sinks)), strict=True
+            self._sinks, tee(items, len(self._sinks)), strict=True
         ):
             yield from sink.load(model_gen)
 

@@ -2,18 +2,19 @@ from typing import Annotated, Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
-T = TypeVar("T")
+_ValueT = TypeVar("_ValueT")
+_MappingRuleT = TypeVar("_MappingRuleT")
 
 
-class MappingRule(BaseModel, Generic[T], extra="forbid"):
+class MappingRule(BaseModel, Generic[_ValueT], extra="forbid"):
     """Generic mapping rule model."""
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
-    setValues: Annotated[T | None, Field(title="setValues")] = None
+    setValues: Annotated[_ValueT | None, Field(title="setValues")] = None
     rule: Annotated[str | None, Field(title="rule")] = None
 
 
-class MappingField(BaseModel, Generic[T], extra="forbid"):
+class MappingField(BaseModel, Generic[_MappingRuleT], extra="forbid"):
     """Generic mapping field model."""
 
     fieldInPrimarySource: Annotated[str | None, Field(title="fieldInPrimarySource")] = (
@@ -26,7 +27,7 @@ class MappingField(BaseModel, Generic[T], extra="forbid"):
         list[str] | None, Field(title="examplesInPrimarySource")
     ] = None
     mappingRules: Annotated[
-        list[MappingRule[T]], Field(min_length=1, title="mappingRules")
+        list[MappingRule[_MappingRuleT]], Field(min_length=1, title="mappingRules")
     ]
     comment: Annotated[str | None, Field(title="comment")] = None
 

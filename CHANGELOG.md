@@ -25,6 +25,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.51.1] - 2025-02-13
+
+### Fixed
+
+- expand the pattern for DOI Urls as these can also contain lowercase letters
+
+## [0.51.0] - 2025-02-11
+
+### Added
+
+- add entry for `s3` to sink settings enum
+
+### Changes
+
+- add `AnyMergedModel` to the allowed types for `Sink.load` methods
+- but let BackendApiSink throw an error, when merged items are loaded
+- make local typevars private and give them speaking names
+
+## [0.50.0] - 2025-02-06
+
+### Changes
+
+- BREAKING: move ItemsContainer and PaginatedItemsContainer to mex.common.models
+- BREAKING: replace post_extracted_items with ingest and allow AnyRuleSetResponses
+- allow AnyRuleSetResponses as arguments to sinks
+- BREAKING: sinks now yield the models they loaded, instead of just their identifiers
+
 ## [0.49.3] - 2025-01-29
 
 ### Changes

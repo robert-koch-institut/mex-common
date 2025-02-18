@@ -3,10 +3,7 @@ from urllib.parse import urljoin
 from requests.exceptions import HTTPError
 
 from mex.common.backend_api.models import (
-    IdentifiersResponse,
-    ItemsContainer,
     MergedModelTypeAdapter,
-    PaginatedItemsContainer,
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
@@ -16,6 +13,8 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ItemsContainer,
+    PaginatedItemsContainer,
 )
 from mex.common.settings import BaseSettings
 
@@ -40,28 +39,34 @@ class BackendApiConnector(HTTPConnector):
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
 
-    def post_extracted_items(
+    def ingest(
         self,
-        extracted_items: list[AnyExtractedModel],
-    ) -> IdentifiersResponse:
-        """Post extracted items to the backend in bulk.
+        models_or_rule_sets: list[AnyExtractedModel | AnyRuleSetResponse],
+    ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
+        """Post extracted models or rule-sets to the backend in bulk.
 
         Args:
-            extracted_items: Extracted items to post
+            models_or_rule_sets: Extracted models or rule-sets to ingest
 
         Raises:
             HTTPError: If post was not accepted, crashes or times out
 
         Returns:
-            Response model from the endpoint
+            List of extracted models or rule-sets from the endpoint
         """
         response = self.request(
             method="POST",
             endpoint="ingest",
-            payload=ItemsContainer[AnyExtractedModel](items=extracted_items),
+            payload=ItemsContainer[AnyExtractedModel | AnyRuleSetResponse](
+                items=models_or_rule_sets
+            ),
             timeout=self.INGEST_TIMEOUT,
         )
-        return IdentifiersResponse.model_validate(response)
+        return (
+            ItemsContainer[AnyExtractedModel | AnyRuleSetResponse]
+            .model_validate(response)
+            .items
+        )
 
     def fetch_extracted_items(
         self,
