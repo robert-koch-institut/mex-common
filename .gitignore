@@ -121,6 +121,11 @@ dmypy.json
 # SQLite databases
 *.db
 
+# Reflex
+.states
+assets/external/
+.web
+
 # Default exports
 *.ndjson
 data/
