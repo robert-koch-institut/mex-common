@@ -18,11 +18,12 @@ from mex.common.orcid.models.person import (
 
 
 @pytest.mark.parametrize(
-    ("given_names", "family_name", "expected_result", "error"),
+    ("given_names", "family_name", "given_and_familyname", "expected_result", "error"),
     [
         (
             "John",
             "Doe",
+            None,
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
                     path="0009-0004-3041-5706",
@@ -40,8 +41,29 @@ from mex.common.orcid.models.person import (
             None,
         ),
         (
+            None,
+            None,
+            '"Jayne Carberry"',
+            OrcidRecord(
+                orcid_identifier=OrcidIdentifier(
+                    path="0000-0003-4634-4047",
+                    uri="https://orcid.org/0000-0003-4634-4047",
+                ),
+                person=OrcidPerson(
+                    emails=OrcidEmails(email=[]),
+                    name=OrcidName(
+                        family_name=OrcidFamilyName(value="Carberry"),
+                        given_names=OrcidGivenNames(value="Jayne"),
+                        visibility="public",
+                    ),
+                ),
+            ),
+            None,
+        ),
+        (
             "NotExistJohn",
             "Doe",
+            None,
             None,
             pytest.raises(
                 EmptySearchResultError,
@@ -51,44 +73,41 @@ from mex.common.orcid.models.person import (
             "Multiple",
             "Doe",
             None,
+            None,
+            pytest.raises(
+                FoundMoreThanOneError,
+            ),
+        ),
+        (
+            None,
+            None,
+            "Jayne Carberry",
+            None,
             pytest.raises(
                 FoundMoreThanOneError,
             ),
         ),
     ],
-    ids=[],
+    ids=["existing", "existing_jayne", "not_existing", "multiple", "multiple_jayne"],
 )
 @pytest.mark.usefixtures("mocked_orcid")
-def test_get_orcid_record_by_name(given_names, family_name, expected_result, error):
+def test_get_orcid_record_by_name(
+    given_names, family_name, given_and_familyname, expected_result, error
+):
     if error:
         with error:
-            get_orcid_record_by_name(given_names=given_names, family_name=family_name)
+            get_orcid_record_by_name(
+                given_names=given_names,
+                family_name=family_name,
+                given_and_family_names=given_and_familyname,
+            )
     else:
         result = get_orcid_record_by_name(
-            given_names=given_names, family_name=family_name
+            given_names=given_names,
+            family_name=family_name,
+            given_and_family_names=given_and_familyname,
         )
         assert result == expected_result
-
-
-@pytest.mark.usefixtures("mocked_orcid")
-def test_get_orcid_record_by_given_and_family_name():
-    name = "Jayne Carberry"
-    result = get_orcid_record_by_name(given_and_family_names=name)
-    expected = {
-        "orcid_identifier": {
-            "path": "0000-0003-4634-4047",
-            "uri": "https://orcid.org/0000-0003-4634-4047",
-        },
-        "person": {
-            "emails": {"email": []},
-            "name": {
-                "family_name": {"value": "Carberry"},
-                "given_names": {"value": "Jayne"},
-                "visibility": "public",
-            },
-        },
-    }
-    assert result.model_dump() == expected
 
 
 @pytest.mark.usefixtures("mocked_orcid")

@@ -241,15 +241,18 @@ def mocked_orcid(
     def fetch(_self: OrcidConnector, filters: dict[str, Any]) -> dict[str, Any]:
         if filters.get("given-names") == "John":
             return {"num-found": 1, "result": [orcid_person_raw]}
-        if filters.get("given-and-family-names"):
+        if filters.get("given-and-family-names") == '"Jayne Carberry"':
             return {"num-found": 1, "result": [orcid_person_jayne_raw]}
-        if filters.get("given-names") == "Multiple":
+        if (
+            filters.get("given-names") == "Multiple"
+            or filters.get("given-and-family-names") == "Jayne Carberry"
+        ):
             return orcid_multiple_matches
-        return {"result": None, "num-found": 0}
+        return {"result": [], "num-found": 0}
 
     monkeypatch.setattr(OrcidConnector, "fetch", fetch)
 
-    def get_data_by_id(orcid_id: str) -> dict[str, Any]:
+    def get_data_by_id(_self: OrcidConnector, orcid_id: str) -> dict[str, Any]:
         if orcid_id == "0009-0004-3041-5706":
             return orcid_person_raw
         if orcid_id == "0000-0003-4634-4047":
@@ -257,4 +260,4 @@ def mocked_orcid(
         msg = "404 Not Found"
         raise HTTPError(msg)
 
-    monkeypatch.setattr(OrcidConnector, "get_data_by_id", staticmethod(get_data_by_id))
+    monkeypatch.setattr(OrcidConnector, "get_data_by_id", get_data_by_id)

@@ -30,12 +30,6 @@ def test_build_query(filters, expected) -> None:
     assert built_query == expected
 
 
-@pytest.mark.usefixtures("mocked_orcid")
-@pytest.mark.parametrize(
-    ("orcidid", "expected"),
-    [("0009-0004-3041-5706", True), ("0002-1825-0097", False)],
-    ids=["valid_query", "non_valid_query"],
-)
 @pytest.mark.usefixtures("orcid_person_raw")
 @pytest.mark.parametrize(
     ("family_name", "given_names", "expected"),
@@ -158,7 +152,7 @@ def test_build_query(filters, expected) -> None:
                 "num-found": 10,
             },
         ),
-        ("Doe", "NotExistJohn", {"result": None, "num-found": 0}),
+        ("Doe", "NotExistJohn", {"result": [], "num-found": 0}),
     ],
     ids=["existing person", "multiple results", "non-existing person"],
 )
@@ -177,36 +171,60 @@ def test_fetch_person_by_name(family_name, given_names, expected) -> None:
 @pytest.mark.usefixtures("mocked_orcid")
 def test_get_data_by_id(orcid_person_raw) -> None:
     expected_data = orcid_person_raw
-    result = OrcidConnector.get_data_by_id("0009-0004-3041-5706")
+    result = OrcidConnector.get().get_data_by_id("0009-0004-3041-5706")
     assert result == expected_data
 
 
 @pytest.mark.usefixtures("mocked_orcid")
 def test_get_data_by_id_not_found():
     with pytest.raises(HTTPError, match="404 Not Found"):
-        OrcidConnector.get_data_by_id("0000-0000-0000-0000")
-
-
-@pytest.mark.usefixtures("mocked_orcid")
-def test_get_data_by_name(orcid_person_raw):
-    given_names = "John"
-    family_name = "Doe"
-    result = OrcidConnector.get_data_by_name(
-        given_names=given_names, family_name=family_name
-    )
-    assert result == orcid_person_raw
+        OrcidConnector.get().get_data_by_id("0000-0000-0000-0000")
 
 
 @pytest.mark.parametrize(
-    ("givenname", "familyname", "expected_exception"),
+    ("givenname", "familyname", "given_and_family_name"),
     [
-        ("NotExistJohn", "Doe", EmptySearchResultError),
-        ("Multiple", "Doe", FoundMoreThanOneError),
+        ("John", "Doe", None),
+        (None, None, '"Jayne Carberry"'),
     ],
-    ids=["Empty Results", "Multiple Responses"],
+    ids=["normalname search", "given_and_family_names"],
 )
 @pytest.mark.usefixtures("mocked_orcid")
-def test_get_data_by_name_errors(givenname, familyname, expected_exception):
+def test_get_data_by_name(
+    givenname,
+    familyname,
+    given_and_family_name,
+    orcid_person_raw,
+    orcid_person_jayne_raw,
+):
+    result = OrcidConnector.get().get_data_by_name(
+        given_names=givenname,
+        family_name=familyname,
+        given_and_family_names=given_and_family_name,
+    )
+    if givenname == "John":
+        assert result == orcid_person_raw
+    else:
+        assert result == orcid_person_jayne_raw
+
+
+@pytest.mark.parametrize(
+    ("givenname", "familyname", "given_and_family_name", "expected_exception"),
+    [
+        ("NotExistJohn", "Doe", None, EmptySearchResultError),
+        ("Multiple", "Doe", None, FoundMoreThanOneError),
+        (None, None, "Jayne Carberry", FoundMoreThanOneError),
+    ],
+    ids=["Empty Results", "Multiple Responses", "Multiple Responses given_and_family"],
+)
+@pytest.mark.usefixtures("mocked_orcid")
+def test_get_data_by_name_errors(
+    givenname, familyname, given_and_family_name, expected_exception
+):
     """Test get_data_by_name raises appropriate errors for various edge cases."""
     with pytest.raises(expected_exception):
-        OrcidConnector.get_data_by_name(given_names=givenname, family_name=familyname)
+        OrcidConnector.get().get_data_by_name(
+            given_names=givenname,
+            family_name=familyname,
+            given_and_family_names=given_and_family_name,
+        )
