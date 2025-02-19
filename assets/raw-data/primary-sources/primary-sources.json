@@ -34,5 +34,14 @@
                 "value": "Wikidata APIs"
             }
         ]
+    },
+    {
+        "identifier": "orcid",
+        "title": [
+            {
+                "language": "en",
+                "value": "Open Researcher Contributor Identification Initiative"
+            }
+        ]
     }
 ]

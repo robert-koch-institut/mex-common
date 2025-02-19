@@ -1,0 +1,38 @@
+{
+    "orcid-identifier": {
+        "host": "orcid.org",
+        "path": "0009-0004-3041-5706",
+        "uri": "https://orcid.org/0009-0004-3041-5706"
+    },
+    "path": "/0009-0004-3041-5706",
+    "person": {
+        "emails": {
+            "email": [],
+            "path": "/0009-0004-3041-5706/email"
+        },
+        "name": {
+            "created-date": {
+                "value": 1729001670037
+            },
+            "family-name": {
+                "value": "Doe"
+            },
+            "given-names": {
+                "value": "John"
+            },
+            "last-modified-date": {
+                "value": 1730814244255
+            },
+            "path": "0009-0004-3041-5706",
+            "visibility": "public"
+        },
+        "other-names": {
+            "other-name": [],
+            "path": "/0009-0004-3041-5706/other-names"
+        },
+        "researcher-urls": {
+            "path": "/0009-0004-3041-5706/researcher-urls",
+            "researcher-url": []
+        }
+    }
+}
