@@ -12,13 +12,15 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import MagicMock, Mock
 
+import pytest
 import requests
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
-from requests import Response
+from requests import HTTPError, Response
 
 from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
+from mex.common.orcid.connector import OrcidConnector
 from mex.common.primary_source.helpers import get_all_extracted_primary_sources
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.wikidata.connector import (
@@ -191,3 +193,71 @@ def mocked_wikidata(
         "get_wikidata_item_details_by_id",
         get_wikidata_item_details_by_id,
     )
+
+
+@pytest.fixture
+def orcid_person_raw() -> dict[str, Any]:
+    """Return a raw orcid person."""
+    with open(Path(__file__).parent / "test_data" / "orcid_person_raw.json") as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
+def orcid_person_jayne_raw() -> dict[str, Any]:
+    """Return a raw orcid person."""
+    with open(
+        Path(__file__).parent / "test_data" / "orcid_person_jayne_raw.json"
+    ) as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
+def orcid_multiple_matches() -> dict[str, Any]:
+    """Return a raw orcid person."""
+    with open(
+        Path(__file__).parent / "test_data" / "orcid_multiple_matches.json"
+    ) as fh:
+        return cast(dict[str, Any], json.load(fh))
+
+
+@pytest.fixture
+def mocked_orcid(
+    monkeypatch: pytest.MonkeyPatch,
+    orcid_person_raw: dict[str, Any],
+    orcid_multiple_matches: dict[str, Any],
+    orcid_person_jayne_raw: dict[str, Any],
+) -> None:
+    """Mock orcid connector."""
+    response_query = Mock(spec=Response, status_code=200)
+
+    session = MagicMock(spec=requests.Session)
+    session.get = MagicMock(side_effect=[response_query])
+
+    def mocked_init(self: OrcidConnector) -> None:
+        self.session = session
+
+    monkeypatch.setattr(OrcidConnector, "__init__", mocked_init)
+
+    def fetch(_self: OrcidConnector, filters: dict[str, Any]) -> dict[str, Any]:
+        if filters.get("given-names") == "John":
+            return {"num-found": 1, "result": [orcid_person_raw]}
+        if filters.get("given-and-family-names") == '"Jayne Carberry"':
+            return {"num-found": 1, "result": [orcid_person_jayne_raw]}
+        if (
+            filters.get("given-names") == "Multiple"
+            or filters.get("given-and-family-names") == "Jayne Carberry"
+        ):
+            return orcid_multiple_matches
+        return {"result": [], "num-found": 0}
+
+    monkeypatch.setattr(OrcidConnector, "fetch", fetch)
+
+    def get_data_by_id(_self: OrcidConnector, orcid_id: str) -> dict[str, Any]:
+        if orcid_id == "0009-0004-3041-5706":
+            return orcid_person_raw
+        if orcid_id == "0000-0003-4634-4047":
+            return orcid_person_jayne_raw
+        msg = "404 Not Found"
+        raise HTTPError(msg)
+
+    monkeypatch.setattr(OrcidConnector, "get_data_by_id", get_data_by_id)
