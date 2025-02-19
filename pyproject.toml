@@ -132,6 +132,9 @@ select = ["ALL"]
 "mex/common/models/resource.py" = [
     "A005",     # Allow module for resource models to shadow standard-library
 ]
+"mex/common/types/__init__.py" = [
+    "A005",     # Allow custom types module to shadow standard-library
+]
 "mex/common/types/email.py" = [
     "A005",     # Allow custom email types module to shadow standard-library
 ]
@@ -142,6 +145,7 @@ select = ["ALL"]
     "INP001",   # Scripts folder does not need to be a package
 ]
 "tests/**" = [
+    "A005",     # Allow modules shadowing standard-library modules
     "ARG005",   # Allow unused lambda arguments for mocking
     "D101",     # Allow missing docstring in public class
     "D102",     # Allow missing docstring in public method
