@@ -108,6 +108,7 @@ class BackendApiConnector(HTTPConnector):
         self,
         query_string: str | None,
         entity_type: list[str] | None,
+        had_primary_source: list[str] | None,
         skip: int,
         limit: int,
     ) -> PaginatedItemsContainer[AnyMergedModel]:
@@ -115,7 +116,8 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             query_string: Full-text search query
-            entity_type: The item's entityType
+            entity_type: The items' entityType
+            had_primary_source: The items' hadPrimarySource
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -131,6 +133,7 @@ class BackendApiConnector(HTTPConnector):
             params={
                 "q": query_string,
                 "entityType": entity_type,
+                "hadPrimarySource": had_primary_source,
                 "skip": str(skip),
                 "limit": str(limit),
             },
@@ -198,6 +201,7 @@ class BackendApiConnector(HTTPConnector):
         self,
         query_string: str | None,
         entity_type: list[str] | None,
+        had_primary_source: list[str] | None,
         skip: int,
         limit: int,
     ) -> PaginatedItemsContainer[AnyPreviewModel]:
@@ -205,7 +209,8 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             query_string: Full-text search query
-            entity_type: The item's entityType
+            entity_type: The items' entityType
+            had_primary_source: The items' hadPrimarySource
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -221,6 +226,7 @@ class BackendApiConnector(HTTPConnector):
             params={
                 "q": query_string,
                 "entityType": entity_type,
+                "hadPrimarySource": had_primary_source,
                 "skip": str(skip),
                 "limit": str(limit),
             },
