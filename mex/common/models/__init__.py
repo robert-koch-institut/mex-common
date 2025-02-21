@@ -307,6 +307,7 @@ __all__ = (
     "AnyExtractedModel",
     "AnyMergedModel",
     "AnyPreventiveModel",
+    "AnyPreviewModel",
     "AnyRuleModel",
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
