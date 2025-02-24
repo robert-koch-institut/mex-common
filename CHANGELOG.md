@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- temporarily pin pydantic settings version to bypass error in settings update.
+
 ### Security
 
 ## [0.52.1] - 2025-02-24
