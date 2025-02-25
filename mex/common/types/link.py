@@ -3,7 +3,9 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field, model_validator
 
-URL_PATTERN = r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?"
+URL_PATTERN = (
+    "^(?:(?:[^:/?#]+):)?(?://(?:[^/?#]*))?(?:[^?#]*)(?:\\?(?:[^#]*))?(?:#(?:.*))?$"
+)
 
 
 class LinkLanguage(StrEnum):
