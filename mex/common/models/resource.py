@@ -51,6 +51,7 @@ ConformsToStr = Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-1
 DoiStr = Annotated[
     str,
     Field(
+        pattern="^https?://(?:dx\\.)?doi\\.org/10\\.\\d{4,9}[-.;()/:\\w]{,256}$",
         examples=[
             "https://doi.org/10.1007/978-1-0716-2441-8_7",
             "https://doi.org/10.2807/1560-7917.ES.2022.27.46.2200849",
@@ -58,22 +59,29 @@ DoiStr = Annotated[
             "http://dx.doi.org/10.25646/5147",
             "https://doi.org/10.1016/j.vaccine.2022.11.065",
         ],
-        pattern=r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Za-z0-9]+)$",
     ),
 ]
 LoincIdStr = Annotated[
     str,
     Field(
-        examples=["https://loinc.org/95209-3", "https://loinc.org/LA26211-5"],
-        pattern=r"^https://loinc.org/([a-zA-z]*)|(([0-9]*(-[0-9])*))$",
+        pattern="^https://loinc\\.org/[-\\w]{2,64}$",
+        examples=[
+            "https://loinc.org/95209-3",
+            "https://loinc.org/LA26211-5",
+            "https://loinc.org/96766-1",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 MeshIdStr = Annotated[
     str,
     Field(
-        pattern=r"^http://id\.nlm\.nih\.gov/mesh/[A-Z0-9]{2,64}$",
-        examples=["http://id.nlm.nih.gov/mesh/D001604"],
+        pattern="^http://id\\.nlm\\.nih\\.gov/mesh/[A-Z0-9]{2,64}$",
+        examples=[
+            "http://id.nlm.nih.gov/mesh/D001604",
+            "http://id.nlm.nih.gov/mesh/T025130",
+            "http://id.nlm.nih.gov/mesh/D007717",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]

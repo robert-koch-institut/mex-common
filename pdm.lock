@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:093bdb6431bb12d4be21bd51d23ac1dad275a86920f7168ae08b3ab8cd6e3bcb"
+content_hash = "sha256:fe69dc42f8885bc34d1a605e9aec80760e339d05288c686d0585c45b3adf8f51"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -192,14 +192,14 @@ files = [
 
 [[package]]
 name = "decorator"
-version = "5.2.0"
+version = "5.2.1"
 requires_python = ">=3.8"
 summary = "Decorators for Humans"
 groups = ["dev"]
 marker = "python_version == \"3.11\""
 files = [
-    {file = "decorator-5.2.0-py3-none-any.whl", hash = "sha256:f30a69c066f698c7c11fa1fa3425f684d3b4b01b494ee41e73c0a14f3de48427"},
-    {file = "decorator-5.2.0.tar.gz", hash = "sha256:1cf2ab68f8c1c7eae3895d82ab0daab41294cfbe6fbdebf50b44307299980762"},
+    {file = "decorator-5.2.1-py3-none-any.whl", hash = "sha256:d316bb415a2d9e2d2b3abcc4084c6502fc09240e292cd76a76afc106a1c8e04a"},
+    {file = "decorator-5.2.1.tar.gz", hash = "sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360"},
 ]
 
 [[package]]
@@ -426,11 +426,11 @@ files = [
 
 [[package]]
 name = "mex-model"
-version = "3.5.2"
+version = "3.5.3"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-model.git"
-ref = "3.5.2"
-revision = "47c42de2a7c9a24e4f15d0302813cfd0c7bfb41b"
+ref = "3.5.3"
+revision = "719e3a962efebd58ce2ce8de09420138ad7adfe5"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
 marker = "python_version == \"3.11\""
@@ -696,7 +696,7 @@ files = [
 
 [[package]]
 name = "pydantic-settings"
-version = "2.8.0"
+version = "2.7.1"
 requires_python = ">=3.8"
 summary = "Settings management using Pydantic"
 groups = ["default"]
@@ -706,8 +706,8 @@ dependencies = [
     "python-dotenv>=0.21.0",
 ]
 files = [
-    {file = "pydantic_settings-2.8.0-py3-none-any.whl", hash = "sha256:c782c7dc3fb40e97b238e713c25d26f64314aece2e91abcff592fcac15f71820"},
-    {file = "pydantic_settings-2.8.0.tar.gz", hash = "sha256:88e2ca28f6e68ea102c99c3c401d6c9078e68a5df600e97b43891c34e089500a"},
+    {file = "pydantic_settings-2.7.1-py3-none-any.whl", hash = "sha256:590be9e6e24d06db33a4262829edef682500ef008565a969c73d39d5f8bfb3fd"},
+    {file = "pydantic_settings-2.7.1.tar.gz", hash = "sha256:10c9caad35e64bfb3c2fbf70a078c0e25cc92499782e5200747f942a065dec93"},
 ]
 
 [[package]]
