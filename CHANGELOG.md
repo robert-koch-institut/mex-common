@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- BREAKING: filter for had_primary_source to backend api connector
+
 ### Changes
 
 ### Deprecated
@@ -31,11 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-  - Connector class for retrieving ORCID data by ID or name
-  - methods for extracting data from orcid
-  - methods to transform from OcidPerson to mex person
-  - model class for orcid data
-  - unit tests for orcid connector
+- Connector class for retrieving ORCID data by ID or name
+- methods for extracting data from orcid
+- methods to transform from OrcidPerson to mex person
+- model class for orcid data
+- unit tests for orcid connector
 
 ## [0.51.1] - 2025-02-13
 
