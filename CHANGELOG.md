@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: remove validation aliases to make env variables explicit, except MEX_ASSETS_DIR which is hardcoded
+
 ### Deprecated
 
 ### Removed

@@ -89,7 +89,6 @@ class BaseSettings(PydanticBaseSettings):
         False,
         alias="pdb",
         description="Jump into post-mortem debugging after any uncaught exception.",
-        validation_alias="MEX_DEBUG",
     )
     sink: list[Sink] = Field(
         [Sink.NDJSON],
@@ -97,7 +96,6 @@ class BaseSettings(PydanticBaseSettings):
             "Where to send data that is extracted or ingested. Defaults to writing "
             "ndjson files, but can be configured to push to the backend or the graph."
         ),
-        validation_alias="MEX_SINK",
     )
     assets_dir: Path = Field(
         Path.cwd() / "assets",
@@ -113,22 +111,18 @@ class BaseSettings(PydanticBaseSettings):
             "Path to directory that stores generated and temporary files. "
             "Defaults to the current working directory."
         ),
-        validation_alias="MEX_WORK_DIR",
     )
     identity_provider: IdentityProvider = Field(
         IdentityProvider.MEMORY,
         description="Provider to assign identifiers to new model instances.",
-        validation_alias="MEX_IDENTITY_PROVIDER",
     )
     backend_api_url: AnyUrl = Field(
         Url("http://localhost:8080/"),
         description="MEx backend API url.",
-        validation_alias="MEX_BACKEND_API_URL",
     )
     backend_api_key: SecretStr = Field(
         SecretStr("dummy_write_key"),
         description="Backend API key with write access to call POST/PUT endpoints",
-        validation_alias="MEX_BACKEND_API_KEY",
     )
     verify_session: bool | AssetsPath = Field(
         True,
@@ -137,7 +131,6 @@ class BaseSettings(PydanticBaseSettings):
             "certificate, or a path to a CA bundle to use. If a path is given, it can "
             "be either absolute or relative to the `assets_dir`. Defaults to True."
         ),
-        validation_alias="MEX_VERIFY_SESSION",
     )
     organigram_path: AssetsPath = Field(
         AssetsPath("raw-data/organigram/organizational_units.json"),
@@ -145,7 +138,6 @@ class BaseSettings(PydanticBaseSettings):
             "Path to the JSON file describing the organizational units, "
             "absolute path or relative to `assets_dir`."
         ),
-        validation_alias="MEX_ORGANIGRAM_PATH",
     )
     primary_sources_path: AssetsPath = Field(
         AssetsPath("raw-data/primary-sources/primary-sources.json"),
@@ -153,7 +145,6 @@ class BaseSettings(PydanticBaseSettings):
             "Path to the JSON file describing the primary sources, "
             "absolute path or relative to `assets_dir`."
         ),
-        validation_alias="MEX_PRIMARY_SOURCES_PATH",
     )
     ldap_url: SecretStr = Field(
         SecretStr("ldap://user:pw@ldap:636"),
@@ -163,7 +154,6 @@ class BaseSettings(PydanticBaseSettings):
         "`pw` is the password for authenticating against ldap, "
         "`host` is the url of the ldap server, and "
         "`port` is the port of the ldap server.",
-        validation_alias="MEX_LDAP_URL",
     )
     wiki_api_url: AnyUrl = Field(
         Url("https://wikidata/"),
@@ -171,25 +161,21 @@ class BaseSettings(PydanticBaseSettings):
         "wikidata organization ID to get all the info about the organization, "
         "which includes basic info, aliases, labels, descriptions, claims, and "
         "sitelinks",
-        validation_alias="MEX_WIKI_API_URL",
     )
     wiki_query_service_url: AnyUrl = Field(
         Url("https://wikidata/"),
         description="URL of Wikidata query service, this URL is to send organization "
         "name in plain text to wikidata and receive search results with wikidata "
         "organization ID",
-        validation_alias="MEX_WIKI_QUERY_SERVICE_URL",
     )
     mex_web_user_agent: str = Field(
         "rki/mex",
         description="a user agent is sent in the header of some requests to external "
         "services ",
-        validation_alias="MEX_WEB_USER_AGENT",
     )
     orcid_api_url: AnyUrl = Field(
         Url("https://orcid"),
         description="URL of orcid api.",
-        validation_alias="MEX_ORCID_API_URL",
     )
 
     def text(self) -> str:

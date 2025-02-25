@@ -65,9 +65,9 @@ def isolate_assets_dir(
 
 
 @pytest.fixture(autouse=True)
-def isolate_work_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Set the `MEX_WORK_DIR` environment variable to a temp path for all tests."""
-    monkeypatch.setenv("MEX_WORK_DIR", str(tmp_path))
+def isolate_work_dir(tmp_path: Path, settings: BaseSettings) -> None:
+    """Set settings.work_dir variable to a temp path for all tests."""
+    settings.work_dir = tmp_path
 
 
 @pytest.fixture(autouse=True)
@@ -82,7 +82,6 @@ def isolate_settings(
     isolate_work_dir: None,  # noqa: ARG001
 ) -> Generator[None, None, None]:
     """Automatically reset the settings singleton store."""
-    SETTINGS_STORE.reset()
     yield
     SETTINGS_STORE.reset()
 
