@@ -9,10 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- BREAKING: filter for had_primary_source to backend api connector
-- BREAKING: mex-model to 3.5.5: update patterns and examples for URL fields
-
 ### Changes
+
+- BREAKING: mex-model to 3.5.5: update patterns and examples for URL fields
 
 ### Deprecated
 
