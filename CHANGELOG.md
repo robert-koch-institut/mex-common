@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.53.0] - 2025-02-26
+
+### Added
+
+- BREAKING: filter for had_primary_source to backend api connector
+
 ## [0.52.2] - 2025-02-24
 
 ### Fixed
