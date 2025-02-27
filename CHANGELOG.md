@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: mex-model to 3.5.5: update patterns and examples for URL fields
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.54.0] - 2025-02-27
+
+### Changes
+
+- BREAKING: mex-model to 3.5.5: update patterns and examples for URL fields
 
 ## [0.53.0] - 2025-02-26
 
