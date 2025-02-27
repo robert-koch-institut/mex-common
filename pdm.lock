@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:050c7b0c61d552223a85d23b829bd7d3252328897989e89fb46c8cf2c1dcbead"
+content_hash = "sha256:64238fb6f4d50ad3b09fc4c566b89f7e8d1acf84f79fae86d2e19c6a2e4ebb78"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -426,11 +426,11 @@ files = [
 
 [[package]]
 name = "mex-model"
-version = "3.5.4"
+version = "3.5.5"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-model.git"
-ref = "3.5.4"
-revision = "69b12068f20017deb006926ab98ddac4c565862c"
+ref = "3.5.5"
+revision = "340d6dfea8cb36031b8f772cf920f604525657e5"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
 marker = "python_version == \"3.11\""

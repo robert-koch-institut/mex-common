@@ -51,7 +51,7 @@ ConformsToStr = Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-1
 DoiStr = Annotated[
     str,
     Field(
-        pattern="^https?://(?:dx\\.)?doi\\.org/10\\.\\d{4,9}[-.;()/:\\w]{0,256}$",
+        pattern="^https?://(?:dx\\.)?doi\\.org/10\\.[0-9]{4,9}[-_.;()/:A-Za-z0-9]{0,256}$",
         examples=[
             "https://doi.org/10.1007/978-1-0716-2441-8_7",
             "https://doi.org/10.2807/1560-7917.ES.2022.27.46.2200849",
@@ -64,7 +64,7 @@ DoiStr = Annotated[
 LoincIdStr = Annotated[
     str,
     Field(
-        pattern="^https://loinc\\.org/[-\\w]{2,64}$",
+        pattern="^https://loinc\\.org/[-A-Za-z0-9]{2,64}$",
         examples=[
             "https://loinc.org/95209-3",
             "https://loinc.org/LA26211-5",

@@ -29,7 +29,7 @@ from mex.common.types import (
 GeprisIdStr = Annotated[
     str,
     Field(
-        pattern="^https://gepris\\.dfg\\.de/gepris/institution/[\\d]{1,64}$",
+        pattern="^https://gepris\\.dfg\\.de/gepris/institution/[0-9]{1,64}$",
         examples=[
             "https://gepris.dfg.de/gepris/institution/10179",
             "https://gepris.dfg.de/gepris/institution/10293",
@@ -41,7 +41,7 @@ GeprisIdStr = Annotated[
 GndIdStr = Annotated[
     str,
     Field(
-        pattern="^https://d-nb\\.info/gnd/[-X\\d]{3,10}$",
+        pattern="^https://d-nb\\.info/gnd/[-X0-9]{3,10}$",
         examples=[
             "https://d-nb.info/gnd/17690-4",
             "https://d-nb.info/gnd/4017909-6",
@@ -53,7 +53,7 @@ GndIdStr = Annotated[
 IsniIdStr = Annotated[
     str,
     Field(
-        pattern="^https://isni\\.org/isni/[X\\d]{16}$",
+        pattern="^https://isni\\.org/isni/[X0-9]{16}$",
         examples=[
             "https://isni.org/isni/0000000109403744",
             "https://isni.org/isni/0000000417918889",
@@ -65,7 +65,7 @@ IsniIdStr = Annotated[
 RorIdStr = Annotated[
     str,
     Field(
-        pattern="^https://ror\\.org/[a-z\\d]{9}$",
+        pattern="^https://ror\\.org/[a-z0-9]{9}$",
         examples=[
             "https://ror.org/01k5qnb77",
             "https://ror.org/00s9v1h75",
@@ -77,7 +77,7 @@ RorIdStr = Annotated[
 ViafIdStr = Annotated[
     str,
     Field(
-        pattern="^https://viaf\\.org/viaf/[\\d]{2,22}$",
+        pattern="^https://viaf\\.org/viaf/[0-9]{2,22}$",
         examples=[
             "https://viaf.org/viaf/123556639",
             "https://viaf.org/viaf/137080884",
@@ -89,7 +89,7 @@ ViafIdStr = Annotated[
 WikidataIdStr = Annotated[
     str,
     Field(
-        pattern="^https://www\\.wikidata\\.org/entity/[PQ\\d]{2,64}$",
+        pattern="^https://www\\.wikidata\\.org/entity/[PQ0-9]{2,64}$",
         examples=[
             "https://www.wikidata.org/entity/Q679041",
             "https://www.wikidata.org/entity/Q918501",
