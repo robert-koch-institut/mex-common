@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: mex-model to 3.5.6: make doi pattern more lenient
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.54.1] - 2025-02-28
+
+### Changes
+
+- BREAKING: mex-model to 3.5.6: make doi pattern more lenient
 
 ## [0.54.0] - 2025-02-27
 
