@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- remove unsafe pytest import from testing plugin
-
 ### Security
+
+## [0.54.2] - 2025-03-05
+
+### Fixed
+
+- remove unsafe pytest import from testing plugin
 
 ## [0.54.1] - 2025-02-28
 
