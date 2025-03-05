@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import MagicMock, Mock
 
-import pytest
 import requests
 from langdetect import DetectorFactory
 from pydantic import AnyUrl
