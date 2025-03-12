@@ -32,7 +32,7 @@ class BaseSettings(PydanticBaseSettings):
 
     model_config = SettingsConfigDict(
         populate_by_name=True,
-        env_prefix="mex_",
+        env_prefix="mex_common_",
         env_file=".env",
         env_file_encoding="utf-8",
         env_nested_delimiter="__",
