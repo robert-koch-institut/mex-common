@@ -98,6 +98,7 @@ def test_fetch_merged_items_mocked(
     response = connector.fetch_merged_items(
         "Tintzmann",
         entity_type=["MergedPerson", "MergedContactPoint"],
+        had_primary_source=None,
         skip=0,
         limit=1,
     )
@@ -111,6 +112,7 @@ def test_fetch_merged_items_mocked(
         {
             "q": "Tintzmann",
             "entityType": ["MergedPerson", "MergedContactPoint"],
+            "hadPrimarySource": None,
             "skip": "0",
             "limit": "1",
         },
@@ -212,7 +214,7 @@ def test_fetch_preview_items_mocked(
     mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
-    response = connector.fetch_preview_items("foobar", None, 1, 0)
+    response = connector.fetch_preview_items("foobar", None, None, 1, 0)
 
     assert response == preview_response
 
@@ -222,6 +224,7 @@ def test_fetch_preview_items_mocked(
         {
             "q": "foobar",
             "entityType": None,
+            "hadPrimarySource": None,
             "skip": "1",
             "limit": "0",
         },

@@ -39,6 +39,7 @@ from mex.common.types import (
 DoiStr = Annotated[
     str,
     Field(
+        pattern="^https?://(?:dx\\.)?doi\\.org/[0-9]{2}\\.[0-9]{4,9}[-_.;()/:A-Za-z0-9]{0,256}$",
         examples=[
             "https://doi.org/10.1007/978-1-0716-2441-8_7",
             "https://doi.org/10.2807/1560-7917.ES.2022.27.46.2200849",
@@ -46,7 +47,6 @@ DoiStr = Annotated[
             "http://dx.doi.org/10.25646/5147",
             "https://doi.org/10.1016/j.vaccine.2022.11.065",
         ],
-        pattern=r"^(((http)|(https))://(dx.)?doi.org/)(10.\d{4,9}/[-._;()/:A-Za-z0-9]+)$",
     ),
 ]
 EditionStr = Annotated[

@@ -29,48 +29,72 @@ from mex.common.types import (
 GeprisIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://gepris\.dfg\.de/gepris/institution/[0-9]{1,64}$",
-        examples=["https://gepris.dfg.de/gepris/institution/10179"],
+        pattern="^https://gepris\\.dfg\\.de/gepris/institution/[0-9]{1,64}$",
+        examples=[
+            "https://gepris.dfg.de/gepris/institution/10179",
+            "https://gepris.dfg.de/gepris/institution/10293",
+            "https://gepris.dfg.de/gepris/institution/21091092",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 GndIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://d-nb\.info/gnd/[-X0-9]{3,10}$",
-        examples=["https://d-nb.info/gnd/17690-4"],
+        pattern="^https://d-nb\\.info/gnd/[-X0-9]{3,10}$",
+        examples=[
+            "https://d-nb.info/gnd/17690-4",
+            "https://d-nb.info/gnd/4017909-6",
+            "https://d-nb.info/gnd/4603236-8",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 IsniIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
-        examples=["https://isni.org/isni/0000000109403744"],
+        pattern="^https://isni\\.org/isni/[X0-9]{16}$",
+        examples=[
+            "https://isni.org/isni/0000000109403744",
+            "https://isni.org/isni/0000000417918889",
+            "https://isni.org/isni/0000000459040795",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 RorIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://ror\.org/[a-z0-9]{9}$",
-        examples=["https://ror.org/01k5qnb77"],
+        pattern="^https://ror\\.org/[a-z0-9]{9}$",
+        examples=[
+            "https://ror.org/01k5qnb77",
+            "https://ror.org/00s9v1h75",
+            "https://ror.org/04t3en479",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 ViafIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://viaf\.org/viaf/[0-9]{2,22}$",
-        examples=["https://viaf.org/viaf/123556639"],
+        pattern="^https://viaf\\.org/viaf/[0-9]{2,22}$",
+        examples=[
+            "https://viaf.org/viaf/123556639",
+            "https://viaf.org/viaf/137080884",
+            "https://viaf.org/viaf/122203699",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 WikidataIdStr = Annotated[
     str,
     Field(
-        examples=["http://www.wikidata.org/entity/Q679041"],
-        pattern=r"^https://www\.wikidata\.org/entity/[PQ0-9]{2,64}$",
+        pattern="^https://www\\.wikidata\\.org/entity/[PQ0-9]{2,64}$",
+        examples=[
+            "https://www.wikidata.org/entity/Q679041",
+            "https://www.wikidata.org/entity/Q918501",
+            "https://www.wikidata.org/entity/Q491566",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]

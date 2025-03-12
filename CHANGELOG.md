@@ -21,6 +21,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.54.2] - 2025-03-05
+
+### Fixed
+
+- remove unsafe pytest import from testing plugin
+
+## [0.54.1] - 2025-02-28
+
+### Changes
+
+- BREAKING: mex-model to 3.5.6: make doi pattern more lenient
+
+## [0.54.0] - 2025-02-27
+
+### Changes
+
+- BREAKING: mex-model to 3.5.5: update patterns and examples for URL fields
+
+## [0.53.0] - 2025-02-26
+
+### Added
+
+- BREAKING: filter for had_primary_source to backend api connector
+
 ## [0.52.2] - 2025-02-24
 
 ### Fixed
@@ -33,11 +57,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-  - Connector class for retrieving ORCID data by ID or name
-  - methods for extracting data from orcid
-  - methods to transform from OcidPerson to mex person
-  - model class for orcid data
-  - unit tests for orcid connector
+- Connector class for retrieving ORCID data by ID or name
+- methods for extracting data from orcid
+- methods to transform from OrcidPerson to mex person
+- model class for orcid data
+- unit tests for orcid connector
 
 ## [0.51.1] - 2025-02-13
 

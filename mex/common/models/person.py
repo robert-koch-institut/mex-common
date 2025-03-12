@@ -46,16 +46,24 @@ GivenNameStr = Annotated[
 IsniIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://isni\.org/isni/[X0-9]{16}$",
-        examples=["https://isni.org/isni/0000000109403744"],
+        pattern="^https://isni\\.org/isni/[X0-9]{16}$",
+        examples=[
+            "https://isni.org/isni/0000000019240398",
+            "https://isni.org/isni/0000000453907343",
+            "https://isni.org/isni/0000000038086111",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
 OrcidIdStr = Annotated[
     str,
     Field(
-        pattern=r"^https://orcid\.org/[-X0-9]{9,21}$",
-        examples=["https://orcid.org/0000-0002-9079-593X"],
+        pattern="^https://orcid\\.org/[-X0-9]{9,21}$",
+        examples=[
+            "https://orcid.org/0000-0002-9079-593X",
+            "https://orcid.org/0000-0003-2300-3928",
+            "https://orcid.org/0000-0002-1335-4022",
+        ],
         json_schema_extra={"format": "uri"},
     ),
 ]
