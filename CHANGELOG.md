@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- stop stringifying backend identity provider url parameters
-
 ### Security
+
+## [0.54.3] - 2025-03-18
+
+### Fixed
+
+- stop stringifying backend identity provider url parameters
 
 ## [0.54.2] - 2025-03-05
 
