@@ -43,12 +43,9 @@ class BackendApiIdentityProvider(BaseProvider, BackendApiConnector):
             "GET",
             "identity",
             params={
-                key: str(value)
-                for key, value in [
-                    ("hadPrimarySource", had_primary_source),
-                    ("identifierInPrimarySource", identifier_in_primary_source),
-                    ("stableTargetId", stable_target_id),
-                ]
+                "hadPrimarySource": had_primary_source,
+                "identifierInPrimarySource": identifier_in_primary_source,
+                "stableTargetId": stable_target_id,
             },
         )
         return ItemsContainer[Identity].model_validate(response).items

@@ -110,3 +110,28 @@ def test_fetch_mocked(
             identifierInPrimarySource=contact_point.identifierInPrimarySource,
         )
     ]
+
+
+def test_fetch_mocked_empty(
+    mocked_backend_identity_provider: requests.Session,
+) -> None:
+    mocked_response = Mock(spec=requests.Response)
+    mocked_response.status_code = 200
+    mocked_response.json = MagicMock(return_value={"items": [], "total": 0})
+    mocked_backend_identity_provider.request = MagicMock(return_value=mocked_response)
+
+    provider = BackendApiIdentityProvider.get()
+
+    provider.fetch()
+
+    mocked_backend_identity_provider.request.assert_called_with(
+        "GET",
+        "http://localhost:8080/v0/identity",
+        {
+            "hadPrimarySource": None,
+            "identifierInPrimarySource": None,
+            "stableTargetId": None,
+        },
+        timeout=10,
+        headers={"Accept": "application/json", "User-Agent": "rki/mex"},
+    )
