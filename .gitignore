@@ -22,6 +22,7 @@ downloads/
 eggs/
 lib/
 lib64/
+locked-requirements.txt
 MANIFEST
 parts/
 sdist/
@@ -49,7 +50,7 @@ coverage.xml
 test*.jpeg
 test*.png
 *.cover
-*.py,cover
+*,cover
 .hypothesis/
 .pytest_cache/
 cover/
@@ -84,7 +85,7 @@ ipython_config.py
 __pypackages__/
 
 # Celery stuff
-celerybeat-schedule
+celerybeat-schedule.*
 celerybeat.pid
 
 # Environments
@@ -126,10 +127,14 @@ dmypy.json
 assets/external/
 .web
 
-# Default exports
+# MEx specific
+.aws/
+.invenio.private
 *.ndjson
 data/
 identity.csv
+logs/
+payload
 schema.json
 tmp*/
 work/
