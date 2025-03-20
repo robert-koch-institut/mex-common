@@ -10,7 +10,7 @@ from mex.common.utils import grouper
 class BackendApiSink(BaseSink):
     """Sink to load models to the Backend API."""
 
-    CHUNK_SIZE = 50
+    CHUNK_SIZE = 25
 
     def load(
         self, items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse]

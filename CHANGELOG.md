@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- reduce chunk size for backend api sink to avoid timeouts
+
 ### Deprecated
 
 ### Removed
