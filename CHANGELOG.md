@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.54.4] - 2025-03-20
+
+### Changes
+
+- reduce chunk size for backend api sink to avoid timeouts
+
 ## [0.54.3] - 2025-03-18
 
 ### Fixed
