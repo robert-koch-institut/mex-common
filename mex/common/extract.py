@@ -40,7 +40,7 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
 def parse_csv(
     path_or_buffer: Union[str, PathLike[str], "ReadCsvBuffer[Any]"],
     into: type[_BaseModelT],
-    chunksize: int = 10,
+    chunksize: int = 10000,
     **kwargs: Any,
 ) -> Generator[_BaseModelT, None, None]:
     """Parse a CSV file into an iterable of the given model type.
@@ -57,18 +57,18 @@ def parse_csv(
     with pd.read_csv(
         path_or_buffer, chunksize=chunksize, dtype=get_dtypes_for_model(into), **kwargs
     ) as reader:
-        for chunk in reader:
+        for i, chunk in enumerate(reader):
+            logger.info(
+                "parse_csv - %s chunk %s - OK",
+                into.__name__,
+                i,
+            )
             for index, row in chunk.iterrows():
                 try:
                     model = into.model_validate(
                         row.replace(to_replace=np.nan, value=None)
                         .replace(regex=r"^\s*$", value=None)
                         .to_dict()
-                    )
-                    logger.info(
-                        "parse_csv - %s %s - OK",
-                        into.__name__,
-                        index,
                     )
                     yield model
                 except ValidationError as error:

@@ -34,7 +34,7 @@ false,"bad row",,,
     """.strip()
     )
 
-    parsed_models = list(parse_csv(buffer, DummyModel, chunksize=1))
+    parsed_models = list(parse_csv(buffer, DummyModel, chunksize=2))
     assert len(parsed_models) == 1
     assert parsed_models[0].model_dump() == {  # good row
         "bool_": True,
@@ -45,5 +45,5 @@ false,"bad row",,,
     }
     assert len(caplog.text.splitlines()) == 2
     good_row_log, bad_row_log = caplog.text.splitlines()
-    assert "parse_csv - DummyModel 0 - OK" in good_row_log
+    assert "parse_csv - DummyModel chunk 0 - OK" in good_row_log
     assert "parse_csv - DummyModel 1 - ValidationError" in bad_row_log

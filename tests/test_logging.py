@@ -11,7 +11,7 @@ from mex.common.logging import watch
 def test_watch(caplog: LogCaptureFixture) -> None:
     items = ["foo", UUID(int=16, version=4), MExError("foo", 42)]
 
-    @watch
+    @watch(log_interval=1)
     def dummy_generator() -> Any:
         yield from items
 

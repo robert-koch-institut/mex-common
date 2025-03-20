@@ -9,7 +9,7 @@ from mex.common.settings import BaseSettings
 from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
-@watch
+@watch()
 def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
     """Extract organizational units from the organigram JSON file.
 

@@ -6,7 +6,7 @@ from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 
 
-@watch
+@watch()
 def transform_organigram_units_to_organizational_units(
     units: Iterable[OrganigramUnit], primary_source: ExtractedPrimarySource
 ) -> Generator[ExtractedOrganizationalUnit, None, None]:
