@@ -15,7 +15,7 @@ from mex.common.models import (
 )
 
 
-@watch
+@watch()
 def transform_ldap_persons_to_mex_persons(
     ldap_persons: Iterable[LDAPPerson],
     primary_source: ExtractedPrimarySource,
@@ -40,7 +40,7 @@ def transform_ldap_persons_to_mex_persons(
         )
 
 
-@watch
+@watch()
 def transform_ldap_actors_to_mex_contact_points(
     ldap_actors: Iterable[LDAPActor],
     primary_source: ExtractedPrimarySource,
@@ -58,7 +58,7 @@ def transform_ldap_actors_to_mex_contact_points(
         yield transform_ldap_actor_to_mex_contact_point(actor, primary_source)
 
 
-@watch
+@watch()
 def transform_ldap_persons_with_query_to_mex_persons(
     ldap_persons_with_query: Iterable[LDAPPersonWithQuery],
     primary_source: ExtractedPrimarySource,

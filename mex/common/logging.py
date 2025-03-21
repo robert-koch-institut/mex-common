@@ -2,7 +2,7 @@ import logging
 import logging.config
 from collections.abc import Callable, Generator
 from functools import wraps
-from typing import Any, TypeVar
+from typing import Any, ParamSpec, TypeVar
 
 import click
 
@@ -37,24 +37,36 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("mex")
 echo = logger.info  # `echo` is deprecated, use the logger directly instead
 
+P = ParamSpec("P")
+
 
 def watch(
-    func: Callable[..., Generator[_YieldT, None, None]],
-) -> Callable[..., Generator[_YieldT, None, None]]:
+    log_interval: int = 10000,
+) -> Callable[
+    [Callable[P, Generator[_YieldT, None, None]]],
+    Callable[P, Generator[_YieldT, None, None]],
+]:
     """Watch the output of a generator function and log the yielded items.
 
     Args:
         func: Generator function that yields strings, models or exceptions
             (It will use the objects `__str__()` method to print it out.)
+        log_interval: integer determining the interval length between loggings
 
     Returns:
         Decorated function that logs all yielded items
     """
 
-    @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
-        for item in func(*args, **kwargs):
-            logger.info("%s - %s", func.__name__, item)
-            yield item
+    def decorator(
+        func: Callable[P, Generator[_YieldT, None, None]],
+    ) -> Callable[P, Generator[_YieldT, None, None]]:
+        @wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
+            for i, item in enumerate(func(*args, **kwargs)):
+                if i % log_interval == 0:
+                    logger.info("%s - %s - %s", i, func.__name__, item)
+                yield item
 
-    return wrapper
+        return wrapper
+
+    return decorator

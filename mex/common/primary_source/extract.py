@@ -6,7 +6,7 @@ from mex.common.primary_source.models import SeedPrimarySource
 from mex.common.settings import BaseSettings
 
 
-@watch
+@watch()
 def extract_seed_primary_sources() -> Generator[SeedPrimarySource, None, None]:
     """Extract seed primary sources from the raw-data JSON file.
 

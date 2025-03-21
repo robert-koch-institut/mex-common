@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: wrap function around watch decorator accepting log_interval parameter
+- increase parse_csv default chunksize to 10000 and log on chunk level instead of row level
+
 ### Deprecated
 
 ### Removed
