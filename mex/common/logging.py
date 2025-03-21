@@ -2,7 +2,7 @@ import logging
 import logging.config
 from collections.abc import Callable, Generator
 from functools import wraps
-from typing import Any, TypeVar
+from typing import Any, ParamSpec, TypeVar
 
 import click
 
@@ -37,12 +37,14 @@ logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("mex")
 echo = logger.info  # `echo` is deprecated, use the logger directly instead
 
+P = ParamSpec("P")
+
 
 def watch(
     log_interval: int = 10000,
 ) -> Callable[
-    [Callable[..., Generator[_YieldT, None, None]]],
-    Callable[..., Generator[_YieldT, None, None]],
+    [Callable[P, Generator[_YieldT, None, None]]],
+    Callable[P, Generator[_YieldT, None, None]],
 ]:
     """Watch the output of a generator function and log the yielded items.
 
@@ -56,8 +58,8 @@ def watch(
     """
 
     def decorator(
-        func: Callable[..., Generator[_YieldT, None, None]],
-    ) -> Callable[..., Generator[_YieldT, None, None]]:
+        func: Callable[P, Generator[_YieldT, None, None]],
+    ) -> Callable[P, Generator[_YieldT, None, None]]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
             for i, item in enumerate(func(*args, **kwargs)):
