@@ -5,6 +5,7 @@ from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.orcid.extract import (
     get_orcid_record_by_id,
     get_orcid_record_by_name,
+    get_orcid_records_by_given_or_family_name,
 )
 from mex.common.orcid.models.person import (
     OrcidEmails,
@@ -43,7 +44,7 @@ from mex.common.orcid.models.person import (
         (
             None,
             None,
-            '"Jayne Carberry"',
+            "Jayne Carberry",
             OrcidRecord(
                 orcid_identifier=OrcidIdentifier(
                     path="0000-0003-4634-4047",
@@ -81,7 +82,7 @@ from mex.common.orcid.models.person import (
         (
             None,
             None,
-            "Jayne Carberry",
+            "Multiple Carberry",
             None,
             pytest.raises(
                 FoundMoreThanOneError,
@@ -132,7 +133,7 @@ def test_get_orcid_record_by_name(
             ),
             None,
         ),
-        ("0000-0000-0000-0000", None, pytest.raises(HTTPError, match="404 Not Found")),
+        ("0000-0000-0000-000", None, pytest.raises(HTTPError, match="404 Not Found")),
     ],
     ids=["existing id", "non-existing id"],
 )
@@ -143,3 +144,34 @@ def test_get_orcid_record_by_id(orcid_id, expected_result, error):
     else:
         result = get_orcid_record_by_id(orcid_id)
         assert result == expected_result
+
+
+jayne_carberry_result = OrcidRecord(
+    orcid_identifier=OrcidIdentifier(
+        path="0000-0003-4634-4047", uri="https://orcid.org/0000-0003-4634-4047"
+    ),
+    person=OrcidPerson(
+        emails=OrcidEmails(email=[]),
+        name=OrcidName(
+            family_name=OrcidFamilyName(value="Carberry"),
+            given_names=OrcidGivenNames(value="Jayne"),
+            visibility="public",
+        ),
+    ),
+)
+
+
+@pytest.mark.usefixtures("mocked_orcid")
+@pytest.mark.parametrize(
+    ("search_string", "expected_result"),
+    [
+        ("Jayne Carberry", [jayne_carberry_result]),
+        ("Multiple Carberry", [jayne_carberry_result] * 10),
+    ],
+    ids=["single result", "multiple results"],
+)
+def test_get_orcid_records_by_given_or_family_name(search_string, expected_result):
+    result = list(
+        get_orcid_records_by_given_or_family_name(given_and_family_names=search_string)
+    )
+    assert result == expected_result
