@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-
+- extract method for orcid can now obtain multiple results (orcid records)
 ### Changes
 
 ### Deprecated
