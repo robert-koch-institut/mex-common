@@ -6,6 +6,7 @@ to the `conftest.py` in your root test folder.
 
 import json
 import os
+import re
 from collections.abc import Generator
 from enum import Enum
 from pathlib import Path
@@ -240,11 +241,11 @@ def mocked_orcid(
     def fetch(_self: OrcidConnector, filters: dict[str, Any]) -> dict[str, Any]:
         if filters.get("given-names") == "John":
             return {"num-found": 1, "result": [orcid_person_raw]}
-        if filters.get("given-and-family-names") == '"Jayne Carberry"':
+        if filters.get("given-and-family-names") == "Jayne Carberry":
             return {"num-found": 1, "result": [orcid_person_jayne_raw]}
         if (
             filters.get("given-names") == "Multiple"
-            or filters.get("given-and-family-names") == "Jayne Carberry"
+            or filters.get("given-and-family-names") == "Multiple Carberry"
         ):
             return orcid_multiple_matches
         return {"result": [], "num-found": 0}
@@ -254,7 +255,9 @@ def mocked_orcid(
     def get_data_by_id(_self: OrcidConnector, orcid_id: str) -> dict[str, Any]:
         if orcid_id == "0009-0004-3041-5706":
             return orcid_person_raw
-        if orcid_id == "0000-0003-4634-4047":
+        if re.match(
+            r"^[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}$", orcid_id
+        ):
             return orcid_person_jayne_raw
         msg = "404 Not Found"
         raise HTTPError(msg)

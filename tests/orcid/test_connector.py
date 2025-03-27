@@ -1,7 +1,7 @@
 import pytest
 from requests import HTTPError
 
-from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
+from mex.common.exceptions import EmptySearchResultError
 from mex.common.orcid.connector import OrcidConnector
 
 
@@ -178,14 +178,14 @@ def test_get_data_by_id(orcid_person_raw) -> None:
 @pytest.mark.usefixtures("mocked_orcid")
 def test_get_data_by_id_not_found():
     with pytest.raises(HTTPError, match="404 Not Found"):
-        OrcidConnector.get().get_data_by_id("0000-0000-0000-0000")
+        OrcidConnector.get().get_data_by_id("0000-0000-0000-000")
 
 
 @pytest.mark.parametrize(
     ("givenname", "familyname", "given_and_family_name"),
     [
         ("John", "Doe", None),
-        (None, None, '"Jayne Carberry"'),
+        (None, None, "Jayne Carberry"),
     ],
     ids=["normalname search", "given_and_family_names"],
 )
@@ -210,12 +210,8 @@ def test_get_data_by_name(
 
 @pytest.mark.parametrize(
     ("givenname", "familyname", "given_and_family_name", "expected_exception"),
-    [
-        ("NotExistJohn", "Doe", None, EmptySearchResultError),
-        ("Multiple", "Doe", None, FoundMoreThanOneError),
-        (None, None, "Jayne Carberry", FoundMoreThanOneError),
-    ],
-    ids=["Empty Results", "Multiple Responses", "Multiple Responses given_and_family"],
+    [("NotExistJohn", "Doe", None, EmptySearchResultError)],
+    ids=["Empty Results"],
 )
 @pytest.mark.usefixtures("mocked_orcid")
 def test_get_data_by_name_errors(

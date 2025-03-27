@@ -45,13 +45,12 @@ def get_orcid_record_by_id(orcid_id: str) -> OrcidRecord:
 
 
 def get_orcid_records_by_given_or_family_name(
-    given_names: str = "*", family_name: str = "*"
+    given_and_family_names: str = "*",
 ) -> Generator[OrcidRecord, None, None]:
     """Returns a generator of OrcidRecord objects matching the given filters.
 
     Args:
-        given_names: Given name of a person, defaults to '*'.
-        family_name: Surname of a person, defaults to '*'.
+        given_and_family_names: Full name of a person, default non-null
 
     Raises:
         EmptySearchResultError
@@ -59,15 +58,14 @@ def get_orcid_records_by_given_or_family_name(
     Yields:
         OrcidRecord: ORCID records matching the search filters.
     """
-    filters = {"given-and-family-names": f"{given_names} {family_name}"}
+    filters = {"given-and-family-names": f"{given_and_family_names}"}
     orcidapi = OrcidConnector.get()
-
     search_response = orcidapi.fetch(filters=filters)
     num_found = search_response.get("num-found", 0)
 
     if num_found == 0:
-        raise EmptySearchResultError
-
+        msg = "Cannot find ORCID records for the given filters."
+        raise EmptySearchResultError(msg)
     for record in search_response.get("result", []):
         orcid_data = orcidapi.get_data_by_id(record["orcid-identifier"]["path"])
         yield map_orcid_data_to_orcid_record(orcid_data)
