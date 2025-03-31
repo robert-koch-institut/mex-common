@@ -96,23 +96,23 @@ class HTTPConnector(BaseConnector):
 
         if response.status_code == codes.no_content:
             return {}
-        return cast(dict[str, Any], response.json())
+        return cast("dict[str, Any]", response.json())
 
     @backoff.on_predicate(
         backoff.fibo,
-        lambda response: cast(Response, response).status_code
+        lambda response: cast("Response", response).status_code
         >= codes.internal_server_error,
         max_tries=4,
     )
     @backoff.on_predicate(
         backoff.fibo,
-        lambda response: cast(Response, response).status_code
+        lambda response: cast("Response", response).status_code
         == codes.too_many_requests,
         max_tries=10,
     )
     @backoff.on_predicate(
         backoff.fibo,
-        lambda response: cast(Response, response).status_code == codes.forbidden,
+        lambda response: cast("Response", response).status_code == codes.forbidden,
         max_tries=10,
     )
     @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)

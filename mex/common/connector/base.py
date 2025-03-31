@@ -26,7 +26,7 @@ class BaseConnector(metaclass=ABCMeta):
     @classmethod
     def get(cls) -> Self:
         """Get the singleton instance for this class from the store."""
-        return cast(Self, CONNECTOR_STORE.load(cls))
+        return cast("Self", CONNECTOR_STORE.load(cls))
 
     @abstractmethod
     def __init__(self) -> None:  # pragma: no cover

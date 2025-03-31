@@ -44,8 +44,8 @@ def test_sink_load() -> None:
     ]
 
     sink = NdjsonSink.get()
-    ids = list(sink.load(test_models))
-    assert len(ids)
+    items = list(sink.load(test_models))
+    assert len(items) == len(test_models)
 
     with open(settings.work_dir / "Thing.ndjson") as handle:
         output = handle.read()

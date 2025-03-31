@@ -38,7 +38,7 @@ class WikidataQueryServiceConnector(HTTPConnector):
             "Api-User-Agent": f"{settings.mex_web_user_agent}",
         }
         results = self.request("GET", params=params, headers=headers)
-        return cast(list[dict[str, dict[str, str]]], results["results"]["bindings"])
+        return cast("list[dict[str, dict[str, str]]]", results["results"]["bindings"])
 
 
 class WikidataAPIConnector(HTTPConnector):
@@ -78,4 +78,4 @@ class WikidataAPIConnector(HTTPConnector):
             "Api-User-Agent": f"{settings.mex_web_user_agent}",
         }
         results = self.request("GET", params=params, headers=headers)
-        return cast(dict[str, str], results["entities"][item_id])
+        return cast("dict[str, str]", results["entities"][item_id])

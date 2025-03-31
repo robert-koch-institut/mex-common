@@ -130,7 +130,7 @@ def wikidata_organization_raw() -> dict[str, Any]:
     with open(
         Path(__file__).parent / "test_data" / "wikidata_organization_raw.json"
     ) as fh:
-        return cast(dict[str, Any], json.load(fh))
+        return cast("dict[str, Any]", json.load(fh))
 
 
 @pytest.fixture
@@ -199,7 +199,7 @@ def mocked_wikidata(
 def orcid_person_raw() -> dict[str, Any]:
     """Return a raw orcid person."""
     with open(Path(__file__).parent / "test_data" / "orcid_person_raw.json") as fh:
-        return cast(dict[str, Any], json.load(fh))
+        return cast("dict[str, Any]", json.load(fh))
 
 
 @pytest.fixture
@@ -208,7 +208,7 @@ def orcid_person_jayne_raw() -> dict[str, Any]:
     with open(
         Path(__file__).parent / "test_data" / "orcid_person_jayne_raw.json"
     ) as fh:
-        return cast(dict[str, Any], json.load(fh))
+        return cast("dict[str, Any]", json.load(fh))
 
 
 @pytest.fixture
@@ -217,7 +217,7 @@ def orcid_multiple_matches() -> dict[str, Any]:
     with open(
         Path(__file__).parent / "test_data" / "orcid_multiple_matches.json"
     ) as fh:
-        return cast(dict[str, Any], json.load(fh))
+        return cast("dict[str, Any]", json.load(fh))
 
 
 @pytest.fixture
