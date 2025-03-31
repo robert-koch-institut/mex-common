@@ -80,7 +80,7 @@ class BaseSettings(PydanticBaseSettings):
         Returns:
             An instance of BaseSettings or a subclass thereof
         """
-        return cast(Self, SETTINGS_STORE.load(cls))
+        return cast("Self", SETTINGS_STORE.load(cls))
 
     # Note: We need to hardcode the environment variable names for base settings here,
     # otherwise their prefix will get overwritten with those of a specific subclass.

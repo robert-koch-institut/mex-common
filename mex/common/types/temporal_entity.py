@@ -142,7 +142,7 @@ class TemporalEntity:
             else:
                 date_time, parsed_precision = self._parse_string(args[0])
         elif all(isinstance(a, int) for a in args):
-            args = cast(tuple[int, ...], args)
+            args = cast("tuple[int, ...]", args)
             date_time, parsed_precision = self._parse_integers(*args, tzinfo=tzinfo)
         else:
             msg = (

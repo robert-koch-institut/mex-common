@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES and VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES lookups
+
 ### Changes
+
+- update ruff and apply TC006 fixes
 
 ### Deprecated
 
@@ -22,13 +26,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.56.0] - 2025-03-27
 
 ### Added
+
 - extract method for orcid can now obtain multiple results (orcid records)
+
 ## [0.55.0] - 2025-03-21
 
 ### Changes
 
 - BREAKING: wrap function around watch decorator accepting log_interval parameter
-- increase parse_csv default chunksize to 10000 and log on chunk level instead of row level
+- increase parse_csv default chunksize to 10000 and log chunks instead of rows
 
 ## [0.54.4] - 2025-03-20
 

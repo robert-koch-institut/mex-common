@@ -1,3 +1,5 @@
+from typing import cast
+
 from mex.common.models import (
     ADDITIVE_MODEL_CLASSES_BY_NAME,
     EXTRACTED_MODEL_CLASSES_BY_NAME,
@@ -11,6 +13,7 @@ from mex.common.types import (
     NESTED_MODEL_CLASSES_BY_NAME,
     TEMPORAL_ENTITIES,
     VOCABULARY_ENUMS,
+    AnyVocabularyEnum,
     Email,
     Link,
     LiteralStringType,
@@ -19,6 +22,7 @@ from mex.common.types import (
 from mex.common.utils import (
     contains_only_types,
     get_all_fields,
+    get_inner_types,
     group_fields_by_class_name,
 )
 
@@ -31,6 +35,15 @@ ALL_MODEL_CLASSES_BY_NAME = {
     **PREVIEW_MODEL_CLASSES_BY_NAME,
     **PREVENTIVE_MODEL_CLASSES_BY_NAME,
     **SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
+}
+
+# all field types grouped by field and class names
+ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES = {
+    class_name: {
+        field_name: list(get_inner_types(field_info.annotation, include_none=False))
+        for field_name, field_info in get_all_fields(model_class).items()
+    }
+    for class_name, model_class in ALL_MODEL_CLASSES_BY_NAME.items()
 }
 
 # fields that are immutable and can only be set once
@@ -92,6 +105,19 @@ VOCABULARY_FIELDS_BY_CLASS_NAME = group_fields_by_class_name(
     ALL_MODEL_CLASSES_BY_NAME,
     lambda field_info: contains_only_types(field_info, *VOCABULARY_ENUMS),
 )
+
+# vocabulary enum items grouped by field and class names
+VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES = {
+    class_name: {
+        field_name: [
+            item
+            for vocabulary in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]
+            for item in cast("type[AnyVocabularyEnum]", vocabulary)
+        ]
+        for field_name in field_names
+    }
+    for class_name, field_names in VOCABULARY_FIELDS_BY_CLASS_NAME.items()
+}
 
 # fields with changeable values that are not nested objects or merged item references
 MUTABLE_FIELDS_BY_CLASS_NAME = {
