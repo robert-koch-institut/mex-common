@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES and VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES lookups
-
 ### Changes
-
-- update ruff and apply TC006 fixes
 
 ### Deprecated
 
