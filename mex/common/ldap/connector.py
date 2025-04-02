@@ -12,9 +12,7 @@ from mex.common.exceptions import (
     FoundMoreThanOneError,
     MExError,
 )
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPerson
-from mex.common.ldap.models.unit import LDAPUnit
+from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPUnit
 from mex.common.settings import BaseSettings
 
 _LDAPActorT = TypeVar("_LDAPActorT", bound=LDAPActor)
@@ -25,7 +23,6 @@ class LDAPConnector(BaseConnector):
 
     DEFAULT_PORT = 636
     SEARCH_BASE = "DC=rki,DC=local"
-    PAGE_SIZE = 25
 
     def __init__(self) -> None:
         """Create a new LDAP connection."""

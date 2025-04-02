@@ -3,7 +3,7 @@ import pytest
 from mex.common.exceptions import MExError
 from mex.common.models import ExtractedPrimarySource
 from mex.common.wikidata.helpers import get_extracted_organization_from_wikidata
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.wikidata.models import WikidataOrganization
 from mex.common.wikidata.transform import (
     transform_wikidata_organization_to_extracted_organization,
 )

@@ -1,7 +1,7 @@
 from typing import Any
 
 from mex.common.connector.http import HTTPConnector
-from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
+from mex.common.orcid.models import OrcidRecord, OrcidSearchResponse
 from mex.common.settings import BaseSettings
 
 
@@ -23,65 +23,50 @@ class OrcidConnector(HTTPConnector):
         """Construct the ORCID API query string."""
         return " AND ".join([f"{key}:{value}" for key, value in filters.items()])
 
-    def fetch(self, filters: dict[str, Any]) -> dict[str, Any]:
-        """Perform a search query against the ORCID API."""
-        query = self.build_query(filters)
-        return self.request(method="GET", endpoint="search", params={"q": query})
-
-    def get_data_by_id(self, orcid_id: str) -> dict[str, Any]:
-        """Retrieve data by UNIQUE ORCID ID.
+    def get_record_by_id(self, orcid_id: str) -> OrcidRecord:
+        """Get a single orcid record by id.
 
         Args:
             orcid_id: Unique identifier in ORCID system.
 
         Returns:
-            Personal data of the single matching id.
+            Orcid record of the single matching id.
         """
-        # or endpoint = f"{orcid_id}/person"
         endpoint = f"{orcid_id}/record"
-        return dict(self.request(method="GET", endpoint=endpoint))
+        response = self.request(method="GET", endpoint=endpoint)
+        return OrcidRecord.model_validate(response)
 
-    def get_data_by_name(
+    def search_records_by_name(  # noqa: PLR0913
         self,
-        given_names: str = "*",
-        family_name: str = "*",
-        given_and_family_names: str = "*",
+        given_names: str | None = None,
+        family_name: str | None = None,
+        given_and_family_names: str | None = None,
         filters: dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
-        """Get ORCID record of a single person for the given filters.
+        skip: int = 0,
+        limit: int = 10,
+    ) -> OrcidSearchResponse:
+        """Search for orcid results for the given filters.
 
         Args:
-            self: Connector.
-            given_names: Given name of a person, defaults to non-null
-            family_name: Surname of a person, defaults to non-null
-            given_and_family_names: Name of person, default to non-null
+            given_names: Optional given name of a person.
+            family_name: Optional surname of a person.
+            given_and_family_names: Optional full name of a person.
             filters: Key-value pairs representing ORCID search filters.
-
-        Raises:
-            EmptySearchResultError
-            FoundMoreThanOneError
+            skip: How many items to skip for pagination.
+            limit: How many items to return in one page.
 
         Returns:
-            Orcid data of the single matching person by name.
+            Paginated list of orcid results.
         """
         if filters is None:
             filters = {}
-        if given_names != "*":
+        if given_names:
             filters["given-names"] = given_names
-        if family_name != "*":
+        if family_name:
             filters["family-name"] = family_name
-        if given_and_family_names != "*":
+        if given_and_family_names:
             filters["given-and-family-names"] = given_and_family_names
-
-        search_response = self.fetch(filters)
-
-        num_found = search_response.get("num-found", 0)
-        if num_found == 0:
-            msg = "Cannot find orcid person for filters.'"
-            raise EmptySearchResultError(msg)
-        if num_found > 1:
-            msg = "Found multiple orcid persons for filters.'"
-            raise FoundMoreThanOneError(msg)
-
-        orcid_id = search_response["result"][0]["orcid-identifier"]["path"]
-        return self.get_data_by_id(orcid_id=orcid_id)
+        query = self.build_query(filters)
+        params = {"q": query, "start": str(skip), "rows": str(limit)}
+        response = self.request(method="GET", endpoint="search", params=params)
+        return OrcidSearchResponse.model_validate(response)

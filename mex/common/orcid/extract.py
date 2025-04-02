@@ -1,71 +1,101 @@
-from collections.abc import Generator
+from functools import lru_cache
+from typing import Any
 
-from mex.common.exceptions import EmptySearchResultError
+from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
+from mex.common.models import PaginatedItemsContainer
 from mex.common.orcid.connector import OrcidConnector
-from mex.common.orcid.models.person import OrcidRecord
-from mex.common.orcid.transform import map_orcid_data_to_orcid_record
+from mex.common.orcid.models import OrcidRecord
+
+
+@lru_cache(maxsize=100)
+def get_orcid_record_by_id(orcid_id: str) -> OrcidRecord:
+    """Get a single orcid record by id.
+
+    Args:
+        orcid_id: Unique identifier in ORCID system.
+
+    Returns:
+        Orcid record of the single matching id.
+    """
+    connector = OrcidConnector.get()
+    return connector.get_record_by_id(orcid_id)
 
 
 def get_orcid_record_by_name(
-    given_names: str = "*", family_name: str = "*", given_and_family_names: str = "*"
+    given_names: str | None = None,
+    family_name: str | None = None,
+    given_and_family_names: str | None = None,
+    filters: dict[str, Any] | None = None,
 ) -> OrcidRecord:
-    """Returns Orcidrecord of a single person for the given filters.
+    """Get OrcidRecord of a single person for the given filters.
 
     Args:
-        given_names: Given name of a person, defaults to non-null
-        family_name: Surname of a person, defaults to non-null
-        given_and_family_names: Name of a person, default non-null
+        given_names: Optional given name of a person.
+        family_name: Optional surname of a person.
+        given_and_family_names: Optional full name of a person.
+        filters: Key-value pairs representing ORCID search filters.
 
     Raises:
         EmptySearchResultError
         FoundMoreThanOneError
 
     Returns:
-        Orcidrecord of the matching person by name.
+        OrcidRecord of the matching person by name.
     """
-    orcid_data = OrcidConnector.get().get_data_by_name(
+    connector = OrcidConnector.get()
+    orcid_response = connector.search_records_by_name(
         given_names=given_names,
         family_name=family_name,
         given_and_family_names=given_and_family_names,
+        filters=filters,
+        skip=0,
+        limit=1,
     )
-    return map_orcid_data_to_orcid_record(orcid_data)
+    if orcid_response.num_found == 0:
+        msg = "Cannot find orcid person for filters."
+        raise EmptySearchResultError(msg)
+    if orcid_response.num_found > 1:
+        msg = f"Found multiple orcid persons for filters: {orcid_response.num_found}"
+        raise FoundMoreThanOneError(msg)
+    return get_orcid_record_by_id(
+        orcid_response.result[0].orcid_identifier.path,
+    )
 
 
-def get_orcid_record_by_id(orcid_id: str) -> OrcidRecord:
-    """Returns Orcidrecord by UNIQUE ORCID ID.
+def search_records_by_name(  # noqa: PLR0913
+    given_names: str | None = None,
+    family_name: str | None = None,
+    given_and_family_names: str | None = None,
+    filters: dict[str, Any] | None = None,
+    skip: int = 0,
+    limit: int = 10,
+) -> PaginatedItemsContainer[OrcidRecord]:
+    """Get all Orcid records for the given filters.
 
     Args:
-        orcid_id: Unique identifier in ORCID system.
+        given_names: Optional given name of a person.
+        family_name: Optional surname of a person.
+        given_and_family_names: Optional full name of a person.
+        filters: Key-value pairs representing ORCID search filters.
+        skip: How many items to skip for pagination.
+        limit: How many items to return in one page.
 
     Returns:
-        Orcidrecord of the matching id.
+        Paginated container of orcid records.
     """
-    orcid_data = OrcidConnector.get().get_data_by_id(orcid_id=orcid_id)
-    return map_orcid_data_to_orcid_record(orcid_data)
-
-
-def get_orcid_records_by_given_or_family_name(
-    given_and_family_names: str = "*",
-) -> Generator[OrcidRecord, None, None]:
-    """Returns a generator of OrcidRecord objects matching the given filters.
-
-    Args:
-        given_and_family_names: Full name of a person, default non-null
-
-    Raises:
-        EmptySearchResultError
-
-    Yields:
-        OrcidRecord: ORCID records matching the search filters.
-    """
-    filters = {"given-and-family-names": f"{given_and_family_names}"}
-    orcidapi = OrcidConnector.get()
-    search_response = orcidapi.fetch(filters=filters)
-    num_found = search_response.get("num-found", 0)
-
-    if num_found == 0:
-        msg = "Cannot find ORCID records for the given filters."
-        raise EmptySearchResultError(msg)
-    for record in search_response.get("result", []):
-        orcid_data = orcidapi.get_data_by_id(record["orcid-identifier"]["path"])
-        yield map_orcid_data_to_orcid_record(orcid_data)
+    connector = OrcidConnector.get()
+    response = connector.search_records_by_name(
+        given_names=given_names,
+        family_name=family_name,
+        given_and_family_names=given_and_family_names,
+        filters=filters,
+        skip=skip,
+        limit=limit,
+    )
+    items = [
+        get_orcid_record_by_id(
+            item.orcid_identifier.path,
+        )
+        for item in response.result
+    ]
+    return PaginatedItemsContainer[OrcidRecord](items=items, total=response.num_found)

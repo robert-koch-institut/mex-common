@@ -2,12 +2,7 @@ from collections.abc import Generator, Iterable
 
 from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.types import Text, TextLanguage
-from mex.common.wikidata.models.organization import (
-    Aliases,
-    Claim,
-    Labels,
-    WikidataOrganization,
-)
+from mex.common.wikidata.models import Aliases, Claim, Labels, WikidataOrganization
 
 
 def transform_wikidata_organizations_to_extracted_organizations(

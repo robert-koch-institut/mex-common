@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from functools import cache
 
 from mex.common.exceptions import MExError
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPPersonWithQuery
 from mex.common.logging import watch
 from mex.common.models import (
     ExtractedContactPoint,

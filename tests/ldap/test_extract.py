@@ -11,7 +11,7 @@ from mex.common.ldap.extract import (
     get_merged_ids_by_query_string,
     get_persons_by_name,
 )
-from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
 from tests.ldap.conftest import SAMPLE_PERSON_ATTRS, LDAPMocker

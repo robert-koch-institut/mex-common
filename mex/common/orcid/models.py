@@ -37,8 +37,8 @@ class OrcidGivenNames(BaseModel):
 class OrcidName(BaseModel):
     """Model class for Orcid name."""
 
-    family_name: OrcidFamilyName = Field(alias="family-name")
-    given_names: OrcidGivenNames = Field(alias="given-names")
+    family_name: OrcidFamilyName | None = Field(alias="family-name")
+    given_names: OrcidGivenNames | None = Field(alias="given-names")
     visibility: str
 
 
@@ -54,3 +54,16 @@ class OrcidRecord(BaseModel):
 
     orcid_identifier: OrcidIdentifier = Field(alias="orcid-identifier")
     person: OrcidPerson
+
+
+class OrcidSearchItem(BaseModel):
+    """Model class for a single search result item."""
+
+    orcid_identifier: OrcidIdentifier = Field(alias="orcid-identifier")
+
+
+class OrcidSearchResponse(BaseModel):
+    """Model class for a search response."""
+
+    num_found: int = Field(alias="num-found")
+    result: list[OrcidSearchItem]

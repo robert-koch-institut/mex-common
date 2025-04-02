@@ -6,7 +6,7 @@ from mex.common.wikidata.connector import (
     WikidataAPIConnector,
     WikidataQueryServiceConnector,
 )
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.wikidata.models import WikidataOrganization
 
 
 def search_organization_by_label(
@@ -54,7 +54,7 @@ def search_organization_by_label(
         msg = f"KeyError: Error processing results for {item_label}"
         raise MExError(msg) from error
 
-    return _get_organization_details(wd_item_id)
+    return get_organization_details(wd_item_id)
 
 
 def get_count_of_found_organizations_by_label(
@@ -142,10 +142,10 @@ def search_organizations_by_label(
             msg = f"IndexError: Error processing results for {item_label}"
             raise MExError(msg) from error
 
-        yield _get_organization_details(wd_item_id)
+        yield get_organization_details(wd_item_id)
 
 
-def _get_organization_details(item_id: str) -> WikidataOrganization:
+def get_organization_details(item_id: str) -> WikidataOrganization:
     """Get a wikidata item details by its ID.
 
     Args:
