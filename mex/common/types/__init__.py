@@ -104,7 +104,6 @@ __all__ = (
     "ConsentStatus",
     "ConsentType",
     "DataProcessingState",
-    "DataType",
     "Email",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
