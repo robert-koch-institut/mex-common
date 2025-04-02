@@ -9,13 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add pagination to orcid connector search method
+- add caching to orcid single item lookup
+- add support for multiple emails to orcid transform
+
 ### Changes
+
+- BREAKING: dissolve aux-extractor model folders into single files
+- BREAKING: clean-up orcid connector method and extract function names
+- BREAKING: require orcid primary source as parameter to transform function
+- make orcid family and given names optional to validate all data
+- make get_organization_details from wikidata public
 
 ### Deprecated
 
 ### Removed
 
 - drop stale DataType type
+- remove unused LDAPConnector.PAGE_SIZE
 
 ### Fixed
 
