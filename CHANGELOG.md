@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: clean-up orcid connector method and extract function names
 - BREAKING: require orcid primary source as parameter to transform function
 - make orcid family and given names optional to validate all data
-- make get_organization_details from wikidata public
+- rename private _get_organization_details to public get_wikidata_organization
 
 ### Deprecated
 
@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - drop stale DataType type
 - remove unused LDAPConnector.PAGE_SIZE
+- BREAKING: removed unused MEX_WIKI_QUERY_SERVICE_URL setting
+- BREAKING: removed unused WikidataQueryServiceConnector class
+- BREAKING: removed unused search_organization_by_label extract function
+- BREAKING: removed unused get_count_of_found_organizations_by_label extract function
+- BREAKING: removed unused search_organizations_by_label extract function
+- BREAKING: removed unused get_extracted_organization_from_wikidata helper function
 
 ### Fixed
 

@@ -24,10 +24,7 @@ from mex.common.orcid.connector import OrcidConnector
 from mex.common.orcid.models import OrcidRecord, OrcidSearchResponse
 from mex.common.primary_source.helpers import get_all_extracted_primary_sources
 from mex.common.settings import SETTINGS_STORE, BaseSettings
-from mex.common.wikidata.connector import (
-    WikidataAPIConnector,
-    WikidataQueryServiceConnector,
-)
+from mex.common.wikidata.connector import WikidataAPIConnector
 from mex.common.wikidata.models import WikidataOrganization
 
 
@@ -152,35 +149,10 @@ def mocked_wikidata(
     session = MagicMock(spec=requests.Session)
     session.get = MagicMock(side_effect=[response_query])
 
-    def mocked_init(self: WikidataQueryServiceConnector) -> None:
+    def mocked_init(self: WikidataAPIConnector) -> None:
         self.session = session
 
-    monkeypatch.setattr(WikidataQueryServiceConnector, "__init__", mocked_init)
     monkeypatch.setattr(WikidataAPIConnector, "__init__", mocked_init)
-
-    # mock search_wikidata_with_query
-
-    def get_data_by_query(
-        _self: WikidataQueryServiceConnector, _query: str
-    ) -> list[dict[str, dict[str, str]]]:
-        return [
-            {
-                "item": {
-                    "type": "uri",
-                    "value": "http://www.wikidata.org/entity/Q26678",
-                },
-                "itemLabel": {"xml:lang": "en", "type": "literal", "value": "BMW"},
-                "itemDescription": {
-                    "xml:lang": "en",
-                    "type": "literal",
-                    "value": "German automotive manufacturer, and conglomerate",
-                },
-            },
-        ]
-
-    monkeypatch.setattr(
-        WikidataQueryServiceConnector, "get_data_by_query", get_data_by_query
-    )
 
     # mock get_wikidata_org_with_org_id
 
