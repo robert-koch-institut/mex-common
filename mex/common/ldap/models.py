@@ -1,9 +1,22 @@
 from typing import Annotated
 
-from pydantic import Field
+from pydantic import UUID4, Field
 
-from mex.common.ldap.models.actor import LDAPActor
 from mex.common.models import BaseModel
+from mex.common.types import Email
+
+
+class LDAPActor(BaseModel):
+    """Model class for generic LDAP accounts."""
+
+    sAMAccountName: str | None = None
+    objectGUID: UUID4
+    mail: list[Email] = []
+
+    @staticmethod
+    def get_ldap_fields() -> tuple[str, ...]:
+        """Return the fields that should be fetched from LDAP."""
+        return tuple(sorted(LDAPActor.model_fields))
 
 
 class LDAPPerson(LDAPActor):
@@ -29,3 +42,9 @@ class LDAPPersonWithQuery(BaseModel):
 
     person: LDAPPerson
     query: str
+
+
+class LDAPUnit(LDAPActor):
+    """Model class for LDAP organizational units."""
+
+    parent_label: str | None = None

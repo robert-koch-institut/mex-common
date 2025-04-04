@@ -21,13 +21,11 @@ from requests import HTTPError, Response
 from mex.common.connector import CONNECTOR_STORE
 from mex.common.models import ExtractedPrimarySource
 from mex.common.orcid.connector import OrcidConnector
+from mex.common.orcid.models import OrcidRecord, OrcidSearchResponse
 from mex.common.primary_source.helpers import get_all_extracted_primary_sources
 from mex.common.settings import SETTINGS_STORE, BaseSettings
-from mex.common.wikidata.connector import (
-    WikidataAPIConnector,
-    WikidataQueryServiceConnector,
-)
-from mex.common.wikidata.models.organization import WikidataOrganization
+from mex.common.wikidata.connector import WikidataAPIConnector
+from mex.common.wikidata.models import WikidataOrganization
 
 
 class NoOpPytest:
@@ -151,35 +149,10 @@ def mocked_wikidata(
     session = MagicMock(spec=requests.Session)
     session.get = MagicMock(side_effect=[response_query])
 
-    def mocked_init(self: WikidataQueryServiceConnector) -> None:
+    def mocked_init(self: WikidataAPIConnector) -> None:
         self.session = session
 
-    monkeypatch.setattr(WikidataQueryServiceConnector, "__init__", mocked_init)
     monkeypatch.setattr(WikidataAPIConnector, "__init__", mocked_init)
-
-    # mock search_wikidata_with_query
-
-    def get_data_by_query(
-        _self: WikidataQueryServiceConnector, _query: str
-    ) -> list[dict[str, dict[str, str]]]:
-        return [
-            {
-                "item": {
-                    "type": "uri",
-                    "value": "http://www.wikidata.org/entity/Q26678",
-                },
-                "itemLabel": {"xml:lang": "en", "type": "literal", "value": "BMW"},
-                "itemDescription": {
-                    "xml:lang": "en",
-                    "type": "literal",
-                    "value": "German automotive manufacturer, and conglomerate",
-                },
-            },
-        ]
-
-    monkeypatch.setattr(
-        WikidataQueryServiceConnector, "get_data_by_query", get_data_by_query
-    )
 
     # mock get_wikidata_org_with_org_id
 
@@ -238,28 +211,39 @@ def mocked_orcid(
 
     monkeypatch.setattr(OrcidConnector, "__init__", mocked_init)
 
-    def fetch(_self: OrcidConnector, filters: dict[str, Any]) -> dict[str, Any]:
-        if filters.get("given-names") == "John":
-            return {"num-found": 1, "result": [orcid_person_raw]}
-        if filters.get("given-and-family-names") == "Jayne Carberry":
-            return {"num-found": 1, "result": [orcid_person_jayne_raw]}
-        if (
-            filters.get("given-names") == "Multiple"
-            or filters.get("given-and-family-names") == "Multiple Carberry"
-        ):
-            return orcid_multiple_matches
-        return {"result": [], "num-found": 0}
+    def search_records_by_name(  # noqa: PLR0913
+        _self: OrcidConnector,
+        given_names: str | None = None,
+        family_name: str | None = None,  # noqa: ARG001
+        given_and_family_names: str | None = None,
+        filters: dict[str, Any] | None = None,  # noqa: ARG001
+        skip: int = 0,  # noqa: ARG001
+        limit: int = 10,  # noqa: ARG001
+    ) -> OrcidSearchResponse:
+        response = {"result": [], "num-found": 0}
+        if given_names == "John":
+            response = {"num-found": 1, "result": [orcid_person_raw]}
+        elif given_and_family_names == "Jayne Carberry":
+            response = {"num-found": 1, "result": [orcid_person_jayne_raw]}
+        elif given_names == "Multiple" or given_and_family_names == "Multiple Carberry":
+            response = orcid_multiple_matches
+        return OrcidSearchResponse.model_validate(response)
 
-    monkeypatch.setattr(OrcidConnector, "fetch", fetch)
+    monkeypatch.setattr(
+        OrcidConnector, "search_records_by_name", search_records_by_name
+    )
 
-    def get_data_by_id(_self: OrcidConnector, orcid_id: str) -> dict[str, Any]:
+    def get_record_by_id(
+        _self: OrcidConnector,
+        orcid_id: str,
+    ) -> OrcidRecord:
         if orcid_id == "0009-0004-3041-5706":
-            return orcid_person_raw
+            return OrcidRecord.model_validate(orcid_person_raw)
         if re.match(
             r"^[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}$", orcid_id
         ):
-            return orcid_person_jayne_raw
+            return OrcidRecord.model_validate(orcid_person_jayne_raw)
         msg = "404 Not Found"
         raise HTTPError(msg)
 
-    monkeypatch.setattr(OrcidConnector, "get_data_by_id", get_data_by_id)
+    monkeypatch.setattr(OrcidConnector, "get_record_by_id", get_record_by_id)

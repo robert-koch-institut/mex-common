@@ -4,12 +4,7 @@ from operator import attrgetter, itemgetter
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import Text, TextLanguage
-from mex.common.wikidata.models.organization import (
-    Aliases,
-    Claim,
-    Labels,
-    WikidataOrganization,
-)
+from mex.common.wikidata.models import Aliases, Claim, Labels, WikidataOrganization
 from mex.common.wikidata.transform import (
     _get_alternative_names,
     _get_clean_labels,

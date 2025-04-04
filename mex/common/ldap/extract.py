@@ -3,7 +3,7 @@ from collections.abc import Generator, Iterable
 
 from mex.common.identity import get_provider
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models.person import LDAPPerson, LDAPPersonWithQuery
+from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import MergedPersonIdentifier
 

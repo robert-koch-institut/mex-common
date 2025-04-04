@@ -5,9 +5,9 @@ from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.orcid.extract import (
     get_orcid_record_by_id,
     get_orcid_record_by_name,
-    get_orcid_records_by_given_or_family_name,
+    search_records_by_name,
 )
-from mex.common.orcid.models.person import (
+from mex.common.orcid.models import (
     OrcidEmails,
     OrcidFamilyName,
     OrcidGivenNames,
@@ -66,37 +66,35 @@ from mex.common.orcid.models.person import (
             "Doe",
             None,
             None,
-            pytest.raises(
-                EmptySearchResultError,
-            ),
+            EmptySearchResultError,
         ),
         (
             "Multiple",
             "Doe",
             None,
             None,
-            pytest.raises(
-                FoundMoreThanOneError,
-            ),
+            FoundMoreThanOneError,
         ),
         (
             None,
             None,
             "Multiple Carberry",
             None,
-            pytest.raises(
-                FoundMoreThanOneError,
-            ),
+            FoundMoreThanOneError,
         ),
     ],
     ids=["existing", "existing_jayne", "not_existing", "multiple", "multiple_jayne"],
 )
 @pytest.mark.usefixtures("mocked_orcid")
 def test_get_orcid_record_by_name(
-    given_names, family_name, given_and_familyname, expected_result, error
-):
+    given_names: str,
+    family_name: str,
+    given_and_familyname: str,
+    expected_result: OrcidRecord,
+    error: type[Exception],
+) -> None:
     if error:
-        with error:
+        with pytest.raises(error):
             get_orcid_record_by_name(
                 given_names=given_names,
                 family_name=family_name,
@@ -113,7 +111,7 @@ def test_get_orcid_record_by_name(
 
 @pytest.mark.usefixtures("mocked_orcid")
 @pytest.mark.parametrize(
-    ("orcid_id", "expected_result", "error"),
+    ("orcid_id", "expected_result", "error", "error_message"),
     [
         (
             "0009-0004-3041-5706",
@@ -132,14 +130,20 @@ def test_get_orcid_record_by_name(
                 ),
             ),
             None,
+            None,
         ),
-        ("0000-0000-0000-000", None, pytest.raises(HTTPError, match="404 Not Found")),
+        ("0000-0000-0000-000", None, HTTPError, "404 Not Found"),
     ],
     ids=["existing id", "non-existing id"],
 )
-def test_get_orcid_record_by_id(orcid_id, expected_result, error):
+def test_get_orcid_record_by_id(
+    orcid_id: str,
+    expected_result: OrcidRecord,
+    error: type[Exception],
+    error_message: str,
+) -> None:
     if error:
-        with error:
+        with pytest.raises(HTTPError, match=error_message):
             get_orcid_record_by_id(orcid_id)
     else:
         result = get_orcid_record_by_id(orcid_id)
@@ -170,8 +174,9 @@ jayne_carberry_result = OrcidRecord(
     ],
     ids=["single result", "multiple results"],
 )
-def test_get_orcid_records_by_given_or_family_name(search_string, expected_result):
-    result = list(
-        get_orcid_records_by_given_or_family_name(given_and_family_names=search_string)
-    )
-    assert result == expected_result
+def test_get_orcid_records_by_given_or_family_name(
+    search_string: str, expected_result: list[OrcidRecord]
+) -> None:
+    response = search_records_by_name(given_and_family_names=search_string)
+    assert response.total == len(expected_result)
+    assert response.items == expected_result

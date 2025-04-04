@@ -3,8 +3,7 @@ from uuid import UUID
 import pytest
 
 from mex.common.exceptions import MExError
-from mex.common.ldap.models.actor import LDAPActor
-from mex.common.ldap.models.person import LDAPPerson
+from mex.common.ldap.models import LDAPActor, LDAPPerson
 from mex.common.ldap.transform import (
     PersonName,
     analyse_person_string,

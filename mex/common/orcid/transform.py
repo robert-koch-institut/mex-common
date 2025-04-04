@@ -1,41 +1,32 @@
-from typing import Any
-
-from mex.common.models import (
-    ExtractedPerson,
-)
-from mex.common.orcid.models.person import OrcidRecord
-from mex.common.primary_source.helpers import get_all_extracted_primary_sources
-
-
-def map_orcid_data_to_orcid_record(orcid_data: dict[str, Any]) -> OrcidRecord:
-    """Wraps orcid data into an OrcidRecord."""
-    return OrcidRecord.model_validate(orcid_data)
+from mex.common.models import ExtractedPerson, ExtractedPrimarySource
+from mex.common.orcid.models import OrcidRecord
 
 
 def transform_orcid_person_to_mex_person(
     orcid_record: OrcidRecord,
+    primary_source: ExtractedPrimarySource,
 ) -> ExtractedPerson:
     """Transforms a single ORCID person to an ExtractedPerson.
 
     Args:
         orcid_record: OrcidRecord object of a person.
+        primary_source: Primary source for Orcid.
 
     Returns:
         ExtractedPerson.
     """
-    primary_source = get_all_extracted_primary_sources()["orcid"]
     had_primary_source = primary_source.stableTargetId
-
     id_in_primary_source = orcid_record.orcid_identifier.path
-    emails = orcid_record.person.emails.email
-    email = emails[0].email if emails else None
-    if orcid_record.person.name.visibility == "public":
-        given_names = orcid_record.person.name.given_names.value
-        family_name = orcid_record.person.name.family_name.value
-    else:
-        given_names = None
-        family_name = None
     orcid_id = orcid_record.orcid_identifier.uri
+    email = [e for emails in orcid_record.person.emails.email for e in emails.email]
+    name = orcid_record.person.name
+    given_names = None
+    family_name = None
+    if name.visibility == "public":
+        if name.given_names:
+            given_names = name.given_names.value
+        if name.family_name:
+            family_name = name.family_name.value
 
     return ExtractedPerson(
         identifierInPrimarySource=id_in_primary_source,
