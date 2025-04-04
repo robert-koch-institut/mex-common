@@ -10,7 +10,9 @@ from mex.common.utils import grouper
 class BackendApiSink(BaseSink):
     """Sink to load models to the Backend API."""
 
-    CHUNK_SIZE = 25
+    CHUNK_SIZE: int = 25
+    CONNECT_TIMEOUT: int | float = 5
+    READ_TIMEOUT: int | float = 30
 
     def load(
         self, items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse]
@@ -36,7 +38,10 @@ class BackendApiSink(BaseSink):
                 elif model is not None:
                     msg = f"backend cannot ingest {type(model)}"
                     raise NotImplementedError(msg)
-            connector.ingest(model_list)
-            total_count += len(model_list)
-            yield from model_list
+            ingested = connector.ingest(
+                model_list,
+                timeout=(self.CONNECT_TIMEOUT, self.READ_TIMEOUT),
+            )
+            total_count += len(ingested)
+            yield from ingested
             logger.info("%s - written %s models", type(self).__name__, total_count)

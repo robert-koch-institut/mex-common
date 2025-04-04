@@ -43,7 +43,6 @@ def test_ingest_mocked(
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
-        timeout=BackendApiConnector.INGEST_TIMEOUT,
         data=Joker(),
     )
     assert (
