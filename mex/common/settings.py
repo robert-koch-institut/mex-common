@@ -167,23 +167,12 @@ class BaseSettings(PydanticBaseSettings):
     )
     wiki_api_url: AnyUrl = Field(
         Url("https://wikidata/"),
-        description="URL of Wikidata API, this URL is used to send "
-        "wikidata organization ID to get all the info about the organization, "
-        "which includes basic info, aliases, labels, descriptions, claims, and "
-        "sitelinks",
+        description="URL of the Wikidata API used to resolve an ID to an organization.",
         validation_alias="MEX_WIKI_API_URL",
-    )
-    wiki_query_service_url: AnyUrl = Field(
-        Url("https://wikidata/"),
-        description="URL of Wikidata query service, this URL is to send organization "
-        "name in plain text to wikidata and receive search results with wikidata "
-        "organization ID",
-        validation_alias="MEX_WIKI_QUERY_SERVICE_URL",
     )
     mex_web_user_agent: str = Field(
         "rki/mex",
-        description="a user agent is sent in the header of some requests to external "
-        "services ",
+        description="User agent is sent in request headers to external services.",
         validation_alias="MEX_WEB_USER_AGENT",
     )
     orcid_api_url: AnyUrl = Field(
