@@ -10,7 +10,7 @@ _PROPS = "info|aliases|labels|descriptions|datatype|claims|sitelinks|sitelinks/u
 class WikidataQueryServiceConnector(HTTPConnector):
     """Connector class to handle requesting the Wikidata Query Service."""
 
-    TIMEOUT = 80
+    TIMEOUT: int | float = 80
 
     def _set_url(self) -> None:
         """Set url of the host."""
