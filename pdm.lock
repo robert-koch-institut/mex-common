@@ -310,7 +310,7 @@ files = [
 
 [[package]]
 name = "ipython"
-version = "9.1.0"
+version = "9.0.2"
 requires_python = ">=3.11"
 summary = "IPython: Productive Interactive Computing"
 groups = ["dev"]
@@ -329,8 +329,8 @@ dependencies = [
     "typing-extensions>=4.6; python_version < \"3.12\"",
 ]
 files = [
-    {file = "ipython-9.1.0-py3-none-any.whl", hash = "sha256:2df07257ec2f84a6b346b8d83100bcf8fa501c6e01ab75cd3799b0bb253b3d2a"},
-    {file = "ipython-9.1.0.tar.gz", hash = "sha256:a47e13a5e05e02f3b8e1e7a0f9db372199fe8c3763532fe7a1e0379e4e135f16"},
+    {file = "ipython-9.0.2-py3-none-any.whl", hash = "sha256:143ef3ea6fb1e1bffb4c74b114051de653ffb7737a3f7ab1670e657ca6ae8c44"},
+    {file = "ipython-9.0.2.tar.gz", hash = "sha256:ec7b479e3e5656bf4f58c652c120494df1820f4f28f522fb7ca09e213c2aab52"},
 ]
 
 [[package]]
