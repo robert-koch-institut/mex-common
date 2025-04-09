@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.57.0] - 2025-04-09
+
+### Added
+
 - add pagination to orcid connector search method
 - add caching to orcid single item lookup
 - add support for multiple emails to orcid transform
@@ -25,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add proportional backoff to http connector: the longer it took, the longer we chill
 - use watch decorator on sinks to only log once every 1000 write ops
 
-### Deprecated
-
 ### Removed
 
 - drop stale DataType type
@@ -37,10 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: removed unused get_count_of_found_organizations_by_label extract function
 - BREAKING: removed unused search_organizations_by_label extract function
 - BREAKING: removed unused get_extracted_organization_from_wikidata helper function
-
-### Fixed
-
-### Security
 
 ## [0.56.1] - 2025-03-31
 
