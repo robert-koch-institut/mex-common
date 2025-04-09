@@ -44,6 +44,7 @@ def test_ingest_mocked(
             "User-Agent": "rki/mex",
         },
         data=Joker(),
+        timeout=10,
     )
     assert (
         json.loads(mocked_backend.call_args.kwargs["data"])

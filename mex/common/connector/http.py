@@ -111,16 +111,9 @@ class HTTPConnector(BaseConnector):
     @backoff.on_predicate(
         backoff.fibo,
         lambda response: cast("Response", response).status_code
-        >= codes.internal_server_error,
+        >= codes.internal_server_error
+        or cast("Response", response).status_code == codes.too_many_requests,
         max_tries=3,
-        jitter=backoff.random_jitter,
-        logger=logger,
-    )
-    @backoff.on_predicate(
-        backoff.fibo,
-        lambda response: cast("Response", response).status_code
-        == codes.too_many_requests,
-        max_tries=5,
         jitter=backoff.random_jitter,
         logger=logger,
     )

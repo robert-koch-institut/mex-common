@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: require orcid primary source as parameter to transform function
 - make orcid family and given names optional to validate all data
 - rename private _get_organization_details to public get_wikidata_organization
+- move ingest timeout configuration from BackendAPIConnector to BackendApiSink
+- wrap read time out errors of http connector in a custom timed error
+- add proportional backoff to http connector: the longer it took, the longer we chill
 
 ### Deprecated
 

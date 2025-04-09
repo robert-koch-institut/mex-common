@@ -8,9 +8,8 @@ class MExError(Exception):
 
     def __str__(self) -> str:
         """Format this exception as a string for logging."""
-        return (
-            f"{self.__class__.__name__}: {(', '.join(str(arg) for arg in self.args))} "
-        )
+        args = ", ".join(str(a) for a in self.args) or "N/A"
+        return f"{self.__class__.__name__}: {args}"
 
 
 class EmptySearchResultError(MExError):
@@ -37,5 +36,5 @@ class TimedReadTimeout(ReadTimeout):
 
     def __str__(self) -> str:
         """Return a shortened representation."""
-        args = ", ".join(str(a) for a in self.args)
-        return f"{args} (seconds elapsed={self.seconds:.3f})"
+        args = ", ".join(str(a) for a in self.args) or "N/A"
+        return f"{self.__class__.__name__}: {args} (seconds elapsed={self.seconds:.3f})"

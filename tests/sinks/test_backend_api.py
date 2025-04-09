@@ -4,7 +4,7 @@ import pytest
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import ExtractedPerson, ItemsContainer, MergedPerson
+from mex.common.models import ExtractedPerson, MergedPerson
 from mex.common.sinks.backend_api import BackendApiSink
 
 
@@ -16,14 +16,13 @@ def test_sink_load_mocked(
 
     monkeypatch.setattr(BackendApiConnector, "__init__", __init__)
 
-    response = ItemsContainer[ExtractedPerson](items=[extracted_person])
-    ingest = Mock(return_value=response)
+    ingest = Mock(return_value=[extracted_person])
     monkeypatch.setattr(BackendApiConnector, "ingest", ingest)
 
     sink = BackendApiSink.get()
     models_or_rule_sets = list(sink.load([extracted_person]))
     assert models_or_rule_sets == [extracted_person]
-    ingest.assert_called_once_with([extracted_person])
+    ingest.assert_called_once_with([extracted_person], timeout=(5, 30))
 
 
 def test_sink_load_merged_error(

@@ -1,7 +1,7 @@
 from collections.abc import Generator, Iterable
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import logger
+from mex.common.logging import watch
 from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 from mex.common.sinks.base import BaseSink
 from mex.common.utils import grouper
@@ -14,6 +14,7 @@ class BackendApiSink(BaseSink):
     CONNECT_TIMEOUT: int | float = 5
     READ_TIMEOUT: int | float = 30
 
+    @watch(log_interval=1000)
     def load(
         self, items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse]
     ) -> Generator[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None]:
@@ -28,7 +29,6 @@ class BackendApiSink(BaseSink):
         Returns:
             Generator for posted models
         """
-        total_count = 0
         connector = BackendApiConnector.get()
         for chunk in grouper(self.CHUNK_SIZE, items):
             model_list = []
@@ -38,10 +38,7 @@ class BackendApiSink(BaseSink):
                 elif model is not None:
                     msg = f"backend cannot ingest {type(model)}"
                     raise NotImplementedError(msg)
-            ingested = connector.ingest(
+            yield from connector.ingest(
                 model_list,
                 timeout=(self.CONNECT_TIMEOUT, self.READ_TIMEOUT),
             )
-            total_count += len(ingested)
-            yield from ingested
-            logger.info("%s - written %s models", type(self).__name__, total_count)
