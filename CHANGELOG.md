@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.57.0] - 2025-04-09
+
+### Added
+
 - add pagination to orcid connector search method
 - add caching to orcid single item lookup
 - add support for multiple emails to orcid transform
@@ -21,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - make orcid family and given names optional to validate all data
 - rename private _get_organization_details to public get_wikidata_organization
 
-### Deprecated
-
 ### Removed
 
 - drop stale DataType type
@@ -33,10 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: removed unused get_count_of_found_organizations_by_label extract function
 - BREAKING: removed unused search_organizations_by_label extract function
 - BREAKING: removed unused get_extracted_organization_from_wikidata helper function
-
-### Fixed
-
-### Security
 
 ## [0.56.1] - 2025-03-31
 
