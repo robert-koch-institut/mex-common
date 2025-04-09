@@ -4,7 +4,7 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import IO, Any, TypeVar
 
-from mex.common.logging import logger
+from mex.common.logging import logger, watch
 from mex.common.models.base.model import BaseModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks.base import BaseSink
@@ -28,6 +28,7 @@ class NdjsonSink(BaseSink):
     def close(self) -> None:
         """Nothing to close, since load already closes all file handles."""
 
+    @watch(log_interval=1000)
     def load(
         self,
         items: Iterable[_LoadItemT],
@@ -41,7 +42,6 @@ class NdjsonSink(BaseSink):
             Generator for the loaded items
         """
         file_handles: dict[str, IO[Any]] = {}
-        total_count = 0
         with ExitStack() as stack:
             for chunk in grouper(self.CHUNK_SIZE, items):
                 for item in chunk:
@@ -62,6 +62,4 @@ class NdjsonSink(BaseSink):
                         )
                     dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
                     fh.write(f"{dumped_json}\n")
-                    total_count += 1
                     yield item
-                logger.info("%s - written %s items", type(self).__name__, total_count)

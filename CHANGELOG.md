@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - move ingest timeout configuration from BackendAPIConnector to BackendApiSink
 - wrap read time out errors of http connector in a custom timed error
 - add proportional backoff to http connector: the longer it took, the longer we chill
+- use watch decorator on sinks to only log once every 1000 write ops
 
 ### Deprecated
 
