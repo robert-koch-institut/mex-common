@@ -1,13 +1,23 @@
 import json
+import time
 from abc import abstractmethod
 from collections.abc import Mapping
 from typing import Any, Literal, cast
 
 import backoff
 import requests
-from requests import HTTPError, RequestException, Response, codes
+from requests import Response, codes
+from requests.exceptions import (
+    ConnectTimeout,
+    HTTPError,
+    ProxyError,
+    ReadTimeout,
+    SSLError,
+)
 
 from mex.common.connector import BaseConnector
+from mex.common.exceptions import TimedReadTimeout
+from mex.common.logging import logger
 from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder
 
@@ -15,8 +25,8 @@ from mex.common.transform import MExEncoder
 class HTTPConnector(BaseConnector):
     """Base class for requests-based HTTP connectors."""
 
-    TIMEOUT = 10
-
+    TIMEOUT: int | float = 10
+    TIMEOUT_MAX: int | float = 100
     url: str = ""
 
     def __init__(self) -> None:
@@ -101,21 +111,36 @@ class HTTPConnector(BaseConnector):
     @backoff.on_predicate(
         backoff.fibo,
         lambda response: cast("Response", response).status_code
-        >= codes.internal_server_error,
-        max_tries=4,
-    )
-    @backoff.on_predicate(
-        backoff.fibo,
-        lambda response: cast("Response", response).status_code
-        == codes.too_many_requests,
-        max_tries=10,
+        >= codes.internal_server_error
+        or cast("Response", response).status_code == codes.too_many_requests,
+        max_tries=3,
+        jitter=backoff.random_jitter,
+        logger=logger,
     )
     @backoff.on_predicate(
         backoff.fibo,
         lambda response: cast("Response", response).status_code == codes.forbidden,
-        max_tries=10,
+        max_tries=1,
+        jitter=backoff.random_jitter,
+        logger=logger,
     )
-    @backoff.on_exception(backoff.fibo, RequestException, max_tries=6)
+    @backoff.on_exception(
+        backoff.fibo,
+        (ConnectTimeout, ProxyError, SSLError),
+        max_tries=3,
+        jitter=backoff.random_jitter,
+        logger=logger,
+    )
+    @backoff.on_exception(
+        backoff.runtime,  # proportional backoff
+        TimedReadTimeout,
+        value=lambda error: min(
+            cast("TimedReadTimeout", error).seconds, HTTPConnector.TIMEOUT_MAX
+        ),
+        max_tries=5,
+        jitter=backoff.random_jitter,
+        logger=logger,
+    )
     def _send_request(
         self,
         method: str,
@@ -124,7 +149,17 @@ class HTTPConnector(BaseConnector):
         **kwargs: Any,
     ) -> Response:
         """Send the response with advanced retrying rules."""
-        return self.session.request(method, url, params, **kwargs)
+        t0 = time.perf_counter()
+        try:
+            return self.session.request(method, url, params, **kwargs)
+        except ReadTimeout as error:
+            # wrap error in a custom timed error to get proportional backoff
+            raise TimedReadTimeout(
+                *error.args,
+                response=error.response,
+                request=error.request,
+                seconds=time.perf_counter() - t0,
+            ) from error
 
     def close(self) -> None:
         """Close the connector's underlying requests session."""
