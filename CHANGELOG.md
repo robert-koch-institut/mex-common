@@ -11,7 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: convert extract_seed_primary_sources return from generator to list
+- BREAKING: convert transform_seed_primary_sources... return from generator to list
+
 ### Deprecated
+
+- BREAKING: stop caching extract_seed_primary_sources
+- BREAKING: stop caching get_all_extracted_primary_sources
+- BREAKING: stop caching get_extracted_primary_source_by_name
 
 ### Removed
 
