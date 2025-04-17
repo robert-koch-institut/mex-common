@@ -1,6 +1,6 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
-from mex.common.logging import watch
+from mex.common.logging import logger
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ExtractedPrimarySource,
@@ -8,10 +8,9 @@ from mex.common.models import (
 from mex.common.primary_source.models import SeedPrimarySource
 
 
-@watch()
 def transform_seed_primary_sources_to_extracted_primary_sources(
     primary_sources: Iterable[SeedPrimarySource],
-) -> Generator[ExtractedPrimarySource, None, None]:
+) -> list[ExtractedPrimarySource]:
     """Transform seed primary sources into ExtractedPrimarySources.
 
     Args:
@@ -20,12 +19,30 @@ def transform_seed_primary_sources_to_extracted_primary_sources(
     Returns:
         Generator for ExtractedPrimarySource
     """
-    for primary_source in primary_sources:
-        yield ExtractedPrimarySource(
-            identifierInPrimarySource=primary_source.identifier,
-            title=primary_source.title,
-            hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-        )
+    extracted_primary_sources = [
+        transform_seed_primary_source_to_extracted_primary_source(primary_source)
+        for primary_source in primary_sources
+    ]
+    logger.info(f"transformed {len(extracted_primary_sources)} primary sources")
+    return extracted_primary_sources
+
+
+def transform_seed_primary_source_to_extracted_primary_source(
+    primary_source: SeedPrimarySource,
+) -> ExtractedPrimarySource:
+    """Transform a seed primary source into an ExtractedPrimarySource.
+
+    Args:
+        primary_source: Primary source coming from raw-data file
+
+    Returns:
+        ExtractedPrimarySource
+    """
+    return ExtractedPrimarySource(
+        identifierInPrimarySource=primary_source.identifier,
+        title=primary_source.title,
+        hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    )
 
 
 # TODO(EH): Remove this in MX-1698
