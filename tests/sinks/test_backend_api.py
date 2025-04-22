@@ -22,7 +22,7 @@ def test_sink_load_mocked(
     sink = BackendApiSink.get()
     models_or_rule_sets = list(sink.load([extracted_person]))
     assert models_or_rule_sets == [extracted_person]
-    ingest.assert_called_once_with([extracted_person], timeout=(5, 30))
+    ingest.assert_called_once_with([extracted_person], timeout=(5, 90))
 
 
 def test_sink_load_merged_error(
