@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- increase read timeout limit for BackendApiSink
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.58.2] - 2025-04-22
+
+### Changes
+
+- increase read timeout limit for BackendApiSink
 
 ## [0.58.1] - 2025-04-17
 
