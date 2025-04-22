@@ -14,7 +14,7 @@ class BackendApiSink(BaseSink):
 
     CHUNK_SIZE: int = 25
     CONNECT_TIMEOUT: int | float = 5
-    READ_TIMEOUT: int | float = 30
+    READ_TIMEOUT: int | float = 90
 
     @watch(log_interval=1000)
     def load(
