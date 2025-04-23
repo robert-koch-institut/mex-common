@@ -229,7 +229,9 @@ def test_request_failure(  # noqa: PLR0913
     connector = DummyHTTPConnector.get()
 
     try:
-        response_or_error: Any = connector.request("POST", "things", payload=[])
+        response_or_error: Any = connector.request(
+            "POST", "things", payload=[], params={"format": "json"}
+        )
     except RequestException as error:
         response_or_error = repr(error)
 
