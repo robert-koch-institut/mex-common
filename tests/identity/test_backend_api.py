@@ -4,6 +4,7 @@ import pytest
 import requests
 from pytest import MonkeyPatch
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.identity import Identity
 from mex.common.identity.backend_api import BackendApiIdentityProvider
 from mex.common.models import ExtractedContactPoint
@@ -11,22 +12,22 @@ from mex.common.types import MergedPrimarySourceIdentifier
 
 
 @pytest.fixture
-def mocked_backend_identity_provider(monkeypatch: MonkeyPatch) -> MagicMock:
+def mocked_backend_connector(monkeypatch: MonkeyPatch) -> MagicMock:
     mocked_session = MagicMock(spec=requests.Session)
     mocked_session.request = MagicMock(
         return_value=Mock(spec=requests.Response, status_code=200)
     )
     mocked_session.headers = {}
 
-    def set_mocked_session(self: BackendApiIdentityProvider) -> None:
+    def set_mocked_session(self: BackendApiConnector) -> None:
         self.session = mocked_session
 
-    monkeypatch.setattr(BackendApiIdentityProvider, "_set_session", set_mocked_session)
+    monkeypatch.setattr(BackendApiConnector, "_set_session", set_mocked_session)
     return mocked_session
 
 
 def test_assign_mocked(
-    mocked_backend_identity_provider: requests.Session,
+    mocked_backend_connector: requests.Session,
 ) -> None:
     mocked_data = {
         "identifier": MergedPrimarySourceIdentifier.generate(seed=962),
@@ -37,7 +38,7 @@ def test_assign_mocked(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=mocked_data)
-    mocked_backend_identity_provider.request = MagicMock(return_value=mocked_response)
+    mocked_backend_connector.request = MagicMock(return_value=mocked_response)
 
     provider = BackendApiIdentityProvider.get()
     identity_first = provider.assign(
@@ -61,7 +62,7 @@ def test_assign_mocked(
 
 
 def test_fetch_mocked(
-    mocked_backend_identity_provider: requests.Session,
+    mocked_backend_connector: requests.Session,
 ) -> None:
     mocked_data = {
         "items": [
@@ -78,7 +79,7 @@ def test_fetch_mocked(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=mocked_data)
-    mocked_backend_identity_provider.request = MagicMock(return_value=mocked_response)
+    mocked_backend_connector.request = MagicMock(return_value=mocked_response)
 
     provider = BackendApiIdentityProvider.get()
 
@@ -113,18 +114,18 @@ def test_fetch_mocked(
 
 
 def test_fetch_mocked_empty(
-    mocked_backend_identity_provider: requests.Session,
+    mocked_backend_connector: requests.Session,
 ) -> None:
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value={"items": [], "total": 0})
-    mocked_backend_identity_provider.request = MagicMock(return_value=mocked_response)
+    mocked_backend_connector.request = MagicMock(return_value=mocked_response)
 
     provider = BackendApiIdentityProvider.get()
 
     provider.fetch()
 
-    mocked_backend_identity_provider.request.assert_called_with(
+    mocked_backend_connector.request.assert_called_with(
         "GET",
         "http://localhost:8080/v0/identity",
         {

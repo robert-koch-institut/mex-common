@@ -13,7 +13,7 @@ from mex.common.exceptions import (
 from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPUnit
 from mex.common.settings import BaseSettings
 
-LDAPActorT = TypeVar("LDAPActorT", bound=LDAPActor)
+_LDAPActorT = TypeVar("_LDAPActorT", bound=LDAPActor)
 
 
 class LDAPConnector(BaseConnector):
@@ -51,10 +51,10 @@ class LDAPConnector(BaseConnector):
 
     def _fetch(
         self,
-        model_cls: type[LDAPActorT],
+        model_cls: type[_LDAPActorT],
         limit: int = 10,
         **filters: str,
-    ) -> list[LDAPActorT]:
+    ) -> list[_LDAPActorT]:
         """Fetch all items that match the given filters and parse to given model.
 
         Args:

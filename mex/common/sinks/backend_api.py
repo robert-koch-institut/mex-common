@@ -9,8 +9,8 @@ from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetRespo
 from mex.common.sinks.base import BaseSink
 from mex.common.utils import grouper
 
-LoadItemT = TypeVar(
-    "LoadItemT", bound=AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse
+_LoadItemT = TypeVar(
+    "_LoadItemT", bound=AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse
 )
 
 
@@ -22,7 +22,7 @@ class BackendApiSink(BaseSink):
     READ_TIMEOUT: int | float = 90
 
     @watch(log_interval=1000)
-    def load(self, items: Iterable[LoadItemT]) -> Generator[LoadItemT, None, None]:
+    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
         """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:
@@ -57,4 +57,4 @@ class BackendApiSink(BaseSink):
                 ]
                 logger.error(f"error ingesting models: {', '.join(model_info)}")
                 raise
-            yield from cast("list[LoadItemT]", model_list)
+            yield from cast("list[_LoadItemT]", model_list)

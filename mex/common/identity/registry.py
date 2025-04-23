@@ -1,7 +1,5 @@
 from typing import TYPE_CHECKING, Final
 
-from mex.common.identity.backend_api import BackendApiIdentityProvider
-from mex.common.identity.memory import MemoryIdentityProvider
 from mex.common.types import IdentityProvider
 
 if TYPE_CHECKING:
@@ -46,8 +44,3 @@ def get_provider() -> "BaseProvider":
         return provider_cls.get()
     msg = f"Identity provider not implemented: {settings.identity_provider}"
     raise RuntimeError(msg)
-
-
-# register the default providers shipped with mex-common
-register_provider(IdentityProvider.MEMORY, MemoryIdentityProvider)
-register_provider(IdentityProvider.BACKEND, BackendApiIdentityProvider)

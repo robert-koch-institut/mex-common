@@ -57,6 +57,7 @@ def ldap_mocker(monkeypatch: MonkeyPatch) -> LDAPMocker:
 
     def mocker(results: PagedSearchResults) -> None:
         def __init__(self: LDAPConnector) -> None:
+            self._search_base = "DC=foo"
             self._connection = MagicMock(spec=Connection, extend=Mock())
             self._connection.extend.standard.paged_search = MagicMock(
                 side_effect=[

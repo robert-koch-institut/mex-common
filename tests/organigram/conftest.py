@@ -24,7 +24,6 @@ def child_unit() -> OrganigramUnit:
             Text(value="C1: Sub Unit", language="en"),
         ],
         parentUnit="parent-unit",
-        website=None,
     )
 
 
@@ -34,11 +33,9 @@ def extracted_child_unit(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedOrganizationalUnit:
     """Return the child unit transformed to an ExtractedOrganizationalUnit."""
-    return next(
-        transform_organigram_units_to_organizational_units(
-            [child_unit], extracted_primary_sources["organigram"]
-        )
-    )
+    return transform_organigram_units_to_organizational_units(
+        [child_unit], extracted_primary_sources["organigram"]
+    )[0]
 
 
 @pytest.fixture
@@ -58,7 +55,6 @@ def parent_unit() -> OrganigramUnit:
             title="Example | Parent Department",
             url="https://www.example.com/departments/parent.html",
         ),
-        parentUnit=None,
     )
 
 
@@ -68,8 +64,6 @@ def extracted_parent_unit(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> ExtractedOrganizationalUnit:
     """Return the parent unit transformed to an ExtractedOrganizationalUnit."""
-    return next(
-        transform_organigram_units_to_organizational_units(
-            [parent_unit], extracted_primary_sources["organigram"]
-        )
-    )
+    return transform_organigram_units_to_organizational_units(
+        [parent_unit], extracted_primary_sources["organigram"]
+    )[0]

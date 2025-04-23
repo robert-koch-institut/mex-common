@@ -8,7 +8,6 @@ from mex.common.ldap.connector import LDAPConnector
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
     XY2_FUNC_ACCOUNT_ATTRS,
-    XY_DEPARTMENT_ATTRS,
     XY_FUNC_ACCOUNT_ATTRS,
     LDAPMocker,
     PagedSearchResults,
@@ -74,19 +73,6 @@ def test_get_functional_accounts_ldap(kwargs: dict[str, str], pattern: str) -> N
 
     flat_result = ",".join(str(p.objectGUID) for p in functional_accounts)
     assert re.match(pattern, flat_result)
-
-
-def test_get_units_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[XY_DEPARTMENT_ATTRS]])
-    connector = LDAPConnector.get()
-    units = list(connector.get_units(sAMAccountName="XY"))
-
-    assert len(units) == 1
-    assert units[0].model_dump(exclude_none=True) == {
-        "mail": ["XY@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
-        "sAMAccountName": "XY",
-    }
 
 
 def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:

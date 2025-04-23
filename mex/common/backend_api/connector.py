@@ -3,10 +3,6 @@ from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
 
-from mex.common.backend_api.models import (
-    MergedModelTypeAdapter,
-    RuleSetResponseTypeAdapter,
-)
 from mex.common.connector import HTTPConnector
 from mex.common.identity.models import Identity
 from mex.common.models import (
@@ -18,13 +14,15 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPerson,
     ItemsContainer,
+    MergedModelTypeAdapter,
     PaginatedItemsContainer,
+    RuleSetResponseTypeAdapter,
 )
 from mex.common.settings import BaseSettings
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
-IngestibleModelT = TypeVar(
-    "IngestibleModelT", bound=AnyExtractedModel | AnyRuleSetResponse
+_IngestibleModelT = TypeVar(
+    "_IngestibleModelT", bound=AnyExtractedModel | AnyRuleSetResponse
 )
 
 
@@ -381,7 +379,7 @@ class BackendApiConnector(HTTPConnector):
 
     def ingest(
         self,
-        ingestible_models: list[IngestibleModelT],
+        ingestible_models: list[_IngestibleModelT],
         **kwargs: Any,
     ) -> None:
         """Post extracted models or rule-sets to the backend in bulk.
@@ -396,6 +394,6 @@ class BackendApiConnector(HTTPConnector):
         self.request(
             method="POST",
             endpoint="ingest",
-            payload=ItemsContainer[IngestibleModelT](items=ingestible_models),
+            payload=ItemsContainer[_IngestibleModelT](items=ingestible_models),
             **kwargs,
         )

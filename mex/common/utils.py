@@ -9,7 +9,8 @@ from typing import Annotated, Any, Literal, TypeVar, Union, get_args, get_origin
 
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-T = TypeVar("T")
+_ContainedTokenT = TypeVar("_ContainedTokenT")
+_GroupableItemT = TypeVar("_GroupableItemT")
 
 
 @dataclass
@@ -21,12 +22,17 @@ class GenericFieldInfo:
     frozen: bool
 
 
-def contains_any(base: Container[T], tokens: Iterable[T]) -> bool:
+def contains_any(
+    base: Container[_ContainedTokenT], tokens: Iterable[_ContainedTokenT]
+) -> bool:
     """Check if a given base contains any of the given tokens."""
     return any(token in base for token in tokens)
 
 
-def any_contains_any(bases: Iterable[Container[T] | None], tokens: Iterable[T]) -> bool:
+def any_contains_any(
+    bases: Iterable[Container[_ContainedTokenT] | None],
+    tokens: Iterable[_ContainedTokenT],
+) -> bool:
     """Check if any of the given bases contains any of the given tokens."""
     for base in bases:
         if base is None:
@@ -191,7 +197,9 @@ def group_fields_by_class_name(
     }
 
 
-def grouper(chunk_size: int, iterable: Iterable[T]) -> Iterator[Iterable[T | None]]:
+def grouper(
+    chunk_size: int, iterable: Iterable[_GroupableItemT]
+) -> Iterator[Iterable[_GroupableItemT | None]]:
     """Collect data into fixed-length chunks or blocks."""
     # https://docs.python.org/3.9/library/itertools.html#itertools-recipes
     args = [iter(iterable)] * chunk_size

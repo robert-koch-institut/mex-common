@@ -7,11 +7,11 @@ from mex.common.testing import Joker
 from mex.common.types import TextLanguage
 
 
-def test_transform_mex_db_primary_source_to_extracted_primary_source() -> None:
-    extracted_primary_source = next(
+def test_transform_seed_primary_sources_to_extracted_primary_sources() -> None:
+    extracted_primary_source = (
         transform_seed_primary_sources_to_extracted_primary_sources(
             extract_seed_primary_sources()
-        )
+        )[0]
     )
     assert extracted_primary_source.model_dump(
         exclude_none=True, exclude_defaults=True
