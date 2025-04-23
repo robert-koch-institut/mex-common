@@ -1,15 +1,10 @@
-from functools import cache
-
-from mex.common.models import (
-    ExtractedPrimarySource,
-)
+from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
 
 
-@cache
 def get_all_extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     """Extract and transform all primary sources.
 
@@ -28,7 +23,6 @@ def get_all_extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
     return {p.identifierInPrimarySource: p for p in extracted_primary_sources}
 
 
-@cache
 def get_extracted_primary_source_by_name(name: str) -> ExtractedPrimarySource | None:
     """Pick the extracted primary source with the given name and return it.
 

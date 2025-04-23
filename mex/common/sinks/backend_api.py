@@ -1,4 +1,5 @@
 from collections.abc import Generator, Iterable
+from typing import TypeVar, cast
 
 from requests import RequestException
 
@@ -7,6 +8,10 @@ from mex.common.logging import logger, watch
 from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 from mex.common.sinks.base import BaseSink
 from mex.common.utils import grouper
+
+LoadItemT = TypeVar(
+    "LoadItemT", bound=AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse
+)
 
 
 class BackendApiSink(BaseSink):
@@ -17,9 +22,7 @@ class BackendApiSink(BaseSink):
     READ_TIMEOUT: int | float = 30
 
     @watch(log_interval=1000)
-    def load(
-        self, items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse]
-    ) -> Generator[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None]:
+    def load(self, items: Iterable[LoadItemT]) -> Generator[LoadItemT, None, None]:
         """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:
@@ -41,7 +44,7 @@ class BackendApiSink(BaseSink):
                     msg = f"backend cannot ingest {type(model)}"
                     raise NotImplementedError(msg)
             try:
-                response = connector.ingest(
+                connector.ingest(
                     model_list,
                     timeout=(self.CONNECT_TIMEOUT, self.READ_TIMEOUT),
                 )
@@ -54,4 +57,4 @@ class BackendApiSink(BaseSink):
                 ]
                 logger.error(f"error ingesting models: {', '.join(model_info)}")
                 raise
-            yield from response
+            yield from cast("list[LoadItemT]", model_list)

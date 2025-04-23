@@ -1,7 +1,5 @@
 import json
-import re
 from enum import Enum, EnumMeta
-from functools import cache
 from importlib.resources import files
 from typing import TYPE_CHECKING, ClassVar, Self, Union
 
@@ -14,7 +12,7 @@ from pydantic import (
 )
 from pydantic_core import core_schema
 
-from mex.common.utils import normalize
+from mex.common.transform import normalize, split_to_caps
 
 if TYPE_CHECKING:  # pragma: no cover
     from enum import _EnumDict
@@ -40,12 +38,6 @@ class Concept(BaseModel):
     prefLabel: BilingualText
     altLabel: list[BilingualText] = []
     definition: BilingualText | None = None
-
-
-@cache
-def split_to_caps(string: str) -> str:
-    """Convert the given string from `Split case` into `CAPS_CASE`."""
-    return "_".join(word.upper() for word in re.split("[^a-zA-Z]", string) if word)
 
 
 class VocabularyLoader(EnumMeta):

@@ -1,49 +1,56 @@
 import json
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
+from functools import lru_cache
 
 from mex.common.exceptions import MExError
-from mex.common.logging import watch
+from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.settings import BaseSettings
 from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
-@watch()
-def extract_organigram_units() -> Generator[OrganigramUnit, None, None]:
+@lru_cache(maxsize=1)
+def extract_organigram_units() -> list[OrganigramUnit]:
     """Extract organizational units from the organigram JSON file.
 
     Settings:
         organigram_path: Resolved path to the organigram file
 
     Returns:
-        Generator for organigram units
+        List of organigram units
     """
     settings = BaseSettings.get()
     with open(settings.organigram_path) as fh:
-        for raw in json.load(fh):
-            yield OrganigramUnit.model_validate(raw)
+        raw_units = json.load(fh)
+    logger.info("extracted %s organigram units", len(raw_units))
+    return [OrganigramUnit.model_validate(raw) for raw in raw_units]
 
 
-def _get_synonyms(
-    extracted_unit: ExtractedOrganizationalUnit,
-) -> Generator[str, None, None]:
+@lru_cache(maxsize=1024)
+def get_unit_synonyms(extracted_unit: ExtractedOrganizationalUnit) -> list[str]:
     """Generate synonyms for a unit using its name fields.
 
     Args:
         extracted_unit: Extracted organizational unit
 
     Returns:
-        Generator with (possibly duplicate) synonyms
+        Sorted list of unique unit synonyms
     """
-    yield extracted_unit.identifierInPrimarySource
-    for names in [
-        extracted_unit.name,
-        extracted_unit.shortName,
-        extracted_unit.alternativeName,
-    ]:
-        for name in names:
-            yield name.value
+    return sorted(
+        {
+            extracted_unit.identifierInPrimarySource,
+            *(
+                text.value
+                for texts in [
+                    extracted_unit.name,
+                    extracted_unit.shortName,
+                    extracted_unit.alternativeName,
+                ]
+                for text in texts
+            ),
+        }
+    )
 
 
 def get_unit_merged_ids_by_synonyms(
@@ -64,7 +71,7 @@ def get_unit_merged_ids_by_synonyms(
     """
     synonym_dict: dict[str, MergedOrganizationalUnitIdentifier] = {}
     for extracted_unit in extracted_units:
-        for synonym in _get_synonyms(extracted_unit):
+        for synonym in get_unit_synonyms(extracted_unit):
             if (
                 synonym in synonym_dict
                 and synonym_dict[synonym] != extracted_unit.stableTargetId

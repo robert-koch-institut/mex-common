@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, TypeVar
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -8,16 +8,24 @@ from mex.common.backend_api.models import (
     RuleSetResponseTypeAdapter,
 )
 from mex.common.connector import HTTPConnector
+from mex.common.identity.models import Identity
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ExtractedOrganization,
+    ExtractedPerson,
     ItemsContainer,
     PaginatedItemsContainer,
 )
 from mex.common.settings import BaseSettings
+from mex.common.types import Identifier, MergedPrimarySourceIdentifier
+
+IngestibleModelT = TypeVar(
+    "IngestibleModelT", bound=AnyExtractedModel | AnyRuleSetResponse
+)
 
 
 class BackendApiConnector(HTTPConnector):
@@ -38,37 +46,6 @@ class BackendApiConnector(HTTPConnector):
         """Set the backend api url with the version path."""
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
-
-    def ingest(
-        self,
-        models_or_rule_sets: list[AnyExtractedModel | AnyRuleSetResponse],
-        **kwargs: Any,
-    ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
-        """Post extracted models or rule-sets to the backend in bulk.
-
-        Args:
-            models_or_rule_sets: Extracted models or rule-sets to ingest
-            kwargs: Further keyword arguments passed to `requests`
-
-        Raises:
-            HTTPError: If post was not accepted, crashes or times out
-
-        Returns:
-            List of extracted models or rule-sets from the endpoint
-        """
-        response = self.request(
-            method="POST",
-            endpoint="ingest",
-            payload=ItemsContainer[AnyExtractedModel | AnyRuleSetResponse](
-                items=models_or_rule_sets
-            ),
-            **kwargs,
-        )
-        return (
-            ItemsContainer[AnyExtractedModel | AnyRuleSetResponse]
-            .model_validate(response)
-            .items
-        )
 
     def fetch_extracted_items(
         self,
@@ -235,6 +212,24 @@ class BackendApiConnector(HTTPConnector):
         )
         return PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
 
+    def create_rule_set(
+        self,
+        rule_set: AnyRuleSetRequest,
+    ) -> AnyRuleSetResponse:
+        """Create a new rule set.
+
+        Args:
+            rule_set: New rule-set to create
+
+        Raises:
+            HTTPError: If the rule-set did not validate
+
+        Returns:
+            The newly created rule-set
+        """
+        response = self.request(method="POST", endpoint="rule-set", payload=rule_set)
+        return RuleSetResponseTypeAdapter.validate_python(response)
+
     def get_rule_set(
         self,
         stable_target_id: str,
@@ -255,3 +250,152 @@ class BackendApiConnector(HTTPConnector):
             endpoint=f"rule-set/{stable_target_id}",
         )
         return RuleSetResponseTypeAdapter.validate_python(response)
+
+    def update_rule_set(
+        self, stable_target_id: str, rule_set: AnyRuleSetRequest
+    ) -> AnyRuleSetResponse:
+        """Update an existing rule set.
+
+        Args:
+            stable_target_id: The merged item's identifier
+            rule_set: The new rule-set contents
+
+        Raises:
+            HTTPError: If no rule-set was found
+
+        Returns:
+            A set of three rules
+        """
+        response = self.request(
+            method="PUT", endpoint=f"rule-set/{stable_target_id}", payload=rule_set
+        )
+        return RuleSetResponseTypeAdapter.validate_python(response)
+
+    def search_organization_in_wikidata(
+        self,
+        q: str,
+        offset: int = 0,
+        limit: int = 10,
+    ) -> PaginatedItemsContainer[ExtractedOrganization]:
+        """Search for organizations in wikidata.
+
+        Args:
+            q: Wikidata item ID or full URL
+            offset: The starting index for pagination
+            limit: The maximum number of results to return
+
+        Returns:
+            Paginated list of ExtractedOrganizations
+        """
+        response = self.request(
+            method="GET",
+            endpoint="wikidata",
+            params={"q": q, "offset": str(offset), "limit": str(limit)},
+        )
+        return PaginatedItemsContainer[ExtractedOrganization].model_validate(response)
+
+    def search_person_in_ldap(
+        self,
+        q: str,
+        offset: int = 0,
+        limit: int = 10,
+    ) -> PaginatedItemsContainer[ExtractedPerson]:
+        """Search for persons in LDAP.
+
+        Args:
+            q: The name of the person to be searched
+            offset: The starting index for pagination
+            limit: The maximum number of results to return
+
+        Returns:
+            Paginated list of ExtractedPersons
+        """
+        response = self.request(
+            method="GET",
+            endpoint="ldap",
+            params={"q": q, "offset": str(offset), "limit": str(limit)},
+        )
+        return PaginatedItemsContainer[ExtractedPerson].model_validate(response)
+
+    def search_person_in_orcid(
+        self,
+        q: str,
+        offset: int = 0,
+        limit: int = 10,
+    ) -> PaginatedItemsContainer[ExtractedPerson]:
+        """Search for persons in orcid.
+
+        Args:
+            q: The name of the person to be searched
+            offset: The starting index for pagination
+            limit: The maximum number of results to return
+
+        Returns:
+            Paginated list of ExtractedPersons
+        """
+        response = self.request(
+            method="GET",
+            endpoint="orcid",
+            params={"q": q, "offset": str(offset), "limit": str(limit)},
+        )
+        return PaginatedItemsContainer[ExtractedPerson].model_validate(response)
+
+    def assign_identity(
+        self,
+        had_primary_source: MergedPrimarySourceIdentifier,
+        identifier_in_primary_source: str,
+    ) -> Identity:
+        """Find an Identity in a database or assign a new one."""
+        response = self.request(
+            "POST",
+            "identity",
+            {
+                "hadPrimarySource": had_primary_source,
+                "identifierInPrimarySource": identifier_in_primary_source,
+            },
+        )
+        return Identity.model_validate(response)
+
+    def fetch_identities(
+        self,
+        had_primary_source: Identifier | None = None,
+        identifier_in_primary_source: str | None = None,
+        stable_target_id: Identifier | None = None,
+    ) -> ItemsContainer[Identity]:
+        """Find Identity instances matching the given filters.
+
+        Either provide `stableTargetId` or `hadPrimarySource`
+        and `identifierInPrimarySource` together to get a unique result.
+        """
+        connector = BackendApiConnector.get()
+        response = connector.request(
+            "GET",
+            "identity",
+            params={
+                "hadPrimarySource": had_primary_source,
+                "identifierInPrimarySource": identifier_in_primary_source,
+                "stableTargetId": stable_target_id,
+            },
+        )
+        return ItemsContainer[Identity].model_validate(response)
+
+    def ingest(
+        self,
+        ingestible_models: list[IngestibleModelT],
+        **kwargs: Any,
+    ) -> None:
+        """Post extracted models or rule-sets to the backend in bulk.
+
+        Args:
+            ingestible_models: Extracted models or rule-sets to ingest
+            kwargs: Further keyword arguments passed to `requests`
+
+        Raises:
+            HTTPError: If post was not accepted, crashes or times out
+        """
+        self.request(
+            method="POST",
+            endpoint="ingest",
+            payload=ItemsContainer[IngestibleModelT](items=ingestible_models),
+            **kwargs,
+        )

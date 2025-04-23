@@ -1,15 +1,15 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
-from mex.common.logging import watch
+from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 
 
-@watch()
 def transform_organigram_units_to_organizational_units(
-    units: Iterable[OrganigramUnit], primary_source: ExtractedPrimarySource
-) -> Generator[ExtractedOrganizationalUnit, None, None]:
+    units: Iterable[OrganigramUnit],
+    primary_source: ExtractedPrimarySource,
+) -> list[ExtractedOrganizationalUnit]:
     """Transform organigram units into ExtractedOrganizationalUnits.
 
     Beware that the order of the output is not necessarily the order of the input.
@@ -19,7 +19,7 @@ def transform_organigram_units_to_organizational_units(
         primary_source: Primary source for organigram
 
     Returns:
-        Generator for ExtractedOrganizationalUnit
+        List of ExtractedOrganizationalUnit
     """
     extracted_unit_by_id_in_primary_source: dict[str, ExtractedOrganizationalUnit] = {}
     parent_id_in_primary_source_by_id_in_primary_source: dict[str, str] = {}
@@ -54,4 +54,8 @@ def transform_organigram_units_to_organizational_units(
                 extracted_unit.parentUnit = MergedOrganizationalUnitIdentifier(
                     parent_unit.stableTargetId
                 )
-        yield extracted_unit
+    logger.info(
+        "transformed %s organizational units",
+        len(extracted_unit_by_id_in_primary_source),
+    )
+    return list(extracted_unit_by_id_in_primary_source.values())

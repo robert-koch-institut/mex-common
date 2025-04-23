@@ -1,23 +1,21 @@
 import hashlib
 import json
 from collections.abc import MutableMapping
-from functools import cache
 from typing import Any
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import (
-    ConfigDict,
-    TypeAdapter,
-    ValidationError,
-    ValidatorFunctionWrapHandler,
-    model_validator,
-)
+from pydantic import ConfigDict, ValidatorFunctionWrapHandler, model_validator
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
 from mex.common.models.base.schema import JsonSchemaGenerator
 from mex.common.transform import MExEncoder
-from mex.common.utils import get_all_fields, get_inner_types
+from mex.common.utils import (
+    get_alias_lookup,
+    get_all_fields,
+    get_field_names_allowing_none,
+    get_list_field_names,
+)
 
 
 class BaseModel(PydanticBaseModel):
@@ -61,47 +59,10 @@ class BaseModel(PydanticBaseModel):
         )
 
     @classmethod
-    @cache
-    def _get_alias_lookup(cls) -> dict[str, str]:
-        """Build a cached mapping from field alias to field names."""
-        return {
-            field_info.alias or field_name: field_name
-            for field_name, field_info in get_all_fields(cls).items()
-        }
-
-    @classmethod
-    @cache
-    def _get_list_field_names(cls) -> list[str]:
-        """Build a cached list of fields that look like lists."""
-        field_names = []
-        for field_name, field_info in get_all_fields(cls).items():
-            field_types = get_inner_types(field_info.annotation, unpack_list=False)
-            if any(
-                isinstance(field_type, type) and issubclass(field_type, list)
-                for field_type in field_types
-            ):
-                field_names.append(field_name)
-        return field_names
-
-    @classmethod
-    @cache
-    def _get_field_names_allowing_none(cls) -> list[str]:
-        """Build a cached list of fields can be set to None."""
-        field_names: list[str] = []
-        for field_name, field_info in get_all_fields(cls).items():
-            validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
-            try:
-                validator.validate_python(None)
-            except ValidationError:
-                continue
-            field_names.append(field_name)
-        return field_names
-
-    @classmethod
     def _convert_non_list_to_list(cls, field_name: str, value: Any) -> list[Any] | None:
         """Convert a non-list value to a list value by wrapping it in a list."""
         if value is None:
-            if field_name in cls._get_field_names_allowing_none():
+            if field_name in get_field_names_allowing_none(cls):
                 return None
             # if a list is required, we interpret None as an empty list
             return []
@@ -125,7 +86,7 @@ class BaseModel(PydanticBaseModel):
     @classmethod
     def _fix_value_listyness_for_field(cls, field_name: str, value: Any) -> Any:
         """Check actual and desired shape of a value and fix it if necessary."""
-        should_be_list = field_name in cls._get_list_field_names()
+        should_be_list = field_name in get_list_field_names(cls)
         is_list = isinstance(value, list)
         if not is_list and should_be_list:
             return cls._convert_non_list_to_list(field_name, value)
@@ -207,7 +168,7 @@ class BaseModel(PydanticBaseModel):
         # validator. Sigh, see https://github.com/pydantic/pydantic/discussions/7434
         if isinstance(data, MutableMapping):
             for name, value in data.items():
-                field_name = cls._get_alias_lookup().get(name, name)
+                field_name = get_alias_lookup(cls).get(name, name)
                 if field_name in get_all_fields(cls):
                     data[name] = cls._fix_value_listyness_for_field(field_name, value)
         return handler(data)

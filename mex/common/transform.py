@@ -2,7 +2,7 @@ import json
 import re
 from collections.abc import Iterable
 from enum import Enum
-from functools import cache
+from functools import lru_cache
 from pathlib import PurePath
 from typing import Any
 from uuid import UUID
@@ -10,14 +10,15 @@ from uuid import UUID
 from pydantic import AnyUrl, SecretStr
 from pydantic import BaseModel as PydanticModel
 
-from mex.common.types import PathWrapper, TemporalEntity
-
 
 class MExEncoder(json.JSONEncoder):
     """Custom JSON encoder that can handle pydantic models, enums and UUIDs."""
 
     def default(self, obj: Any) -> Any:  # noqa: PLR0911
         """Implement custom serialization rules."""
+        # break import cycle, sigh
+        from mex.common.types import PathWrapper, TemporalEntity
+
         if isinstance(obj, PydanticModel):
             return obj.model_dump()
         if isinstance(obj, AnyUrl):
@@ -37,7 +38,7 @@ class MExEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-@cache
+@lru_cache(maxsize=1024)
 def snake_to_dromedary(string: str) -> str:
     """Convert the given string from `snake_case` into `dromedaryCase`."""
     if len(tokens := re.split(r"_", string)) > 1:
@@ -48,7 +49,7 @@ def snake_to_dromedary(string: str) -> str:
     return string
 
 
-@cache
+@lru_cache(maxsize=1024)
 def dromedary_to_snake(string: str) -> str:
     """Convert the given string from `dromedaryCase` into `snake_case`."""
     return "_".join(
@@ -58,7 +59,7 @@ def dromedary_to_snake(string: str) -> str:
     )
 
 
-@cache
+@lru_cache(maxsize=1024)
 def dromedary_to_kebab(string: str) -> str:
     """Convert the given string from `dromedaryCase` into `kebab-case`."""
     return "-".join(
@@ -68,12 +69,24 @@ def dromedary_to_kebab(string: str) -> str:
     )
 
 
-@cache
+@lru_cache(maxsize=1024)
 def kebab_to_camel(string: str) -> str:
     """Convert the given string from `kebab-case` into `CamelCase`."""
     if len(tokens := re.split(r"\-+", string)) > 1:
         return "".join(word.title() for word in tokens)
     return string[:1].upper() + string[1:]
+
+
+@lru_cache(maxsize=1024)
+def normalize(string: str) -> str:
+    """Normalize the given string to lowercase, numerals and single spaces."""
+    return " ".join(re.sub(r"[^a-z0-9]", " ", string.lower()).split())
+
+
+@lru_cache(maxsize=1024)
+def split_to_caps(string: str) -> str:
+    """Convert the given string from `Split case` into `CAPS_CASE`."""
+    return "_".join(word.upper() for word in re.split("[^a-zA-Z]", string) if word)
 
 
 def ensure_prefix(string_like: Any, prefix: Any) -> str:

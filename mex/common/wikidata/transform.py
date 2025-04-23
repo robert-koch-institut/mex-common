@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Generator, Iterable, Sequence
 
 from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.types import Text, TextLanguage
@@ -79,12 +79,13 @@ def transform_wikidata_organization_to_extracted_organization(
 
 
 def _get_alternative_names(
-    native_labels: list[Claim], all_aliases: Aliases
+    native_labels: Sequence[Claim],
+    all_aliases: Aliases,
 ) -> list[Text]:
     """Get alternative names of an organization in DE and EN.
 
     Args:
-        native_labels: List of all native labels
+        native_labels: Sequence of all native labels
         all_aliases: All aliases of the organization
 
     Returns:
@@ -110,7 +111,7 @@ def _get_alternative_names(
     return list(set(alternative_names))
 
 
-def _get_clean_short_names(short_names: list[Claim]) -> list[Text]:
+def _get_clean_short_names(short_names: Sequence[Claim]) -> list[Text]:
     """Get clean short names only in EN and DE and ignore the rest.
 
     Args:

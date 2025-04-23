@@ -1,5 +1,5 @@
 from collections import defaultdict
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 
 from mex.common.identity import get_provider
 from mex.common.ldap.connector import LDAPConnector
@@ -117,33 +117,18 @@ def get_merged_ids_by_query_string(
 
 def get_persons_by_name(
     display_name: str = "*",
+    limit: int = 10,
     **filters: str,
-) -> Generator[LDAPPerson, None, None]:
+) -> list[LDAPPerson]:
     """Get all ldap persons matching the filters.
 
     Args:
         display_name: Full name of the searched person, defaults to non-null.
+        limit: How many persons to return
         **filters: Additional filters.
 
     Returns:
-        Generator for LDAP persons.
+        List of LDAP persons.
     """
     connector = LDAPConnector.get()
-    return connector.get_persons(displayName=display_name, **filters)
-
-
-def get_count_of_found_persons_by_name(
-    display_name: str = "*",
-    **filters: str,
-) -> int:
-    """Get total count of found ldap persons.
-
-    Args:
-        display_name: Full name of the searched person, defaults to non-null.
-        **filters: Additional filters.
-
-    Returns:
-          count of found persons.
-    """
-    connector = LDAPConnector.get()
-    return len(list(connector.get_persons(displayName=display_name, **filters)))
+    return connector.get_persons(displayName=display_name, limit=limit, **filters)

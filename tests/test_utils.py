@@ -19,12 +19,14 @@ from mex.common.utils import (
     any_contains_any,
     contains_any,
     contains_only_types,
+    get_alias_lookup,
     get_all_fields,
+    get_field_names_allowing_none,
     get_inner_types,
+    get_list_field_names,
     group_fields_by_class_name,
     grouper,
     jitter_sleep,
-    normalize,
 )
 
 
@@ -145,6 +147,44 @@ def test_get_all_fields_on_model_with_computed_field() -> None:
     }
 
 
+class ComplexDummyModel(BaseModel):
+    """Dummy Model with multiple attributes."""
+
+    optional_str: str | None = None
+    required_str: str = "default"
+    optional_list: list[str] | None = None
+    required_list: list[str] = []
+
+    @computed_field(alias="computedInt")  # type: ignore[prop-decorator]
+    @property
+    def computed_int(self) -> int:
+        return 42
+
+
+def test_get_alias_lookup() -> None:
+    assert get_alias_lookup(ComplexDummyModel) == {
+        "optional_str": "optional_str",
+        "required_str": "required_str",
+        "optional_list": "optional_list",
+        "required_list": "required_list",
+        "computedInt": "computed_int",
+    }
+
+
+def test_get_list_field_names() -> None:
+    assert get_list_field_names(ComplexDummyModel) == [
+        "optional_list",
+        "required_list",
+    ]
+
+
+def test_get_field_names_allowing_none() -> None:
+    assert get_field_names_allowing_none(ComplexDummyModel) == [
+        "optional_str",
+        "optional_list",
+    ]
+
+
 def test_group_fields_by_class_name() -> None:
     class DummyModel(BaseModel):
         number: int
@@ -156,14 +196,6 @@ def test_group_fields_by_class_name() -> None:
     lookup = {"Dummy": DummyModel, "Pseudo": PseudoModel}
     expected = {"Dummy": ["text"], "Pseudo": ["title"]}
     assert group_fields_by_class_name(lookup, lambda f: f.annotation is str) == expected
-
-
-@pytest.mark.parametrize(
-    ("string", "expected"),
-    [("", ""), ("__XYZ__", "xyz"), ("/foo/BAR$42", "foo bar 42")],
-)
-def test_normalize(string: str, expected: str) -> None:
-    assert normalize(string) == expected
 
 
 def test_grouper() -> None:

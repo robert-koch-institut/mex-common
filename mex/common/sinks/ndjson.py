@@ -11,7 +11,7 @@ from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.utils import grouper
 
-_LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
+LoadItemT = TypeVar("LoadItemT", bound=BaseModel)
 
 
 class NdjsonSink(BaseSink):
@@ -31,8 +31,8 @@ class NdjsonSink(BaseSink):
     @watch(log_interval=1000)
     def load(
         self,
-        items: Iterable[_LoadItemT],
-    ) -> Generator[_LoadItemT, None, None]:
+        items: Iterable[LoadItemT],
+    ) -> Generator[LoadItemT, None, None]:
         """Write any items into a new-line delimited JSON file.
 
         Args:

@@ -1,14 +1,13 @@
-import re
 from collections.abc import Callable, Container, Generator, Iterable, Iterator, Mapping
 from dataclasses import dataclass
-from functools import cache
+from functools import lru_cache
 from itertools import zip_longest
 from random import random
 from time import sleep
 from types import NoneType, UnionType
 from typing import Annotated, Any, Literal, TypeVar, Union, get_args, get_origin
 
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
 T = TypeVar("T")
 
@@ -107,7 +106,7 @@ def get_inner_types(
         yield NoneType
 
 
-@cache
+@lru_cache(maxsize=4048)
 def get_all_fields(model: BaseModel) -> dict[str, GenericFieldInfo]:
     """Return a combined dict of defined and computed fields of a given model."""
     return {
@@ -128,6 +127,43 @@ def get_all_fields(model: BaseModel) -> dict[str, GenericFieldInfo]:
             for name, info in model.model_computed_fields.items()
         },
     }
+
+
+@lru_cache(maxsize=4048)
+def get_alias_lookup(model: BaseModel) -> dict[str, str]:
+    """Build a cached mapping from field alias to field names."""
+    return {
+        field_info.alias or field_name: field_name
+        for field_name, field_info in get_all_fields(model).items()
+    }
+
+
+@lru_cache(maxsize=4048)
+def get_list_field_names(model: BaseModel) -> list[str]:
+    """Build a cached list of fields that look like lists."""
+    field_names = []
+    for field_name, field_info in get_all_fields(model).items():
+        field_types = get_inner_types(field_info.annotation, unpack_list=False)
+        if any(
+            isinstance(field_type, type) and issubclass(field_type, list)
+            for field_type in field_types
+        ):
+            field_names.append(field_name)
+    return field_names
+
+
+@lru_cache(maxsize=4048)
+def get_field_names_allowing_none(model: BaseModel) -> list[str]:
+    """Build a cached list of fields can be set to None."""
+    field_names: list[str] = []
+    for field_name, field_info in get_all_fields(model).items():
+        validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
+        try:
+            validator.validate_python(None)
+        except ValidationError:
+            continue
+        field_names.append(field_name)
+    return field_names
 
 
 def group_fields_by_class_name(
@@ -153,12 +189,6 @@ def group_fields_by_class_name(
         )
         for name, cls in model_classes_by_name.items()
     }
-
-
-@cache
-def normalize(string: str) -> str:
-    """Normalize the given string to lowercase, numerals and single spaces."""
-    return " ".join(re.sub(r"[^a-z0-9]", " ", string.lower()).split())
 
 
 def grouper(chunk_size: int, iterable: Iterable[T]) -> Iterator[Iterable[T | None]]:

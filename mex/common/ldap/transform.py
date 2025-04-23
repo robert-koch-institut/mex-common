@@ -1,11 +1,11 @@
 import re
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass
-from functools import cache
+from functools import lru_cache
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPPersonWithQuery
-from mex.common.logging import watch
+from mex.common.logging import logger
 from mex.common.models import (
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
@@ -14,12 +14,11 @@ from mex.common.models import (
 )
 
 
-@watch()
 def transform_ldap_persons_to_mex_persons(
     ldap_persons: Iterable[LDAPPerson],
     primary_source: ExtractedPrimarySource,
     units: Iterable[ExtractedOrganizationalUnit],
-) -> Generator[ExtractedPerson, None, None]:
+) -> list[ExtractedPerson]:
     """Transform LDAP persons to ExtractedPersons.
 
     Args:
@@ -28,22 +27,25 @@ def transform_ldap_persons_to_mex_persons(
         units: Extracted organizational units
 
     Returns:
-        Generator for extracted persons
+        List of extracted persons
     """
     units_by_identifier_in_primary_source = {
         unit.identifierInPrimarySource: unit for unit in units
     }
-    for person in ldap_persons:
-        yield transform_ldap_person_to_mex_person(
+    extracted_persons = [
+        transform_ldap_person_to_mex_person(
             person, primary_source, units_by_identifier_in_primary_source
         )
+        for person in ldap_persons
+    ]
+    logger.info("transformed %s extracted persons from ldap", len(extracted_persons))
+    return extracted_persons
 
 
-@watch()
 def transform_ldap_actors_to_mex_contact_points(
     ldap_actors: Iterable[LDAPActor],
     primary_source: ExtractedPrimarySource,
-) -> Generator[ExtractedContactPoint, None, None]:
+) -> list[ExtractedContactPoint]:
     """Transform LDAP actors (e.g. functional accounts) to ExtractedContactPoints.
 
     Args:
@@ -51,18 +53,24 @@ def transform_ldap_actors_to_mex_contact_points(
         primary_source: Primary source for LDAP
 
     Returns:
-        Generator for extracted contact points
+        List of extracted contact points
     """
-    for actor in ldap_actors:
-        yield transform_ldap_actor_to_mex_contact_point(actor, primary_source)
+    extracted_contact_points = [
+        transform_ldap_actor_to_mex_contact_point(actor, primary_source)
+        for actor in ldap_actors
+    ]
+    logger.info(
+        "transformed %s extracted contact points from ldap",
+        len(extracted_contact_points),
+    )
+    return extracted_contact_points
 
 
-@watch()
 def transform_ldap_persons_with_query_to_mex_persons(
     ldap_persons_with_query: Iterable[LDAPPersonWithQuery],
     primary_source: ExtractedPrimarySource,
     units: Iterable[ExtractedOrganizationalUnit],
-) -> Generator[ExtractedPerson, None, None]:
+) -> list[ExtractedPerson]:
     """Transform LDAP persons with query to ExtractedPersons.
 
     Args:
@@ -71,9 +79,9 @@ def transform_ldap_persons_with_query_to_mex_persons(
         units: Extracted organizational units
 
     Returns:
-        Generator for extracted persons
+        List of extracted persons
     """
-    yield from transform_ldap_persons_to_mex_persons(
+    return transform_ldap_persons_to_mex_persons(
         (a.person for a in ldap_persons_with_query), primary_source, units
     )
 
@@ -148,7 +156,7 @@ class PersonName:
     full_name: str = ""
 
 
-@cache
+@lru_cache(maxsize=1024)
 def analyse_person_string(string: str) -> list[PersonName]:
     """Try to extract a list of given- and surnames from a person string.
 
