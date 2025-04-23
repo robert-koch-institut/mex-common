@@ -1,12 +1,14 @@
+import time
 from typing import Any
 from unittest.mock import MagicMock, Mock, call
 
 import pytest
 import requests
-from pytest import MonkeyPatch
-from requests import JSONDecodeError, Response
+from pytest import LogCaptureFixture, MonkeyPatch
+from requests import ConnectTimeout, JSONDecodeError, RequestException, Response, codes
 
 from mex.common.connector import CONNECTOR_STORE, HTTPConnector
+from mex.common.exceptions import TimedReadTimeout
 
 
 class DummyHTTPConnector(HTTPConnector):
@@ -14,7 +16,7 @@ class DummyHTTPConnector(HTTPConnector):
         self.url = "https://www.example.com"
 
     def _check_availability(self) -> None:
-        self.request("GET", "_system/check")
+        pass
 
 
 @pytest.fixture
@@ -32,7 +34,12 @@ def mocked_dummy_session(monkeypatch: MonkeyPatch) -> MagicMock:
     return mocked_session
 
 
-def test_init_mocked(mocked_dummy_session: MagicMock) -> None:
+def test_init_mocked(mocked_dummy_session: MagicMock, monkeypatch: MonkeyPatch) -> None:
+    def _check_availability(self: DummyHTTPConnector) -> None:
+        self.request("GET", "_system/check")
+
+    monkeypatch.setattr(DummyHTTPConnector, "_check_availability", _check_availability)
+
     connector = DummyHTTPConnector.get()
     connector.request("GET", "_system/check")
     assert connector.url == "https://www.example.com"
@@ -138,4 +145,100 @@ def test_request_success(
         },
         timeout=DummyHTTPConnector.TIMEOUT,
         **expected_kwargs,
+    )
+
+
+@pytest.mark.parametrize(
+    (
+        "fake_response_time",
+        "error_or_response",
+        "expected_response",
+        "expected_retries",
+    ),
+    [
+        (
+            0.0,
+            Mock(
+                status_code=codes.internal_server_error,
+                json=MagicMock(return_value={"status": codes.internal_server_error}),
+            ),
+            {"status": codes.internal_server_error},
+            3,
+        ),
+        (
+            0.0,
+            Mock(
+                status_code=codes.too_many_requests,
+                json=MagicMock(return_value={"status": codes.too_many_requests}),
+            ),
+            {"status": codes.too_many_requests},
+            3,
+        ),
+        (
+            0.0,
+            Mock(
+                status_code=codes.forbidden,
+                json=MagicMock(return_value={"status": codes.forbidden}),
+            ),
+            {"status": codes.forbidden},
+            1,
+        ),
+        (
+            0.0,
+            ConnectTimeout("connect took too long"),
+            "ConnectTimeout('connect took too long')",
+            3,
+        ),
+        (
+            1.5,
+            TimedReadTimeout("read took too long", seconds=1.5),
+            "TimedReadTimeout('read took too long')",
+            5,
+        ),
+    ],
+    ids=[
+        "internal server error",
+        "too many requests",
+        "forbidden",
+        "connect timeout",
+        "timed read timeout",
+    ],
+)
+def test_request_failure(  # noqa: PLR0913
+    monkeypatch: MonkeyPatch,
+    caplog: LogCaptureFixture,
+    fake_response_time: float,
+    error_or_response: Exception | Response,
+    expected_response: str | dict[str, Any],
+    expected_retries: int,
+) -> None:
+    def mock_request(*_: Any, **__: Any) -> Response:
+        time.sleep(fake_response_time)
+        if isinstance(error_or_response, Exception):
+            raise error_or_response
+        return error_or_response
+
+    mocked_session = MagicMock(spec=requests.Session, name="dummy_session")
+    mocked_session.request = mock_request
+
+    def set_mocked_session(self: DummyHTTPConnector) -> None:
+        self.session = mocked_session
+
+    monkeypatch.setattr(DummyHTTPConnector, "_set_session", set_mocked_session)
+
+    connector = DummyHTTPConnector.get()
+
+    try:
+        response_or_error: Any = connector.request("POST", "things", payload=[])
+    except RequestException as error:
+        response_or_error = repr(error)
+
+    assert response_or_error == expected_response
+    assert len(caplog.messages) == expected_retries
+    assert all(
+        message.startswith("Backing off _send_request")
+        for message in caplog.messages[: expected_retries - 1]
+    )
+    assert caplog.messages[-1].startswith(
+        f"Giving up _send_request(...) after {expected_retries} tries"
     )

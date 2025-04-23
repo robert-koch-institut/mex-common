@@ -1,3 +1,4 @@
+from typing import Any
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
@@ -23,7 +24,6 @@ class BackendApiConnector(HTTPConnector):
     """Connector class to handle interaction with the Backend API."""
 
     API_VERSION = "v0"
-    INGEST_TIMEOUT = 30
 
     def _check_availability(self) -> None:
         """Send a GET request to verify the API is available."""
@@ -42,11 +42,13 @@ class BackendApiConnector(HTTPConnector):
     def ingest(
         self,
         models_or_rule_sets: list[AnyExtractedModel | AnyRuleSetResponse],
+        **kwargs: Any,
     ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
         """Post extracted models or rule-sets to the backend in bulk.
 
         Args:
             models_or_rule_sets: Extracted models or rule-sets to ingest
+            kwargs: Further keyword arguments passed to `requests`
 
         Raises:
             HTTPError: If post was not accepted, crashes or times out
@@ -63,7 +65,7 @@ class BackendApiConnector(HTTPConnector):
             params={
                 "format": "json",
             },
-            timeout=self.INGEST_TIMEOUT,
+            **kwargs,
         )
         return (
             ItemsContainer[AnyExtractedModel | AnyRuleSetResponse]
