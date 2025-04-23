@@ -54,6 +54,55 @@ class HTTPConnector(BaseConnector):
         response = self._send_request("HEAD", self.url, params={})
         response.raise_for_status()
 
+    def request_raw(
+        self,
+        method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
+        endpoint: str | None = None,
+        payload: Any = None,
+        params: Mapping[str, list[str] | str | None] | None = None,
+        **kwargs: Any,
+    ) -> Response:
+        """Prepare and send a raw request with error handling and payload serialization.
+
+        Args:
+            method: HTTP method to use
+            endpoint: Path to API endpoint to be prefixed with host and version
+            payload: Data to be serialized as JSON using the `MExEncoder`
+            params: Dictionary to be sent in the query string of the request
+            kwargs: Further keyword arguments passed to `requests`
+
+        Raises:
+            RequestException: Error from `requests` that can't be solved with a retry
+            HTTPError: Re-raised HTTP error with (truncated) response body
+
+        Returns:
+            Response object for the  request
+        """
+        # Prepare request
+        if endpoint:
+            url = f"{self.url.rstrip('/')}/{endpoint.lstrip('/')}"
+        else:
+            url = self.url
+        kwargs.setdefault("timeout", self.TIMEOUT)
+        if not kwargs.get("headers"):
+            kwargs.setdefault("headers", {})
+        kwargs["headers"].setdefault("User-Agent", "rki/mex")
+
+        if payload:
+            kwargs["data"] = json.dumps(payload, cls=MExEncoder)
+
+        # Send request
+        response = self._send_request(method, url, params, **kwargs)
+        try:
+            response.raise_for_status()
+        except HTTPError as error:
+            # Re-raise errors that outlived the retries and add the response body
+            raise HTTPError(
+                " ".join(str(arg) for arg in (*error.args, response.text[:4096])),
+                response=response,
+            ) from error
+        return response
+
     def request(
         self,
         method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
@@ -79,31 +128,12 @@ class HTTPConnector(BaseConnector):
         Returns:
             Parsed JSON body of the response
         """
-        # Prepare request
-        if endpoint:
-            url = f"{self.url.rstrip('/')}/{endpoint.lstrip('/')}"
-        else:
-            url = self.url
-        kwargs.setdefault("timeout", self.TIMEOUT)
         if not kwargs.get("headers"):
             kwargs.setdefault("headers", {})
         kwargs["headers"].setdefault("Accept", "application/json")
-        kwargs["headers"].setdefault("User-Agent", "rki/mex")
-
-        if payload:
-            kwargs["data"] = json.dumps(payload, cls=MExEncoder)
-
-        # Send request
-        response = self._send_request(method, url, params, **kwargs)
-        try:
-            response.raise_for_status()
-        except HTTPError as error:
-            # Re-raise errors that outlived the retries and add the response body
-            raise HTTPError(
-                " ".join(str(arg) for arg in (*error.args, response.text[:4096])),
-                response=response,
-            ) from error
-
+        response = self.request_raw(
+            method, endpoint=endpoint, payload=payload, params=params, **kwargs
+        )
         if response.status_code == codes.no_content:
             return {}
         return cast("dict[str, Any]", response.json())
