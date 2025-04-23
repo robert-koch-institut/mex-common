@@ -27,7 +27,6 @@ def extract_organigram_units() -> list[OrganigramUnit]:
     return [OrganigramUnit.model_validate(raw) for raw in raw_units]
 
 
-@lru_cache(maxsize=1024)
 def get_unit_synonyms(extracted_unit: ExtractedOrganizationalUnit) -> list[str]:
     """Generate synonyms for a unit using its name fields.
 

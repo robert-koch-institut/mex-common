@@ -168,7 +168,7 @@ class BaseSettings(PydanticBaseSettings):
     ldap_search_base: str = Field(
         "DC=rki,DC=local",
         description="Search base for the ldap connector.",
-        validation_alias="MEX_SEARCH_BASE",
+        validation_alias="MEX_LDAP_SEARCH_BASE",
     )
     wiki_api_url: AnyUrl = Field(
         Url("https://wikidata/"),

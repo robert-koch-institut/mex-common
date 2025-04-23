@@ -113,7 +113,7 @@ def get_inner_types(
 
 
 @lru_cache(maxsize=4048)
-def get_all_fields(model: BaseModel) -> dict[str, GenericFieldInfo]:
+def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
     """Return a combined dict of defined and computed fields of a given model."""
     return {
         **{
@@ -136,7 +136,7 @@ def get_all_fields(model: BaseModel) -> dict[str, GenericFieldInfo]:
 
 
 @lru_cache(maxsize=4048)
-def get_alias_lookup(model: BaseModel) -> dict[str, str]:
+def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
     """Build a cached mapping from field alias to field names."""
     return {
         field_info.alias or field_name: field_name
@@ -145,7 +145,7 @@ def get_alias_lookup(model: BaseModel) -> dict[str, str]:
 
 
 @lru_cache(maxsize=4048)
-def get_list_field_names(model: BaseModel) -> list[str]:
+def get_list_field_names(model: type[BaseModel]) -> list[str]:
     """Build a cached list of fields that look like lists."""
     field_names = []
     for field_name, field_info in get_all_fields(model).items():
@@ -159,7 +159,7 @@ def get_list_field_names(model: BaseModel) -> list[str]:
 
 
 @lru_cache(maxsize=4048)
-def get_field_names_allowing_none(model: BaseModel) -> list[str]:
+def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
     """Build a cached list of fields can be set to None."""
     field_names: list[str] = []
     for field_name, field_info in get_all_fields(model).items():
