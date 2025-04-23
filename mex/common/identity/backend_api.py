@@ -20,7 +20,8 @@ class BackendApiIdentityProvider(BaseProvider, BackendApiConnector):
         response = self.request(
             "POST",
             "identity",
-            {
+            params={
+                "format": "json",
                 "hadPrimarySource": had_primary_source,
                 "identifierInPrimarySource": identifier_in_primary_source,
             },
@@ -43,6 +44,7 @@ class BackendApiIdentityProvider(BaseProvider, BackendApiConnector):
             "GET",
             "identity",
             params={
+                "format": "json",
                 "hadPrimarySource": had_primary_source,
                 "identifierInPrimarySource": identifier_in_primary_source,
                 "stableTargetId": stable_target_id,

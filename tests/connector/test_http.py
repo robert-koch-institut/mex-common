@@ -120,13 +120,22 @@ def test_request_success(
 
     connector = DummyHTTPConnector.get()
 
-    actual_response = connector.request("POST", "things", payload=sent_payload)
+    actual_response = connector.request(
+        "POST",
+        "things",
+        payload=sent_payload,
+        params={
+            "format": "json",
+        },
+    )
 
     assert actual_response == expected_response
     assert mocked_session.request.call_args_list[-1] == call(
         "POST",
         "https://www.example.com/things",
-        None,
+        {
+            "format": "json",
+        },
         timeout=DummyHTTPConnector.TIMEOUT,
         **expected_kwargs,
     )

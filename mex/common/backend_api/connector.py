@@ -60,6 +60,9 @@ class BackendApiConnector(HTTPConnector):
             payload=ItemsContainer[AnyExtractedModel | AnyRuleSetResponse](
                 items=models_or_rule_sets
             ),
+            params={
+                "format": "json",
+            },
             timeout=self.INGEST_TIMEOUT,
         )
         return (
@@ -95,6 +98,7 @@ class BackendApiConnector(HTTPConnector):
             method="GET",
             endpoint="extracted-item",
             params={
+                "format": "json",
                 "q": query_string,
                 "stableTargetId": stable_target_id,
                 "entityType": entity_type,
@@ -131,6 +135,7 @@ class BackendApiConnector(HTTPConnector):
             method="GET",
             endpoint="merged-item",
             params={
+                "format": "json",
                 "q": query_string,
                 "entityType": entity_type,
                 "hadPrimarySource": had_primary_source,
@@ -160,6 +165,7 @@ class BackendApiConnector(HTTPConnector):
             method="GET",
             endpoint="merged-item",
             params={
+                "format": "json",
                 "identifier": identifier,
                 "limit": "1",
             },
@@ -194,6 +200,9 @@ class BackendApiConnector(HTTPConnector):
             method="POST",
             endpoint=f"preview-item/{stable_target_id}",
             payload=rule_set,
+            params={
+                "format": "json",
+            },
         )
         return MergedModelTypeAdapter.validate_python(response)
 
@@ -224,6 +233,7 @@ class BackendApiConnector(HTTPConnector):
             method="GET",
             endpoint="preview-item",
             params={
+                "format": "json",
                 "q": query_string,
                 "entityType": entity_type,
                 "hadPrimarySource": had_primary_source,
@@ -251,5 +261,8 @@ class BackendApiConnector(HTTPConnector):
         response = self.request(
             method="GET",
             endpoint=f"rule-set/{stable_target_id}",
+            params={
+                "format": "json",
+            },
         )
         return RuleSetResponseTypeAdapter.validate_python(response)

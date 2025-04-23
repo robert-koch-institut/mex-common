@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: request method of HTTPConnector return Response unless specified otherwise
+
 ### Deprecated
 
 ### Removed

@@ -21,6 +21,7 @@ def test_connector_get() -> None:
 
 
 def test_connector_store_reset() -> None:
+    CONNECTOR_STORE.reset()
     connector = DummyConnector.get()
     assert len(list(CONNECTOR_STORE)) == 1
 

@@ -51,4 +51,4 @@ class WikidataAPIConnector(HTTPConnector):
                 "formatversion": "2",
             },
         )
-        return cast("dict[str, str]", results["entities"][item_id])
+        return cast("dict[str, str]", results["entities"][item_id])  # type: ignore[index]

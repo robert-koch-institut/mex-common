@@ -51,7 +51,7 @@ class HTTPConnector(BaseConnector):
         payload: Any = None,
         params: Mapping[str, list[str] | str | None] | None = None,
         **kwargs: Any,
-    ) -> dict[str, Any]:
+    ) -> dict[str, Any] | Response:
         """Prepare and send a request with error handling and payload de/serialization.
 
         Args:
@@ -96,7 +96,9 @@ class HTTPConnector(BaseConnector):
 
         if response.status_code == codes.no_content:
             return {}
-        return cast("dict[str, Any]", response.json())
+        if (params) and params.get("format") == "json":
+            return cast("dict[str, Any]", response.json())
+        return response
 
     @backoff.on_predicate(
         backoff.fibo,

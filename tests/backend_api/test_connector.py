@@ -38,7 +38,7 @@ def test_ingest_mocked(
     assert mocked_backend.call_args == call(
         "POST",
         "http://localhost:8080/v0/ingest",
-        None,
+        {"format": "json"},
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
@@ -74,6 +74,7 @@ def test_fetch_extracted_items_mocked(
         "GET",
         "http://localhost:8080/v0/extracted-item",
         {
+            "format": "json",
             "q": "Tintzmann",
             "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
             "entityType": ["ExtractedPerson", "ExtractedContactPoint"],
@@ -110,6 +111,7 @@ def test_fetch_merged_items_mocked(
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
+            "format": "json",
             "q": "Tintzmann",
             "entityType": ["MergedPerson", "MergedContactPoint"],
             "hadPrimarySource": None,
@@ -139,6 +141,7 @@ def test_get_merged_item_mocked(
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
+            "format": "json",
             "identifier": "NGwfzG8ROsrvIiQIVDVy",
             "limit": "1",
         },
@@ -162,6 +165,7 @@ def test_get_merged_item_error_mocked(mocked_backend: MagicMock) -> None:
         "GET",
         "http://localhost:8080/v0/merged-item",
         {
+            "format": "json",
             "identifier": "NGwfzG8ROsrvIiQIVDVy",
             "limit": "1",
         },
@@ -189,7 +193,7 @@ def test_preview_merged_item_mocked(
     assert mocked_backend.call_args == call(
         "POST",
         "http://localhost:8080/v0/preview-item/NGwfzG8ROsrvIiQIVDVy",
-        None,
+        {"format": "json"},
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
@@ -222,6 +226,7 @@ def test_fetch_preview_items_mocked(
         "GET",
         "http://localhost:8080/v0/preview-item",
         {
+            "format": "json",
             "q": "foobar",
             "entityType": None,
             "hadPrimarySource": None,
@@ -249,7 +254,7 @@ def test_get_rule_set_mocked(
     assert mocked_backend.call_args == call(
         "GET",
         "http://localhost:8080/v0/rule-set/NGwfzG8ROsrvIiQIVDVy",
-        None,
+        {"format": "json"},
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",

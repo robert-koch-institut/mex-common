@@ -128,6 +128,7 @@ def test_fetch_mocked_empty(
         "GET",
         "http://localhost:8080/v0/identity",
         {
+            "format": "json",
             "hadPrimarySource": None,
             "identifierInPrimarySource": None,
             "stableTargetId": None,
