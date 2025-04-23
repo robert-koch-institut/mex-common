@@ -12,10 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added `BackendApiConnector` methods to create and update rule-sets
 - added `BackendApiConnector` methods to search in wiki, ldap and orcid
 - added `BackendApiConnector` methods to fetch and assign identities
-- added `backend_api.helpers` to fetch and assign cached identities
 - added `limit` parameter to ldap connector and helper functions
 - added pre-configured type adapters to all models with an `entityType`
 - added `MEX_LDAP_SEARCH_BASE` setting to configure the search domain
+- added `metrics` method to connectors to collect cache hits and misses
 
 ### Changes
 

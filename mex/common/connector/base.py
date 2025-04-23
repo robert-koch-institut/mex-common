@@ -15,6 +15,14 @@ class _ConnectorStore(SingletonStore["BaseConnector"]):
                 stack.push(closing(connector))
         super().reset()
 
+    def metrics(self) -> dict[str, int]:
+        """Generate metrics about all active connectors."""
+        return {
+            f"{connector.__class__.__name__}_{metric_key}": value
+            for connector in self
+            for metric_key, value in connector.metrics().items()
+        }
+
 
 CONNECTOR_STORE = _ConnectorStore()
 
@@ -31,6 +39,10 @@ class BaseConnector(metaclass=ABCMeta):
     @abstractmethod
     def __init__(self) -> None:  # pragma: no cover
         """Create a new connector instance."""
+
+    def metrics(self) -> dict[str, int]:  # pragma: no cover
+        """Generate metrics about connector usage."""
+        return {}
 
     @abstractmethod
     def close(self) -> None:  # pragma: no cover
