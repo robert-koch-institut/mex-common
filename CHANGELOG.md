@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Also allow raw request of HTTPConnector
-
 ### Changes
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.58.3] - 2025-04-24
+
+### Added
+
+- Also allow raw request of HTTPConnector
 
 ## [0.58.2] - 2025-04-22
 
