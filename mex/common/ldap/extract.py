@@ -119,7 +119,6 @@ def get_ldap_persons(
     surname: str = "*",
     given_name: str = "*",
     mail: str = "*",
-    offset: int = 0,
     limit: int = 10,
     **filters: str | None,
 ) -> list[LDAPPerson]:
@@ -129,7 +128,6 @@ def get_ldap_persons(
         given_name: Given name of a person, defaults to non-null
         surname: Surname of a person, defaults to non-null
         mail: Email address, defaults to non-null
-        offset: The starting index for pagination (not implemented)
         limit: How many items to return
         **filters: Additional filters
 
@@ -141,7 +139,6 @@ def get_ldap_persons(
         surname=surname,
         given_name=given_name,
         mail=mail,
-        offset=offset,
         limit=limit,
         **filters,
     )

@@ -85,6 +85,7 @@ class LDAPConnector(BaseConnector):
         self,
         mail: str = "*",
         sAMAccountName: str = "*",  # noqa: N803
+        objectGUID: str = "*",  # noqa: N803
         limit: int = 10,
         **filters: str | None,
     ) -> list[LDAPActor]:
@@ -95,6 +96,7 @@ class LDAPConnector(BaseConnector):
         Args:
             mail: Email address of the functional account
             sAMAccountName: Account name
+            objectGUID: Internal LDAP identifier
             limit: How many items to return
             **filters: Additional filters
 
@@ -105,8 +107,9 @@ class LDAPConnector(BaseConnector):
             LDAPUnit,
             objectCategory="Person",
             OU="Funktion",
-            sAMAccountName=sAMAccountName,
             mail=mail,
+            sAMAccountName=sAMAccountName,
+            objectGUID=objectGUID,
             limit=limit,
             **filters,
         )
@@ -116,7 +119,6 @@ class LDAPConnector(BaseConnector):
         surname: str = "*",
         given_name: str = "*",
         mail: str = "*",
-        offset: int = 0,  # noqa: ARG002
         limit: int = 10,
         **filters: str | None,
     ) -> list[LDAPPerson]:
@@ -132,7 +134,6 @@ class LDAPConnector(BaseConnector):
             given_name: Given name of a person, defaults to non-null
             surname: Surname of a person, defaults to non-null
             mail: Email address, defaults to non-null
-            offset: The starting index for pagination (not implemented)
             limit: How many items to return
             **filters: Additional filters
 
@@ -154,12 +155,16 @@ class LDAPConnector(BaseConnector):
 
     def get_functional_account(
         self,
+        mail: str = "*",
+        sAMAccountName: str = "*",  # noqa: N803
         objectGUID: str = "*",  # noqa: N803
         **filters: str | None,
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
         Args:
+            mail: Email address of the functional account
+            sAMAccountName: Account name
             objectGUID: Internal LDAP identifier
             **filters: Filters for LDAP search
 
@@ -170,8 +175,8 @@ class LDAPConnector(BaseConnector):
             Single LDAP functional account matching the filters
         """
         functional_accounts = self.get_functional_accounts(
-            mail="*",
-            sAMAccountName="*",
+            mail=mail,
+            sAMAccountName=sAMAccountName,
             objectGUID=objectGUID,
             limit=2,
             **filters,
@@ -215,7 +220,6 @@ class LDAPConnector(BaseConnector):
             mail="*",
             objectGUID=objectGUID,
             employeeID=employeeID,
-            offset=0,
             limit=2,
             **filters,
         )
