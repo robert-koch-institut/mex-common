@@ -170,6 +170,8 @@ class LDAPConnector(BaseConnector):
             Single LDAP functional account matching the filters
         """
         functional_accounts = self.get_functional_accounts(
+            mail="*",
+            sAMAccountName="*",
             objectGUID=objectGUID,
             limit=2,
             **filters,
@@ -208,8 +210,12 @@ class LDAPConnector(BaseConnector):
             Single LDAP person matching the filters
         """
         persons = self.get_persons(
+            surname="*",
+            given_name="*",
+            mail="*",
             objectGUID=objectGUID,
             employeeID=employeeID,
+            offset=0,
             limit=2,
             **filters,
         )
