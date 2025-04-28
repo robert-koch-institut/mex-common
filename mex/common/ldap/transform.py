@@ -3,7 +3,6 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from functools import lru_cache
 
-from mex.common.exceptions import MExError
 from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPPersonWithQuery
 from mex.common.logging import logger
 from mex.common.models import (
@@ -101,18 +100,6 @@ def transform_ldap_person_to_mex_person(
     Returns:
         Extracted person
     """
-    member_of = [
-        unit.stableTargetId
-        for d in (ldap_person.department, ldap_person.departmentNumber)
-        if d and (unit := units_by_identifier_in_primary_source.get(d.lower()))
-    ]
-    if not member_of:
-        msg = (
-            "No unit or department found for LDAP department "
-            f"'{ldap_person.department}' or departmentNumber "
-            f"'{ldap_person.departmentNumber}'"
-        )
-        raise MExError(msg)
     return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
@@ -122,7 +109,11 @@ def transform_ldap_person_to_mex_person(
         fullName=[ldap_person.displayName] if ldap_person.displayName else [],
         givenName=ldap_person.givenName,
         isniId=[],
-        memberOf=member_of,
+        memberOf=[
+            unit.stableTargetId
+            for d in (ldap_person.department, ldap_person.departmentNumber)
+            if d and (unit := units_by_identifier_in_primary_source.get(d.lower()))
+        ],
         orcidId=[],
     )
 

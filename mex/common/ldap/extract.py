@@ -115,20 +115,20 @@ def get_merged_ids_by_query_string(
     return merged_ids_by_attribute
 
 
-def get_persons_by_name(
-    display_name: str = "*",
+def get_ldap_persons(
+    offset: int = 0,
     limit: int = 10,
-    **filters: str,
+    **filters: str | None,
 ) -> list[LDAPPerson]:
     """Get all ldap persons matching the filters.
 
     Args:
-        display_name: Full name of the searched person, defaults to non-null.
+        offset: The starting index for pagination
         limit: How many persons to return
         **filters: Additional filters.
 
     Returns:
-        List of LDAP persons.
+        List of LDAP persons
     """
     connector = LDAPConnector.get()
-    return connector.get_persons(displayName=display_name, limit=limit, **filters)
+    return connector.get_persons(offset=offset, limit=limit, **filters)

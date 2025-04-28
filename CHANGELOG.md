@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added pre-configured type adapters to all models with an `entityType`
 - added `MEX_LDAP_SEARCH_BASE` setting to configure the search domain
 - added `metrics` method to connectors to collect cache hits and misses
+- added `get_extracted_organizational_unit_with_parents` organigram helper
+- added `transform_organigram_unit_to_extracted_organizational_unit` transformer
 
 ### Changes
 
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: convert primary-source functions from generator to list return
 - BREAKING: moved `split_to_caps` from types to transform module
 - BREAKING: moved `normalize` from utils to transform module
+- BREAKING: renamed `get_persons_by_name` to `get_ldap_persons`
 
 ### Deprecated
 
@@ -38,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: remove return value from `BackendApiConnector.ingest`
 - BREAKING: remove unused `LDAPConnector.get_unit` and `get_units` methods
 - BREAKING: remove `get_count_of_found_persons_by_name` to avoid duplicate queries
+- BREAKING: removed `member_of` validation for ldap persons
+- BREAKING: removed `get_all_extracted_primary_sources` helper
 
 ### Fixed
 

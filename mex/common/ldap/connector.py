@@ -53,7 +53,7 @@ class LDAPConnector(BaseConnector):
         self,
         model_cls: type[_LDAPActorT],
         limit: int = 10,
-        **filters: str,
+        **filters: str | None,
     ) -> list[_LDAPActorT]:
         """Fetch all items that match the given filters and parse to given model.
 
@@ -65,7 +65,9 @@ class LDAPConnector(BaseConnector):
         Returns:
             List of instances of `model_cls`
         """
-        search_filter = "".join(f"({key}={value})" for key, value in filters.items())
+        search_filter = "".join(
+            f"({key}={value})" for key, value in filters.items() if value
+        )
         response = self._connection.extend.standard.paged_search(
             search_base=self._search_base,
             search_filter=f"(&{search_filter})",
@@ -84,7 +86,7 @@ class LDAPConnector(BaseConnector):
         mail: str = "*",
         sAMAccountName: str = "*",  # noqa: N803
         limit: int = 10,
-        **filters: str,
+        **filters: str | None,
     ) -> list[LDAPActor]:
         """Get LDAP functional accounts that match provided filters.
 
@@ -114,8 +116,9 @@ class LDAPConnector(BaseConnector):
         surname: str = "*",
         given_name: str = "*",
         mail: str = "*",
+        offset: int = 0,  # noqa: ARG002
         limit: int = 10,
-        **filters: str,
+        **filters: str | None,
     ) -> list[LDAPPerson]:
         """Get LDAP persons that match the provided filters.
 
@@ -129,6 +132,7 @@ class LDAPConnector(BaseConnector):
             given_name: Given name of a person, defaults to non-null
             surname: Surname of a person, defaults to non-null
             mail: Email address, defaults to non-null
+            offset: The starting index for pagination (not implemented)
             limit: How many items to return
             **filters: Additional filters
 
@@ -151,7 +155,7 @@ class LDAPConnector(BaseConnector):
     def get_functional_account(
         self,
         objectGUID: str = "*",  # noqa: N803
-        **filters: str,
+        **filters: str | None,
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
@@ -188,7 +192,7 @@ class LDAPConnector(BaseConnector):
         self,
         objectGUID: str = "*",  # noqa: N803
         employeeID: str = "*",  # noqa: N803
-        **filters: str,
+        **filters: str | None,
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 

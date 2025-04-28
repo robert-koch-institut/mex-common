@@ -3,6 +3,7 @@ from contextlib import ExitStack, closing
 from typing import Self, cast, final
 
 from mex.common.context import SingletonStore
+from mex.common.transform import dromedary_to_snake
 
 
 class _ConnectorStore(SingletonStore["BaseConnector"]):
@@ -18,7 +19,7 @@ class _ConnectorStore(SingletonStore["BaseConnector"]):
     def metrics(self) -> dict[str, int]:
         """Generate metrics about all active connectors."""
         return {
-            f"{connector.__class__.__name__}_{metric_key}": value
+            f"{dromedary_to_snake(connector.__class__.__name__)}_{metric_key}": value
             for connector in self
             for metric_key, value in connector.metrics().items()
         }
