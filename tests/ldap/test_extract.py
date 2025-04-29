@@ -179,7 +179,7 @@ def test_get_merged_ids_by_query_string(
 
 def test_get_ldap_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons = get_ldap_persons(display_name="Sam Sample")
+    persons = get_ldap_persons("Sam Sample")
     persons_list = list(persons)
     expected = {
         "company": "RKI",

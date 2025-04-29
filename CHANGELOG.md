@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix ldap connector method signatures
+
 ### Security
 
 ## [0.59.0] - 2025-04-29
