@@ -7,9 +7,7 @@ from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
-    XY2_DEPARTMENT_ATTRS,
     XY2_FUNC_ACCOUNT_ATTRS,
-    XY_DEPARTMENT_ATTRS,
     XY_FUNC_ACCOUNT_ATTRS,
     LDAPMocker,
     PagedSearchResults,
@@ -77,19 +75,6 @@ def test_get_functional_accounts_ldap(kwargs: dict[str, str], pattern: str) -> N
     assert re.match(pattern, flat_result)
 
 
-def test_get_units_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[XY_DEPARTMENT_ATTRS]])
-    connector = LDAPConnector.get()
-    units = list(connector.get_units(sAMAccountName="XY"))
-
-    assert len(units) == 1
-    assert units[0].model_dump(exclude_none=True) == {
-        "mail": ["XY@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
-        "sAMAccountName": "XY",
-    }
-
-
 def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
     connector = LDAPConnector.get()
@@ -139,36 +124,6 @@ def test_get_person_mocked(ldap_mocker: LDAPMocker) -> None:
         "sn": "Sample",
     }
     assert person.model_dump(exclude_none=True) == expected
-
-
-@pytest.mark.parametrize(
-    ("search_results", "error_text"),
-    [
-        ([[]], "Cannot find AD unit"),
-        ([[XY_DEPARTMENT_ATTRS, XY2_DEPARTMENT_ATTRS]], "Found multiple AD units"),
-    ],
-)
-def test_get_unit_mocked_error(
-    ldap_mocker: LDAPMocker, search_results: PagedSearchResults, error_text: str
-) -> None:
-    ldap_mocker(search_results)
-    connector = LDAPConnector.get()
-    with pytest.raises(MExError, match=error_text):
-        connector.get_unit(sAMAccountName="whatever")
-
-
-def test_get_unit_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[XY_DEPARTMENT_ATTRS]])
-    connector = LDAPConnector.get()
-
-    unit = connector.get_unit(sAMAccountName=XY_DEPARTMENT_ATTRS["sAMAccountName"][0])
-
-    expected = {
-        "mail": ["XY@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000042"),
-        "sAMAccountName": "XY",
-    }
-    assert unit.model_dump(exclude_none=True) == expected
 
 
 @pytest.mark.parametrize(

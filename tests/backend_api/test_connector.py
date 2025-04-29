@@ -32,9 +32,8 @@ def test_ingest_mocked(
     mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
-    response = connector.ingest([extracted_person])
+    connector.ingest([extracted_person])
 
-    assert response == [extracted_person]
     assert mocked_backend.call_args == call(
         "POST",
         "http://localhost:8080/v0/ingest",

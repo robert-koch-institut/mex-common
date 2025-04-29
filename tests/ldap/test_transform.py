@@ -2,7 +2,6 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.exceptions import MExError
 from mex.common.ldap.models import LDAPActor, LDAPPerson
 from mex.common.ldap.transform import (
     PersonName,
@@ -37,7 +36,7 @@ def test_transform_ldap_actors_to_mex_contact_points(
     extracted_contact_points = transform_ldap_actors_to_mex_contact_points(
         [ldap_actor], extracted_primary_sources["ldap"]
     )
-    extracted_contact_point = next(iter(extracted_contact_points))
+    extracted_contact_point = extracted_contact_points[0]
 
     expected = {
         "email": ["mail@example3.com"],
@@ -74,7 +73,7 @@ def test_transform_ldap_persons_to_mex_persons(
     extracted_persons = transform_ldap_persons_to_mex_persons(
         [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
     )
-    extracted_person = next(iter(extracted_persons))
+    extracted_person = extracted_persons[0]
 
     expected = {
         "email": ["mail@example2.com"],
@@ -91,36 +90,6 @@ def test_transform_ldap_persons_to_mex_persons(
     assert (
         extracted_person.model_dump(exclude_none=True, exclude_defaults=True)
         == expected
-    )
-
-
-def test_transform_ldap_persons_to_mex_persons_with_unknown_department_raises_error(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-    extracted_unit: ExtractedOrganizationalUnit,
-) -> None:
-    ldap_person = LDAPPerson(
-        company="RKI",
-        department="wurstwasser",
-        departmentNumber="wurstglas",
-        displayName="Sample, Sam, Dr.",
-        employeeID="SampleS",
-        givenName="Sam",
-        mail=["mail@example2.com"],
-        objectGUID=UUID(int=42, version=4),
-        ou="MF",
-        sAMAccountName="samples",
-        sn="Sample",
-    )
-
-    extracted_persons = transform_ldap_persons_to_mex_persons(
-        [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
-    )
-    with pytest.raises(MExError) as error:
-        _ = list(extracted_persons)
-
-    assert all(
-        error.match(d) if d else False
-        for d in [ldap_person.department, ldap_person.departmentNumber]
     )
 
 

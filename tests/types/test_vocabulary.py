@@ -2,19 +2,8 @@ import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common.types import VocabularyEnum, VocabularyLoader, split_to_caps
+from mex.common.types import VocabularyEnum, VocabularyLoader
 from tests.types.conftest import TESTDATA_DIR
-
-
-@pytest.mark.parametrize(
-    ("string", "expected"),
-    [
-        ("", ""),
-        ("Foo(Bar) 99 - Batz", "FOO_BAR_BATZ"),
-    ],
-)
-def test_split_to_caps(string: str, expected: str) -> None:
-    assert split_to_caps(string) == expected
 
 
 @pytest.fixture

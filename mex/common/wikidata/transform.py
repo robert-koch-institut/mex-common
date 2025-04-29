@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Generator, Iterable, Sequence
 
 from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.types import Text, TextLanguage
@@ -79,21 +79,24 @@ def transform_wikidata_organization_to_extracted_organization(
 
 
 def _get_alternative_names(
-    native_labels: list[Claim], all_aliases: Aliases
+    native_labels: Sequence[Claim],
+    all_aliases: Aliases,
 ) -> list[Text]:
     """Get alternative names of an organization in DE and EN.
 
     Args:
-        native_labels: List of all native labels
+        native_labels: Sequence of all native labels
         all_aliases: All aliases of the organization
 
     Returns:
         combined list of native labels and aliases in DE and EN
     """
-    alternative_names = [
-        Text(value=alias.value, language=None)
-        for alias in all_aliases.en + all_aliases.de
-    ]
+    alternative_names = []
+
+    for alias in all_aliases.en + all_aliases.de:
+        text = Text(value=alias.value, language=None)
+        if text not in alternative_names:
+            alternative_names.append(text)
 
     for native_label in native_labels:
         value = native_label.mainsnak.datavalue.value.text
@@ -103,14 +106,19 @@ def _get_alternative_names(
             continue
 
         if language == "de":
-            alternative_names.append(Text(value=value, language=TextLanguage.DE))
+            text = Text(value=value, language=TextLanguage.DE)
         elif language == "en":
-            alternative_names.append(Text(value=value, language=TextLanguage.EN))
+            text = Text(value=value, language=TextLanguage.EN)
+        else:
+            continue
 
-    return list(set(alternative_names))
+        if text not in alternative_names:
+            alternative_names.append(text)
+
+    return alternative_names
 
 
-def _get_clean_short_names(short_names: list[Claim]) -> list[Text]:
+def _get_clean_short_names(short_names: Sequence[Claim]) -> list[Text]:
     """Get clean short names only in EN and DE and ignore the rest.
 
     Args:
@@ -119,7 +127,7 @@ def _get_clean_short_names(short_names: list[Claim]) -> list[Text]:
     Returns:
         list of clean short names in EN and DE
     """
-    clean_short_name = []
+    clean_short_names = []
     for short_name in short_names:
         value = short_name.mainsnak.datavalue.value.text
         language = short_name.mainsnak.datavalue.value.language
@@ -128,10 +136,16 @@ def _get_clean_short_names(short_names: list[Claim]) -> list[Text]:
             continue
 
         if language == "de":
-            clean_short_name.append(Text(value=value, language=TextLanguage.DE))
+            text = Text(value=value, language=TextLanguage.DE)
         elif language == "en":
-            clean_short_name.append(Text(value=value, language=TextLanguage.EN))
-    return list(set(clean_short_name))
+            text = Text(value=value, language=TextLanguage.EN)
+        else:
+            continue
+
+        if text not in clean_short_names:
+            clean_short_names.append(text)
+
+    return clean_short_names
 
 
 def _get_clean_labels(labels: Labels) -> list[Text]:

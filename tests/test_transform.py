@@ -16,7 +16,9 @@ from mex.common.transform import (
     ensure_postfix,
     ensure_prefix,
     kebab_to_camel,
+    normalize,
     snake_to_dromedary,
+    split_to_caps,
     to_key_and_values,
 )
 from mex.common.types import Identifier, TemporalEntity
@@ -156,6 +158,25 @@ def test_dromedary_to_kebab(string: str, expected: str) -> None:
 def test_kebab_to_camel(string: str, expected: str) -> None:
     result = kebab_to_camel(string)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [("", ""), ("__XYZ__", "xyz"), ("/foo/BAR$42", "foo bar 42")],
+)
+def test_normalize(string: str, expected: str) -> None:
+    assert normalize(string) == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [
+        ("", ""),
+        ("Foo(Bar) 99 - Batz", "FOO_BAR_BATZ"),
+    ],
+)
+def test_split_to_caps(string: str, expected: str) -> None:
+    assert split_to_caps(string) == expected
 
 
 @pytest.mark.parametrize(

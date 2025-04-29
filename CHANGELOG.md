@@ -9,11 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- added `BackendApiConnector` methods to create and update rule-sets
+- added `BackendApiConnector` methods to search in wiki, ldap and orcid
+- added `BackendApiConnector` methods to fetch and assign identities
+- added `limit` parameter to ldap connector and helper functions
+- added pre-configured type adapters to all models with an `entityType`
+- added `MEX_LDAP_SEARCH_BASE` setting to configure the search domain
+- added `metrics` method to connectors to collect cache hits and misses
+- added `get_extracted_organizational_unit_with_parents` organigram helper
+- added `transform_organigram_unit_to_extracted_organizational_unit` transformer
+
 ### Changes
+
+- BREAKING: move MergedModel and RuleSetResponse type adapters to models module
+- de-coupled BackendApiIdentityProvider from BackendApiConnector
+- moved memory and backend identity provider registration to package init file
+- BREAKING: convert ldap connector and related functions from generator to list returns
+- reconfigure all cached functions to have a `maxsize` setting
+- moved `get_alias_lookup`, `get_list_field_names` and `get_field_names_allowing_none`
+  from `BaseModel` class to utils module
+- BREAKING: convert organigram functions from generator to list returns
+- BREAKING: convert primary-source functions from generator to list return
+- BREAKING: moved `split_to_caps` from types to transform module
+- BREAKING: moved `normalize` from utils to transform module
+- BREAKING: renamed `get_persons_by_name` to `get_ldap_persons`
 
 ### Deprecated
 
 ### Removed
+
+- BREAKING: remove return value from `BackendApiConnector.ingest`
+- BREAKING: remove unused `LDAPConnector.get_unit` and `get_units` methods
+- BREAKING: remove `get_count_of_found_persons_by_name` to avoid duplicate queries
+- BREAKING: removed `member_of` validation for ldap persons
+- BREAKING: removed `get_all_extracted_primary_sources` helper
 
 ### Fixed
 

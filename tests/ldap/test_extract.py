@@ -5,11 +5,10 @@ import pytest
 from mex.common.identity import get_provider
 from mex.common.ldap.extract import (
     _get_merged_ids_by_attribute,
-    get_count_of_found_persons_by_name,
+    get_ldap_persons,
     get_merged_ids_by_email,
     get_merged_ids_by_employee_ids,
     get_merged_ids_by_query_string,
-    get_persons_by_name,
 )
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
@@ -178,9 +177,9 @@ def test_get_merged_ids_by_query_string(
     assert merged_ids_by_query_string == expected
 
 
-def test_get_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
+def test_get_ldap_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons = get_persons_by_name(display_name="Sam Sample")
+    persons = get_ldap_persons(display_name="Sam Sample")
     persons_list = list(persons)
     expected = {
         "company": "RKI",
@@ -200,9 +199,3 @@ def test_get_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
         persons_list[0].model_dump(exclude_none=True)["givenName"]
         == expected["givenName"]
     )
-
-
-def test_get_count_of_found_persons_by_name_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons_count = get_count_of_found_persons_by_name(display_name="Sam Sample")
-    assert persons_count == 1

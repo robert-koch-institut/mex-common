@@ -71,7 +71,6 @@ from mex.common.types.vocabulary import (
     Theme,
     VocabularyEnum,
     VocabularyLoader,
-    split_to_caps,
 )
 
 __all__ = (
@@ -160,7 +159,6 @@ __all__ = (
     "YearMonth",
     "YearMonthDay",
     "YearMonthDayTime",
-    "split_to_caps",
 )
 
 AnyVocabularyEnum = (

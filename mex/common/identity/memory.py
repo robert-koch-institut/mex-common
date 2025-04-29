@@ -108,6 +108,10 @@ class MemoryIdentityProvider(BaseProvider):
 
         return list(identities)
 
+    def metrics(self) -> dict[str, int]:
+        """Generate metrics about identity provider usage."""
+        return {"database_size": len(self._database)}
+
     def close(self) -> None:
         """Trash the in-memory identity database."""
         self._database.clear()

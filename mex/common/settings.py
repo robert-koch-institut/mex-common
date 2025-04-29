@@ -165,6 +165,11 @@ class BaseSettings(PydanticBaseSettings):
         "`port` is the port of the ldap server.",
         validation_alias="MEX_LDAP_URL",
     )
+    ldap_search_base: str = Field(
+        "DC=rki,DC=local",
+        description="Search base for the ldap connector.",
+        validation_alias="MEX_LDAP_SEARCH_BASE",
+    )
     wiki_api_url: AnyUrl = Field(
         Url("https://wikidata/"),
         description="URL of the Wikidata API used to resolve an ID to an organization.",

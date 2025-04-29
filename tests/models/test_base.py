@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Any
 
 import pytest
@@ -19,37 +18,6 @@ class ComplexDummyModel(BaseModel):
     @property
     def computed_int(self) -> int:
         return 42
-
-
-def test_get_alias_lookup() -> None:
-    assert ComplexDummyModel._get_alias_lookup() == {
-        "optional_str": "optional_str",
-        "required_str": "required_str",
-        "optional_list": "optional_list",
-        "required_list": "required_list",
-        "computedInt": "computed_int",
-    }
-
-
-def test_get_list_field_names() -> None:
-    assert ComplexDummyModel._get_list_field_names() == [
-        "optional_list",
-        "required_list",
-    ]
-
-
-def test_get_field_names_allowing_none() -> None:
-    assert ComplexDummyModel._get_field_names_allowing_none() == [
-        "optional_str",
-        "optional_list",
-    ]
-
-
-class Animal(Enum):
-    """Dummy enum to use in tests."""
-
-    CAT = "cat"
-    DOG = "dog"
 
 
 @pytest.mark.parametrize(

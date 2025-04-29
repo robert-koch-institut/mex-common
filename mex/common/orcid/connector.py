@@ -60,13 +60,13 @@ class OrcidConnector(HTTPConnector):
         """
         if filters is None:
             filters = {}
-        if given_names:
-            filters["given-names"] = given_names
-        if family_name:
-            filters["family-name"] = family_name
-        if given_and_family_names:
-            filters["given-and-family-names"] = given_and_family_names
+        if given_names and (n := given_names.strip()):
+            filters["given-names"] = n
+        if family_name and (n := family_name.strip()):
+            filters["family-name"] = n
+        if given_and_family_names and (n := given_and_family_names.strip()):
+            filters["given-and-family-names"] = n
         query = self.build_query(filters)
-        params = {"q": query, "start": str(skip), "rows": str(limit)}
+        params = {"q": query or None, "start": str(skip), "rows": str(limit)}
         response = self.request(method="GET", endpoint="search", params=params)
         return OrcidSearchResponse.model_validate(response)

@@ -7,7 +7,7 @@ from mex.common.orcid.connector import OrcidConnector
 from mex.common.orcid.models import OrcidRecord
 
 
-@lru_cache(maxsize=100)
+@lru_cache(maxsize=128)
 def get_orcid_record_by_id(orcid_id: str) -> OrcidRecord:
     """Get a single orcid record by id.
 

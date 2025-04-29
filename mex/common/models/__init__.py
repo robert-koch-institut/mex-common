@@ -70,7 +70,9 @@ In addition to the classes themselves, `mex.common.models` also exposes various
 lists of models, lookups by class name and typing for unions of models.
 """
 
-from typing import Final, get_args
+from typing import Annotated, Final, get_args
+
+from pydantic import Field, TypeAdapter
 
 from mex.common.models.access_platform import (
     AccessPlatformFilter,
@@ -294,6 +296,7 @@ __all__ = (
     "AdditiveConsent",
     "AdditiveContactPoint",
     "AdditiveDistribution",
+    "AdditiveModelTypeAdapter",
     "AdditiveOrganization",
     "AdditiveOrganizationalUnit",
     "AdditivePerson",
@@ -349,6 +352,7 @@ __all__ = (
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
+    "ExtractedModelTypeAdapter",
     "ExtractedOrganization",
     "ExtractedOrganizationalUnit",
     "ExtractedPerson",
@@ -357,9 +361,11 @@ __all__ = (
     "ExtractedVariable",
     "ExtractedVariableGroup",
     "FilterField",
+    "FilterModelTypeAdapter",
     "FilterRule",
     "ItemsContainer",
     "MappingField",
+    "MappingModelTypeAdapter",
     "MappingRule",
     "MergedAccessPlatform",
     "MergedActivity",
@@ -368,6 +374,7 @@ __all__ = (
     "MergedContactPoint",
     "MergedDistribution",
     "MergedItem",
+    "MergedModelTypeAdapter",
     "MergedOrganization",
     "MergedOrganizationalUnit",
     "MergedPerson",
@@ -394,6 +401,7 @@ __all__ = (
     "PreventiveConsent",
     "PreventiveContactPoint",
     "PreventiveDistribution",
+    "PreventiveModelTypeAdapter",
     "PreventiveOrganization",
     "PreventiveOrganizationalUnit",
     "PreventivePerson",
@@ -408,6 +416,7 @@ __all__ = (
     "PreviewConsent",
     "PreviewContactPoint",
     "PreviewDistribution",
+    "PreviewModelTypeAdapter",
     "PreviewOrganization",
     "PreviewOrganizationalUnit",
     "PreviewPerson",
@@ -423,12 +432,16 @@ __all__ = (
     "ResourceMapping",
     "ResourceRuleSetRequest",
     "ResourceRuleSetResponse",
+    "RuleModelTypeAdapter",
+    "RuleSetRequestTypeAdapter",
+    "RuleSetResponseTypeAdapter",
     "SubtractiveAccessPlatform",
     "SubtractiveActivity",
     "SubtractiveBibliographicResource",
     "SubtractiveConsent",
     "SubtractiveContactPoint",
     "SubtractiveDistribution",
+    "SubtractiveModelTypeAdapter",
     "SubtractiveOrganization",
     "SubtractiveOrganizationalUnit",
     "SubtractivePerson",
@@ -486,6 +499,9 @@ AnyExtractedModel = (
     | ExtractedVariable
     | ExtractedVariableGroup
 )
+ExtractedModelTypeAdapter: TypeAdapter[AnyExtractedModel] = TypeAdapter(
+    Annotated[AnyExtractedModel, Field(discriminator="entityType")]
+)
 EXTRACTED_MODEL_CLASSES: Final[list[type[AnyExtractedModel]]] = list(
     get_args(AnyExtractedModel)
 )
@@ -508,6 +524,9 @@ AnyMergedModel = (
     | MergedVariable
     | MergedVariableGroup
 )
+MergedModelTypeAdapter: TypeAdapter[AnyMergedModel] = TypeAdapter(
+    Annotated[AnyMergedModel, Field(discriminator="entityType")]
+)
 MERGED_MODEL_CLASSES: Final[list[type[AnyMergedModel]]] = list(get_args(AnyMergedModel))
 MERGED_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyMergedModel]]] = {
     cls.__name__: cls for cls in MERGED_MODEL_CLASSES
@@ -527,6 +546,9 @@ AnyPreviewModel = (
     | PreviewResource
     | PreviewVariable
     | PreviewVariableGroup
+)
+PreviewModelTypeAdapter: TypeAdapter[AnyPreviewModel] = TypeAdapter(
+    Annotated[AnyPreviewModel, Field(discriminator="entityType")]
 )
 PREVIEW_MODEL_CLASSES: Final[list[type[AnyPreviewModel]]] = list(
     get_args(AnyPreviewModel)
@@ -550,6 +572,9 @@ AnyAdditiveModel = (
     | AdditiveVariable
     | AdditiveVariableGroup
 )
+AdditiveModelTypeAdapter: TypeAdapter[AnyAdditiveModel] = TypeAdapter(
+    Annotated[AnyAdditiveModel, Field(discriminator="entityType")]
+)
 ADDITIVE_MODEL_CLASSES: Final[list[type[AnyAdditiveModel]]] = list(
     get_args(AnyAdditiveModel)
 )
@@ -571,6 +596,9 @@ AnySubtractiveModel = (
     | SubtractiveResource
     | SubtractiveVariable
     | SubtractiveVariableGroup
+)
+SubtractiveModelTypeAdapter: TypeAdapter[AnySubtractiveModel] = TypeAdapter(
+    Annotated[AnySubtractiveModel, Field(discriminator="entityType")]
 )
 SUBTRACTIVE_MODEL_CLASSES: Final[list[type[AnySubtractiveModel]]] = list(
     get_args(AnySubtractiveModel)
@@ -594,6 +622,9 @@ AnyPreventiveModel = (
     | PreventiveVariable
     | PreventiveVariableGroup
 )
+PreventiveModelTypeAdapter: TypeAdapter[AnyPreventiveModel] = TypeAdapter(
+    Annotated[AnyPreventiveModel, Field(discriminator="entityType")]
+)
 PREVENTIVE_MODEL_CLASSES: Final[list[type[AnyPreventiveModel]]] = list(
     get_args(AnyPreventiveModel)
 )
@@ -602,6 +633,9 @@ PREVENTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPreventiveModel]]] = {
 }
 
 AnyRuleModel = AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel
+RuleModelTypeAdapter: TypeAdapter[AnyRuleModel] = TypeAdapter(
+    Annotated[AnyRuleModel, Field(discriminator="entityType")]
+)
 RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel))
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
@@ -621,6 +655,9 @@ AnyRuleSetRequest = (
     | ResourceRuleSetRequest
     | VariableRuleSetRequest
     | VariableGroupRuleSetRequest
+)
+RuleSetRequestTypeAdapter: TypeAdapter[AnyRuleSetRequest] = TypeAdapter(
+    Annotated[AnyRuleSetRequest, Field(discriminator="entityType")]
 )
 RULE_SET_REQUEST_CLASSES: Final[list[type[AnyRuleSetRequest]]] = list(
     get_args(AnyRuleSetRequest)
@@ -644,6 +681,9 @@ AnyRuleSetResponse = (
     | VariableRuleSetResponse
     | VariableGroupRuleSetResponse
 )
+RuleSetResponseTypeAdapter: TypeAdapter[AnyRuleSetResponse] = TypeAdapter(
+    Annotated[AnyRuleSetResponse, Field(discriminator="entityType")]
+)
 RULE_SET_RESPONSE_CLASSES: Final[list[type[AnyRuleSetResponse]]] = list(
     get_args(AnyRuleSetResponse)
 )
@@ -665,6 +705,9 @@ AnyMappingModel = (
     | ResourceMapping
     | VariableMapping
     | VariableGroupMapping
+)
+MappingModelTypeAdapter: TypeAdapter[AnyMappingModel] = TypeAdapter(
+    Annotated[AnyMappingModel, Field(discriminator="entityType")]
 )
 MAPPING_MODEL_CLASSES: Final[list[type[AnyMappingModel]]] = list(
     get_args(AnyMappingModel)
@@ -691,6 +734,9 @@ AnyFilterModel = (
     | ResourceFilter
     | VariableFilter
     | VariableGroupFilter
+)
+FilterModelTypeAdapter: TypeAdapter[AnyFilterModel] = TypeAdapter(
+    Annotated[AnyFilterModel, Field(discriminator="entityType")]
 )
 FILTER_MODEL_CLASSES: Final[list[type[AnyFilterModel]]] = list(get_args(AnyFilterModel))
 FILTER_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyFilterModel]]] = {

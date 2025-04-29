@@ -1,4 +1,3 @@
-from functools import cache
 from typing import cast
 
 from mex.common.connector.http import HTTPConnector
@@ -28,7 +27,6 @@ class WikidataAPIConnector(HTTPConnector):
         """Send a GET request to verify the host is available."""
         self.request("GET", params={"format": "json", "action": "wbgetentities"})
 
-    @cache  # noqa: B019
     def get_wikidata_item_details_by_id(self, item_id: str) -> dict[str, str]:
         """Get details of a wikidata item by item id.
 

@@ -1,54 +1,51 @@
-from collections.abc import Iterable
+from collections.abc import Generator
 
+from mex.common.exceptions import MExError
 from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.models import OrganigramUnit
-from mex.common.types import Email, MergedOrganizationalUnitIdentifier
+from mex.common.organigram.transform import (
+    transform_organigram_unit_to_extracted_organizational_unit,
+)
+from mex.common.types import MergedOrganizationalUnitIdentifier
 
 
-def transform_organigram_unit_to_extracted_organizational_unit(
-    organigram_unit: OrganigramUnit,
-    primary_source: ExtractedPrimarySource,
-) -> ExtractedOrganizationalUnit:
-    """Transform an organigram unit into an ExtractedOrganizationalUnit.
-
-    Args:
-        organigram_unit: Iterable of organigram units coming from the JSON file
-        primary_source: Primary source for organigram
-
-    Returns:
-        ExtractedOrganizationalUnit
-    """
-    return ExtractedOrganizationalUnit(
-        identifierInPrimarySource=organigram_unit.identifier,
-        hadPrimarySource=primary_source.stableTargetId,
-        alternativeName=organigram_unit.alternativeName,
-        email=[Email(email) for email in organigram_unit.email],
-        name=organigram_unit.name,
-        shortName=organigram_unit.shortName,
-        website=[organigram_unit.website] if organigram_unit.website else [],
-    )
-
-
-def transform_organigram_units_to_organizational_units(
-    organigram_units: Iterable[OrganigramUnit],
+def get_extracted_organizational_unit_with_parents(
+    name: str,
     primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedOrganizationalUnit]:
-    """Transform organigram units into ExtractedOrganizationalUnits.
-
-    Beware that the order of the output is not necessarily the order of the input.
+    """Pick the unit with the given name and transform it along with its parents.
 
     Args:
-        organigram_units: Iterable of organigram units coming from the JSON file
-        primary_source: Primary source for organigram
+        name: Name (`identifierInPrimarySource`) of the organigram unit
+        primary_source: Extracted primary source for the organigram
 
     Returns:
-        List of ExtractedOrganizationalUnit
+        ExtractedOrganizationalUnit with its parents
     """
+    organigram_units = extract_organigram_units()
+
+    def with_parents(n: str) -> Generator[OrganigramUnit, None, None]:
+        for unit in organigram_units:
+            if n == unit.identifier or n in (
+                t.value
+                for texts in (unit.name, unit.shortName, unit.alternativeName)
+                for t in texts
+            ):
+                yield unit
+                if unit.parentUnit:
+                    yield from with_parents(unit.parentUnit)
+                break
+        else:
+            msg = f"could not find unit for {name}"
+            raise MExError(msg)
+
+    organigram_unit_with_parents = list(with_parents(name))
     extracted_unit_by_id_in_primary_source: dict[str, ExtractedOrganizationalUnit] = {}
     parent_id_in_primary_source_by_id_in_primary_source: dict[str, str] = {}
 
-    for unit in organigram_units:
+    for unit in organigram_unit_with_parents:
         extracted_unit = transform_organigram_unit_to_extracted_organizational_unit(
             unit, primary_source
         )

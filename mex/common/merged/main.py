@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any, Literal, overload
 
 from pydantic_core import ValidationError
@@ -23,8 +24,8 @@ from mex.common.types import Identifier
 
 def _merge_extracted_items_and_apply_preventive_rule(
     merged_dict: dict[str, Any],
-    mergeable_fields: list[str],
-    extracted_items: list[AnyExtractedModel],
+    mergeable_fields: Sequence[str],
+    extracted_items: Sequence[AnyExtractedModel],
     rule: AnyPreventiveModel | None,
 ) -> None:
     """Merge a list of extracted items while applying a preventive rule.
@@ -50,7 +51,7 @@ def _merge_extracted_items_and_apply_preventive_rule(
 
 def _apply_additive_rule(
     merged_dict: dict[str, Any],
-    mergeable_fields: list[str],
+    mergeable_fields: Sequence[str],
     rule: AnyAdditiveModel,
 ) -> None:
     """Merge the values from an additive rule into a `merged_dict`.
@@ -67,7 +68,7 @@ def _apply_additive_rule(
 
 def _apply_subtractive_rule(
     merged_dict: dict[str, Any],
-    mergeable_fields: list[str],
+    mergeable_fields: Sequence[str],
     rule: AnySubtractiveModel,
 ) -> None:
     """Prune values of a subtractive rule from a `merged_dict`.

@@ -1,9 +1,11 @@
 import re
+from functools import lru_cache
 
 from mex.common.wikidata.connector import WikidataAPIConnector
 from mex.common.wikidata.models import WikidataOrganization
 
 
+@lru_cache(maxsize=128)
 def get_wikidata_organization(item_id_or_url: str) -> WikidataOrganization:
     """Get a wikidata item details by its ID.
 

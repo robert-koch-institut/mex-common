@@ -1,5 +1,3 @@
-from collections.abc import Generator
-from functools import cache
 from typing import TypeVar
 from urllib.parse import urlsplit
 
@@ -21,15 +19,12 @@ _LDAPActorT = TypeVar("_LDAPActorT", bound=LDAPActor)
 class LDAPConnector(BaseConnector):
     """Connector class to handle credentials and querying of LDAP."""
 
-    DEFAULT_PORT = 636
-    SEARCH_BASE = "DC=rki,DC=local"
-
     def __init__(self) -> None:
         """Create a new LDAP connection."""
         settings = BaseSettings.get()
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
-        port = int(url.port or self.DEFAULT_PORT)
+        port = int(url.port) if url.port else None
         server = Server(host, port, use_ssl=True)
         connection = Connection(
             server,
@@ -39,6 +34,7 @@ class LDAPConnector(BaseConnector):
             read_only=True,
         )
         self._connection = connection.__enter__()
+        self._search_base = settings.ldap_search_base
         if not self._is_service_available():
             msg = f"LDAP service not available at url: {host}:{port}"
             raise MExError(msg)
@@ -54,42 +50,45 @@ class LDAPConnector(BaseConnector):
         self._connection.__exit__(None, None, None)
 
     def _fetch(
-        self, model_cls: type[_LDAPActorT], /, **filters: str
-    ) -> Generator[_LDAPActorT, None, None]:
+        self,
+        model_cls: type[_LDAPActorT],
+        limit: int = 10,
+        **filters: str | None,
+    ) -> list[_LDAPActorT]:
         """Fetch all items that match the given filters and parse to given model.
 
         Args:
             model_cls: Pydantic model class
+            limit: How many items to return
             **filters: LDAP compatible filters, will be joined in AND-condition
 
         Returns:
-            Generator for instance of `model_cls`
+            List of instances of `model_cls`
         """
-        search_filter = "".join(f"({key}={value})" for key, value in filters.items())
-        entries = self._paged_ldap_search(
-            model_cls.get_ldap_fields(), search_filter, self.SEARCH_BASE
+        search_filter = "".join(
+            f"({key}={value})" for key, value in filters.items() if value
         )
-        for entry in entries:
-            if attributes := entry.get("attributes"):
-                yield model_cls.model_validate(attributes)
-
-    @cache  # noqa: B019
-    def _paged_ldap_search(
-        self, fields: tuple[str], search_filter: str, search_base: str
-    ) -> list[dict[str, str]]:
-        entries = self._connection.extend.standard.paged_search(
-            search_base=search_base,
+        response = self._connection.extend.standard.paged_search(
+            search_base=self._search_base,
             search_filter=f"(&{search_filter})",
-            attributes=fields,
+            attributes=model_cls.get_ldap_fields(),
+            generator=False,
+            size_limit=limit,
         )
-        return list(entries)
+        return [
+            model_cls.model_validate(attributes)
+            for item in response
+            if (attributes := item.get("attributes"))
+        ]
 
     def get_functional_accounts(
         self,
         mail: str = "*",
         sAMAccountName: str = "*",  # noqa: N803
-        **filters: str,
-    ) -> Generator[LDAPActor, None, None]:
+        objectGUID: str = "*",  # noqa: N803
+        limit: int = 10,
+        **filters: str | None,
+    ) -> list[LDAPActor]:
         """Get LDAP functional accounts that match provided filters.
 
         Some projects/resources declare functional mailboxes as their contact.
@@ -97,17 +96,21 @@ class LDAPConnector(BaseConnector):
         Args:
             mail: Email address of the functional account
             sAMAccountName: Account name
+            objectGUID: Internal LDAP identifier
+            limit: How many items to return
             **filters: Additional filters
 
         Returns:
-            Generator for LDAP functional accounts
+            List of LDAP functional accounts
         """
-        yield from self._fetch(
+        return self._fetch(
             LDAPUnit,
             objectCategory="Person",
             OU="Funktion",
-            sAMAccountName=sAMAccountName,
             mail=mail,
+            sAMAccountName=sAMAccountName,
+            objectGUID=objectGUID,
+            limit=limit,
             **filters,
         )
 
@@ -116,8 +119,9 @@ class LDAPConnector(BaseConnector):
         surname: str = "*",
         given_name: str = "*",
         mail: str = "*",
-        **filters: str,
-    ) -> Generator[LDAPPerson, None, None]:
+        limit: int = 10,
+        **filters: str | None,
+    ) -> list[LDAPPerson]:
         """Get LDAP persons that match the provided filters.
 
         An LDAP person's objectGUIDs is stable across name changes, whereas name based
@@ -130,12 +134,13 @@ class LDAPConnector(BaseConnector):
             given_name: Given name of a person, defaults to non-null
             surname: Surname of a person, defaults to non-null
             mail: Email address, defaults to non-null
+            limit: How many items to return
             **filters: Additional filters
 
         Returns:
-            Generator for LDAP persons
+            List of LDAP persons
         """
-        yield from self._fetch(
+        return self._fetch(
             LDAPPerson,
             objectClass="user",
             objectCategory="Person",
@@ -144,41 +149,22 @@ class LDAPConnector(BaseConnector):
             mail=mail,
             sn=surname,
             givenName=given_name,
-            **filters,
-        )
-
-    def get_units(
-        self,
-        sAMAccountName: str = "*",  # noqa: N803
-        mail: str = "*",
-        **filters: str,
-    ) -> Generator[LDAPUnit, None, None]:
-        """Get LDAP units that match the provided filters.
-
-        Args:
-            sAMAccountName: Account name of the unit
-            mail: Email address of the unit
-            **filters: Additional filters
-
-        Returns:
-            Generator for LDAP units
-        """
-        yield from self._fetch(
-            LDAPUnit,
-            OU="Funktion",
-            sAMAccountName=sAMAccountName,
-            mail=mail,
+            limit=limit,
             **filters,
         )
 
     def get_functional_account(
         self,
+        mail: str = "*",
+        sAMAccountName: str = "*",  # noqa: N803
         objectGUID: str = "*",  # noqa: N803
-        **filters: str,
+        **filters: str | None,
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
         Args:
+            mail: Email address of the functional account
+            sAMAccountName: Account name
             objectGUID: Internal LDAP identifier
             **filters: Filters for LDAP search
 
@@ -188,11 +174,12 @@ class LDAPConnector(BaseConnector):
         Returns:
             Single LDAP functional account matching the filters
         """
-        functional_accounts = list(
-            self.get_functional_accounts(
-                objectGUID=objectGUID,
-                **filters,
-            )
+        functional_accounts = self.get_functional_accounts(
+            mail=mail,
+            sAMAccountName=sAMAccountName,
+            objectGUID=objectGUID,
+            limit=2,
+            **filters,
         )
         if not functional_accounts:
             msg = (
@@ -212,7 +199,7 @@ class LDAPConnector(BaseConnector):
         self,
         objectGUID: str = "*",  # noqa: N803
         employeeID: str = "*",  # noqa: N803
-        **filters: str,
+        **filters: str | None,
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 
@@ -227,12 +214,14 @@ class LDAPConnector(BaseConnector):
         Returns:
             Single LDAP person matching the filters
         """
-        persons = list(
-            self.get_persons(
-                objectGUID=objectGUID,
-                employeeID=employeeID,
-                **filters,
-            )
+        persons = self.get_persons(
+            surname="*",
+            given_name="*",
+            mail="*",
+            objectGUID=objectGUID,
+            employeeID=employeeID,
+            limit=2,
+            **filters,
         )
         if not persons:
             msg = (
@@ -247,24 +236,3 @@ class LDAPConnector(BaseConnector):
             )
             raise FoundMoreThanOneError(msg)
         return persons[0]
-
-    def get_unit(self, **filters: str) -> LDAPUnit:
-        """Get a single LDAP unit for the given filters.
-
-        Args:
-            **filters: Filters for LDAP search
-
-        Raises:
-            MExError: If number of LDAP entries that match the filters is not 1
-
-        Returns:
-            Single LDAP unit matching the filters
-        """
-        units = list(self.get_units(**filters))
-        if not units:
-            msg = f"Cannot find AD unit for filters '{filters}'"
-            raise EmptySearchResultError(msg)
-        if len(units) > 1:
-            msg = f"Found multiple AD units for filters '{filters}'"
-            raise FoundMoreThanOneError(msg)
-        return units[0]
