@@ -11,17 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-model to 3.5.7
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- fix ldap connector method signatures
-
 ### Security
+
+## [0.59.1] - 2025-04-29
+
+### Changes
+
+- update mex-model to 3.5.7
+
+### Fixed
+
+- fix ldap connector method signatures
 
 ## [0.59.0] - 2025-04-29
 
