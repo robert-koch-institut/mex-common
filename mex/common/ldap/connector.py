@@ -83,9 +83,10 @@ class LDAPConnector(BaseConnector):
 
     def get_functional_accounts(
         self,
+        *,
         mail: str = "*",
-        sAMAccountName: str = "*",  # noqa: N803
         objectGUID: str = "*",  # noqa: N803
+        sAMAccountName: str = "*",  # noqa: N803
         limit: int = 10,
         **filters: str | None,
     ) -> list[LDAPActor]:
@@ -95,8 +96,8 @@ class LDAPConnector(BaseConnector):
 
         Args:
             mail: Email address of the functional account
-            sAMAccountName: Account name
             objectGUID: Internal LDAP identifier
+            sAMAccountName: Account name
             limit: How many items to return
             **filters: Additional filters
 
@@ -105,20 +106,24 @@ class LDAPConnector(BaseConnector):
         """
         return self._fetch(
             LDAPUnit,
-            objectCategory="Person",
-            OU="Funktion",
             mail=mail,
-            sAMAccountName=sAMAccountName,
+            objectCategory="Person",
             objectGUID=objectGUID,
+            OU="Funktion",
+            sAMAccountName=sAMAccountName,
             limit=limit,
             **filters,
         )
 
-    def get_persons(
+    def get_persons(  # noqa: PLR0913
         self,
-        surname: str = "*",
+        *,
+        employeeID: str = "*",  # noqa: N803
         given_name: str = "*",
         mail: str = "*",
+        objectGUID: str = "*",  # noqa: N803
+        sAMAccountName: str = "*",  # noqa: N803
+        surname: str = "*",
         limit: int = 10,
         **filters: str | None,
     ) -> list[LDAPPerson]:
@@ -128,12 +133,15 @@ class LDAPConnector(BaseConnector):
         person identifiers of the schema SurnameF are not stable.
 
         Only consider LDAP entries of objectClass 'user', ObjectCategory 'Person'.
-        Additional required attributes are: sAMAccountName, employeeId.
+        Additional required attributes are: sAMAccountName, employeeID.
 
         Args:
+            employeeID: Employee identifier
             given_name: Given name of a person, defaults to non-null
-            surname: Surname of a person, defaults to non-null
             mail: Email address, defaults to non-null
+            objectGUID: Internal LDAP identifier
+            sAMAccountName: Account name
+            surname: Surname of a person, defaults to non-null
             limit: How many items to return
             **filters: Additional filters
 
@@ -144,28 +152,30 @@ class LDAPConnector(BaseConnector):
             LDAPPerson,
             objectClass="user",
             objectCategory="Person",
-            sAMAccountName="*",
-            employeeId="*",
-            mail=mail,
-            sn=surname,
+            employeeID=employeeID,
             givenName=given_name,
+            mail=mail,
+            objectGUID=objectGUID,
+            sAMAccountName=sAMAccountName,
+            sn=surname,
             limit=limit,
             **filters,
         )
 
     def get_functional_account(
         self,
+        *,
         mail: str = "*",
-        sAMAccountName: str = "*",  # noqa: N803
         objectGUID: str = "*",  # noqa: N803
+        sAMAccountName: str = "*",  # noqa: N803
         **filters: str | None,
     ) -> LDAPActor:
         """Get a single LDAP functional account for the given filters.
 
         Args:
             mail: Email address of the functional account
-            sAMAccountName: Account name
             objectGUID: Internal LDAP identifier
+            sAMAccountName: Account name
             **filters: Filters for LDAP search
 
         Raises:
@@ -176,8 +186,8 @@ class LDAPConnector(BaseConnector):
         """
         functional_accounts = self.get_functional_accounts(
             mail=mail,
-            sAMAccountName=sAMAccountName,
             objectGUID=objectGUID,
+            sAMAccountName=sAMAccountName,
             limit=2,
             **filters,
         )
@@ -195,17 +205,26 @@ class LDAPConnector(BaseConnector):
             raise FoundMoreThanOneError(msg)
         return functional_accounts[0]
 
-    def get_person(
+    def get_person(  # noqa: PLR0913
         self,
-        objectGUID: str = "*",  # noqa: N803
+        *,
         employeeID: str = "*",  # noqa: N803
+        given_name: str = "*",
+        mail: str = "*",
+        objectGUID: str = "*",  # noqa: N803
+        sAMAccountName: str = "*",  # noqa: N803
+        surname: str = "*",
         **filters: str | None,
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 
         Args:
-            objectGUID: Internal LDAP identifier
             employeeID: Employee ID, must be present
+            given_name: Given name of a person, defaults to non-null
+            mail: Email address, defaults to non-null
+            objectGUID: Internal LDAP identifier
+            sAMAccountName: str = "*",  # noqa: N803
+            surname: Surname of a person, defaults to non-null
             **filters: Filters for LDAP search
 
         Raises:
@@ -215,11 +234,12 @@ class LDAPConnector(BaseConnector):
             Single LDAP person matching the filters
         """
         persons = self.get_persons(
-            surname="*",
-            given_name="*",
-            mail="*",
-            objectGUID=objectGUID,
             employeeID=employeeID,
+            given_name=given_name,
+            mail=mail,
+            objectGUID=objectGUID,
+            sAMAccountName=sAMAccountName,
+            surname=surname,
             limit=2,
             **filters,
         )
