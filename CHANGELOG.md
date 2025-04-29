@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.59.0] - 2025-04-29
+
+### Added
+
 - added `BackendApiConnector` methods to create and update rule-sets
 - added `BackendApiConnector` methods to search in wiki, ldap and orcid
 - added `BackendApiConnector` methods to fetch and assign identities
@@ -34,8 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: moved `normalize` from utils to transform module
 - BREAKING: renamed `get_persons_by_name` to `get_ldap_persons`
 
-### Deprecated
-
 ### Removed
 
 - BREAKING: remove return value from `BackendApiConnector.ingest`
@@ -43,10 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: remove `get_count_of_found_persons_by_name` to avoid duplicate queries
 - BREAKING: removed `member_of` validation for ldap persons
 - BREAKING: removed `get_all_extracted_primary_sources` helper
-
-### Fixed
-
-### Security
 
 ## [0.58.3] - 2025-04-24
 
