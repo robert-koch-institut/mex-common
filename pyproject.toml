@@ -15,7 +15,7 @@ dependencies = [
     "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.5.7",
     "numpy>=2,<3",
     "pandas>=2,<3",
-    "pyarrow>=19,<20",
+    "pyarrow>=20,<21",
     "pydantic-settings>=2,<2.8,",
     "pydantic>=2,<2.10",
     "pytz>=2024,<2024.2",
