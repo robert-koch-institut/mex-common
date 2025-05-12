@@ -46,7 +46,7 @@ class VocabularyLoader(EnumMeta):
     ) -> "VocabularyLoader":
         """Create a new enum class by loading the configured vocabulary JSON."""
         if vocabulary_name := dct.get("__vocabulary__"):
-            dct["__concepts__"] = cls.parse_raw(vocabulary_name)
+            dct["__concepts__"] = cls.parse_raw(vocabulary_name.replace("-", "_"))
             for concept in dct["__concepts__"]:
                 dct[split_to_caps(concept.prefLabel.en)] = str(concept.identifier)
         return super().__new__(cls, name, bases, dct)
