@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update pyarrow and click dependencies
-- update mex-model to 3.6.0
+- update mex-model to 3.6.1
 
 ### Deprecated
 
