@@ -4,8 +4,8 @@ import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common import VOCABULARY_JSON_BY_NAME
 from mex.common.types import VocabularyEnum
+from mex.model import VOCABULARY_JSON_BY_NAME
 from tests.types.conftest import TESTDATA_DIR
 
 
