@@ -1,17 +1,19 @@
+import json
+
 import pytest
 from pydantic import BaseModel, ValidationError
 from pytest import MonkeyPatch
 
-from mex.common.types import VocabularyEnum, VocabularyLoader
+from mex.common.types import VocabularyEnum
+from mex.model import VOCABULARY_JSON_BY_NAME
 from tests.types.conftest import TESTDATA_DIR
 
 
 @pytest.fixture
 def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
-    dummy_vocabulary = VocabularyLoader.parse_file(
-        str(TESTDATA_DIR / "dummy-vocabulary.json")
-    )
-    monkeypatch.setattr(VocabularyLoader, "parse_file", lambda *_: dummy_vocabulary)
+    with open(TESTDATA_DIR / "dummy-vocabulary.json") as fh:
+        dummy_vocabulary = json.load(fh)
+    monkeypatch.setitem(VOCABULARY_JSON_BY_NAME, "dummy_vocabulary", dummy_vocabulary)
 
 
 @pytest.mark.usefixtures("use_dummy_vocabulary")
