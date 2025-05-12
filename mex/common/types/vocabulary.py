@@ -1,6 +1,4 @@
-import json
 from enum import Enum, EnumMeta
-from importlib.resources import files
 from typing import TYPE_CHECKING, ClassVar, Self, Union
 
 from pydantic import (
@@ -13,13 +11,13 @@ from pydantic import (
 from pydantic_core import core_schema
 
 from mex.common.transform import normalize, split_to_caps
+from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:  # pragma: no cover
     from enum import _EnumDict
 
     from mex.common.types import Text
 
-MODEL_VOCABULARIES = files("mex.model.vocabularies")
 VOCABULARY_PATTERN = r"https://mex.rki.de/item/[a-z0-9-]+"
 
 
@@ -48,20 +46,17 @@ class VocabularyLoader(EnumMeta):
     ) -> "VocabularyLoader":
         """Create a new enum class by loading the configured vocabulary JSON."""
         if vocabulary_name := dct.get("__vocabulary__"):
-            dct["__concepts__"] = cls.parse_file(f"{vocabulary_name}.json")
+            dct["__concepts__"] = cls.parse_raw(vocabulary_name)
             for concept in dct["__concepts__"]:
                 dct[split_to_caps(concept.prefLabel.en)] = str(concept.identifier)
         return super().__new__(cls, name, bases, dct)
 
     @classmethod
-    def parse_file(cls, file_name: str) -> list[Concept]:
-        """Parse vocabulary file and return concepts as list."""
-        raw_vocabularies = json.loads(
-            MODEL_VOCABULARIES.joinpath(file_name).read_text("utf-8")
-        )
+    def parse_raw(cls, vocabulary_name: str) -> list[Concept]:
+        """Parse vocabulary and return concepts as list."""
         return [
             Concept.model_validate(raw_vocabulary)
-            for raw_vocabulary in raw_vocabularies
+            for raw_vocabulary in VOCABULARY_JSON_BY_NAME[vocabulary_name]
         ]
 
 

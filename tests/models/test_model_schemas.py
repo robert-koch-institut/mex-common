@@ -2,7 +2,6 @@ import json
 import re
 from collections.abc import Callable
 from copy import deepcopy
-from importlib.resources import files
 from itertools import zip_longest
 from typing import Any
 
@@ -11,8 +10,7 @@ import pytest
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
 from mex.common.transform import dromedary_to_kebab
 from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
-
-MEX_MODEL_ENTITIES = files("mex.model.entities")
+from mex.model import ENTITY_JSON_BY_NAME
 
 
 def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
@@ -48,9 +46,7 @@ SPECIFIED_SCHEMAS = dict(
     sorted(
         {
             schema["title"].replace(" ", ""): schema
-            for entity_file in MEX_MODEL_ENTITIES.iterdir()
-            if (schema := json.loads(entity_file.read_text("utf-8")))
-            and not schema["title"].startswith("Concept")
+            for schema in ENTITY_JSON_BY_NAME.values()
         }.items()
     )
 )
