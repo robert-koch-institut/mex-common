@@ -11,9 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update pyarrow and click dependencies
-- update mex-model to 3.6.1
-
 ### Deprecated
 
 ### Removed
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.59.2] - 2025-05-12
+
+### Changes
+
+- update pyarrow and click dependencies
+- update mex-model to 3.6.1
 
 ## [0.59.1] - 2025-04-29
 
