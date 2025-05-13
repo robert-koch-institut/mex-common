@@ -12,10 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - bump cookiecutter template to ed5deb
+- move hash function from ExtractedData to BaseModel
 
 ### Deprecated
 
 ### Removed
+
+- removed `BaseEntity` class to reduce inheritance hierarchy
 
 ### Fixed
 

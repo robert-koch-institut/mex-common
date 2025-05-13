@@ -151,3 +151,12 @@ def test_base_model_checksum() -> None:
 def test_base_model_str() -> None:
     model = DummyBaseModel(foo="bar")
     assert str(model) == "DummyBaseModel: 94232c5b8fc9272f6f73a1e36eb68fcf"
+
+
+def test_base_model_hash() -> None:
+    thing1 = DummyBaseModel(foo="4567")
+    thing2 = DummyBaseModel(foo="4567")
+    thing3 = DummyBaseModel(foo="5678")
+
+    assert hash(thing1) == hash(thing2)
+    assert hash(thing1) != hash(thing3)
