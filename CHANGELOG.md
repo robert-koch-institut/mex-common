@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- added MEX_BACKEND_API_PARALLELIZATION and MEX_BACKEND_API_CHUNK_SIZE settings
-- added support for sending batches of data to the backend in parallel
-
 ### Changes
-
-- bump cookiecutter template to ed5deb
 
 ### Deprecated
 
@@ -23,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.60.0] - 2025-05-13
+
+### Added
+
+- added MEX_BACKEND_API_PARALLELIZATION and MEX_BACKEND_API_CHUNK_SIZE settings
+- added support for sending batches of data to the backend in parallel
+
+### Changes
+
+- bump cookiecutter template to ed5deb
 
 ## [0.59.2] - 2025-05-12
 
