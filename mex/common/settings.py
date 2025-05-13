@@ -130,6 +130,18 @@ class BaseSettings(PydanticBaseSettings):
         description="Backend API key with write access to call POST/PUT endpoints",
         validation_alias="MEX_BACKEND_API_KEY",
     )
+    backend_api_parallelization: int = Field(
+        1,
+        description=(
+            "How many simultaneous threads may spin up to load data into the backend."
+        ),
+        validation_alias="MEX_BACKEND_API_PARALLELIZATION",
+    )
+    backend_api_chunk_size: int = Field(
+        25,
+        description="How many items to load into the backend in one chunk.",
+        validation_alias="MEX_BACKEND_API_CHUNK_SIZE",
+    )
     verify_session: bool | AssetsPath = Field(
         True,  # noqa: FBT003
         description=(
