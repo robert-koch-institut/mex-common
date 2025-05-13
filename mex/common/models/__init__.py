@@ -66,6 +66,16 @@ These private classes are used to compose the public classes like so:
 - TFilter: a single field containing a list of filter rule definitions
 - TMapping: all BaseT fields re-typed as lists of mapping fields with `setValues` type
 
+All models intended for developer consumption have two main classifying class variables:
+The frozen `entityType` field is added to classes to help with assigning the correct
+class when reading raw JSON entities. Simple duck-typing would not work, because some
+entity-types have overlapping attributes, like `Person.email` and `ContactPoint.email`.
+See: https://docs.pydantic.dev/latest/concepts/fields/#discriminator
+The frozen `stemType` class variable is added to classes to help with knowing which
+special-use-case classes are meant for the same type of items.
+E.g. `ExtractedPerson`, `MergedPerson` and `PreventivePerson` all share the same
+`stemType` of `"Person"`.
+
 In addition to the classes themselves, `mex.common.models` also exposes various
 lists of models, lookups by class name and typing for unions of models.
 """
