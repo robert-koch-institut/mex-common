@@ -203,7 +203,7 @@ def test_request_failure(  # noqa: PLR0913
     expected_response: str | dict[str, Any],
     expected_retries: int,
 ) -> None:
-    def mock_request(*_: Any, **__: Any) -> Response:
+    def mock_request(*_: Any, **__: Any) -> Response:  # noqa: ANN401
         time.sleep(fake_response_time)
         if isinstance(error_or_response, Exception):
             raise error_or_response

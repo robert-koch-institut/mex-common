@@ -62,10 +62,10 @@ def contains_only_types(field: GenericFieldInfo, *types: type) -> bool:
 
 
 def get_inner_types(
-    annotation: Any,
-    include_none: bool = True,
-    unpack_list: bool = True,
-    unpack_literal: bool = True,
+    annotation: Any,  # noqa: ANN401
+    include_none: bool = True,  # noqa: FBT001, FBT002
+    unpack_list: bool = True,  # noqa: FBT001, FBT002
+    unpack_literal: bool = True,  # noqa: FBT001, FBT002
 ) -> Generator[type, None, None]:
     """Recursively yield all inner types from a given type annotation.
 

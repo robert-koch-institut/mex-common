@@ -45,8 +45,8 @@ def test_transform_wikidata_organization_to_extracted_organization(
         "viafId": ["https://viaf.org/viaf/129013645"],
         "wikidataId": ["https://www.wikidata.org/entity/Q26678"],
     }
-    with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
-        wikidata_organization = WikidataOrganization.model_validate(json.load(f)[0])
+    with (TESTDATA_DIR / "items_details.json").open(encoding="utf-8") as fh:
+        wikidata_organization = WikidataOrganization.model_validate(json.load(fh)[0])
 
     extracted_organization = transform_wikidata_organization_to_extracted_organization(
         wikidata_organization, extracted_primary_sources["wikidata"]
@@ -102,9 +102,9 @@ def test_transform_wikidata_organization_to_organization(
         "wikidataId": ["https://www.wikidata.org/entity/Q26678"],
     }
 
-    with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
+    with (TESTDATA_DIR / "items_details.json").open(encoding="utf-8") as fh:
         wikidata_organizations = [
-            WikidataOrganization.model_validate(item) for item in json.load(f)
+            WikidataOrganization.model_validate(item) for item in json.load(fh)
         ]
 
     extracted_organizations = list(

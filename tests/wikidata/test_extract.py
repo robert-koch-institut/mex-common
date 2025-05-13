@@ -209,9 +209,9 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
         },
     }
 
-    def mocked_item_details_response() -> Any:
-        with open(TESTDATA_DIR / "items_details.json", encoding="utf-8") as f:
-            data = json.load(f)
+    def mocked_item_details_response() -> Any:  # noqa: ANN401
+        with (TESTDATA_DIR / "items_details.json").open(encoding="utf-8") as fh:
+            data = json.load(fh)
             return data[0]
 
     monkeypatch.setattr(

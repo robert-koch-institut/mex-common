@@ -108,6 +108,6 @@ from mex.common.orcid.models import (
     ],
     ids=["valid data", "missing email field", "visibility is private"],
 )
-def test_orcid_record(orcid_data, expected_result):
+def test_orcid_record(orcid_data: object, expected_result: OrcidRecord) -> None:
     result = OrcidRecord.model_validate(orcid_data)
     assert result == expected_result

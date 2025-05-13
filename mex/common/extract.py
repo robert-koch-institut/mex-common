@@ -41,7 +41,7 @@ def parse_csv(
     path_or_buffer: Union[str, PathLike[str], "ReadCsvBuffer[Any]"],
     into: type[_BaseModelT],
     chunksize: int = 10000,
-    **kwargs: Any,
+    **kwargs: Any,  # noqa: ANN401
 ) -> Generator[_BaseModelT, None, None]:
     """Parse a CSV file into an iterable of the given model type.
 

@@ -29,7 +29,7 @@ class TimedReadTimeout(ReadTimeout):
 
     seconds: float
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Initialize exception with timeout `seconds`."""
         self.seconds = kwargs.pop("seconds", 0.0)
         super().__init__(*args, **kwargs)

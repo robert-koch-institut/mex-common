@@ -380,7 +380,7 @@ class BackendApiConnector(HTTPConnector):
     def ingest(
         self,
         ingestible_models: list[_IngestibleModelT],
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ANN401
     ) -> None:
         """Post extracted models or rule-sets to the backend in bulk.
 

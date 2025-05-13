@@ -58,9 +58,9 @@ class HTTPConnector(BaseConnector):
         self,
         method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
         endpoint: str | None = None,
-        payload: Any = None,
+        payload: Any = None,  # noqa: ANN401
         params: Mapping[str, list[str] | str | None] | None = None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ANN401
     ) -> Response:
         """Prepare and send a raw request with error handling and payload serialization.
 
@@ -107,9 +107,9 @@ class HTTPConnector(BaseConnector):
         self,
         method: Literal["OPTIONS", "POST", "GET", "PUT", "DELETE"],
         endpoint: str | None = None,
-        payload: Any = None,
+        payload: Any = None,  # noqa: ANN401
         params: Mapping[str, list[str] | str | None] | None = None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ANN401
     ) -> dict[str, Any]:
         """Prepare and send a request with error handling and payload de/serialization.
 
@@ -176,7 +176,7 @@ class HTTPConnector(BaseConnector):
         method: str,
         url: str,
         params: Mapping[str, list[str] | str | None] | None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ANN401
     ) -> Response:
         """Send the response with advanced retrying rules."""
         t0 = time.perf_counter()

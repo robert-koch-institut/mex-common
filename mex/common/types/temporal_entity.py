@@ -189,7 +189,9 @@ class TemporalEntity:
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
+        cls,
+        source_type: Any,  # noqa: ANN401
+        handler: GetCoreSchemaHandler,
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add validation and serialization rules."""
         return core_schema.json_or_python_schema(
@@ -282,10 +284,10 @@ class TemporalEntity:
             and self.precision == other_temporal.precision
         )
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: object) -> bool:
         """Return whether the given other value is the greater than this one."""
         try:
-            other_temporal = TemporalEntity(other)
+            other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
         except TypeError:
             raise NotImplementedError from None
         return bool(self.date_time > other_temporal.date_time)

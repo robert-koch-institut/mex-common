@@ -51,14 +51,14 @@ class NdjsonSink(BaseSink):
                     try:
                         fh = file_handles[class_name]
                     except KeyError:
-                        file_name = self._work_dir / f"{class_name}.ndjson"
-                        writer = open(file_name, "a+", encoding="utf-8")  # noqa: SIM115
+                        file = self._work_dir / f"{class_name}.ndjson"
+                        writer = file.open("a+", encoding="utf-8")
                         file_handles[class_name] = fh = stack.enter_context(writer)
                         logger.info(
                             "%s - writing %s to file %s",
                             type(self).__name__,
                             class_name,
-                            file_name.as_posix(),
+                            file.as_posix(),
                         )
                     dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
                     fh.write(f"{dumped_json}\n")

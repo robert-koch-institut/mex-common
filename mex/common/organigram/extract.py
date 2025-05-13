@@ -1,6 +1,7 @@
 import json
 from collections.abc import Iterable
 from functools import lru_cache
+from pathlib import Path
 
 from mex.common.exceptions import MExError
 from mex.common.logging import logger
@@ -21,7 +22,7 @@ def extract_organigram_units() -> list[OrganigramUnit]:
         List of organigram units
     """
     settings = BaseSettings.get()
-    with open(settings.organigram_path) as fh:
+    with Path(settings.organigram_path).open() as fh:
         raw_units = json.load(fh)
     logger.info("extracted %s organigram units", len(raw_units))
     return [OrganigramUnit.model_validate(raw) for raw in raw_units]

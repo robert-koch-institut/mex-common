@@ -14,7 +14,7 @@ from pydantic import BaseModel as PydanticModel
 class MExEncoder(json.JSONEncoder):
     """Custom JSON encoder that can handle pydantic models, enums and UUIDs."""
 
-    def default(self, obj: Any) -> Any:  # noqa: PLR0911
+    def default(self, obj: object) -> object:  # noqa: PLR0911
         """Implement custom serialization rules."""
         # break import cycle, sigh
         from mex.common.types import PathWrapper, TemporalEntity
@@ -89,7 +89,7 @@ def split_to_caps(string: str) -> str:
     return "_".join(word.upper() for word in re.split("[^a-zA-Z]", string) if word)
 
 
-def ensure_prefix(string_like: Any, prefix: Any) -> str:
+def ensure_prefix(string_like: object, prefix: object) -> str:
     """Return a string with the given prefix prepended if it is not present yet.
 
     If `string_like` already starts with the prefix, return a stringified copy.
@@ -102,7 +102,7 @@ def ensure_prefix(string_like: Any, prefix: Any) -> str:
     return f"{prefix}{string}"
 
 
-def ensure_postfix(string_like: Any, postfix: Any) -> str:
+def ensure_postfix(string_like: object, postfix: object) -> str:
     """Return a string with the given postfix appended if it is not present yet.
 
     If `string_like` already ends with the postfix, return a stringified copy.

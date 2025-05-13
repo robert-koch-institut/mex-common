@@ -87,7 +87,7 @@ def test_extracted_data_stores_identity_in_provider() -> None:
     assert str(thing.stableTargetId) == identities[0].stableTargetId
 
 
-def test_hash_function():
+def test_hash_function() -> None:
     hps1 = MergedPrimarySourceIdentifier.generate(seed=123456)
     hps2 = MergedPrimarySourceIdentifier.generate(seed=234567)
     thing1 = ExtractedThing(hadPrimarySource=hps1, identifierInPrimarySource="4567")

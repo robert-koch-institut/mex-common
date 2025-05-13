@@ -47,8 +47,8 @@ def test_sink_load() -> None:
     items = list(sink.load(test_models))
     assert len(items) == len(test_models)
 
-    with open(settings.work_dir / "Thing.ndjson") as handle:
-        output = handle.read()
+    with (settings.work_dir / "Thing.ndjson").open() as fh:
+        output = fh.read()
 
     expected = """\
 {{"enum_attr": null, "identifier": "{}", "str_attr": "foo", "ts_attr": null, "uuid_attr": null}}

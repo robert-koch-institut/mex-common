@@ -58,7 +58,8 @@ def patch_reprs(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.fixture(autouse=True)
 def isolate_assets_dir(
-    is_integration_test: bool, monkeypatch: pytest.MonkeyPatch
+    is_integration_test: bool,  # noqa: FBT001
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Disable the `MEX_ASSETS_DIR` environment variable for unit testing."""
     if not is_integration_test:  # pragma: no cover
@@ -134,9 +135,9 @@ def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
 @pytest.fixture
 def wikidata_organization_raw() -> dict[str, Any]:
     """Return a raw wikidata organization."""
-    with open(
+    with (
         Path(__file__).parent / "test_data" / "wikidata_organization_raw.json"
-    ) as fh:
+    ).open() as fh:
         return cast("dict[str, Any]", json.load(fh))
 
 
@@ -180,25 +181,25 @@ def mocked_wikidata(
 @pytest.fixture
 def orcid_person_raw() -> dict[str, Any]:
     """Return a raw orcid person."""
-    with open(Path(__file__).parent / "test_data" / "orcid_person_raw.json") as fh:
+    with (Path(__file__).parent / "test_data" / "orcid_person_raw.json").open() as fh:
         return cast("dict[str, Any]", json.load(fh))
 
 
 @pytest.fixture
 def orcid_person_jayne_raw() -> dict[str, Any]:
     """Return a raw orcid person."""
-    with open(
+    with (
         Path(__file__).parent / "test_data" / "orcid_person_jayne_raw.json"
-    ) as fh:
+    ).open() as fh:
         return cast("dict[str, Any]", json.load(fh))
 
 
 @pytest.fixture
 def orcid_multiple_matches() -> dict[str, Any]:
     """Return a raw orcid person."""
-    with open(
+    with (
         Path(__file__).parent / "test_data" / "orcid_multiple_matches.json"
-    ) as fh:
+    ).open() as fh:
         return cast("dict[str, Any]", json.load(fh))
 
 

@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from collections.abc import Generator
 from uuid import UUID
 
 from pytest import LogCaptureFixture
@@ -12,7 +12,7 @@ def test_watch(caplog: LogCaptureFixture) -> None:
     items = ["foo", UUID(int=16, version=4), MExError("foo", 42)]
 
     @watch(log_interval=1)
-    def dummy_generator() -> Any:
+    def dummy_generator() -> Generator[str | UUID | MExError, None, None]:
         yield from items
 
     # unpack generator and capture logs

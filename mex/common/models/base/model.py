@@ -35,7 +35,7 @@ class BaseModel(PydanticBaseModel):
     @classmethod
     def model_json_schema(
         cls,
-        by_alias: bool = True,
+        by_alias: bool = True,  # noqa: FBT001, FBT002
         ref_template: str = DEFAULT_REF_TEMPLATE,
         schema_generator: type[PydanticJsonSchemaGenerator] = JsonSchemaGenerator,
         mode: JsonSchemaMode = "validation",
@@ -59,7 +59,7 @@ class BaseModel(PydanticBaseModel):
         )
 
     @classmethod
-    def _convert_non_list_to_list(cls, field_name: str, value: Any) -> list[Any] | None:
+    def _convert_non_list_to_list(cls, field_name: str, value: Any) -> list[Any] | None:  # noqa: ANN401
         """Convert a non-list value to a list value by wrapping it in a list."""
         if value is None:
             if field_name in get_field_names_allowing_none(cls):
@@ -70,7 +70,7 @@ class BaseModel(PydanticBaseModel):
         return [value]
 
     @classmethod
-    def _convert_list_to_non_list(cls, field_name: str, value: list[Any]) -> Any:
+    def _convert_list_to_non_list(cls, field_name: str, value: list[Any]) -> Any:  # noqa: ANN401
         """Convert a list value to a non-list value by unpacking it if possible."""
         length = len(value)
         if length == 0:
@@ -84,7 +84,7 @@ class BaseModel(PydanticBaseModel):
         raise ValueError(msg)
 
     @classmethod
-    def _fix_value_listyness_for_field(cls, field_name: str, value: Any) -> Any:
+    def _fix_value_listyness_for_field(cls, field_name: str, value: Any) -> Any:  # noqa: ANN401
         """Check actual and desired shape of a value and fix it if necessary."""
         should_be_list = field_name in get_list_field_names(cls)
         is_list = isinstance(value, list)
@@ -98,8 +98,10 @@ class BaseModel(PydanticBaseModel):
     @model_validator(mode="wrap")
     @classmethod
     def verify_computed_field_consistency(
-        cls, data: Any, handler: ValidatorFunctionWrapHandler
-    ) -> Any:
+        cls,
+        data: Any,  # noqa: ANN401
+        handler: ValidatorFunctionWrapHandler,
+    ) -> Any:  # noqa: ANN401
         """Validate that parsed values for computed fields are consistent.
 
         Parsing a dictionary with a value for a computed field that is consistent with
@@ -143,7 +145,7 @@ class BaseModel(PydanticBaseModel):
 
     @model_validator(mode="wrap")
     @classmethod
-    def fix_listyness(cls, data: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+    def fix_listyness(cls, data: Any, handler: ValidatorFunctionWrapHandler) -> Any:  # noqa: ANN401
         """Adjust the listyness of to-be-parsed data to match the desired shape.
 
         If that data is a Mapping and the model defines a list[T] field but the raw data

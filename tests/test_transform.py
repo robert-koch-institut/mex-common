@@ -63,7 +63,7 @@ class DummyEnum(Enum):
         (PathWrapper("relative/path"), '"relative/path"'),
     ],
 )
-def test_mex_json_encoder(raw: Any, expected: str) -> None:
+def test_mex_json_encoder(raw: object, expected: str) -> None:
     assert json.dumps(raw, cls=MExEncoder, sort_keys=True) == expected
 
 
@@ -193,7 +193,7 @@ def test_split_to_caps(string: str, expected: str) -> None:
     ],
     ids=["empty", "already-prefixed", "prefix-added", "stringified"],
 )
-def test_ensure_prefix(string: Any, prefix: Any, expected: str) -> None:
+def test_ensure_prefix(string: object, prefix: object, expected: str) -> None:
     result = ensure_prefix(string, prefix)
 
     assert result == expected
@@ -213,7 +213,11 @@ def test_ensure_prefix(string: Any, prefix: Any, expected: str) -> None:
     ],
     ids=["empty", "already-postfixed", "postfix-added", "stringified"],
 )
-def test_ensure_postfix(string: Any, postfix: Any, expected: str) -> None:
+def test_ensure_postfix(
+    string: object,
+    postfix: object,
+    expected: str,
+) -> None:
     result = ensure_postfix(string, postfix)
 
     assert result == expected
