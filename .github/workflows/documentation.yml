@@ -13,6 +13,7 @@ env:
   PIP_NO_CLEAN: on
   PIP_NO_INPUT: on
   PIP_PREFER_BINARY: on
+  PY_COLORS: "1"
 
 permissions:
   contents: read
