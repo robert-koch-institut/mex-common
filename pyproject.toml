@@ -6,7 +6,7 @@ authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.11,<3.12"
 dependencies = [
     "backoff>=2,<3",
     "click>=8,<9",
@@ -22,18 +22,18 @@ dependencies = [
     "requests>=2,<3",
 ]
 optional-dependencies.dev = [
-    "ipdb>=0.13,<1",
-    "pandas-stubs>=2,<3",
-    "mypy>=1,<2",
-    "pytest-cov>=6,<7",
-    "pytest-random-order>=1,<2",
-    "pytest-xdist>=3,<4",
-    "pytest>=8,<9",
-    "ruff>=0.11,<1",
-    "sphinx>=8,<9",
-    "types-ldap3>=2,<3",
-    "types-pytz>=2025,<2026",
-    "types-requests>=2,<3",
+    "ipdb>=0.13",
+    "pandas-stubs>=2",
+    "mypy>=1",
+    "pytest-cov>=6",
+    "pytest-random-order>=1",
+    "pytest-xdist>=3",
+    "pytest>=8",
+    "ruff>=0.11",
+    "sphinx>=8",
+    "types-ldap3>=2",
+    "types-pytz>=2025",
+    "types-requests>=2",
 ]
 
 [tool.cruft]
