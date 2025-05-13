@@ -21,7 +21,9 @@ class PathWrapper(PathLike[str]):
 
     @classmethod
     def __get_pydantic_core_schema__(
-        cls, source_type: Any, handler: GetCoreSchemaHandler
+        cls,
+        source_type: Any,  # noqa: ANN401
+        handler: GetCoreSchemaHandler,
     ) -> core_schema.CoreSchema:
         """Modify the core schema to add validation and serialization rules."""
         return core_schema.chain_schema(

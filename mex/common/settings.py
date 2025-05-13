@@ -47,7 +47,7 @@ class BaseSettings(PydanticBaseSettings):
         _env_file_encoding: str | None = None,
         _env_nested_delimiter: str | None = None,
         _secrets_dir: str | Path | None = None,
-        **values: Any,
+        **values: Any,  # noqa: ANN401
     ) -> None:
         """Construct a new settings instance.
 
@@ -86,7 +86,7 @@ class BaseSettings(PydanticBaseSettings):
     # otherwise their prefix will get overwritten with those of a specific subclass.
 
     debug: bool = Field(
-        False,
+        False,  # noqa: FBT003
         alias="pdb",
         description="Jump into post-mortem debugging after any uncaught exception.",
         validation_alias="MEX_DEBUG",
@@ -131,7 +131,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_BACKEND_API_KEY",
     )
     verify_session: bool | AssetsPath = Field(
-        True,
+        True,  # noqa: FBT003
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
             "certificate, or a path to a CA bundle to use. If a path is given, it can "

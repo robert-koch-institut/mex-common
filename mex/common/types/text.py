@@ -46,7 +46,7 @@ class Text(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_strings(cls, value: Any) -> dict[str, Any]:
+    def validate_strings(cls, value: Any) -> dict[str, Any]:  # noqa: ANN401
         """Convert string input to dictionary."""
         if isinstance(value, str):
             return {"value": value}

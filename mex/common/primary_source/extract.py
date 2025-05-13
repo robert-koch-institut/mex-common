@@ -1,5 +1,6 @@
 import json
 from functools import lru_cache
+from pathlib import Path
 
 from mex.common.logging import logger
 from mex.common.primary_source.models import SeedPrimarySource
@@ -17,7 +18,7 @@ def extract_seed_primary_sources() -> list[SeedPrimarySource]:
         List of seed primary sources
     """
     settings = BaseSettings.get()
-    with open(settings.primary_sources_path) as fh:
+    with Path(settings.primary_sources_path).open() as fh:
         raw_units = json.load(fh)
     logger.info("extracted %s seed primary sources", len(raw_units))
     return [SeedPrimarySource.model_validate(raw) for raw in raw_units]

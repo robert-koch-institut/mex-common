@@ -40,7 +40,11 @@ from mex.common.utils import (
     ],
     ids=["empty", "hit", "miss", "numbers"],
 )
-def test_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> None:
+def test_contains_any(
+    base: Any,  # noqa: ANN401
+    tokens: Iterable[Any],
+    expected: bool,  # noqa: FBT001
+) -> None:
     assert contains_any(base, tokens) == expected
 
 
@@ -54,7 +58,11 @@ def test_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> None:
     ],
     ids=["empty", "hit", "miss", "numbers"],
 )
-def test_any_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> None:
+def test_any_contains_any(
+    base: Any,  # noqa: ANN401
+    tokens: Iterable[Any],
+    expected: bool,  # noqa: FBT001
+) -> None:
     assert any_contains_any(base, tokens) == expected
 
 
@@ -80,7 +88,9 @@ def test_any_contains_any(base: Any, tokens: Iterable[Any], expected: bool) -> N
     ],
 )
 def test_contains_only_types(
-    annotation: Any, types: list[type], expected: bool
+    annotation: Any,  # noqa: ANN401
+    types: list[type],
+    expected: bool,  # noqa: FBT001
 ) -> None:
     class DummyModel(BaseModel):
         attribute: annotation
@@ -126,7 +136,9 @@ def test_contains_only_types(
     ],
 )
 def test_get_inner_types(
-    annotation: Any, flags: dict[str, bool], expected_types: list[type]
+    annotation: Any,  # noqa: ANN401
+    flags: dict[str, bool],
+    expected_types: list[type],
 ) -> None:
     assert list(get_inner_types(annotation, **flags)) == expected_types
 

@@ -342,7 +342,7 @@ def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     validate_cardinality: Literal[True, False],
-    expected: Any,
+    expected: Any,  # noqa: ANN401
 ) -> None:
     try:
         merged_item = create_merged_item(

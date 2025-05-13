@@ -61,7 +61,7 @@ def watch(
         func: Callable[P, Generator[_YieldT, None, None]],
     ) -> Callable[P, Generator[_YieldT, None, None]]:
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:
+        def wrapper(*args: Any, **kwargs: Any) -> Generator[_YieldT, None, None]:  # noqa: ANN401
             for i, item in enumerate(func(*args, **kwargs)):
                 if i % log_interval == 0:
                     logger.info("%s - %s - %s", i, func.__name__, item)

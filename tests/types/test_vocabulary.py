@@ -11,7 +11,7 @@ from tests.types.conftest import TESTDATA_DIR
 
 @pytest.fixture
 def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
-    with open(TESTDATA_DIR / "dummy-vocabulary.json") as fh:
+    with (TESTDATA_DIR / "dummy-vocabulary.json").open() as fh:
         dummy_vocabulary = json.load(fh)
     monkeypatch.setitem(VOCABULARY_JSON_BY_NAME, "dummy_vocabulary", dummy_vocabulary)
 
