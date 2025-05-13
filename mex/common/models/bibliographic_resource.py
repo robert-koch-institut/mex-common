@@ -77,7 +77,19 @@ IsbnIssnStr = Annotated[
         ],
     ),
 ]
-PagesStr = Annotated[str, Field(examples=["1", "45-67", "45 - 67", "II", "XI", "10i"])]
+PagesStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "1",
+            "45-67",
+            "45 - 67",
+            "II",
+            "XI",
+            "10i",
+        ]
+    ),
+]
 PublicationPlaceStr = Annotated[
     str,
     Field(

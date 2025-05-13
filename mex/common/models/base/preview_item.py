@@ -1,5 +1,5 @@
-from mex.common.models.base.entity import BaseEntity
+from mex.common.models.base.model import BaseModel
 
 
-class PreviewItem(BaseEntity):
+class PreviewItem(BaseModel, extra="forbid"):
     """Base model for previews of merged items."""

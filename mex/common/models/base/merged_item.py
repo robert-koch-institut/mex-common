@@ -1,5 +1,5 @@
-from mex.common.models.base.entity import BaseEntity
+from mex.common.models.base.model import BaseModel
 
 
-class MergedItem(BaseEntity):
+class MergedItem(BaseModel, extra="forbid"):
     """Base model for all merged item classes."""
