@@ -34,5 +34,16 @@ def test_sink_load_merged_error(
     monkeypatch.setattr(BackendApiConnector, "__init__", __init__)
 
     sink = BackendApiSink.get()
-    with pytest.raises(NotImplementedError, match="backend cannot"):
+    with pytest.raises(
+        NotImplementedError,
+        match="Backend can only ingest extracted models and rule-set responses",
+    ):
         list(sink.load([merged_person]))
+
+
+def test_sink_is_supported(
+    extracted_person: ExtractedPerson,
+    merged_person: MergedPerson,
+) -> None:
+    assert BackendApiSink.is_supported([extracted_person, extracted_person]) is True
+    assert BackendApiSink.is_supported([extracted_person, merged_person]) is False

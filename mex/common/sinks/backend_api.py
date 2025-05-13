@@ -1,28 +1,40 @@
 from collections.abc import Generator, Iterable
-from typing import TypeVar, cast
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import TypeGuard
 
 from requests import RequestException
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger, watch
 from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
+from mex.common.settings import BaseSettings
 from mex.common.sinks.base import BaseSink
 from mex.common.utils import grouper
-
-_LoadItemT = TypeVar(
-    "_LoadItemT", bound=AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse
-)
 
 
 class BackendApiSink(BaseSink):
     """Sink to load models to the Backend API."""
 
-    CHUNK_SIZE: int = 25
     CONNECT_TIMEOUT: int | float = 5
     READ_TIMEOUT: int | float = 90
 
+    def __init__(self) -> None:
+        """Create a new sink."""
+        settings = BaseSettings.get()
+        self._executor = ThreadPoolExecutor(
+            max_workers=settings.backend_api_parallelization,
+            thread_name_prefix="backend_api_sink",
+        )
+
+    def close(self) -> None:
+        """Close the sink."""
+        self._executor.shutdown()
+
     @watch(log_interval=1000)
-    def load(self, items: Iterable[_LoadItemT]) -> Generator[_LoadItemT, None, None]:
+    def load(
+        self,
+        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
+    ) -> Generator[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None]:
         """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:
@@ -34,27 +46,46 @@ class BackendApiSink(BaseSink):
         Returns:
             Generator for posted models
         """
+        settings = BaseSettings.get()
+        futures = [
+            self._executor.submit(BackendApiSink.load_chunk, chunk)
+            for chunk in grouper(settings.backend_api_chunk_size, items)
+        ]
+        for future in as_completed(futures):
+            yield from future.result()
+
+    @staticmethod
+    def is_supported(
+        model_list: list[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
+    ) -> TypeGuard[list[AnyExtractedModel | AnyRuleSetResponse]]:
+        """Return whether the given list only contains models the backend can handle."""
+        return all(
+            isinstance(item, AnyExtractedModel | AnyRuleSetResponse)
+            for item in model_list
+        )
+
+    @staticmethod
+    def load_chunk(
+        chunk: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse | None],
+    ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
+        """Load a chunk of models into the backend."""
         connector = BackendApiConnector.get()
-        for chunk in grouper(self.CHUNK_SIZE, items):
-            model_list: list[AnyExtractedModel | AnyRuleSetResponse] = []
-            for model in chunk:
-                if isinstance(model, AnyExtractedModel | AnyRuleSetResponse):
-                    model_list.append(model)
-                elif model is not None:
-                    msg = f"backend cannot ingest {type(model)}"
-                    raise NotImplementedError(msg)
-            try:
-                connector.ingest(
-                    model_list,
-                    timeout=(self.CONNECT_TIMEOUT, self.READ_TIMEOUT),
-                )
-            except RequestException:
-                model_info = [
-                    f"{m.entityType}:{m.hadPrimarySource}:{m.identifierInPrimarySource}"
-                    if isinstance(m, AnyExtractedModel)
-                    else f"{m.entityType}:{m.stableTargetId}"
-                    for m in model_list
-                ]
-                logger.error(f"error ingesting models: {', '.join(model_info)}")
-                raise
-            yield from cast("list[_LoadItemT]", model_list)
+        model_list = [item for item in chunk if item is not None]
+        if not BackendApiSink.is_supported(model_list):
+            msg = "Backend can only ingest extracted models and rule-set responses."
+            raise NotImplementedError(msg)
+        try:
+            connector.ingest(
+                model_list,
+                timeout=(BackendApiSink.CONNECT_TIMEOUT, BackendApiSink.READ_TIMEOUT),
+            )
+        except RequestException:
+            model_info = [
+                f"{m.entityType}:{m.hadPrimarySource}:{m.identifierInPrimarySource}"
+                if isinstance(m, AnyExtractedModel)
+                else f"{m.entityType}:{m.stableTargetId}"
+                for m in model_list
+            ]
+            logger.error(f"Error ingesting models: {', '.join(model_info)}")
+            raise
+        return model_list
