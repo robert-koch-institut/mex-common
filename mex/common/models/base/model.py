@@ -4,7 +4,7 @@ from collections.abc import MutableMapping
 from typing import Any
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import ConfigDict, ValidatorFunctionWrapHandler, model_validator
+from pydantic import ValidatorFunctionWrapHandler, model_validator
 from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
@@ -18,19 +18,18 @@ from mex.common.utils import (
 )
 
 
-class BaseModel(PydanticBaseModel):
+class BaseModel(
+    PydanticBaseModel,
+    str_strip_whitespace=True,
+    populate_by_name=True,
+    extra="ignore",
+    str_max_length=10**5,
+    str_min_length=1,
+    use_enum_values=True,
+    validate_default=True,
+    validate_assignment=True,
+):
     """Common base class for all MEx model classes."""
-
-    model_config = ConfigDict(
-        str_strip_whitespace=True,
-        populate_by_name=True,
-        extra="ignore",
-        str_max_length=10**5,
-        str_min_length=1,
-        use_enum_values=True,
-        validate_default=True,
-        validate_assignment=True,
-    )
 
     @classmethod
     def model_json_schema(
@@ -183,3 +182,7 @@ class BaseModel(PydanticBaseModel):
     def __str__(self) -> str:
         """Format this model as a string for logging."""
         return f"{self.__class__.__name__}: {self.checksum()}"
+
+    def __hash__(self) -> int:
+        """Calculates a hash value to make the object cacheable."""
+        return hash(self.checksum())

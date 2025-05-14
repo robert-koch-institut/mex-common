@@ -2,7 +2,7 @@ from typing import Annotated, TypeVar
 
 from pydantic import Field
 
-from mex.common.models.base.entity import BaseEntity
+from mex.common.models.base.model import BaseModel
 from mex.common.types import (
     ExtractedIdentifier,
     MergedIdentifier,
@@ -12,8 +12,41 @@ from mex.common.types import (
 _MergedIdentifierT = TypeVar("_MergedIdentifierT", bound=MergedIdentifier)
 _ExtractedIdentifierT = TypeVar("_ExtractedIdentifierT", bound=ExtractedIdentifier)
 
+HadPrimarySource = Annotated[
+    MergedPrimarySourceIdentifier,
+    Field(
+        description=(
+            "The stableTargetId of the primary source, that this item was "
+            "extracted from. This field is mandatory for all extracted items to "
+            "aid with data provenance. Extracted primary sources also have this "
+            "field and are all extracted from a static primary source for MEx. "
+            "The extracted primary source for MEx has its own merged item as a "
+            "primary source."
+        ),
+        frozen=True,
+    ),
+]
+IdentifierInPrimarySource = Annotated[
+    str,
+    Field(
+        description=(
+            "This is the identifier the original item had in its source system. "
+            "It is only unique amongst items coming from the same system, because "
+            "identifier formats are likely to overlap between systems. "
+            "The value for `identifierInPrimarySource` is therefore only unique in "
+            "composition with `hadPrimarySource`. MEx uses this composite key to "
+            "assign a stable and globally unique `identifier` per extracted item."
+        ),
+        examples=["123456", "item-501", "D7/x4/zz.final3"],
+        min_length=1,
+        max_length=1000,
+        pattern=r"^[^\n\r]+$",
+        frozen=True,
+    ),
+]
 
-class ExtractedData(BaseEntity):
+
+class ExtractedData(BaseModel, extra="forbid"):
     """Base model for all extracted item classes.
 
     This class adds two important attributes for metadata provenance: `hadPrimarySource`
@@ -23,41 +56,10 @@ class ExtractedData(BaseEntity):
     correct type, e.g. `MergedPersonIdentifier`.
 
     This class also adds a validator to automatically set identifiers for provenance.
-    See below, for a full description.
     """
 
-    hadPrimarySource: Annotated[
-        MergedPrimarySourceIdentifier,
-        Field(
-            description=(
-                "The stableTargetId of the primary source, that this item was "
-                "extracted from. This field is mandatory for all extracted items to "
-                "aid with data provenance. Extracted primary sources also have this "
-                "field and are all extracted from a static primary source for MEx. "
-                "The extracted primary source for MEx has its own merged item as a "
-                "primary source."
-            ),
-            frozen=True,
-        ),
-    ]
-    identifierInPrimarySource: Annotated[
-        str,
-        Field(
-            description=(
-                "This is the identifier the original item had in its source system. "
-                "It is only unique amongst items coming from the same system, because "
-                "identifier formats are likely to overlap between systems. "
-                "The value for `identifierInPrimarySource` is therefore only unique in "
-                "composition with `hadPrimarySource`. MEx uses this composite key to "
-                "assign a stable and globally unique `identifier` per extracted item."
-            ),
-            examples=["123456", "item-501", "D7/x4/zz.final3"],
-            min_length=1,
-            max_length=1000,
-            pattern=r"^[^\n\r]+$",
-            frozen=True,
-        ),
-    ]
+    hadPrimarySource: HadPrimarySource
+    identifierInPrimarySource: IdentifierInPrimarySource
 
     def _get_identifier(
         self, identifier_type: type[_ExtractedIdentifierT]
@@ -96,7 +98,3 @@ class ExtractedData(BaseEntity):
             .assign(self.hadPrimarySource, self.identifierInPrimarySource)
             .stableTargetId
         )
-
-    def __hash__(self) -> int:
-        """Calculates a hash value to make the object cacheable."""
-        return hash(f"{self.hadPrimarySource}\n{self.identifierInPrimarySource}")
