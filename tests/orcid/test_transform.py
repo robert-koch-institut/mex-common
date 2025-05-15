@@ -12,7 +12,6 @@ from mex.common.orcid.models import (
     OrcidRecord,
 )
 from mex.common.orcid.transform import transform_orcid_person_to_mex_person
-from mex.common.types import Email
 
 
 @pytest.mark.parametrize(
@@ -34,17 +33,21 @@ from mex.common.types import Email
                     ),
                 ),
             ),
-            ExtractedPerson(
-                hadPrimarySource="Naj2hOJq9FNRkkMWa5Qd0",
-                identifierInPrimarySource="0009-0004-3041-5706",
-                email=[Email("test@example.com")],
-                familyName=["Carberry"],
-                givenName=["Josiah"],
-                orcidId=["https://orcid.org/0009-0004-3041-5706"],
-                entityType="ExtractedPerson",
-                identifier="eLFbvlVkwRgGxLnS8RywZ3",
-                stableTargetId="ccM55btPUrNtYKSLX8cNQP",
-            ),
+            {
+                "hadPrimarySource": "Naj2hOJq9FNRkkMWa5Qd0",
+                "identifierInPrimarySource": "0009-0004-3041-5706",
+                "affiliation": [],
+                "email": ["test@example.com"],
+                "familyName": ["Carberry"],
+                "fullName": ["Carberry, Josiah"],
+                "givenName": ["Josiah"],
+                "isniId": [],
+                "memberOf": [],
+                "orcidId": ["https://orcid.org/0009-0004-3041-5706"],
+                "entityType": "ExtractedPerson",
+                "identifier": "eLFbvlVkwRgGxLnS8RywZ3",
+                "stableTargetId": "ccM55btPUrNtYKSLX8cNQP",
+            },
         ),
         (
             OrcidRecord(
@@ -62,17 +65,21 @@ from mex.common.types import Email
                     ),
                 ),
             ),
-            ExtractedPerson(
-                hadPrimarySource="Naj2hOJq9FNRkkMWa5Qd0",
-                identifierInPrimarySource="0000-0002-9876-5432",
-                email=[],
-                familyName=["Doe"],
-                givenName=["John"],
-                orcidId=["https://orcid.org/0000-0002-9876-5432"],
-                entityType="ExtractedPerson",
-                identifier="cwOd1omDQ8ePMflUVfXmH6",
-                stableTargetId="cPgmFF42nbFoEMWtuHaQw7",
-            ),
+            {
+                "hadPrimarySource": "Naj2hOJq9FNRkkMWa5Qd0",
+                "identifierInPrimarySource": "0000-0002-9876-5432",
+                "affiliation": [],
+                "email": [],
+                "familyName": ["Doe"],
+                "fullName": ["Doe, John"],
+                "givenName": ["John"],
+                "isniId": [],
+                "memberOf": [],
+                "orcidId": ["https://orcid.org/0000-0002-9876-5432"],
+                "entityType": "ExtractedPerson",
+                "identifier": "cwOd1omDQ8ePMflUVfXmH6",
+                "stableTargetId": "cPgmFF42nbFoEMWtuHaQw7",
+            },
         ),
     ],
     ids=[
@@ -89,4 +96,4 @@ def test_transform_orcid_person_to_mex_person(
     mex_person = transform_orcid_person_to_mex_person(
         orcid_person, orcid_primary_source
     )
-    assert mex_person == expected_mex_person
+    assert mex_person.model_dump() == expected_mex_person

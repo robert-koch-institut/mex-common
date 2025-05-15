@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - move hash function from ExtractedData to BaseModel
+- added fullname attribute to transforming orcid person to mex person
 
 ### Deprecated
 

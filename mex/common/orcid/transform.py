@@ -22,17 +22,23 @@ def transform_orcid_person_to_mex_person(
     name = orcid_record.person.name
     given_names = None
     family_name = None
+    full_name = None
     if name.visibility == "public":
         if name.given_names:
             given_names = name.given_names.value
         if name.family_name:
             family_name = name.family_name.value
+    if family_name and given_names:
+        full_name = f"{family_name}, {given_names}"
+    else:
+        full_name = family_name or given_names
 
     return ExtractedPerson(
         identifierInPrimarySource=id_in_primary_source,
         hadPrimarySource=had_primary_source,
         givenName=given_names,
         familyName=family_name,
+        fullName=full_name,
         orcidId=orcid_id,
         email=email,
     )
