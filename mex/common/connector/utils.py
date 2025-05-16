@@ -1,13 +1,6 @@
 from collections.abc import Callable
 
-from requests import Response, codes
-
 from mex.common.exceptions import TimedRequestException
-
-
-def is_forbidden(response: Response) -> bool:
-    """Check if the given response has a 403 status code."""
-    return response.status_code == int(codes.forbidden)
 
 
 def bounded_backoff(

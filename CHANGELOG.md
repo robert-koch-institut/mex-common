@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - removed `BaseEntity` class to reduce inheritance hierarchy
+- remove http retry on forbidden responses
 
 ### Fixed
 

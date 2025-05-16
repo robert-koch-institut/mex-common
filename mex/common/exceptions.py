@@ -37,8 +37,12 @@ class TimedRequestException(RequestException):
 
     def __str__(self) -> str:
         """Return a shortened representation."""
-        args = ", ".join(str(a) for a in self.args) or "N/A"
-        return f"{self.__class__.__name__}: {args} (seconds elapsed={self.seconds:.3f})"
+        args = (
+            ", ".join(str(a) for a in self.args)
+            or (self.response and self.response.status_code)
+            or "N/A"
+        )
+        return f"{args} (seconds elapsed={self.seconds:.3f})"
 
     @classmethod
     def create(cls, exc: RequestException, t0: float) -> Self:

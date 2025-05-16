@@ -11,5 +11,5 @@ def test_mex_error_str() -> None:
 def test_timed_read_timeout_str() -> None:
     assert (
         str(TimedReadTimeout("I have 2", "args", seconds=5.3))
-        == "TimedReadTimeout: I have 2, args (seconds elapsed=5.300)"
+        == "I have 2, args (seconds elapsed=5.300)"
     )
