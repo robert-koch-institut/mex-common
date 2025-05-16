@@ -12,6 +12,10 @@ from mex.common.exceptions import TimedReadTimeout
 
 
 class DummyHTTPConnector(HTTPConnector):
+    TIMEOUT = 1
+    TIMEOUT_MAX = 2
+    PROPORTIONAL_BACKOFF_MIN = 0.1
+
     def _set_url(self) -> None:
         self.url = "https://www.example.com"
 
@@ -47,7 +51,7 @@ def test_init_mocked(mocked_dummy_session: MagicMock, monkeypatch: MonkeyPatch) 
         "GET",
         "https://www.example.com/_system/check",
         None,
-        timeout=10,
+        timeout=DummyHTTPConnector.TIMEOUT,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
@@ -149,30 +153,27 @@ def test_request_success(
     [
         (
             0.0,
-            Mock(
-                status_code=codes.internal_server_error,
-                json=MagicMock(return_value={"status": codes.internal_server_error}),
+            RequestException(
+                response=Mock(
+                    status_code=codes.internal_server_error,
+                    json=MagicMock(
+                        return_value={"status": codes.internal_server_error}
+                    ),
+                )
             ),
-            {"status": codes.internal_server_error},
-            3,
+            "TimedServerError()",
+            5,
         ),
         (
             0.0,
-            Mock(
-                status_code=codes.too_many_requests,
-                json=MagicMock(return_value={"status": codes.too_many_requests}),
+            RequestException(
+                response=Mock(
+                    status_code=codes.too_many_requests,
+                    json=MagicMock(return_value={"status": codes.too_many_requests}),
+                )
             ),
-            {"status": codes.too_many_requests},
-            3,
-        ),
-        (
-            0.0,
-            Mock(
-                status_code=codes.forbidden,
-                json=MagicMock(return_value={"status": codes.forbidden}),
-            ),
-            {"status": codes.forbidden},
-            1,
+            "TimedTooManyRequests()",
+            5,
         ),
         (
             0.0,
@@ -190,7 +191,6 @@ def test_request_success(
     ids=[
         "internal server error",
         "too many requests",
-        "forbidden",
         "connect timeout",
         "timed read timeout",
     ],

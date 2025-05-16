@@ -1,6 +1,7 @@
-from typing import Any
+import time
+from typing import Any, Self
 
-from requests.exceptions import ReadTimeout
+from requests.exceptions import RequestException
 
 
 class MExError(Exception):
@@ -24,8 +25,8 @@ class MergingError(MExError):
     """Creating a merged item from extracted items and rules failed."""
 
 
-class TimedReadTimeout(ReadTimeout):
-    """Read time out exception with a seconds attribute."""
+class TimedRequestException(RequestException):
+    """Timed request exception with a seconds attribute."""
 
     seconds: float
 
@@ -36,5 +37,31 @@ class TimedReadTimeout(ReadTimeout):
 
     def __str__(self) -> str:
         """Return a shortened representation."""
-        args = ", ".join(str(a) for a in self.args) or "N/A"
-        return f"{self.__class__.__name__}: {args} (seconds elapsed={self.seconds:.3f})"
+        args = (
+            ", ".join(str(a) for a in self.args)
+            or (self.response and self.response.status_code)
+            or "N/A"
+        )
+        return f"{args} (seconds elapsed={self.seconds:.3f})"
+
+    @classmethod
+    def create(cls, exc: RequestException, t0: float) -> Self:
+        """Create a new timed error from an upstream exception and start time."""
+        return cls(
+            *exc.args,
+            response=exc.response,
+            request=exc.request,
+            seconds=time.perf_counter() - t0,
+        )
+
+
+class TimedReadTimeout(TimedRequestException):
+    """The server did not send any data in the allotted amount of time."""
+
+
+class TimedTooManyRequests(TimedRequestException):
+    """Client sent too many requests in a given time."""
+
+
+class TimedServerError(TimedRequestException):
+    """The server encountered an error or is incapable of responding."""

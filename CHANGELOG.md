@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add proportional backoff to too_many_requests responses and configure minimum time
+
 ### Changes
 
 - move hash function from ExtractedData to BaseModel
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - removed `BaseEntity` class to reduce inheritance hierarchy
+- remove http retry on forbidden responses
 
 ### Fixed
 
