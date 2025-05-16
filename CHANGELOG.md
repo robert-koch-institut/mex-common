@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.61.0] - 2025-05-16
+
+### Added
+
 - add proportional backoff to too_many_requests responses and configure minimum time
 
 ### Changes
@@ -16,16 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - move hash function from ExtractedData to BaseModel
 - added fullname attribute to transforming orcid person to mex person
 
-### Deprecated
-
 ### Removed
 
 - removed `BaseEntity` class to reduce inheritance hierarchy
 - remove http retry on forbidden responses
-
-### Fixed
-
-### Security
 
 ## [0.60.0] - 2025-05-13
 
