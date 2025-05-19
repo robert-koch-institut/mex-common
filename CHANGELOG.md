@@ -11,17 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- improve logging for backend API sink connector
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- fix response type of `BackendApiConnector.preview_merged_item` to be `PreviewModel`
-
 ### Security
+
+## [0.61.1] - 2025-05-19
+
+### Changes
+
+- improve logging for backend API sink connector
+
+### Fixed
+
+- fix response type of `BackendApiConnector.preview_merged_item` to be `PreviewModel`
 
 ## [0.61.0] - 2025-05-16
 
