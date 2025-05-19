@@ -174,16 +174,16 @@ def test_get_merged_item_error_mocked(mocked_backend: MagicMock) -> None:
 
 def test_preview_merged_item_mocked(
     mocked_backend: MagicMock,
-    merged_person: MergedPerson,
+    preview_person: PreviewPerson,
     rule_set_request: PersonRuleSetRequest,
 ) -> None:
-    mocked_return = merged_person.model_dump()
+    mocked_return = preview_person.model_dump()
     mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
     response = connector.preview_merged_item("NGwfzG8ROsrvIiQIVDVy", rule_set_request)
 
-    assert response == merged_person
+    assert response == preview_person
 
     assert mocked_backend.call_args == call(
         "POST",

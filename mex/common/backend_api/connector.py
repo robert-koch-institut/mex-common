@@ -14,8 +14,8 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPerson,
     ItemsContainer,
-    MergedModelTypeAdapter,
     PaginatedItemsContainer,
+    PreviewModelTypeAdapter,
     RuleSetResponseTypeAdapter,
 )
 from mex.common.settings import BaseSettings
@@ -154,7 +154,7 @@ class BackendApiConnector(HTTPConnector):
         self,
         stable_target_id: str,
         rule_set: AnyRuleSetRequest,
-    ) -> AnyMergedModel:
+    ) -> AnyPreviewModel:
         """Return a preview for merging the given rule-set with stored extracted items.
 
         Args:
@@ -172,7 +172,7 @@ class BackendApiConnector(HTTPConnector):
             endpoint=f"preview-item/{stable_target_id}",
             payload=rule_set,
         )
-        return MergedModelTypeAdapter.validate_python(response)
+        return PreviewModelTypeAdapter.validate_python(response)
 
     def fetch_preview_items(
         self,

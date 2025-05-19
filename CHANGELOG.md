@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix response type of `BackendApiConnector.preview_merged_item` to be `PreviewModel`
+
 ### Security
 
 ## [0.61.0] - 2025-05-16
