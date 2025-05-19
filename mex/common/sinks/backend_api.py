@@ -1,3 +1,4 @@
+import json
 from collections.abc import Generator, Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import TypeGuard
@@ -79,13 +80,17 @@ class BackendApiSink(BaseSink):
                 model_list,
                 timeout=(BackendApiSink.CONNECT_TIMEOUT, BackendApiSink.READ_TIMEOUT),
             )
-        except RequestException:
+        except RequestException as error:
             model_info = [
-                f"{m.entityType}:{m.hadPrimarySource}:{m.identifierInPrimarySource}"
+                f"{m.entityType}(hadPrimarySource={m.hadPrimarySource}, "
+                f"identifierInPrimarySource={m.identifierInPrimarySource}, ...)"
                 if isinstance(m, AnyExtractedModel)
-                else f"{m.entityType}:{m.stableTargetId}"
+                else f"{m.entityType}(stableTargetId={m.stableTargetId})"
                 for m in model_list
             ]
             logger.error(f"Error ingesting models: {', '.join(model_info)}")
+            if error.response:
+                response_body = json.dumps(error.response.json(), indent=4)
+                logger.error(f"Backend responded: {response_body}")
             raise
         return model_list
