@@ -21,6 +21,7 @@ from mex.common.utils import (
     contains_only_types,
     get_alias_lookup,
     get_all_fields,
+    get_field_names_allowing_empty_list,
     get_field_names_allowing_none,
     get_inner_types,
     get_list_field_names,
@@ -194,6 +195,13 @@ def test_get_field_names_allowing_none() -> None:
     assert get_field_names_allowing_none(ComplexDummyModel) == [
         "optional_str",
         "optional_list",
+    ]
+
+
+def test_get_field_names_allowing_empty_list() -> None:
+    assert get_field_names_allowing_empty_list(ComplexDummyModel) == [
+        "optional_list",
+        "required_list",
     ]
 
 
