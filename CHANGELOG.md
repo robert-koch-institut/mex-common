@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-
+- added utility method for a cached list of fields that can be set to an empty list 'get_field_names_allowing_empty_list'
+- will be used to highlight required field in mex-editor in the edit view
 ### Changes
 
 ### Deprecated
