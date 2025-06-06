@@ -89,11 +89,11 @@ ViafIdStr = Annotated[
 WikidataIdStr = Annotated[
     str,
     Field(
-        pattern="^https://www\\.wikidata\\.org/entity/[PQ0-9]{2,64}$",
+        pattern="^http://www\\.wikidata\\.org/entity/[PQ0-9]{2,64}$",
         examples=[
-            "https://www.wikidata.org/entity/Q679041",
-            "https://www.wikidata.org/entity/Q918501",
-            "https://www.wikidata.org/entity/Q491566",
+            "http://www.wikidata.org/entity/Q679041",
+            "http://www.wikidata.org/entity/Q918501",
+            "http://www.wikidata.org/entity/Q491566",
         ],
         json_schema_extra={"format": "uri"},
     ),

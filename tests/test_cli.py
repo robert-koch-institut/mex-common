@@ -131,7 +131,7 @@ class MyEnum(Enum):
                 "help": "This flag is optional",
                 "prompt": None,
                 "is_flag": True,
-                "flag_value": None,
+                "flag_value": True,
                 "count": False,
                 "hidden": False,
             },
