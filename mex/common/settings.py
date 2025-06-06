@@ -183,7 +183,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_LDAP_SEARCH_BASE",
     )
     wiki_api_url: AnyUrl = Field(
-        Url("https://wikidata/"),
+        Url("http://wikidata/"),
         description="URL of the Wikidata API used to resolve an ID to an organization.",
         validation_alias="MEX_WIKI_API_URL",
     )

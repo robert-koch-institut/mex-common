@@ -48,7 +48,7 @@ def transform_wikidata_organization_to_extracted_organization(
     if not labels:
         return None
     return ExtractedOrganization(
-        wikidataId=f"https://www.wikidata.org/entity/{wikidata_organization.identifier}",
+        wikidataId=f"http://www.wikidata.org/entity/{wikidata_organization.identifier}",
         officialName=labels,
         shortName=_get_clean_short_names(wikidata_organization.claims.short_name),
         geprisId=[],
