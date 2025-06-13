@@ -11,9 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bump mex-model dependency
-- get vocabulary model examples dynamically from models
-
 ### Deprecated
 
 ### Removed
@@ -21,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.61.2] - 2025-06-13
+
+### Changes
+
+- bump mex-model dependency
+- get vocabulary model examples dynamically from models
 
 ## [0.61.1] - 2025-05-19
 
