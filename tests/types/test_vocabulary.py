@@ -64,7 +64,7 @@ def test_vocabulary_enum_schema() -> None:
     assert DummyModel.model_json_schema() == {
         "properties": {
             "dummy": {
-                "examples": ["https://mex.rki.de/item/dummy-vocabulary-1"],
+                "examples": ["https://mex.rki.de/item/dummy-concept-1"],
                 "pattern": "https://mex.rki.de/item/[a-z0-9-]+",
                 "title": "Dummy",
                 "type": "string",

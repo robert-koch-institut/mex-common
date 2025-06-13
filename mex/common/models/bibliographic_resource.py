@@ -147,6 +147,7 @@ class _OptionalLists(_Stem):
     keyword: list[Text] = []
     language: list[Language] = []
     publisher: list[MergedOrganizationIdentifier] = []
+    repositoryURL: list[Link] = []
     subtitle: list[Text] = []
     titleOfBook: list[Text] = []
     titleOfSeries: list[Text] = []
@@ -171,7 +172,6 @@ class _OptionalValues(_Stem):
     pages: PagesStr | None = None
     publicationPlace: PublicationPlaceStr | None = None
     publicationYear: Year | None = None
-    repositoryURL: Link | None = None
     section: SectionStr | None = None
     volume: VolumeOrIssueStr | None = None
     volumeOfSeries: VolumeOrIssueStr | None = None

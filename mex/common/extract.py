@@ -55,7 +55,10 @@ def parse_csv(
         Generator for models
     """
     with pd.read_csv(
-        path_or_buffer, chunksize=chunksize, dtype=get_dtypes_for_model(into), **kwargs
+        path_or_buffer,
+        chunksize=chunksize,
+        dtype=get_dtypes_for_model(into),  # type: ignore[arg-type]
+        **kwargs,
     ) as reader:
         for i, chunk in enumerate(reader):
             logger.info(
