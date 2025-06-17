@@ -82,6 +82,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: release
+    environment:
+      name: pypi
+      url: https://pypi.org/p/mex-release
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -116,3 +121,6 @@ jobs:
           for filename in dist/*; do
             gh release upload ${{ needs.release.outputs.tag }} ${filename};
           done
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
