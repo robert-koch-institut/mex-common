@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- running github release action publishes to pypi
-
 ### Changes
-
-- use mex-model from pypi instead of github
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.62.0] - 2025-06-17
+
+### Added
+
+- running github release action publishes to pypi
+
+### Changes
+
+- use mex-model from pypi instead of github
 
 ## [0.61.2] - 2025-06-13
 
