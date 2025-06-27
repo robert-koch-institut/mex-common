@@ -59,7 +59,19 @@ class BackendApiSink(BaseSink):
     def is_supported(
         model_list: list[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
     ) -> TypeGuard[list[AnyExtractedModel | AnyRuleSetResponse]]:
-        """Return whether the given list only contains models the backend can handle."""
+        """Return whether the given list only contains models the backend can handle.
+
+        The backend API can only handle extracted models and rule-set responses,
+        not merged models. This type guard validates the input and provides
+        type narrowing for downstream processing.
+
+        Args:
+            model_list: List of models to check for backend compatibility.
+
+        Returns:
+            True if all models are supported (extracted models or rule-set responses),
+            False otherwise.
+        """
         return all(
             isinstance(item, AnyExtractedModel | AnyRuleSetResponse)
             for item in model_list
@@ -69,7 +81,21 @@ class BackendApiSink(BaseSink):
     def load_chunk(
         chunk: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse | None],
     ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
-        """Load a chunk of models into the backend."""
+        """Load a chunk of models into the backend.
+
+        Handles the actual bulk insertion of a chunk of models to the backend API.
+        Filters out None values and validates that all models are supported before
+        attempting ingestion.
+
+        Args:
+            chunk: Iterable of models to load, may contain None values.
+
+        Raises:
+            NotImplementedError: If the chunk contains unsupported model types.
+
+        Returns:
+            List of successfully loaded models.
+        """
         connector = BackendApiConnector.get()
         model_list = [item for item in chunk if item is not None]
         if not BackendApiSink.is_supported(model_list):

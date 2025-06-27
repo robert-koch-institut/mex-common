@@ -132,7 +132,19 @@ def get_inner_types(
 
 @lru_cache(maxsize=4048)
 def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
-    """Return a combined dict of defined and computed fields of a given model."""
+    """Return a combined dict of defined and computed fields of a given model.
+
+    This function combines both regular model fields and computed fields into a
+    single dictionary using the GenericFieldInfo abstraction. Results are cached
+    for performance.
+
+    Args:
+        model: The Pydantic model class to extract fields from.
+
+    Returns:
+        Dictionary mapping field names to GenericFieldInfo objects for all fields
+        (both regular and computed) in the model.
+    """
     return {
         **{
             name: GenericFieldInfo(
@@ -155,7 +167,18 @@ def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
 
 @lru_cache(maxsize=4048)
 def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
-    """Build a cached mapping from field alias to field names."""
+    """Build a cached mapping from field alias to field names.
+
+    Creates a dictionary that maps field aliases (or field names if no alias exists)
+    back to the actual field names. This is useful for resolving field references
+    when working with serialized data that may use aliases.
+
+    Args:
+        model: The Pydantic model class to build the alias lookup for.
+
+    Returns:
+        Dictionary mapping field aliases (or names) to actual field names.
+    """
     return {
         field_info.alias or field_name: field_name
         for field_name, field_info in get_all_fields(model).items()
@@ -164,7 +187,17 @@ def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
 
 @lru_cache(maxsize=4048)
 def get_list_field_names(model: type[BaseModel]) -> list[str]:
-    """Build a cached list of fields that look like lists."""
+    """Build a cached list of fields that look like lists.
+
+    Analyzes the model's field annotations to identify fields that are list types.
+    This includes direct list annotations and list types within unions.
+
+    Args:
+        model: The Pydantic model class to analyze.
+
+    Returns:
+        List of field names that have list-like type annotations.
+    """
     field_names = []
     for field_name, field_info in get_all_fields(model).items():
         field_types = get_inner_types(field_info.annotation, unpack_list=False)
@@ -178,7 +211,18 @@ def get_list_field_names(model: type[BaseModel]) -> list[str]:
 
 @lru_cache(maxsize=4048)
 def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
-    """Build a cached list of fields can be set to None."""
+    """Build a cached list of fields that can be set to None.
+
+    Tests each field's annotation by attempting to validate None against it.
+    Fields that accept None without raising a ValidationError are considered
+    nullable fields.
+
+    Args:
+        model: The Pydantic model class to analyze.
+
+    Returns:
+        List of field names that accept None as a valid value.
+    """
     field_names: list[str] = []
     for field_name, field_info in get_all_fields(model).items():
         validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
@@ -196,12 +240,16 @@ def group_fields_by_class_name(
 ) -> dict[str, list[str]]:
     """Group the field names by model class and filter them by the given predicate.
 
+    For each model class, extracts all fields and applies the predicate function
+    to filter them. Returns a mapping from class names to lists of field names
+    that satisfy the predicate condition.
+
     Args:
-        model_classes_by_name: Map from class names to model classes
-        predicate: Function to filter the fields of the classes by
+        model_classes_by_name: Map from class names to model classes.
+        predicate: Function to filter the fields of the classes by.
 
     Returns:
-        Dictionary mapping class names to a list of field names filtered by `predicate`
+        Dictionary mapping class names to a list of field names filtered by `predicate`.
     """
     return {
         name: sorted(
@@ -218,7 +266,20 @@ def group_fields_by_class_name(
 def grouper(
     chunk_size: int, iterable: Iterable[_GroupableItemT]
 ) -> Iterator[Iterable[_GroupableItemT | None]]:
-    """Collect data into fixed-length chunks or blocks."""
+    """Collect data into fixed-length chunks or blocks.
+
+    Groups items from an iterable into fixed-size chunks. The last chunk may be
+    padded with None values if the total number of items is not evenly divisible
+    by the chunk size.
+
+    Args:
+        chunk_size: The size of each chunk.
+        iterable: The iterable to group into chunks.
+
+    Returns:
+        Iterator of iterables, each containing chunk_size items (with None padding
+        for the final chunk if necessary).
+    """
     # https://docs.python.org/3.9/library/itertools.html#itertools-recipes
     args = [iter(iterable)] * chunk_size
     return zip_longest(*args, fillvalue=None)

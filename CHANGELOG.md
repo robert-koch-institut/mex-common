@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- improve a batch of doc-strings with args, raises and return sections
+
 ### Deprecated
 
 ### Removed
