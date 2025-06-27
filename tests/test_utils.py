@@ -18,6 +18,7 @@ from mex.common.utils import (
     GenericFieldInfo,
     any_contains_any,
     contains_any,
+    contains_any_types,
     contains_only_types,
     get_alias_lookup,
     get_all_fields,
@@ -96,6 +97,66 @@ def test_contains_only_types(
         attribute: annotation
 
     assert contains_only_types(DummyModel.model_fields["attribute"], *types) == expected
+
+
+@pytest.mark.parametrize(
+    ("annotation", "types", "expected"),
+    [
+        (None, [str], False),
+        (str, [str], True),
+        (str, [Identifier], False),
+        (Identifier, [str], False),
+        (str, [int, str], True),
+        (str, [int, float], False),
+        (str | int, [str], True),
+        (str | int, [int], True),
+        (str | int, [float], False),
+        (str | None, [str], True),
+        (str | None, [NoneType], False),  # NoneType excluded by include_none=False
+        (list[str], [str], True),
+        (list[str], [list], False),  # list is unpacked by default
+        (list[str | int], [str], True),
+        (list[str | int], [int], True),
+        (list[str | int], [float], False),
+        (Annotated[str, "description"], [str], True),
+        (Annotated[str | int, "description"], [str], True),
+        (Annotated[str | int, "description"], [float], False),
+        (Literal["value"], [Literal], True),
+        (MergedPersonIdentifier | None, MERGED_IDENTIFIER_CLASSES, True),
+        (MergedPersonIdentifier, MERGED_IDENTIFIER_CLASSES, True),
+    ],
+    ids=[
+        "static None",
+        "simple str match",
+        "str vs identifier mismatch",
+        "identifier vs str mismatch",
+        "str in multiple types",
+        "str not in multiple types",
+        "union match first",
+        "union match second",
+        "union no match",
+        "optional str match",
+        "optional str excludes NoneType",
+        "list of str",
+        "list unpacked excludes list type",
+        "nested union match first",
+        "nested union match second",
+        "nested union no match",
+        "annotated str",
+        "annotated union match",
+        "annotated union no match",
+        "literal type",
+        "optional identifier match",
+        "identifier match",
+    ],
+)
+def test_contains_any_types(
+    annotation: Any,  # noqa: ANN401
+    types: list[type],
+    expected: bool,  # noqa: FBT001
+) -> None:
+    field_info = GenericFieldInfo(alias=None, annotation=annotation, frozen=False)
+    assert contains_any_types(field_info, *types) == expected
 
 
 @pytest.mark.parametrize(
