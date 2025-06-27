@@ -16,7 +16,19 @@ class Identifier(str):
 
     @classmethod
     def generate(cls, seed: int | None = None) -> Self:
-        """Generate a new identifier from a seed or random UUID version 4."""
+        """Generate a new identifier from a seed or random UUID version 4.
+
+        Creates a short alphanumerical identifier using UUID version 4 as the
+        source. If a seed is provided, the UUID will be deterministic; otherwise
+        a random UUID is generated.
+
+        Args:
+            seed: Optional integer seed for deterministic identifier generation.
+                  If None, generates a random identifier.
+
+        Returns:
+            New identifier instance with the generated value.
+        """
         # Inspired by https://pypi.org/project/shortuuid
         output = ""
         alpha_len = len(_ALPHABET)
