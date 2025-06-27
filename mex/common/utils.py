@@ -74,7 +74,6 @@ def contains_any_types(field: GenericFieldInfo, *types: type) -> bool:
     Returns:
         Whether the field contains any of the given types
     """
-    # TODO(ND): move this into mex-common for completeness sake
     if inner_types := list(get_inner_types(field.annotation, include_none=False)):
         return any(inner_type in types for inner_type in inner_types)
     return False
