@@ -172,6 +172,20 @@ def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
     return field_names
 
 
+@lru_cache(maxsize=4048)
+def get_field_names_allowing_empty_list(model: type[BaseModel]) -> list[str]:
+    """Build a cached list of fields can be set to an empty list."""
+    field_names: list[str] = []
+    for field_name, field_info in get_all_fields(model).items():
+        validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
+        try:
+            validator.validate_python([])
+        except ValidationError:
+            continue
+        field_names.append(field_name)
+    return field_names
+
+
 def group_fields_by_class_name(
     model_classes_by_name: Mapping[str, type[BaseModel]],
     predicate: Callable[[GenericFieldInfo], bool],
