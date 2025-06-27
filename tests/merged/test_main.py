@@ -33,7 +33,51 @@ from mex.common.models import (
     SubtractiveResource,
 )
 from mex.common.testing import Joker
-from mex.common.types import AccessRestriction, Identifier, Text, TextLanguage, Theme
+from mex.common.types import (
+    AccessRestriction,
+    Email,
+    Identifier,
+    Text,
+    TextLanguage,
+    Theme,
+)
+
+
+def test_merge_extracted_items_stable_order() -> None:
+    merged_dict: dict[str, Any] = {}
+
+    primary_source = Identifier.generate(seed=1)
+    contact_points: list[AnyExtractedModel] = [
+        ExtractedContactPoint(
+            email=["third@contact-point.com"],
+            hadPrimarySource=primary_source,
+            identifierInPrimarySource="zzzzzzzzzz",  # Will have largest identifier
+        ),
+        ExtractedContactPoint(
+            email=["first@contact-point.com"],
+            hadPrimarySource=primary_source,
+            identifierInPrimarySource="aaaaaaaaaaa",  # Will have smallest identifier
+        ),
+        ExtractedContactPoint(
+            email=["second@contact-point.com"],
+            hadPrimarySource=primary_source,
+            identifierInPrimarySource="mmmmmmmmmmm",  # Will have middle identifier
+        ),
+    ]
+
+    _merge_extracted_items_and_apply_preventive_rule(
+        merged_dict,
+        ["email"],
+        contact_points,
+        None,
+    )
+
+    expected_order = [
+        Email("second@contact-point.com"),
+        Email("third@contact-point.com"),
+        Email("first@contact-point.com"),
+    ]
+    assert merged_dict["email"] == expected_order
 
 
 def test_merge_extracted_items_and_apply_preventive_rule() -> None:

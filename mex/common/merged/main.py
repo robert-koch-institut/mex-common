@@ -39,7 +39,7 @@ def _merge_extracted_items_and_apply_preventive_rule(
         extracted_items: List of extracted items
         rule: Preventive rules with primary source identifiers, can be None
     """
-    for extracted_item in extracted_items:
+    for extracted_item in sorted(extracted_items, key=lambda e: e.identifier):
         for field_name in mergeable_fields:
             if rule is not None and extracted_item.hadPrimarySource in getattr(
                 rule, field_name
