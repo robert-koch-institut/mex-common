@@ -199,7 +199,11 @@ class BaseSettings(PydanticBaseSettings):
     )
 
     def text(self) -> str:
-        """Dump the current settings into a readable table."""
+        """Dump the current settings into a readable table.
+
+        Returns:
+            Formatted string with all settings key-value pairs.
+        """
         dict_ = self.model_dump()
         indent = max(len(key) for key in dict_)
         return "\n".join(
@@ -212,7 +216,18 @@ class BaseSettings(PydanticBaseSettings):
 
     @classmethod
     def get_env_name(cls, name: str) -> str:
-        """Get the name of the environment variable for field with given name."""
+        """Get the name of the environment variable for field with given name.
+
+        Resolves the actual environment variable name that would be used for a
+        given field, taking into account case sensitivity and environment prefix
+        configuration.
+
+        Args:
+            name: The field name to get the environment variable name for.
+
+        Returns:
+            The uppercase environment variable name that maps to the field.
+        """
         field = cls.model_fields[name]
         env_settings = EnvSettingsSource(
             cls,

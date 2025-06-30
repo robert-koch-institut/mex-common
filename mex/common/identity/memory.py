@@ -30,7 +30,18 @@ class MemoryIdentityProvider(BaseProvider):
 
     @staticmethod
     def _get_identifier(*args: str) -> Identifier:
-        """Get deterministic identifier based on args."""
+        """Get deterministic identifier based on args.
+
+        Creates a deterministic identifier by joining the arguments with newlines,
+        computing an MD5 hash, and using the resulting integer as a seed for
+        identifier generation.
+
+        Args:
+            *args: String arguments to use for identifier generation.
+
+        Returns:
+            Deterministic Identifier based on the input arguments.
+        """
         seed_string = "\n".join(args)
         hash_ = hashlib.md5(  # noqa: S324 identifier generation is not security related
             seed_string.encode()

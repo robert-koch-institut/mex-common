@@ -175,7 +175,14 @@ class BaseModel(
         return handler(data)
 
     def checksum(self) -> str:
-        """Calculate md5 checksum for this model."""
+        """Calculate md5 checksum for this model.
+
+        Creates a deterministic hash of the model by serializing it to JSON with
+        sorted keys and computing an MD5 digest.
+
+        Returns:
+            MD5 hexdigest string representing the model's current state.
+        """
         json_str = json.dumps(self, sort_keys=True, cls=MExEncoder)
         return hashlib.md5(json_str.encode()).hexdigest()  # noqa: S324
 
