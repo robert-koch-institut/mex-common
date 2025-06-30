@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- ensure extracted items are merged in predictable way
 - improve a batch of doc-strings with args, raises and return sections
 
 ### Deprecated
