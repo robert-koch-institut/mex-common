@@ -35,7 +35,6 @@ from mex.common.models import (
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
-    Email,
     Identifier,
     Text,
     TextLanguage,
@@ -44,27 +43,18 @@ from mex.common.types import (
 
 
 def test_merge_extracted_items_stable_order() -> None:
-    merged_dict: dict[str, Any] = {}
-
-    primary_source = Identifier.generate(seed=1)
-    contact_points: list[AnyExtractedModel] = [
+    # create a batch of 20 contact points
+    contact_points = [
         ExtractedContactPoint(
-            email=["third@contact-point.com"],
-            hadPrimarySource=primary_source,
-            identifierInPrimarySource="zzzzzzzzzz",  # Will have largest identifier
-        ),
-        ExtractedContactPoint(
-            email=["first@contact-point.com"],
-            hadPrimarySource=primary_source,
-            identifierInPrimarySource="aaaaaaaaaaa",  # Will have smallest identifier
-        ),
-        ExtractedContactPoint(
-            email=["second@contact-point.com"],
-            hadPrimarySource=primary_source,
-            identifierInPrimarySource="mmmmmmmmmmm",  # Will have middle identifier
-        ),
+            email=[f"{i}@contact-point.com"],
+            hadPrimarySource=Identifier.generate(seed=1),
+            identifierInPrimarySource=f"{i}",
+        )
+        for i in range(20)
     ]
 
+    # merge the extracted items into a merged item
+    merged_dict: dict[str, Any] = {}
     _merge_extracted_items_and_apply_preventive_rule(
         merged_dict,
         ["email"],
@@ -72,12 +62,10 @@ def test_merge_extracted_items_stable_order() -> None:
         None,
     )
 
-    expected_order = [
-        Email("second@contact-point.com"),
-        Email("third@contact-point.com"),
-        Email("first@contact-point.com"),
+    # check that the list of emails is stable in its order
+    assert merged_dict["email"] == [
+        c.email[0] for c in sorted(contact_points, key=lambda e: e.identifier)
     ]
-    assert merged_dict["email"] == expected_order
 
 
 def test_merge_extracted_items_and_apply_preventive_rule() -> None:
