@@ -166,16 +166,15 @@ def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
 
 
 def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
-    # Patch _setup_connection to return different MagicMock connections each time
+    # first connection raises ldap error
     first_connection = MagicMock(name="conn1")
-    # Patch connection.server.check_availability so no error on init
     monkeypatch.setattr(first_connection.server, "check_availability", MagicMock())
-    # Patch standard to have our paged_search
     first_connection.extend.standard.paged_search = MagicMock(
         side_effect=LDAPSocketSendError("Simulated error")
     )
-    # Patch the second connection's paged_search to not raise
+    # second connection returns valid content
     second_connection: MagicMock = MagicMock(name="conn2")
+    monkeypatch.setattr(second_connection.server, "check_availability", MagicMock())
     second_connection.extend.standard.paged_search = MagicMock(
         return_value=[
             {
@@ -192,7 +191,7 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
         "_setup_connection",
         MagicMock(side_effect=[first_connection, second_connection]),
     )
-    connector = LDAPConnector()
+    connector = LDAPConnector.get()
     assert connector._connection is first_connection
     result = connector._fetch(LDAPActor)
     assert result[0].model_dump(exclude_defaults=True) == {
