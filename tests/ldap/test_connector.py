@@ -1,10 +1,14 @@
 import re
+from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from ldap3.core.exceptions import LDAPSocketSendError
+from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
+from mex.common.ldap.models import LDAPActor
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
     XY2_FUNC_ACCOUNT_ATTRS,
@@ -159,3 +163,40 @@ def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
         "sAMAccountName": "XY",
     }
     assert unit.model_dump(exclude_none=True) == expected
+
+
+def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
+    # Patch _setup_connection to return different MagicMock connections each time
+    first_connection = MagicMock(name="conn1")
+    # Patch connection.server.check_availability so no error on init
+    monkeypatch.setattr(first_connection.server, "check_availability", MagicMock())
+    # Patch standard to have our paged_search
+    first_connection.extend.standard.paged_search = MagicMock(
+        side_effect=LDAPSocketSendError("Simulated error")
+    )
+    # Patch the second connection's paged_search to not raise
+    second_connection: MagicMock = MagicMock(name="conn2")
+    second_connection.extend.standard.paged_search = MagicMock(
+        return_value=[
+            {
+                "attributes": {
+                    "sAMAccountName": "foo",
+                    "objectGUID": "00000000-0000-4000-8000-000000000000",
+                }
+            }
+        ]
+    )
+
+    monkeypatch.setattr(
+        LDAPConnector,
+        "_setup_connection",
+        MagicMock(side_effect=[first_connection, second_connection]),
+    )
+    connector = LDAPConnector()
+    assert connector._connection is first_connection
+    result = connector._fetch(LDAPActor)
+    assert result[0].model_dump(exclude_defaults=True) == {
+        "sAMAccountName": "foo",
+        "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
+    }
+    assert connector._connection is second_connection
