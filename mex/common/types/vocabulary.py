@@ -129,7 +129,7 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
     ) -> json_schema.JsonSchemaValue:
         """Modify the json schema to add the scheme and an example."""
         json_schema_ = handler(core_schema_)
-        json_schema_["examples"] = [f"https://mex.rki.de/item/{cls.__vocabulary__}-1"]
+        json_schema_["examples"] = [str(cls.__concepts__[0].identifier)]
         json_schema_["useScheme"] = f"https://mex.rki.de/item/{cls.__vocabulary__}"
         return json_schema_
 

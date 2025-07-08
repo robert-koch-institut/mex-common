@@ -94,6 +94,13 @@ def ensure_prefix(string_like: object, prefix: object) -> str:
 
     If `string_like` already starts with the prefix, return a stringified copy.
     This method is the inverse of `str.removeprefix`.
+
+    Args:
+        string_like: Object to convert to string and potentially prefix.
+        prefix: Object to convert to string and use as prefix.
+
+    Returns:
+        String with the prefix guaranteed to be present at the beginning.
     """
     string = str(string_like)
     prefix = str(prefix)
@@ -107,6 +114,13 @@ def ensure_postfix(string_like: object, postfix: object) -> str:
 
     If `string_like` already ends with the postfix, return a stringified copy.
     This method is the inverse of `str.removepostfix`.
+
+    Args:
+        string_like: Object to convert to string and potentially postfix.
+        postfix: Object to convert to string and use as postfix.
+
+    Returns:
+        String with the postfix guaranteed to be present at the end.
     """
     string = str(string_like)
     postfix = str(postfix)
@@ -116,7 +130,17 @@ def ensure_postfix(string_like: object, postfix: object) -> str:
 
 
 def to_key_and_values(dct: dict[str, Any]) -> Iterable[tuple[str, list[Any]]]:
-    """Return an iterable of dictionary items where the values are always lists."""
+    """Return an iterable of dictionary items where the values are always lists.
+
+    Normalizes dictionary values by converting single values to single-item lists,
+    leaving existing lists unchanged, and converting None to empty lists.
+
+    Args:
+        dct: Dictionary to normalize the values of.
+
+    Yields:
+        Tuples of (key, list_value) where list_value is guaranteed to be a list.
+    """
     for key, value in dct.items():
         if value is None:
             list_of_values = []

@@ -19,7 +19,7 @@ def get_wikidata_organization(item_id_or_url: str) -> WikidataOrganization:
         WikidataOrganization object
     """
     if match := re.search(
-        r"^(?:https?://)?(?:www\.)?(?:wikidata\.org/entity/)?([A-Z0-9]{2,64})/?$",
+        r"^(?:http?://)?(?:www\.)?(?:wikidata\.org/entity/)?([A-Z0-9]{2,64})/?$",
         item_id_or_url,
     ):
         item_id = match.group(1)

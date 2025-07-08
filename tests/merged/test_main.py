@@ -33,7 +33,39 @@ from mex.common.models import (
     SubtractiveResource,
 )
 from mex.common.testing import Joker
-from mex.common.types import AccessRestriction, Identifier, Text, TextLanguage, Theme
+from mex.common.types import (
+    AccessRestriction,
+    Identifier,
+    Text,
+    TextLanguage,
+    Theme,
+)
+
+
+def test_merge_extracted_items_stable_order() -> None:
+    # create a batch of 20 contact points
+    contact_points = [
+        ExtractedContactPoint(
+            email=[f"{i}@contact-point.com"],
+            hadPrimarySource=Identifier.generate(seed=1),
+            identifierInPrimarySource=f"{i}",
+        )
+        for i in range(20)
+    ]
+
+    # merge the extracted items into a merged item
+    merged_dict: dict[str, Any] = {}
+    _merge_extracted_items_and_apply_preventive_rule(
+        merged_dict,
+        ["email"],
+        contact_points,
+        None,
+    )
+
+    # check that the list of emails is stable in its order
+    assert merged_dict["email"] == [
+        c.email[0] for c in sorted(contact_points, key=lambda e: e.identifier)
+    ]
 
 
 def test_merge_extracted_items_and_apply_preventive_rule() -> None:

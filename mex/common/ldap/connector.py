@@ -1,8 +1,9 @@
-from typing import TypeVar
+from typing import TypeVar, cast
 from urllib.parse import urlsplit
 
+import backoff
 from ldap3 import AUTO_BIND_NO_TLS, Connection, Server
-from ldap3.core.exceptions import LDAPExceptionError
+from ldap3.core.exceptions import LDAPExceptionError, LDAPSocketSendError
 
 from mex.common.connector import BaseConnector
 from mex.common.exceptions import (
@@ -11,6 +12,7 @@ from mex.common.exceptions import (
     MExError,
 )
 from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPUnit
+from mex.common.logging import logger
 from mex.common.settings import BaseSettings
 
 _LDAPActorT = TypeVar("_LDAPActorT", bound=LDAPActor)
@@ -21,6 +23,12 @@ class LDAPConnector(BaseConnector):
 
     def __init__(self) -> None:
         """Create a new LDAP connection."""
+        settings = BaseSettings.get()
+        self._search_base = settings.ldap_search_base
+        self._connection = self._setup_connection()
+
+    def _setup_connection(self) -> Connection:
+        """Set up a new LDAP connection."""
         settings = BaseSettings.get()
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
@@ -33,22 +41,31 @@ class LDAPConnector(BaseConnector):
             auto_bind=AUTO_BIND_NO_TLS,
             read_only=True,
         )
-        self._connection = connection.__enter__()
-        self._search_base = settings.ldap_search_base
-        if not self._is_service_available():
-            msg = f"LDAP service not available at url: {host}:{port}"
-            raise MExError(msg)
-
-    def _is_service_available(self) -> bool:
+        connection.__enter__()
         try:
-            return self._connection.server.check_availability() is True
-        except LDAPExceptionError:
-            return False
+            connection.server.check_availability()
+        except LDAPExceptionError as error:
+            msg = f"LDAP service not available at url: {host}:{port}"
+            raise MExError(msg) from error
+        return connection
 
     def close(self) -> None:
         """Close the connector's underlying LDAP connection."""
-        self._connection.__exit__(None, None, None)
+        if self._connection:
+            self._connection.__exit__(None, None, None)
 
+    def reconnect(self) -> None:
+        """Close current ldap connection and initiate a new one."""
+        self.close()
+        self._connection = self._setup_connection()
+
+    @backoff.on_exception(
+        wait_gen=backoff.fibo,
+        exception=(LDAPSocketSendError,),
+        max_tries=1,
+        logger=logger,
+        on_backoff=lambda details: cast("LDAPConnector", details.args[0]).reconnect(),
+    )
     def _fetch(
         self,
         model_cls: type[_LDAPActorT],

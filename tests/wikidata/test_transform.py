@@ -43,7 +43,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
         "rorId": ["https://ror.org/05vs9tj88", "https://ror.org/044kkbh92"],
         "shortName": [],
         "viafId": ["https://viaf.org/viaf/129013645"],
-        "wikidataId": ["https://www.wikidata.org/entity/Q26678"],
+        "wikidataId": ["http://www.wikidata.org/entity/Q26678"],
     }
     with (TESTDATA_DIR / "items_details.json").open(encoding="utf-8") as fh:
         wikidata_organization = WikidataOrganization.model_validate(json.load(fh)[0])
@@ -99,7 +99,7 @@ def test_transform_wikidata_organization_to_organization(
         "rorId": ["https://ror.org/05vs9tj88", "https://ror.org/044kkbh92"],
         "shortName": [],
         "viafId": ["https://viaf.org/viaf/129013645"],
-        "wikidataId": ["https://www.wikidata.org/entity/Q26678"],
+        "wikidataId": ["http://www.wikidata.org/entity/Q26678"],
     }
 
     with (TESTDATA_DIR / "items_details.json").open(encoding="utf-8") as fh:

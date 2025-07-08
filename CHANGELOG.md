@@ -21,6 +21,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.62.1] - 2025-07-07
+
+### Added
+
+- moved `contains_any_types` over from mex-backend
+
+### Changes
+
+- ensure extracted items are merged in predictable way
+- improve a batch of doc-strings with args, raises and return sections
+
+### Fixed
+
+- fix ldap error if ldap connector is >1h old
+
+## [0.62.0] - 2025-06-17
+
+### Added
+
+- running github release action publishes to pypi
+
+### Changes
+
+- use mex-model from pypi instead of github
+
+## [0.61.2] - 2025-06-13
+
+### Changes
+
+- bump mex-model dependency
+- get vocabulary model examples dynamically from models
+
 ## [0.61.1] - 2025-05-19
 
 ### Changes
