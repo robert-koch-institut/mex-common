@@ -2,6 +2,7 @@ from collections.abc import Iterable
 
 from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 
@@ -9,12 +10,14 @@ from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 def transform_organigram_unit_to_extracted_organizational_unit(
     organigram_unit: OrganigramUnit,
     primary_source: ExtractedPrimarySource,
+    rki_organization: ExtractedOrganization,
 ) -> ExtractedOrganizationalUnit:
     """Transform an organigram unit into an ExtractedOrganizationalUnit.
 
     Args:
         organigram_unit: Iterable of organigram units coming from the JSON file
         primary_source: Primary source for organigram
+        rki_organization: RKI organization to which the unit belongs
 
     Returns:
         ExtractedOrganizationalUnit
@@ -23,6 +26,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
         identifierInPrimarySource=organigram_unit.identifier,
         hadPrimarySource=primary_source.stableTargetId,
         alternativeName=organigram_unit.alternativeName,
+        unitOf=[rki_organization.stableTargetId],
         email=[Email(email) for email in organigram_unit.email],
         name=organigram_unit.name,
         shortName=organigram_unit.shortName,
@@ -33,6 +37,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
 def transform_organigram_units_to_organizational_units(
     organigram_units: Iterable[OrganigramUnit],
     primary_source: ExtractedPrimarySource,
+    rki_organization: ExtractedOrganization,
 ) -> list[ExtractedOrganizationalUnit]:
     """Transform organigram units into ExtractedOrganizationalUnits.
 
@@ -41,6 +46,7 @@ def transform_organigram_units_to_organizational_units(
     Args:
         organigram_units: Iterable of organigram units coming from the JSON file
         primary_source: Primary source for organigram
+        rki_organization: RKI organization to which the units belong
 
     Returns:
         List of ExtractedOrganizationalUnit
@@ -50,7 +56,7 @@ def transform_organigram_units_to_organizational_units(
 
     for unit in organigram_units:
         extracted_unit = transform_organigram_unit_to_extracted_organizational_unit(
-            unit, primary_source
+            unit, primary_source, rki_organization
         )
         extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit
         if parent_identifier_in_primary_source := unit.parentUnit:

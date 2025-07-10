@@ -3,6 +3,7 @@ from collections.abc import Generator
 from mex.common.exceptions import MExError
 from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
@@ -14,12 +15,14 @@ from mex.common.types import MergedOrganizationalUnitIdentifier
 def get_extracted_organizational_unit_with_parents(
     name: str,
     primary_source: ExtractedPrimarySource,
+    rki_organization: ExtractedOrganization,
 ) -> list[ExtractedOrganizationalUnit]:
     """Pick the unit with the given name and transform it along with its parents.
 
     Args:
         name: Name (`identifierInPrimarySource`) of the organigram unit
         primary_source: Extracted primary source for the organigram
+        rki_organization: RKI organization to which the unit belongs
 
     Returns:
         ExtractedOrganizationalUnit with its parents
@@ -47,7 +50,7 @@ def get_extracted_organizational_unit_with_parents(
 
     for unit in organigram_unit_with_parents:
         extracted_unit = transform_organigram_unit_to_extracted_organizational_unit(
-            unit, primary_source
+            unit, primary_source, rki_organization
         )
         extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit
         if parent_identifier_in_primary_source := unit.parentUnit:

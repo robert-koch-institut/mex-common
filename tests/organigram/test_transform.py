@@ -1,4 +1,5 @@
 from mex.common.models import ExtractedPrimarySource
+from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
@@ -11,9 +12,12 @@ def test_transform_organigram_units_to_organizational_units(
     child_unit: OrganigramUnit,
     parent_unit: OrganigramUnit,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    rki_organization: ExtractedOrganization,
 ) -> None:
     extracted_units = transform_organigram_units_to_organizational_units(
-        [child_unit, parent_unit], extracted_primary_sources["organigram"]
+        [child_unit, parent_unit],
+        extracted_primary_sources["organigram"],
+        rki_organization,
     )
 
     # look up by ids, because order is not guaranteed
@@ -49,7 +53,7 @@ def test_transform_organigram_units_to_organizational_units(
             {"value": "Department", "language": TextLanguage.EN},
         ],
         "shortName": [{"value": "PRNT"}],
-        "unitOf": [],
+        "unitOf": ["hDGPcPIlVrQZu9EbokVFmm"],
         "website": [
             {
                 "language": LinkLanguage.EN,
