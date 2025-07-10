@@ -62,9 +62,11 @@ class LDAPConnector(BaseConnector):
     @backoff.on_exception(
         wait_gen=backoff.fibo,
         exception=(LDAPSocketSendError,),
-        max_tries=1,
+        max_tries=2,
         logger=logger,
-        on_backoff=lambda details: cast("LDAPConnector", details.args[0]).reconnect(),
+        on_backoff=lambda details: cast(
+            "LDAPConnector", details["args"][0]
+        ).reconnect(),
     )
     def _fetch(
         self,

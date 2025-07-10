@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.62.2] - 2025-07-08
+
+### Fixed
+
+- fix ldap connection resetting
+
 ## [0.62.1] - 2025-07-07
 
 ### Added
