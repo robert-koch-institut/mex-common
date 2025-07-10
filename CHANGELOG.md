@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- BREAKING: add RKI organization as unitOf to organigram units
-
 ### Changes
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.63.0] - 2025-07-10
+
+### Added
+
+- BREAKING: add RKI organization as unitOf to organigram units
 
 ## [0.62.2] - 2025-07-08
 
