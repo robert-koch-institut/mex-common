@@ -364,6 +364,22 @@ def test_apply_subtractive_rule() -> None:
                 "entityType": "PreviewContactPoint",
             },
         ),
+        (
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                subtractive=SubtractiveContactPoint(
+                    email=["orders@krusty.ocean"],
+                )
+            ),
+            Validation.IGNORE,
+            None,
+        ),
     ],
     ids=(
         "single extracted item",
@@ -374,13 +390,14 @@ def test_apply_subtractive_rule() -> None:
         "merging raises cardinality error",
         "get preview of merged items",
         "preview allows cardinality error",
+        "ignore mode validation returns none",
     ),
 )
 def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
-    expected: dict[str, Any] | str,
+    expected: dict[str, Any] | str | None,
 ) -> None:
     try:
         merged_item = create_merged_item(
@@ -393,4 +410,7 @@ def test_create_merged_item(
         if str(expected) not in f"{error}: {error.__cause__}":
             raise AssertionError(expected) from error
     else:
-        assert {k: v for k, v in merged_item.model_dump().items() if v} == expected
+        if merged_item is None:
+            assert expected is None
+        else:
+            assert {k: v for k, v in merged_item.model_dump().items() if v} == expected
