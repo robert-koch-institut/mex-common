@@ -96,7 +96,8 @@ def test_contains_only_types(
     class DummyModel(BaseModel):
         attribute: annotation
 
-    assert contains_only_types(DummyModel.model_fields["attribute"], *types) == expected
+    field_info = get_all_fields(DummyModel)["attribute"]
+    assert contains_only_types(field_info, *types) == expected
 
 
 @pytest.mark.parametrize(
@@ -266,7 +267,7 @@ def test_group_fields_by_class_name() -> None:
     class PseudoModel(BaseModel):
         title: str
 
-    lookup = {"Dummy": DummyModel, "Pseudo": PseudoModel}
+    lookup: dict[str, type[BaseModel]] = {"Dummy": DummyModel, "Pseudo": PseudoModel}
     expected = {"Dummy": ["text"], "Pseudo": ["title"]}
     assert group_fields_by_class_name(lookup, lambda f: f.annotation is str) == expected
 
