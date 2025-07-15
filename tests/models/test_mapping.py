@@ -28,7 +28,8 @@ def test_all_mapping_fields_are_defined() -> None:
             if field_name != "entityType"
         }
         assert all(
-            get_origin(annotation) is list
+            annotation is not None
+            and get_origin(annotation) is list
             and annotation.__args__[0].__bases__[0] is MappingField
             and default in (PydanticUndefined, [])
             for annotation, default in field_defs.values()

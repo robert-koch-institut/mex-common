@@ -50,6 +50,7 @@ from mex.common.types.temporal_entity import (
     YearMonthDayTime,
 )
 from mex.common.types.text import Text, TextLanguage
+from mex.common.types.validation import Validation
 from mex.common.types.vocabulary import (
     VOCABULARY_PATTERN,
     AccessRestriction,
@@ -152,6 +153,7 @@ __all__ = (
     "Text",
     "TextLanguage",
     "Theme",
+    "Validation",
     "VocabularyEnum",
     "VocabularyLoader",
     "WorkPath",
