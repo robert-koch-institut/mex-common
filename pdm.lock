@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:ca3875bef866faef9a6625921bb4237594e53458df5484126b2f74de9d4068ad"
+content_hash = "sha256:0be265d1190dc120dc4e3ca42921098171b7ef8eff2e356bed9a02a27399b3cb"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -425,13 +425,13 @@ files = [
 
 [[package]]
 name = "mex-model"
-version = "4.1.0"
+version = "4.1.1"
 requires_python = ">=3.9"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
 files = [
-    {file = "mex_model-4.1.0-py3-none-any.whl", hash = "sha256:f9f4fa08416207e8ccc31c57a846abd50f93bb8fa15de63a5b77524a8b828cf2"},
-    {file = "mex_model-4.1.0.tar.gz", hash = "sha256:76112cc0a2e298da8fadf6b257fc72899f6ae0fb0ca0760448a834278f14953a"},
+    {file = "mex_model-4.1.1-py3-none-any.whl", hash = "sha256:cfe3359ae84c1b747a75f6ca44d1df886c0d66621a8a2c5e8f6d71729ebce19d"},
+    {file = "mex_model-4.1.1.tar.gz", hash = "sha256:702d016d8a96e5aeaa84aaea1ea6203d2648b7cbd1075d88eecb2a91c6fe08e1"},
 ]
 
 [[package]]
