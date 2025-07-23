@@ -44,7 +44,7 @@ def transform_wikidata_organization_to_extracted_organization(
     Returns:
         ExtractedOrganization or None
     """
-    labels = _get_clean_labels(wikidata_organization.labels)
+    labels = get_official_name_label(wikidata_organization.labels)
     if not labels:
         return None
     return ExtractedOrganization(
@@ -148,19 +148,19 @@ def _get_clean_short_names(short_names: Sequence[Claim]) -> list[Text]:
     return clean_short_names
 
 
-def _get_clean_labels(labels: Labels) -> list[Text]:
-    """Check if DE label is available and return a list of EN and DE labels.
+def get_official_name_label(labels: Labels) -> Text | None:
+    """Get if DE label is available and return a list of EN and DE labels.
 
     Args:
-        labels: labels object
+        labels: Wikidata labels object
 
     Returns:
-        list of clean labels in EN and DE
+        Text object of the label that was picked, or None
     """
-    clean_labels = []
-    if labels.en:
-        clean_labels.append(Text(value=labels.en.value, language=TextLanguage.EN))
     if labels.de:
-        clean_labels.append(Text(value=labels.de.value, language=TextLanguage.DE))
-
-    return clean_labels
+        return Text(value=labels.de.value, language=TextLanguage.DE)
+    if labels.en:
+        return Text(value=labels.en.value, language=TextLanguage.EN)
+    if labels.multiple:
+        return Text(value=labels.multiple.value, language=None)
+    return None
