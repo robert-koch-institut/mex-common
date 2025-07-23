@@ -12,7 +12,7 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model==4.1.0",
+    "mex-model==4.1.1",
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=20,<21",
