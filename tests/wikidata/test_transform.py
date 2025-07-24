@@ -1,14 +1,22 @@
 import json
 from operator import attrgetter, itemgetter
 
+import pytest
+
 from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
 from mex.common.types import Text, TextLanguage
-from mex.common.wikidata.models import Aliases, Claim, Labels, WikidataOrganization
+from mex.common.wikidata.models import (
+    Aliases,
+    Claim,
+    Label,
+    Labels,
+    WikidataOrganization,
+)
 from mex.common.wikidata.transform import (
     _get_alternative_names,
-    _get_clean_labels,
     _get_clean_short_names,
+    get_official_name_label,
     transform_wikidata_organization_to_extracted_organization,
     transform_wikidata_organizations_to_extracted_organizations,
 )
@@ -228,17 +236,22 @@ def test_get_clean_short_names() -> None:
     )
 
 
-def test_get_clean_labels() -> None:
-    """Test if clean labels are being returned as expected."""
-    expected = [
-        Text(value="Test Label 1 EN", language=TextLanguage.EN),
-        Text(value="Test Label 1 DE", language=TextLanguage.DE),
-    ]
-    raw_labels = {
-        "de": {"language": "de", "value": "Test Label 1 DE"},
-        "en": {"language": "en", "value": "Test Label 1 EN"},
-    }
-
-    clean_labels = _get_clean_labels(Labels.model_validate(raw_labels))
-
-    assert clean_labels == expected
+@pytest.mark.parametrize(
+    ("labels", "expected"),
+    [
+        (Labels(), None),
+        (
+            Labels(en=Label(value="Super cool label")),
+            Text(value="Super cool label", language=TextLanguage.EN),
+        ),
+        (
+            Labels(
+                de=Label(value="Ein toller Bezeichner"),
+                en=Label(value="This does not actually matter"),
+            ),
+            Text(value="Ein toller Bezeichner", language=TextLanguage.DE),
+        ),
+    ],
+)
+def test_get_official_name_label(labels: Labels, expected: Text | None) -> None:
+    assert get_official_name_label(labels) == expected
