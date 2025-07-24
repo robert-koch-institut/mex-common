@@ -65,7 +65,7 @@ class Claims(BaseModel):
 class Label(BaseModel):
     """Model class for single Label."""
 
-    language: str
+    language: str | None = None
     value: str
 
 
@@ -74,6 +74,7 @@ class Labels(BaseModel):
 
     de: Label | None = None
     en: Label | None = None
+    multiple: Annotated[Label | None, Field(alias="mul")] = None
 
 
 class Alias(BaseModel):

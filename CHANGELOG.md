@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.64.0] - 2025-07-24
+
+### Changes
+
+- use default wiki label should there be neither a german nor english label
+
 ## [0.63.0] - 2025-07-10
 
 ### Added
