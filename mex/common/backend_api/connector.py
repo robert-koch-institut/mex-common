@@ -10,6 +10,7 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ExtractedModelTypeAdapter,
     ExtractedOrganization,
     ExtractedPerson,
     ItemsContainer,
@@ -87,6 +88,27 @@ class BackendApiConnector(HTTPConnector):
             },
         )
         return PaginatedItemsContainer[AnyExtractedModel].model_validate(response)
+
+    def get_extracted_item(
+        self,
+        identifier: str,
+    ) -> AnyExtractedModel:
+        """Return one extracted item for the given `identifier`.
+
+        Args:
+            identifier: The extracted item's identifier
+
+        Raises:
+            HTTPError: If no extracted item was found
+
+        Returns:
+            A single extracted item
+        """
+        response = self.request(
+            method="GET",
+            endpoint=f"extracted-item/{identifier}",
+        )
+        return ExtractedModelTypeAdapter.validate_python(response)
 
     def fetch_merged_items(  # noqa: PLR0913
         self,

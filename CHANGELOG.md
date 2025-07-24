@@ -9,15 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add identifier filter to merged and preview fetch endpoints in
-    Backend API
-- Add fetch all merged items method to Backend API connector
+- add identifier filter to merged and preview fetch endpoints in BackendApiConnector
+- add `fetch_all_merged_items` and `get_extracted_item` methods to BackendApiConnector
 
 ### Changes
 
-- BREAKING: replace hadPrimarySource with reference fields in Backend API
-    fetch endpoints
-- BREAKING: Backend API fetch endpoint now expects keyword arguments
+- BREAKING: replace hadPrimarySource with reference field filter in BackendApiConnector
+- BREAKING: BackendApiConnector fetch endpoint methods now expect keyword arguments
 
 ### Deprecated
 

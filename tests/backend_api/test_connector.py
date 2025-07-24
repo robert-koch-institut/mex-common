@@ -88,6 +88,29 @@ def test_fetch_extracted_items_mocked(
     )
 
 
+def test_get_extracted_item_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = extracted_person.model_dump()
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_extracted_item("e3VhxMhEKyjqN5flzLpiEB")
+
+    assert response == extracted_person
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/extracted-item/e3VhxMhEKyjqN5flzLpiEB",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
 def test_fetch_merged_items_mocked(
     mocked_backend: MagicMock, merged_person: MergedPerson
 ) -> None:
