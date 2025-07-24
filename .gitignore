@@ -12,6 +12,7 @@ __pycache__/
 .pdm-build
 .pdm-python
 .Python
+.python-version
 .web/
 *.egg
 *.egg-info/
@@ -91,6 +92,7 @@ celerybeat.pid
 # Environments
 *.env
 .env
+.env.tests
 .venv
 env/
 venv/

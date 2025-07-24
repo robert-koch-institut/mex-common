@@ -38,5 +38,6 @@
             ],
             "minimumReleaseAge": "7 days"
         }
-    ]
+    ],
+    "prFooter": ""
 }

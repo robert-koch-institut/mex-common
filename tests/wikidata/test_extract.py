@@ -114,6 +114,7 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
         "labels": {
             "de": {"language": "de", "value": "TEST"},
             "en": {"language": "en", "value": "TEST"},
+            "multiple": None,
         },
         "claims": {
             "website": [

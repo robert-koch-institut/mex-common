@@ -1,4 +1,4 @@
-class Joker:
+class Joker:  # noqa: PLW1641
     """Testing utility that pretends to be equal to anything.
 
     Useful for tests that assert partially predictable dictionaries.

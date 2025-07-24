@@ -15,7 +15,6 @@ on:
         required: true
 
 env:
-  PDM_CHECK_UPDATE: False
   PIP_DISABLE_PIP_VERSION_CHECK: on
   PIP_NO_CLEAN: on
   PIP_NO_INPUT: on
