@@ -42,6 +42,10 @@ class PathWrapper(PathLike[str]):
         """Return a joined path on the basis of `/`."""
         return self._path.__truediv__(other)
 
+    def __hash__(self) -> int:
+        """Return the hash for this object."""
+        return hash(self._path)
+
     def __str__(self) -> str:
         """Return a string rendering of the resolved path."""
         return self._path.as_posix()

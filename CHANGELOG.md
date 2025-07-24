@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - BREAKING: replace hadPrimarySource with reference field filter in BackendApiConnector
 - BREAKING: BackendApiConnector fetch endpoint methods now expect keyword arguments
+- bump cookiecutter template to e886ec
 
 ### Deprecated
 
