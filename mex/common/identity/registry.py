@@ -36,7 +36,7 @@ def get_provider() -> "BaseProvider":
         An instance of a subclass of `BaseProvider`
     """
     # break import cycle, sigh
-    from mex.common.settings import BaseSettings
+    from mex.common.settings import BaseSettings  # noqa: PLC0415
 
     settings = BaseSettings.get()
     if settings.identity_provider in _PROVIDER_REGISTRY:

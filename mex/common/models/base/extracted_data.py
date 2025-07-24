@@ -72,7 +72,8 @@ class ExtractedData(BaseModel, extra="forbid"):
         Returns:
             Identifier of the correct type
         """
-        from mex.common.identity import get_provider  # break import cycle, sigh
+        # break import cycle, sigh
+        from mex.common.identity import get_provider  # noqa: PLC0415
 
         return identifier_type(
             get_provider()
@@ -91,7 +92,8 @@ class ExtractedData(BaseModel, extra="forbid"):
         Returns:
             StableTargetId of the correct type
         """
-        from mex.common.identity import get_provider  # break import cycle, sigh
+        # break import cycle, sigh
+        from mex.common.identity import get_provider  # noqa: PLC0415
 
         return identifier_type(
             get_provider()
