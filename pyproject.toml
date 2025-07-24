@@ -65,7 +65,7 @@ apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
 sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
 doc = { composite = ["apidoc", "sphinx"] }
 wheel = { cmd = "pdm build --no-sdist" }
-mypy-daemon = { cmd = "pdm run dmypy run --timeout 7200 -- mex tests" }
+mypy-daemon = { cmd = "pdm run dmypy run --timeout 7200 -- mex" }
 lint = { cmd = "pre-commit run --all-files" }
 unit = { cmd = "pdm run pytest -m 'not integration'" }
 test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
