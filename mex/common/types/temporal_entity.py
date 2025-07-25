@@ -292,6 +292,10 @@ class TemporalEntity:
             raise NotImplementedError from None
         return bool(self.date_time > other_temporal.date_time)
 
+    def __hash__(self) -> int:
+        """Return the hash for this object."""
+        return hash((self.date_time, self.precision))
+
     def __str__(self) -> str:
         """Render temporal entity with format fitting for its precision."""
         return self.date_time.strftime(

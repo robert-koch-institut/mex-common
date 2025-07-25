@@ -17,7 +17,7 @@ class MExEncoder(json.JSONEncoder):
     def default(self, obj: object) -> object:  # noqa: PLR0911
         """Implement custom serialization rules."""
         # break import cycle, sigh
-        from mex.common.types import PathWrapper, TemporalEntity
+        from mex.common.types import PathWrapper, TemporalEntity  # noqa: PLC0415
 
         if isinstance(obj, PydanticModel):
             return obj.model_dump()
