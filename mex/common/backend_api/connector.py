@@ -63,8 +63,8 @@ class BackendApiConnector(HTTPConnector):
             query_string: Full-text search query
             stable_target_id: The item's stableTargetId
             entity_type: The item's entityType
-            referenced_identifier: Optional merged item identifiers filter
-            reference_field: Optional field name to filter for
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -125,10 +125,10 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             query_string: Full-text search query
-            identifier: Optional merged item identifier filter
+            identifier: Merged item identifier filter
             entity_type: The items' entityType
-            referenced_identifier: Optional merged item identifiers filter
-            reference_field: Optional field name to filter for
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -166,10 +166,10 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             query_string: Full-text search query
-            identifier: Optional merged item identifier filter
+            identifier: Merged item identifier filter
             entity_type: The items' entityType
-            referenced_identifier: Optional merged item identifiers filter
-            reference_field: Optional field name to filter for
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
 
         Raises:
             HTTPError: If search was not accepted, crashes or times out
@@ -260,10 +260,10 @@ class BackendApiConnector(HTTPConnector):
 
         Args:
             query_string: Full-text search query
-            identifier: Optional merged item identifier filter
+            identifier: Merged item identifier filter
             entity_type: The items' entityType
-            referenced_identifier: Optional merged item identifiers filter
-            reference_field: Optional field name to filter for
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
