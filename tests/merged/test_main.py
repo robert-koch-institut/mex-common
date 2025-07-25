@@ -40,6 +40,7 @@ from mex.common.types import (
     TextLanguage,
     Theme,
 )
+from mex.common.types.validation import Validation
 
 
 def test_merge_extracted_items_stable_order() -> None:
@@ -156,7 +157,7 @@ def test_apply_subtractive_rule() -> None:
 
 
 @pytest.mark.parametrize(
-    ("extracted_items", "rule_set", "validate_cardinality", "expected"),
+    ("extracted_items", "rule_set", "validation", "expected"),
     [
         (
             [
@@ -175,7 +176,7 @@ def test_apply_subtractive_rule() -> None:
                 subtractive=SubtractiveResource(),
                 preventive=PreventiveResource(),
             ),
-            True,
+            Validation.STRICT,
             {
                 "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
                 "contact": ["bFQoRhcVH5DIax"],
@@ -221,7 +222,7 @@ def test_apply_subtractive_rule() -> None:
                     fullName=[Identifier.generate(seed=9)],
                 ),
             ),
-            True,
+            Validation.STRICT,
             {
                 "affiliation": [
                     Identifier.generate(seed=99),
@@ -253,7 +254,7 @@ def test_apply_subtractive_rule() -> None:
                     fullName=[Identifier.generate(seed=9)],
                 ),
             ),
-            True,
+            Validation.STRICT,
             {
                 "givenName": ["Eugene", "Harold"],
                 "memberOf": [
@@ -285,7 +286,7 @@ def test_apply_subtractive_rule() -> None:
                 ),
             ],
             None,
-            True,
+            Validation.STRICT,
             {
                 "affiliation": [
                     Identifier.generate(seed=99),
@@ -301,7 +302,12 @@ def test_apply_subtractive_rule() -> None:
                 "entityType": "MergedPerson",
             },
         ),
-        ([], None, True, "One of rule_set or extracted_items is required."),
+        (
+            [],
+            None,
+            Validation.STRICT,
+            "One of rule_set or extracted_items is required.",
+        ),
         (
             [
                 ExtractedContactPoint(
@@ -315,7 +321,7 @@ def test_apply_subtractive_rule() -> None:
                     email=["flipper@krusty.ocean", "manager@krusty.ocean"]
                 )
             ),
-            True,
+            Validation.STRICT,
             "List should have at least 1 item after validation, not 0",
         ),
         (
@@ -331,7 +337,7 @@ def test_apply_subtractive_rule() -> None:
             ActivityRuleSetRequest(
                 subtractive=SubtractiveActivity(title=Text(value="Burger flipping")),
             ),
-            False,
+            Validation.LENIENT,
             {
                 "contact": [Identifier.generate(seed=97)],
                 "identifier": Identifier.generate(seed=42),
@@ -352,11 +358,27 @@ def test_apply_subtractive_rule() -> None:
                     email=["flipper@krusty.ocean", "manager@krusty.ocean"]
                 )
             ),
-            False,
+            Validation.LENIENT,
             {
                 "identifier": Joker(),
                 "entityType": "PreviewContactPoint",
             },
+        ),
+        (
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                subtractive=SubtractiveContactPoint(
+                    email=["orders@krusty.ocean"],
+                )
+            ),
+            Validation.IGNORE,
+            None,
         ),
     ],
     ids=(
@@ -368,23 +390,27 @@ def test_apply_subtractive_rule() -> None:
         "merging raises cardinality error",
         "get preview of merged items",
         "preview allows cardinality error",
+        "ignore mode validation returns none",
     ),
 )
 def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
-    validate_cardinality: Literal[True, False],
-    expected: Any,  # noqa: ANN401
+    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+    expected: dict[str, Any] | str | None,
 ) -> None:
     try:
         merged_item = create_merged_item(
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,
-            validate_cardinality,
+            validation,
         )
     except MExError as error:
         if str(expected) not in f"{error}: {error.__cause__}":
             raise AssertionError(expected) from error
     else:
-        assert {k: v for k, v in merged_item.model_dump().items() if v} == expected
+        if merged_item is None:
+            assert expected is None
+        else:
+            assert {k: v for k, v in merged_item.model_dump().items() if v} == expected

@@ -8,7 +8,7 @@ from mex.common.organigram.extract import (
     get_unit_merged_ids_by_synonyms,
 )
 from mex.common.organigram.models import OrganigramUnit
-from mex.common.types import Text
+from mex.common.types import Email, Text
 
 
 def test_extract_organigram_units(
@@ -81,7 +81,7 @@ def test_get_unit_merged_ids_by_emails_error(
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
     erroneus_extracted_child_unit = extracted_child_unit
-    erroneus_extracted_child_unit.email.append("PARENT@example.com")
+    erroneus_extracted_child_unit.email.append(Email("PARENT@example.com"))
 
     msg = (
         f"MExError: Conflict: email 'PARENT@example.com' is associated with "

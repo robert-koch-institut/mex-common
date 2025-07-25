@@ -6,7 +6,11 @@ from pydantic import Field, ValidationError, computed_field
 
 from mex.common.identity import get_provider
 from mex.common.models import BaseModel, ExtractedData
-from mex.common.types import Identifier, MergedPrimarySourceIdentifier
+from mex.common.types import (
+    ExtractedIdentifier,
+    MergedIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 
 
 class Animal(Enum):
@@ -16,11 +20,11 @@ class Animal(Enum):
     DOG = "dog"
 
 
-class ExtractedThingIdentifier(Identifier):
+class ExtractedThingIdentifier(ExtractedIdentifier):
     """Identifier for extracted things."""
 
 
-class MergedThingIdentifier(Identifier):
+class MergedThingIdentifier(MergedIdentifier):
     """Identifier for merged thing."""
 
 
@@ -57,14 +61,14 @@ def test_extracted_data_requires_dict_for_construction() -> None:
 
 def test_extracted_data_requires_identifier_in_primary_source() -> None:
     with pytest.raises(ValidationError, match="identifierInPrimarySource"):
-        ExtractedThing(
+        ExtractedThing(  # type: ignore[call-arg]
             hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=1),
         )
 
 
 def test_extracted_data_requires_had_primary_source() -> None:
     with pytest.raises(ValidationError, match="hadPrimarySource"):
-        ExtractedThing(
+        ExtractedThing(  # type: ignore[call-arg]
             identifierInPrimarySource="0",
         )
 
