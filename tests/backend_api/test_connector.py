@@ -150,18 +150,24 @@ def test_fetch_merged_items_mocked(
 def test_fetch_all_merged_items_mocked(
     mocked_backend: MagicMock, merged_person: MergedPerson
 ) -> None:
-    mocked_return = {"items": [merged_person.model_dump()], "total": 103}
-    mocked_backend.return_value.json.return_value = mocked_return
+    merged_person_json = merged_person.model_dump()
+    mocked_backend.return_value.json.side_effect = [
+        {"status": "ok"},  # status check
+        {"items": [], "total": 103},  # call to gauge the total
+        {"items": [merged_person_json] * 100, "total": 103},  # first page 0-99
+        {"items": [merged_person_json] * 3, "total": 103},  # second page 100-103
+    ]
 
     connector = BackendApiConnector.get()
-    items = list(
-        connector.fetch_all_merged_items(
-            query_string="Tintzmann",
-        )
-    )
+    items = list(connector.fetch_all_merged_items(query_string="Tintzmann"))
 
-    assert items == [merged_person] * 2  # should be two requests, one Tintzmann each
+    # expect 4 calls: status check, get the total, and get two pages 0-99/100-103
+    assert len(mocked_backend.call_args_list) == 4
 
+    # expect all 103 persons to be there
+    assert items == [merged_person] * 103
+
+    # expect the last call to be made with the correct parameters
     assert mocked_backend.call_args == call(
         "GET",
         "http://localhost:8080/v0/merged-item",
