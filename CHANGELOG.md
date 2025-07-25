@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: change validation argument of `create_merged_item` helper
-- bump cookiecutter template to e886ec
 
 ### Deprecated
 
@@ -21,6 +20,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.65.0] - 2025-07-25
+
+### Added
+
+- add identifier filter to merged and preview fetch endpoints in BackendApiConnector
+- add `fetch_all_merged_items` and `get_extracted_item` methods to BackendApiConnector
+
+### Changes
+
+- BREAKING: replace hadPrimarySource with reference field filter in BackendApiConnector
+- BREAKING: BackendApiConnector fetch endpoint methods now expect keyword arguments
+- bump cookiecutter template to e886ec
 
 ## [0.64.0] - 2025-07-24
 

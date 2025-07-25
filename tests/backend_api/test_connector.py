@@ -2,7 +2,6 @@ import json
 from unittest.mock import MagicMock, call
 
 import pytest
-from requests.exceptions import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
@@ -59,8 +58,8 @@ def test_fetch_extracted_items_mocked(
 
     connector = BackendApiConnector.get()
     response = connector.fetch_extracted_items(
-        "Tintzmann",
-        "NGwfzG8ROsrvIiQIVDVy",
+        query_string="Tintzmann",
+        stable_target_id="NGwfzG8ROsrvIiQIVDVy",
         entity_type=["ExtractedPerson", "ExtractedContactPoint"],
         skip=0,
         limit=1,
@@ -76,9 +75,34 @@ def test_fetch_extracted_items_mocked(
             "q": "Tintzmann",
             "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
             "entityType": ["ExtractedPerson", "ExtractedContactPoint"],
+            "referenceField": None,
+            "referencedIdentifier": None,
             "skip": "0",
             "limit": "1",
         },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_extracted_item_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = extracted_person.model_dump()
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_extracted_item("e3VhxMhEKyjqN5flzLpiEB")
+
+    assert response == extracted_person
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/extracted-item/e3VhxMhEKyjqN5flzLpiEB",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
@@ -95,10 +119,8 @@ def test_fetch_merged_items_mocked(
 
     connector = BackendApiConnector.get()
     response = connector.fetch_merged_items(
-        "Tintzmann",
+        query_string="Tintzmann",
         entity_type=["MergedPerson", "MergedContactPoint"],
-        had_primary_source=None,
-        skip=0,
         limit=1,
     )
 
@@ -110,10 +132,53 @@ def test_fetch_merged_items_mocked(
         "http://localhost:8080/v0/merged-item",
         {
             "q": "Tintzmann",
+            "identifier": None,
             "entityType": ["MergedPerson", "MergedContactPoint"],
-            "hadPrimarySource": None,
+            "referenceField": None,
+            "referencedIdentifier": None,
             "skip": "0",
             "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_fetch_all_merged_items_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    merged_person_json = merged_person.model_dump()
+    mocked_backend.return_value.json.side_effect = [
+        {"status": "ok"},  # status check
+        {"items": [], "total": 103},  # call to gauge the total
+        {"items": [merged_person_json] * 100, "total": 103},  # first page 0-99
+        {"items": [merged_person_json] * 3, "total": 103},  # second page 100-103
+    ]
+
+    connector = BackendApiConnector.get()
+    items = list(connector.fetch_all_merged_items(query_string="Tintzmann"))
+
+    # expect 4 calls: status check, get the total, and get two pages 0-99/100-103
+    assert len(mocked_backend.call_args_list) == 4
+
+    # expect all 103 persons to be there
+    assert items == [merged_person] * 103
+
+    # expect the last call to be made with the correct parameters
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/merged-item",
+        {
+            "q": "Tintzmann",
+            "identifier": None,
+            "entityType": None,
+            "referenceField": None,
+            "referencedIdentifier": None,
+            "skip": "100",
+            "limit": "100",
         },
         headers={
             "Accept": "application/json",
@@ -126,7 +191,7 @@ def test_fetch_merged_items_mocked(
 def test_get_merged_item_mocked(
     mocked_backend: MagicMock, merged_person: MergedPerson
 ) -> None:
-    mocked_return = {"items": [merged_person.model_dump()], "total": 1}
+    mocked_return = merged_person.model_dump()
     mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
@@ -136,34 +201,8 @@ def test_get_merged_item_mocked(
 
     assert mocked_backend.call_args == call(
         "GET",
-        "http://localhost:8080/v0/merged-item",
-        {
-            "identifier": "NGwfzG8ROsrvIiQIVDVy",
-            "limit": "1",
-        },
-        headers={
-            "Accept": "application/json",
-            "User-Agent": "rki/mex",
-        },
-        timeout=10,
-    )
-
-
-def test_get_merged_item_error_mocked(mocked_backend: MagicMock) -> None:
-    mocked_return = {"items": [], "total": 0}
-    mocked_backend.return_value.json.return_value = mocked_return
-
-    connector = BackendApiConnector.get()
-    with pytest.raises(HTTPError, match="merged item was not found"):
-        connector.get_merged_item("NGwfzG8ROsrvIiQIVDVy")
-
-    assert mocked_backend.call_args == call(
-        "GET",
-        "http://localhost:8080/v0/merged-item",
-        {
-            "identifier": "NGwfzG8ROsrvIiQIVDVy",
-            "limit": "1",
-        },
+        "http://localhost:8080/v0/merged-item/NGwfzG8ROsrvIiQIVDVy",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
@@ -213,7 +252,7 @@ def test_fetch_preview_items_mocked(
     mocked_backend.return_value.json.return_value = mocked_return
 
     connector = BackendApiConnector.get()
-    response = connector.fetch_preview_items("foobar", None, None, 1, 0)
+    response = connector.fetch_preview_items(query_string="foobar", limit=1)
 
     assert response == preview_response
 
@@ -222,10 +261,12 @@ def test_fetch_preview_items_mocked(
         "http://localhost:8080/v0/preview-item",
         {
             "q": "foobar",
+            "identifier": None,
             "entityType": None,
-            "hadPrimarySource": None,
-            "skip": "1",
-            "limit": "0",
+            "referenceField": None,
+            "referencedIdentifier": None,
+            "skip": "0",
+            "limit": "1",
         },
         timeout=10,
         headers={
