@@ -1,7 +1,6 @@
+from collections.abc import Generator
 from typing import Any, TypeVar
 from urllib.parse import urljoin
-
-from requests.exceptions import HTTPError
 
 from mex.common.connector import HTTPConnector
 from mex.common.identity.models import Identity
@@ -11,9 +10,11 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ExtractedModelTypeAdapter,
     ExtractedOrganization,
     ExtractedPerson,
     ItemsContainer,
+    MergedModelTypeAdapter,
     PaginatedItemsContainer,
     PreviewModelTypeAdapter,
     RuleSetResponseTypeAdapter,
@@ -45,13 +46,16 @@ class BackendApiConnector(HTTPConnector):
         settings = BaseSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
 
-    def fetch_extracted_items(
+    def fetch_extracted_items(  # noqa: PLR0913
         self,
-        query_string: str | None,
-        stable_target_id: str | None,
-        entity_type: list[str] | None,
-        skip: int,
-        limit: int,
+        *,
+        query_string: str | None = None,
+        stable_target_id: str | None = None,
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,
+        reference_field: str | None = None,
+        skip: int = 0,
+        limit: int = 100,
     ) -> PaginatedItemsContainer[AnyExtractedModel]:
         """Fetch extracted items that match the given set of filters.
 
@@ -59,6 +63,8 @@ class BackendApiConnector(HTTPConnector):
             query_string: Full-text search query
             stable_target_id: The item's stableTargetId
             entity_type: The item's entityType
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -75,26 +81,54 @@ class BackendApiConnector(HTTPConnector):
                 "q": query_string,
                 "stableTargetId": stable_target_id,
                 "entityType": entity_type,
+                "referencedIdentifier": referenced_identifier,
+                "referenceField": reference_field,
                 "skip": str(skip),
                 "limit": str(limit),
             },
         )
         return PaginatedItemsContainer[AnyExtractedModel].model_validate(response)
 
-    def fetch_merged_items(
+    def get_extracted_item(
         self,
-        query_string: str | None,
-        entity_type: list[str] | None,
-        had_primary_source: list[str] | None,
-        skip: int,
-        limit: int,
+        identifier: str,
+    ) -> AnyExtractedModel:
+        """Return one extracted item for the given `identifier`.
+
+        Args:
+            identifier: The extracted item's identifier
+
+        Raises:
+            HTTPError: If no extracted item was found
+
+        Returns:
+            A single extracted item
+        """
+        response = self.request(
+            method="GET",
+            endpoint=f"extracted-item/{identifier}",
+        )
+        return ExtractedModelTypeAdapter.validate_python(response)
+
+    def fetch_merged_items(  # noqa: PLR0913
+        self,
+        *,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,
+        reference_field: str | None = None,
+        skip: int = 0,
+        limit: int = 100,
     ) -> PaginatedItemsContainer[AnyMergedModel]:
         """Fetch merged items that match the given set of filters.
 
         Args:
             query_string: Full-text search query
+            identifier: Merged item identifier filter
             entity_type: The items' entityType
-            had_primary_source: The items' hadPrimarySource
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -109,13 +143,62 @@ class BackendApiConnector(HTTPConnector):
             endpoint="merged-item",
             params={
                 "q": query_string,
+                "identifier": identifier,
                 "entityType": entity_type,
-                "hadPrimarySource": had_primary_source,
+                "referencedIdentifier": referenced_identifier,
+                "referenceField": reference_field,
                 "skip": str(skip),
                 "limit": str(limit),
             },
         )
         return PaginatedItemsContainer[AnyMergedModel].model_validate(response)
+
+    def fetch_all_merged_items(
+        self,
+        *,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,
+        reference_field: str | None = None,
+    ) -> Generator[AnyMergedModel, None, None]:
+        """Fetch all merged items that match the given set of filters.
+
+        Args:
+            query_string: Full-text search query
+            identifier: Merged item identifier filter
+            entity_type: The items' entityType
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
+
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
+
+        Returns:
+            Generator for all merged items that match the filters
+        """
+        response = self.fetch_merged_items(
+            query_string=query_string,
+            identifier=identifier,
+            entity_type=entity_type,
+            referenced_identifier=referenced_identifier,
+            reference_field=reference_field,
+            skip=0,
+            limit=1,
+        )
+        total_item_number = response.total
+        item_number_limit = 100  # 100 is the maximum possible number per get-request
+        for item_counter in range(0, total_item_number, item_number_limit):
+            response = self.fetch_merged_items(
+                query_string=query_string,
+                identifier=identifier,
+                entity_type=entity_type,
+                referenced_identifier=referenced_identifier,
+                reference_field=reference_field,
+                skip=item_counter,
+                limit=item_number_limit,
+            )
+            yield from response.items
 
     def get_merged_item(
         self,
@@ -132,23 +215,11 @@ class BackendApiConnector(HTTPConnector):
         Returns:
             A single merged item
         """
-        # TODO(ND): stop-gap until backend has proper get merged item endpoint (MX-1669)
         response = self.request(
             method="GET",
-            endpoint="merged-item",
-            params={
-                "identifier": identifier,
-                "limit": "1",
-            },
+            endpoint=f"merged-item/{identifier}",
         )
-        response_model = PaginatedItemsContainer[AnyMergedModel].model_validate(
-            response
-        )
-        try:
-            return response_model.items[0]
-        except IndexError:
-            msg = "merged item was not found"
-            raise HTTPError(msg) from None
+        return MergedModelTypeAdapter.validate_python(response)
 
     def preview_merged_item(
         self,
@@ -174,20 +245,25 @@ class BackendApiConnector(HTTPConnector):
         )
         return PreviewModelTypeAdapter.validate_python(response)
 
-    def fetch_preview_items(
+    def fetch_preview_items(  # noqa: PLR0913
         self,
-        query_string: str | None,
-        entity_type: list[str] | None,
-        had_primary_source: list[str] | None,
-        skip: int,
-        limit: int,
+        *,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,
+        reference_field: str | None = None,
+        skip: int = 0,
+        limit: int = 100,
     ) -> PaginatedItemsContainer[AnyPreviewModel]:
         """Fetch merged item previews that match the given set of filters.
 
         Args:
             query_string: Full-text search query
+            identifier: Merged item identifier filter
             entity_type: The items' entityType
-            had_primary_source: The items' hadPrimarySource
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
             skip: How many items to skip for pagination
             limit: How many items to return in one page
 
@@ -202,8 +278,10 @@ class BackendApiConnector(HTTPConnector):
             endpoint="preview-item",
             params={
                 "q": query_string,
+                "identifier": identifier,
                 "entityType": entity_type,
-                "hadPrimarySource": had_primary_source,
+                "referencedIdentifier": referenced_identifier,
+                "referenceField": reference_field,
                 "skip": str(skip),
                 "limit": str(limit),
             },
