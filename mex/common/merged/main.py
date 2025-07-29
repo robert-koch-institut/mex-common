@@ -131,8 +131,8 @@ def create_merged_item(
             - IGNORE: In case of validation errors, this mode will safely return None
 
     Raises:
-        MergingError: When the given items cannot be merged
-        ValidationError: When the merged item does not validate
+        MergingError: When the given items cannot be merged (in STRICT mode)
+        MergingError: When neither extracted nor rule items are given (in STRICT mode)
 
     Returns:
         Instance of a merged or preview item
