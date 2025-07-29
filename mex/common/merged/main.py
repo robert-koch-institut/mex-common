@@ -58,11 +58,12 @@ def _pick_usable_values(
     ]
     subtracted_values: ValueList = _get_values(rule_set.subtractive, field)
     prevented_sources: SourceList = _get_sources(rule_set.preventive, field)
+    possible_sources_and_values: SourcesAndValues = chain(
+        extracted_sources_and_values, additive_rule_sources_and_values
+    )
     usable_values: ValueList = [
         value
-        for source, value in chain(
-            extracted_sources_and_values, additive_rule_sources_and_values
-        )
+        for source, value in possible_sources_and_values
         if source not in prevented_sources and value not in subtracted_values
     ]
     if not usable_values and validation is Validation.LENIENT:
