@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `Validation` enum to `mex.common.types`
+
 ### Changes
 
 - BREAKING: change validation argument of `create_merged_item` helper
