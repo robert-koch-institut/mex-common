@@ -1,93 +1,104 @@
-from collections.abc import Mapping, Sequence
-from typing import Any, Literal, overload
+from collections.abc import Iterable, Mapping
+from itertools import chain
+from typing import Literal, cast, overload
 
 from pydantic_core import ValidationError
 
 from mex.common.exceptions import MergingError
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.logging import logger
-from mex.common.merged.utils import extend_list_in_dict, prune_list_in_dict
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     PREVIEW_MODEL_CLASSES_BY_NAME,
-    AnyAdditiveModel,
+    RULE_SET_REQUEST_CLASSES_BY_NAME,
     AnyExtractedModel,
     AnyMergedModel,
-    AnyPreventiveModel,
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
-    AnySubtractiveModel,
+    BaseModel,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import Identifier, Validation
+from mex.common.types import (
+    AnyPrimitiveType,
+    Identifier,
+    MergedPrimarySourceIdentifier,
+    Validation,
+)
+from mex.common.utils import ensure_list
+
+SourcesAndValues = Iterable[tuple[MergedPrimarySourceIdentifier, AnyPrimitiveType]]
+ValueList = list[AnyPrimitiveType]
+SourceList = list[MergedPrimarySourceIdentifier]
 
 
-def _merge_extracted_items_and_apply_preventive_rule(
-    merged_dict: dict[str, Any],
-    mergeable_fields: Sequence[str],
-    extracted_items: Sequence[AnyExtractedModel],
-    rule: AnyPreventiveModel | None,
-) -> None:
-    """Merge a list of extracted items while applying a preventive rule.
-
-    Collect unique values from the extracted items and write them into `merged_dict`,
-    unless the primary source of the extracted item was blocked by the rule.
-
-    Args:
-        merged_dict: Mapping from field names to lists of merged values
-        mergeable_fields: List of mergeable field names
-        extracted_items: List of extracted items
-        rule: Preventive rules with primary source identifiers, can be None
-    """
-    for extracted_item in sorted(extracted_items, key=lambda e: e.identifier):
-        for field_name in mergeable_fields:
-            if rule is not None and extracted_item.hadPrimarySource in getattr(
-                rule, field_name
-            ):
-                continue
-            extracted_value = getattr(extracted_item, field_name)
-            extend_list_in_dict(merged_dict, field_name, extracted_value)
+def _get_values(item: BaseModel, field: str) -> ValueList:
+    return cast("ValueList", ensure_list(getattr(item, field)))
 
 
-def _apply_additive_rule(
-    merged_dict: dict[str, Any],
-    mergeable_fields: Sequence[str],
-    rule: AnyAdditiveModel,
-) -> None:
-    """Merge the values from an additive rule into a `merged_dict`.
-
-    Args:
-        merged_dict: Mapping from field names to lists of merged values
-        mergeable_fields: List of mergeable field names
-        rule: Additive rule with values to be added
-    """
-    for field_name in mergeable_fields:
-        rule_value = getattr(rule, field_name)
-        extend_list_in_dict(merged_dict, field_name, rule_value)
+def _get_sources(item: BaseModel, field: str) -> SourceList:
+    return cast("SourceList", ensure_list(getattr(item, field)))
 
 
-def _apply_subtractive_rule(
-    merged_dict: dict[str, Any],
-    mergeable_fields: Sequence[str],
-    rule: AnySubtractiveModel,
-) -> None:
-    """Prune values of a subtractive rule from a `merged_dict`.
+def _pick_usable_values(
+    field: str,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse,
+    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+) -> ValueList:
+    extracted_sources_and_values: SourcesAndValues = [
+        (extracted_item.hadPrimarySource, value)
+        for extracted_item in extracted_items
+        for value in _get_values(extracted_item, field)
+    ]
+    additive_rule_sources_and_values: SourcesAndValues = [
+        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value)
+        for value in _get_values(rule_set.additive, field)
+    ]
+    subtracted_values: ValueList = _get_values(rule_set.subtractive, field)
+    prevented_sources: SourceList = _get_sources(rule_set.preventive, field)
+    usable_values: ValueList = [
+        value
+        for source, value in chain(
+            extracted_sources_and_values, additive_rule_sources_and_values
+        )
+        if source not in prevented_sources and value not in subtracted_values
+    ]
+    if not usable_values and validation is Validation.LENIENT:
+        subtractive_rule_sources_and_values: SourcesAndValues = (
+            (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value) for value in subtracted_values
+        )
+        for _, value in chain(
+            extracted_sources_and_values,
+            additive_rule_sources_and_values,
+            subtractive_rule_sources_and_values,
+        ):
+            return [value]
+    return usable_values
 
-    Args:
-        merged_dict: Mapping from field names to lists of merged values
-        mergeable_fields: List of mergeable field names
-        rule: Subtractive rule with values to remove
-    """
-    for field_name in mergeable_fields:
-        rule_value = getattr(rule, field_name)
-        prune_list_in_dict(merged_dict, field_name, rule_value)
+
+def _create_merged_dict(
+    mergeable_fields: Iterable[str],
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse,
+    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+) -> dict[str, list[AnyPrimitiveType]]:
+    return {
+        field: _pick_usable_values(
+            field,
+            extracted_items,
+            rule_set,
+            validation,
+        )
+        for field in mergeable_fields
+    }
 
 
 @overload
 def create_merged_item(
     identifier: Identifier,
-    extracted_items: list[AnyExtractedModel],
+    extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.LENIENT],
 ) -> AnyPreviewModel: ...
@@ -96,7 +107,7 @@ def create_merged_item(
 @overload
 def create_merged_item(
     identifier: Identifier,
-    extracted_items: list[AnyExtractedModel],
+    extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.STRICT],
 ) -> AnyMergedModel: ...
@@ -105,7 +116,7 @@ def create_merged_item(
 @overload
 def create_merged_item(
     identifier: Identifier,
-    extracted_items: list[AnyExtractedModel],
+    extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.IGNORE],
 ) -> AnyMergedModel: ...
@@ -113,7 +124,7 @@ def create_merged_item(
 
 def create_merged_item(
     identifier: Identifier,
-    extracted_items: list[AnyExtractedModel],
+    extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
 ) -> AnyPreviewModel | AnyMergedModel | None:
@@ -146,9 +157,10 @@ def create_merged_item(
         model_class_lookup = MERGED_MODEL_CLASSES_BY_NAME
 
     if rule_set:
-        entity_type = ensure_prefix(rule_set.stemType, model_prefix)
+        stem_type = rule_set.stemType
     elif extracted_items:
-        entity_type = ensure_prefix(extracted_items[0].stemType, model_prefix)
+        extracted_items = sorted(extracted_items, key=lambda e: e.identifier)
+        stem_type = extracted_items[0].stemType
     elif validation == Validation.STRICT:
         msg = "One of rule_set or extracted_items is required."
         raise MergingError(msg)
@@ -156,17 +168,13 @@ def create_merged_item(
         logger.debug("One of rule_set or extracted_items is required.")
         return None
 
+    entity_type = ensure_prefix(stem_type, model_prefix)
     fields = MERGEABLE_FIELDS_BY_CLASS_NAME[entity_type]
     cls = model_class_lookup[entity_type]
-
-    merged_dict: dict[str, Any] = {"identifier": identifier}
-
-    _merge_extracted_items_and_apply_preventive_rule(
-        merged_dict, fields, extracted_items, rule_set.preventive if rule_set else None
-    )
-    if rule_set:
-        _apply_additive_rule(merged_dict, fields, rule_set.additive)
-        _apply_subtractive_rule(merged_dict, fields, rule_set.subtractive)
+    if rule_set is None:
+        rule_set = RULE_SET_REQUEST_CLASSES_BY_NAME[stem_type]()
+    merged_dict = _create_merged_dict(fields, extracted_items, rule_set, validation)
+    merged_dict["identifier"] = [str(identifier)]
 
     try:
         return cls.model_validate(merged_dict)
