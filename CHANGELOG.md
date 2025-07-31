@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add `Validation` enum to `mex.common.types`
+- add `ensure_list` utility function
 
 ### Changes
 
 - BREAKING: change validation argument of `create_merged_item` helper
+- BREAKING: change the behavior of merge previews to include blocked values
 
 ### Deprecated
 

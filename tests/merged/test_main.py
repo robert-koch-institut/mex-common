@@ -95,12 +95,12 @@ def test_collect_subtractive_values() -> None:
 
 def test_collect_preventive_sources() -> None:
     rule_set = PersonRuleSetRequest(
-        preventive=PreventivePerson(email=[Identifier("badPlankton")])
+        preventive=PreventivePerson(email=[Identifier("preventPlankton")])
     )
 
     result = _collect_preventive_sources("email", rule_set)
 
-    assert result == ["badPlankton"]
+    assert result == ["preventPlankton"]
 
 
 @pytest.mark.parametrize(
