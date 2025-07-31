@@ -9,8 +9,7 @@ from typing import Annotated, Any, Literal, TypeVar, Union, get_args, get_origin
 
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-_ContainedTokenT = TypeVar("_ContainedTokenT")
-_GroupableItemT = TypeVar("_GroupableItemT")
+T = TypeVar("T")
 
 
 @dataclass
@@ -22,17 +21,12 @@ class GenericFieldInfo:
     frozen: bool
 
 
-def contains_any(
-    base: Container[_ContainedTokenT], tokens: Iterable[_ContainedTokenT]
-) -> bool:
+def contains_any(base: Container[T], tokens: Iterable[T]) -> bool:
     """Check if a given base contains any of the given tokens."""
     return any(token in base for token in tokens)
 
 
-def any_contains_any(
-    bases: Iterable[Container[_ContainedTokenT] | None],
-    tokens: Iterable[_ContainedTokenT],
-) -> bool:
+def any_contains_any(bases: Iterable[Container[T] | None], tokens: Iterable[T]) -> bool:
     """Check if any of the given bases contains any of the given tokens."""
     for base in bases:
         if base is None:
@@ -263,9 +257,7 @@ def group_fields_by_class_name(
     }
 
 
-def grouper(
-    chunk_size: int, iterable: Iterable[_GroupableItemT]
-) -> Iterator[Iterable[_GroupableItemT | None]]:
+def grouper(chunk_size: int, iterable: Iterable[T]) -> Iterator[Iterable[T | None]]:
     """Collect data into fixed-length chunks or blocks.
 
     Groups items from an iterable into fixed-size chunks. The last chunk may be
@@ -293,3 +285,12 @@ def jitter_sleep(min_seconds: float, jitter_seconds: float) -> None:
         jitter_seconds: The variable sleep time added to the minimum
     """
     sleep(min_seconds + random() * jitter_seconds)  # noqa: S311
+
+
+def ensure_list(values: list[T] | T | None) -> list[T]:
+    """Put objects in lists, replace None with an empty list and return lists as is."""
+    if values is None:
+        return []
+    if isinstance(values, list):
+        return values
+    return [values]
