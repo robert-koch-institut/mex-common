@@ -1,26 +1,41 @@
-from typing import Any, Literal, cast
+from typing import Any
 
 import pytest
 
 from mex.common.exceptions import MExError
 from mex.common.merged.main import (
+    _apply_lenient_fallback,
+    _collect_additive_values,
+    _collect_extracted_values,
+    _collect_preventive_sources,
+    _collect_subtractive_values,
+    _create_merged_dict,
+    _ensure_rule_set,
+    _filter_usable_values,
+    _get_merged_class,
+    _pick_usable_values,
     create_merged_item,
 )
+from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
     AdditivePerson,
     AdditiveResource,
     AnyExtractedModel,
+    AnyMergedModel,
+    AnyPreviewModel,
     AnyRuleSetRequest,
     ContactPointRuleSetRequest,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedPerson,
     ExtractedResource,
-    MergedContactPoint,
+    MergedPerson,
     PersonRuleSetRequest,
     PreventivePerson,
     PreventiveResource,
+    PreviewPerson,
     ResourceRuleSetRequest,
     SubtractiveActivity,
     SubtractiveContactPoint,
@@ -30,40 +45,219 @@ from mex.common.models import (
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
+    AnyValidation,
     Identifier,
+    MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
     Theme,
+    Validation,
 )
-from mex.common.types.validation import Validation
 
 
-def test_create_merged_item_stable_order() -> None:
-    # create a batch of 20 contact points
-    contact_points = [
-        ExtractedContactPoint(
-            email=[f"{i}@contact-point.com"],
-            hadPrimarySource=Identifier.generate(seed=1),
-            identifierInPrimarySource=f"{i}",
-        )
-        for i in range(20)
-    ]
-
-    # merge the extracted items into a merged item
-    merged_contact_person = cast(
-        "MergedContactPoint",
-        create_merged_item(
-            Identifier.generate(),
-            contact_points,
-            None,
-            validation=Validation.IGNORE,
-        ),
+def test_collect_extracted_values() -> None:
+    person = ExtractedPerson(
+        fullName="Alice",
+        email="alice@example.com",
+        hadPrimarySource=Identifier("thisIstheAliceId"),
+        identifierInPrimarySource="alice",
     )
 
-    # check that the list of emails is stable in its order
-    assert merged_contact_person.email == [
-        c.email[0] for c in sorted(contact_points, key=lambda e: e.identifier)
+    result = _collect_extracted_values("email", [person])
+
+    assert result == [(Identifier("thisIstheAliceId"), "alice@example.com")]
+
+
+def test_collect_additive_values() -> None:
+    rule_set = PersonRuleSetRequest(
+        additive=AdditivePerson(givenName=["Alice", "Alicia"])
+    )
+
+    result = _collect_additive_values("givenName", rule_set)
+
+    assert result == [
+        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Alice"),
+        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Alicia"),
     ]
+
+
+def test_collect_subtractive_values() -> None:
+    rule_set = PersonRuleSetRequest(
+        subtractive=SubtractivePerson(email=["old@example.com", "subtracted@foo.bar"])
+    )
+
+    result = _collect_subtractive_values("email", rule_set)
+
+    assert result == ["old@example.com", "subtracted@foo.bar"]
+
+
+def test_collect_preventive_sources() -> None:
+    rule_set = PersonRuleSetRequest(
+        preventive=PreventivePerson(email=[Identifier("thisIdIsBlocked")])
+    )
+
+    result = _collect_preventive_sources("email", rule_set)
+
+    assert result == ["thisIdIsBlocked"]
+
+
+@pytest.mark.parametrize(
+    ("sources_values", "prevented", "subtracted", "expected"),
+    [
+        pytest.param([], [], [], [], id="empty_input"),
+        pytest.param(
+            [("src1", "value1"), ("src2", "value2")],
+            [],
+            [],
+            ["value1", "value2"],
+            id="no_filtering",
+        ),
+        pytest.param(
+            [("src1", "value1"), ("src2", "value2")],
+            ["src1"],
+            [],
+            ["value2"],
+            id="prevent_source",
+        ),
+        pytest.param(
+            [("src1", "value1"), ("src2", "value2")],
+            [],
+            ["value1"],
+            ["value2"],
+            id="subtract_value",
+        ),
+        pytest.param(
+            [("src1", "value"), ("src2", "value")],
+            [],
+            [],
+            ["value"],
+            id="deduplicate",
+        ),
+    ],
+)
+def test_filter_usable_values(
+    sources_values: SourceAndValueList,
+    prevented: SourceList,
+    subtracted: ValueList,
+    expected: ValueList,
+) -> None:
+    result = _filter_usable_values(sources_values, prevented, subtracted)
+
+    assert result == expected
+
+
+def test_apply_lenient_fallback_empty() -> None:
+    assert _apply_lenient_fallback((), (), []) == []
+
+
+def test_apply_lenient_fallback() -> None:
+    extracted = [(MergedPrimarySourceIdentifier("src1"), "extracted_value")]
+    additive = [(MergedPrimarySourceIdentifier("src2"), "additive_value")]
+    subtracted: ValueList = ["subtracted_value"]
+
+    result = _apply_lenient_fallback(extracted, additive, subtracted)
+
+    assert result == ["extracted_value"]
+
+
+def test_pick_usable_values_strict() -> None:
+    person = ExtractedPerson(
+        fullName="Alice",
+        email="alice@example.com",
+        hadPrimarySource=Identifier.generate(seed=1),
+        identifierInPrimarySource="alice",
+    )
+    rule_set = PersonRuleSetRequest()
+
+    result = _pick_usable_values("email", [person], rule_set, Validation.STRICT)
+
+    assert result == ["alice@example.com"]
+
+
+def test_pick_usable_values_lenient() -> None:
+    person = ExtractedPerson(
+        fullName="Alice",
+        hadPrimarySource=Identifier.generate(seed=1),
+        identifierInPrimarySource="alice",
+    )
+    rule_set = PersonRuleSetRequest(
+        subtractive=SubtractivePerson(email="blocked@example.com")
+    )
+
+    result = _pick_usable_values("email", [person], rule_set, Validation.LENIENT)
+
+    assert result == ["blocked@example.com"]
+
+
+def test_create_merged_dict_strict() -> None:
+    person = ExtractedPerson(
+        fullName="Alice",
+        hadPrimarySource=Identifier.generate(seed=1),
+        identifierInPrimarySource="alice",
+    )
+    rule_set = PersonRuleSetRequest()
+
+    result = _create_merged_dict(["fullName"], [person], rule_set, Validation.STRICT)
+
+    assert result == {"fullName": ["Alice"]}
+
+
+@pytest.mark.parametrize(
+    ("extracted_items", "rule_set", "validation", "expected"),
+    [
+        pytest.param(
+            [],
+            PersonRuleSetRequest(),
+            Validation.STRICT,
+            MergedPerson,
+            id="strict_with_rules",
+        ),
+        pytest.param(
+            [],
+            PersonRuleSetRequest(),
+            Validation.LENIENT,
+            PreviewPerson,
+            id="lenient_with_rules",
+        ),
+        pytest.param(
+            [
+                ExtractedPerson(
+                    fullName="Test Person",
+                    hadPrimarySource=Identifier.generate(seed=1),
+                    identifierInPrimarySource="test",
+                )
+            ],
+            None,
+            Validation.STRICT,
+            MergedPerson,
+            id="strict_no_ruleset",
+        ),
+        pytest.param([], None, Validation.STRICT, None, id="empty_inputs_returns_none"),
+    ],
+)
+def test_get_merged_class(
+    extracted_items: list[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | None,
+    validation: AnyValidation,
+    expected: type[AnyMergedModel | AnyPreviewModel] | None,
+) -> None:
+    result = _get_merged_class(extracted_items, rule_set, validation)
+
+    assert result == expected
+
+
+def test_ensure_rule_set_creates_default() -> None:
+    result = _ensure_rule_set(None, "Person")
+
+    assert isinstance(result, PersonRuleSetRequest)
+
+
+def test_ensure_rule_set_returns_existing() -> None:
+    existing_rule_set = PersonRuleSetRequest()
+
+    result = _ensure_rule_set(existing_rule_set, "Person")
+
+    assert result is existing_rule_set
 
 
 @pytest.mark.parametrize(
@@ -306,12 +500,51 @@ def test_create_merged_item_stable_order() -> None:
             None,
             id="ignore mode validation returns none",
         ),
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    email=[f"{i}@contact-point.com"],
+                    hadPrimarySource=Identifier.generate(seed=1),
+                    identifierInPrimarySource=f"{i}",
+                )
+                for i in range(20)
+            ],
+            ContactPointRuleSetRequest(),
+            Validation.IGNORE,
+            {
+                "email": [
+                    "4@contact-point.com",
+                    "15@contact-point.com",
+                    "1@contact-point.com",
+                    "12@contact-point.com",
+                    "19@contact-point.com",
+                    "11@contact-point.com",
+                    "6@contact-point.com",
+                    "16@contact-point.com",
+                    "10@contact-point.com",
+                    "17@contact-point.com",
+                    "18@contact-point.com",
+                    "14@contact-point.com",
+                    "8@contact-point.com",
+                    "9@contact-point.com",
+                    "7@contact-point.com",
+                    "2@contact-point.com",
+                    "0@contact-point.com",
+                    "3@contact-point.com",
+                    "5@contact-point.com",
+                    "13@contact-point.com",
+                ],
+                "entityType": "MergedContactPoint",
+                "identifier": Joker(),
+            },
+            id="stable order by identifier",
+        ),
     ],
 )
 def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
-    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+    validation: AnyValidation,
     expected: dict[str, Any] | str | None,
 ) -> None:
     try:
@@ -328,4 +561,5 @@ def test_create_merged_item(
         if merged_item is None:
             assert expected is None
         else:
-            assert {k: v for k, v in merged_item.model_dump().items() if v} == expected
+            clean_dict = {k: v for k, v in merged_item.model_dump().items() if v}
+            assert clean_dict == expected

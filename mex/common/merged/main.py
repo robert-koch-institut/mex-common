@@ -7,6 +7,12 @@ from pydantic_core import ValidationError
 from mex.common.exceptions import MergingError
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.logging import logger
+from mex.common.merged.types import (
+    SourceAndValueIter,
+    SourceAndValueList,
+    SourceList,
+    ValueList,
+)
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -19,23 +25,14 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import (
-    AnyPrimitiveType,
-    Identifier,
-    MergedPrimarySourceIdentifier,
-    Validation,
-)
+from mex.common.types import AnyPrimitiveType, AnyValidation, Identifier, Validation
 from mex.common.utils import ensure_list
-
-SourcesAndValues = Iterable[tuple[MergedPrimarySourceIdentifier, AnyPrimitiveType]]
-ValueList = list[AnyPrimitiveType]
-SourceList = list[MergedPrimarySourceIdentifier]
 
 
 def _collect_extracted_values(
     field: str,
     extracted_items: Iterable[AnyExtractedModel],
-) -> SourcesAndValues:
+) -> SourceAndValueList:
     """Collect values from extracted items for a specific field.
 
     Args:
@@ -55,7 +52,7 @@ def _collect_extracted_values(
 def _collect_additive_values(
     field: str,
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse,
-) -> SourcesAndValues:
+) -> SourceAndValueList:
     """Collect values from additive rules for a specific field.
 
     Args:
@@ -104,7 +101,7 @@ def _collect_preventive_sources(
 
 
 def _filter_usable_values(
-    possible_sources_and_values: SourcesAndValues,
+    possible_sources_and_values: SourceAndValueIter,
     prevented_sources: SourceList,
     subtracted_values: ValueList,
 ) -> ValueList:
@@ -134,8 +131,8 @@ def _filter_usable_values(
 
 
 def _apply_lenient_fallback(
-    extracted_sources_and_values: SourcesAndValues,
-    additive_rule_sources_and_values: SourcesAndValues,
+    extracted_sources_and_values: SourceAndValueIter,
+    additive_rule_sources_and_values: SourceAndValueIter,
     subtracted_values: ValueList,
 ) -> ValueList:
     """Apply lenient fallback by returning first available value from any source.
@@ -148,7 +145,7 @@ def _apply_lenient_fallback(
     Returns:
         List containing the first available value, or empty list if none found
     """
-    subtractive_rule_sources_and_values: SourcesAndValues = (
+    subtractive_rule_sources_and_values: SourceAndValueIter = (
         (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value) for value in subtracted_values
     )
     for _, value in chain(
@@ -164,7 +161,7 @@ def _pick_usable_values(
     field: str,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse,
-    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+    validation: AnyValidation,
 ) -> ValueList:
     """Pick usable values for a field from given extracted items and rules.
 
@@ -207,7 +204,7 @@ def _create_merged_dict(
     mergeable_fields: Iterable[str],
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse,
-    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+    validation: AnyValidation,
 ) -> dict[str, list[AnyPrimitiveType] | AnyPrimitiveType]:
     """Create a merged dictionary by processing all mergeable fields.
 
@@ -234,20 +231,18 @@ def _create_merged_dict(
 def _get_merged_class(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
-    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
-) -> type[AnyMergedModel | AnyPreviewModel]:
+    validation: AnyValidation,
+) -> type[AnyMergedModel | AnyPreviewModel] | None:
     """Determine the appropriate merged model class based on validation mode.
 
     Args:
-        extracted_items: List of extracted model instances (sorted by identifier)
+        extracted_items: List of extracted model instances
         rule_set: Rule set containing entity type information, or None
         validation: Validation mode determining whether to use Preview or Merged models
 
     Returns:
-        The appropriate model class (Preview* for LENIENT, Merged* for STRICT/IGNORE)
-
-    Raises:
-        IndexError: If extracted_items is empty and rule_set is None
+        The appropriate model class (Preview* for LENIENT, Merged* for STRICT/IGNORE),
+        or None if neither extracted_items nor rule_set was given.
     """
     model_class_lookup: Mapping[str, type[AnyPreviewModel | AnyMergedModel]]
     if validation == Validation.LENIENT:
@@ -261,6 +256,8 @@ def _get_merged_class(
         stem_type = rule_set.stemType
     elif extracted_items:
         stem_type = extracted_items[0].stemType
+    else:
+        return None
 
     entity_type = ensure_prefix(stem_type, model_prefix)
     return model_class_lookup[entity_type]
@@ -319,7 +316,7 @@ def create_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
-    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+    validation: AnyValidation,
 ) -> AnyPreviewModel | AnyMergedModel | None:
     """Merge a list of extracted items with a set of rules.
 
@@ -344,16 +341,18 @@ def create_merged_item(
     # Convert extracted items from any iterable into sorted list
     extracted_items = sorted(extracted_items, key=lambda e: e.identifier)
 
+    # Get merged class based on extracted and rule items and validation mode
+    merged_class = _get_merged_class(extracted_items, rule_set, validation)
+
     # Bail out when neither extracted nor rule items are given
-    if not extracted_items and not rule_set:
+    if merged_class is None:
         if validation == Validation.STRICT:
             msg = "One of rule_set or extracted_items is required."
             raise MergingError(msg)
         logger.debug("One of rule_set or extracted_items is required.")
         return None
 
-    # Get merged class, mergeable fields and ensure rule set instance
-    merged_class = _get_merged_class(extracted_items, rule_set, validation)
+    # Get mergeable fields and ensure rule set instance
     fields = MERGEABLE_FIELDS_BY_CLASS_NAME[merged_class.__name__]
     rule_set = _ensure_rule_set(rule_set, merged_class.stemType)
 
