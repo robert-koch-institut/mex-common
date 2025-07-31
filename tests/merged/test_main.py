@@ -57,48 +57,50 @@ from mex.common.types import (
 
 def test_collect_extracted_values() -> None:
     person = ExtractedPerson(
-        fullName="Alice",
-        email="alice@example.com",
-        hadPrimarySource=Identifier("thisIstheAliceId"),
-        identifierInPrimarySource="alice",
+        fullName="Squidward, Dr. med.",
+        email="squidward@ocean.clinic",
+        hadPrimarySource=Identifier("squidwardSourceId"),
+        identifierInPrimarySource="squidward",
     )
 
     result = _collect_extracted_values("email", [person])
 
-    assert result == [(Identifier("thisIstheAliceId"), "alice@example.com")]
+    assert result == [(Identifier("squidwardSourceId"), "squidward@ocean.clinic")]
 
 
 def test_collect_additive_values() -> None:
     rule_set = PersonRuleSetRequest(
-        additive=AdditivePerson(givenName=["Alice", "Alicia"])
+        additive=AdditivePerson(givenName=["Bubbles", "Barnacle"])
     )
 
     result = _collect_additive_values("givenName", rule_set)
 
     assert result == [
-        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Alice"),
-        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Alicia"),
+        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Bubbles"),
+        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Barnacle"),
     ]
 
 
 def test_collect_subtractive_values() -> None:
     rule_set = PersonRuleSetRequest(
-        subtractive=SubtractivePerson(email=["old@example.com", "subtracted@foo.bar"])
+        subtractive=SubtractivePerson(
+            email=["pineapple@fruit.ocean", "rock@ocean.floor"]
+        )
     )
 
     result = _collect_subtractive_values("email", rule_set)
 
-    assert result == ["old@example.com", "subtracted@foo.bar"]
+    assert result == ["pineapple@fruit.ocean", "rock@ocean.floor"]
 
 
 def test_collect_preventive_sources() -> None:
     rule_set = PersonRuleSetRequest(
-        preventive=PreventivePerson(email=[Identifier("thisIdIsBlocked")])
+        preventive=PreventivePerson(email=[Identifier("badPlankton")])
     )
 
     result = _collect_preventive_sources("email", rule_set)
 
-    assert result == ["thisIdIsBlocked"]
+    assert result == ["badPlankton"]
 
 
 @pytest.mark.parametrize(
@@ -232,7 +234,13 @@ def test_create_merged_dict_strict() -> None:
             MergedPerson,
             id="strict_no_ruleset",
         ),
-        pytest.param([], None, Validation.STRICT, None, id="empty_inputs_returns_none"),
+        pytest.param(
+            [],
+            None,
+            Validation.STRICT,
+            None,
+            id="empty_inputs_returns_none",
+        ),
     ],
 )
 def test_get_merged_class(
