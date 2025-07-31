@@ -1,17 +1,13 @@
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import pytest
 
 from mex.common.exceptions import MExError
 from mex.common.merged.main import (
-    _apply_additive_rule,
-    _apply_subtractive_rule,
-    _merge_extracted_items_and_apply_preventive_rule,
     create_merged_item,
 )
 from mex.common.models import (
     ActivityRuleSetRequest,
-    AdditiveOrganizationalUnit,
     AdditivePerson,
     AdditiveResource,
     AnyExtractedModel,
@@ -21,14 +17,13 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedPerson,
     ExtractedResource,
+    MergedContactPoint,
     PersonRuleSetRequest,
-    PreventiveContactPoint,
     PreventivePerson,
     PreventiveResource,
     ResourceRuleSetRequest,
     SubtractiveActivity,
     SubtractiveContactPoint,
-    SubtractiveOrganizationalUnit,
     SubtractivePerson,
     SubtractiveResource,
 )
@@ -43,7 +38,7 @@ from mex.common.types import (
 from mex.common.types.validation import Validation
 
 
-def test_merge_extracted_items_stable_order() -> None:
+def test_create_merged_item_stable_order() -> None:
     # create a batch of 20 contact points
     contact_points = [
         ExtractedContactPoint(
@@ -55,111 +50,26 @@ def test_merge_extracted_items_stable_order() -> None:
     ]
 
     # merge the extracted items into a merged item
-    merged_dict: dict[str, Any] = {}
-    _merge_extracted_items_and_apply_preventive_rule(
-        merged_dict,
-        ["email"],
-        contact_points,
-        None,
+    merged_contact_person = cast(
+        "MergedContactPoint",
+        create_merged_item(
+            Identifier.generate(),
+            contact_points,
+            None,
+            validation=Validation.IGNORE,
+        ),
     )
 
     # check that the list of emails is stable in its order
-    assert merged_dict["email"] == [
+    assert merged_contact_person.email == [
         c.email[0] for c in sorted(contact_points, key=lambda e: e.identifier)
     ]
-
-
-def test_merge_extracted_items_and_apply_preventive_rule() -> None:
-    merged_dict: dict[str, Any] = {}
-    contact_points: list[AnyExtractedModel] = [
-        ExtractedContactPoint(
-            email=["info@contact-point.one"],
-            hadPrimarySource=Identifier.generate(seed=1),
-            identifierInPrimarySource="one",
-        ),
-        ExtractedContactPoint(
-            email=["hello@contact-point.two"],
-            hadPrimarySource=Identifier.generate(seed=2),
-            identifierInPrimarySource="two",
-        ),
-    ]
-    rule = PreventiveContactPoint(
-        email=[contact_points[1].hadPrimarySource],
-    )
-    _merge_extracted_items_and_apply_preventive_rule(
-        merged_dict,
-        ["email"],
-        contact_points,
-        rule,
-    )
-    assert merged_dict == {
-        "email": ["info@contact-point.one"],
-    }
-
-    merged_dict.clear()
-    _merge_extracted_items_and_apply_preventive_rule(
-        merged_dict,
-        ["email"],
-        contact_points,
-        None,
-    )
-    assert merged_dict == {
-        "email": ["info@contact-point.one", "hello@contact-point.two"],
-    }
-
-    merged_dict.clear()
-    _merge_extracted_items_and_apply_preventive_rule(
-        merged_dict,
-        ["email"],
-        [],
-        rule,
-    )
-    assert merged_dict == {}
-
-
-def test_apply_additive_rule() -> None:
-    merged_dict: dict[str, Any] = {
-        "email": ["info@org-unit.one"],
-    }
-    rule = AdditiveOrganizationalUnit(
-        email=["new-mail@who.dis", "info@org-unit.one"],
-        name=[Text(value="org unit one", language=TextLanguage.EN)],
-    )
-    _apply_additive_rule(
-        merged_dict,
-        ["email", "name"],
-        rule,
-    )
-    assert merged_dict == {
-        "email": ["info@org-unit.one", "new-mail@who.dis"],
-        "name": [Text(value="org unit one", language=TextLanguage.EN)],
-    }
-
-
-def test_apply_subtractive_rule() -> None:
-    merged_dict: dict[str, Any] = {
-        "email": ["info@org-unit.one"],
-        "name": [Text(value="org unit one", language=TextLanguage.EN)],
-    }
-    rule = SubtractiveOrganizationalUnit(
-        email=["unknown@email.why", "info@org-unit.one"],
-        name=[Text(value="org unit one", language=TextLanguage.DE)],
-    )
-    _apply_subtractive_rule(
-        merged_dict,
-        ["email", "name"],
-        rule,
-    )
-    assert merged_dict == {
-        "email": [],
-        "name": [Text(value="org unit one", language=TextLanguage.EN)],
-    }
 
 
 @pytest.mark.parametrize(
     ("extracted_items", "rule_set", "validation", "expected"),
     [
-        (
+        pytest.param(
             [
                 ExtractedResource(
                     identifierInPrimarySource="r1",
@@ -186,8 +96,9 @@ def test_apply_subtractive_rule() -> None:
                 "entityType": "MergedResource",
                 "identifier": "bFQoRhcVH5DHU6",
             },
+            id="single extracted item",
         ),
-        (
+        pytest.param(
             [
                 ExtractedPerson(
                     fullName="Dr. Zoidberg",
@@ -237,8 +148,9 @@ def test_apply_subtractive_rule() -> None:
                 "identifier": Identifier.generate(seed=42),
                 "entityType": "MergedPerson",
             },
+            id="extracted items and rule set",
         ),
-        (
+        pytest.param(
             [],
             PersonRuleSetRequest(
                 additive=AdditivePerson(
@@ -263,8 +175,9 @@ def test_apply_subtractive_rule() -> None:
                 "identifier": Identifier.generate(seed=42),
                 "entityType": "MergedPerson",
             },
+            id="only rule set",
         ),
-        (
+        pytest.param(
             [
                 ExtractedPerson(
                     fullName="Dr. Zoidberg",
@@ -301,14 +214,16 @@ def test_apply_subtractive_rule() -> None:
                 "identifier": Identifier.generate(seed=42),
                 "entityType": "MergedPerson",
             },
+            id="only extracted items",
         ),
-        (
+        pytest.param(
             [],
             None,
             Validation.STRICT,
             "One of rule_set or extracted_items is required.",
+            id="error if neither is supplied",
         ),
-        (
+        pytest.param(
             [
                 ExtractedContactPoint(
                     identifierInPrimarySource="krusty",
@@ -323,11 +238,13 @@ def test_apply_subtractive_rule() -> None:
             ),
             Validation.STRICT,
             "List should have at least 1 item after validation, not 0",
+            id="merging raises cardinality error",
         ),
-        (
+        pytest.param(
             [
                 ExtractedActivity(
                     title=Text(value="Burger flipping"),
+                    alternativeTitle=[],
                     contact=Identifier.generate(seed=97),
                     responsibleUnit=Identifier.generate(seed=98),
                     identifierInPrimarySource="BF",
@@ -335,17 +252,23 @@ def test_apply_subtractive_rule() -> None:
                 ),
             ],
             ActivityRuleSetRequest(
-                subtractive=SubtractiveActivity(title=Text(value="Burger flipping")),
+                subtractive=SubtractiveActivity(
+                    title=Text(value="Burger flipping"),
+                    alternativeTitle=Text(value="Cash making"),
+                ),
             ),
             Validation.LENIENT,
             {
+                "title": [{"value": "Burger flipping", "language": None}],
+                "alternativeTitle": [{"value": "Cash making", "language": None}],
                 "contact": [Identifier.generate(seed=97)],
                 "identifier": Identifier.generate(seed=42),
                 "responsibleUnit": [Identifier.generate(seed=98)],
                 "entityType": "PreviewActivity",
             },
+            id="get preview of merged items",
         ),
-        (
+        pytest.param(
             [
                 ExtractedContactPoint(
                     identifierInPrimarySource="krusty",
@@ -362,9 +285,11 @@ def test_apply_subtractive_rule() -> None:
             {
                 "identifier": Joker(),
                 "entityType": "PreviewContactPoint",
+                "email": ["manager@krusty.ocean"],
             },
+            id="preview allows cardinality error",
         ),
-        (
+        pytest.param(
             [
                 ExtractedContactPoint(
                     identifierInPrimarySource="orders",
@@ -379,19 +304,9 @@ def test_apply_subtractive_rule() -> None:
             ),
             Validation.IGNORE,
             None,
+            id="ignore mode validation returns none",
         ),
     ],
-    ids=(
-        "single extracted item",
-        "extracted items and rule set",
-        "only rule set",
-        "only extracted items",
-        "error if neither is supplied",
-        "merging raises cardinality error",
-        "get preview of merged items",
-        "preview allows cardinality error",
-        "ignore mode validation returns none",
-    ),
 )
 def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
