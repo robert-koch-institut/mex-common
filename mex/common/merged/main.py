@@ -17,7 +17,6 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
-    BaseModel,
 )
 from mex.common.transform import ensure_prefix
 from mex.common.types import (
@@ -33,14 +32,6 @@ ValueList = list[AnyPrimitiveType]
 SourceList = list[MergedPrimarySourceIdentifier]
 
 
-def _get_values(item: BaseModel, field: str) -> ValueList:
-    return cast("ValueList", ensure_list(getattr(item, field)))
-
-
-def _get_sources(item: BaseModel, field: str) -> SourceList:
-    return cast("SourceList", ensure_list(getattr(item, field)))
-
-
 def _pick_usable_values(
     field: str,
     extracted_items: Iterable[AnyExtractedModel],
@@ -50,14 +41,18 @@ def _pick_usable_values(
     extracted_sources_and_values: SourcesAndValues = [
         (extracted_item.hadPrimarySource, value)
         for extracted_item in extracted_items
-        for value in _get_values(extracted_item, field)
+        for value in cast("ValueList", ensure_list(getattr(extracted_items, field)))
     ]
     additive_rule_sources_and_values: SourcesAndValues = [
         (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value)
-        for value in _get_values(rule_set.additive, field)
+        for value in cast("ValueList", ensure_list(getattr(rule_set.additive, field)))
     ]
-    subtracted_values: ValueList = _get_values(rule_set.subtractive, field)
-    prevented_sources: SourceList = _get_sources(rule_set.preventive, field)
+    subtracted_values: ValueList = cast(
+        "ValueList", ensure_list(getattr(rule_set.subtractive, field))
+    )
+    prevented_sources: SourceList = cast(
+        "SourceList", ensure_list(getattr(rule_set.preventive, field))
+    )
     possible_sources_and_values: SourcesAndValues = chain(
         extracted_sources_and_values, additive_rule_sources_and_values
     )
@@ -66,7 +61,8 @@ def _pick_usable_values(
         for source, value in possible_sources_and_values
         if source not in prevented_sources and value not in subtracted_values
     ]
-    if not usable_values and validation is Validation.LENIENT:
+    allow_lenient_fallback = validation is Validation.LENIENT
+    if not usable_values and allow_lenient_fallback:
         subtractive_rule_sources_and_values: SourcesAndValues = (
             (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value) for value in subtracted_values
         )
