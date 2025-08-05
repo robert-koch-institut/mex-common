@@ -14,10 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: change validation argument of `create_merged_item` helper
+- BREAKING: change model hash and string computation to faster black2/pickle
 
 ### Deprecated
 
 ### Removed
+
+- BREAKING: remove unused `BaseModel.checksum` method
 
 ### Fixed
 

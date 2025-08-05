@@ -140,17 +140,9 @@ class DummyBaseModel(BaseModel):
     foo: str | None = None
 
 
-def test_base_model_checksum() -> None:
-    model_1 = DummyBaseModel()
-    assert model_1.checksum() == "da8e081aa63fd2fd5b909dd86c6dfa6c"
-
-    model_2 = DummyBaseModel(foo="bar")
-    assert model_1.checksum() != model_2.checksum()
-
-
 def test_base_model_str() -> None:
     model = DummyBaseModel(foo="bar")
-    assert str(model) == "DummyBaseModel: 94232c5b8fc9272f6f73a1e36eb68fcf"
+    assert str(model) == "DummyBaseModel(hash='0xf824b9416780b5f')"
 
 
 def test_base_model_hash() -> None:
@@ -158,5 +150,6 @@ def test_base_model_hash() -> None:
     thing2 = DummyBaseModel(foo="4567")
     thing3 = DummyBaseModel(foo="5678")
 
+    assert hash(thing1) == 2305511607198672667
     assert hash(thing1) == hash(thing2)
     assert hash(thing1) != hash(thing3)
