@@ -9,17 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `Validation` enum to `mex.common.types`
 - add helper function to find organigram unit descendants
 
 ### Changes
+
+- BREAKING: change validation argument of `create_merged_item` helper
+- BREAKING: change model hash and string computation to faster black2/pickle
 
 ### Deprecated
 
 ### Removed
 
+- BREAKING: remove unused `BaseModel.checksum` method
+
 ### Fixed
 
 ### Security
+
+## [0.65.0] - 2025-07-25
+
+### Added
+
+- add identifier filter to merged and preview fetch endpoints in BackendApiConnector
+- add `fetch_all_merged_items` and `get_extracted_item` methods to BackendApiConnector
+
+### Changes
+
+- BREAKING: replace hadPrimarySource with reference field filter in BackendApiConnector
+- BREAKING: BackendApiConnector fetch endpoint methods now expect keyword arguments
+- bump cookiecutter template to e886ec
+
+## [0.64.0] - 2025-07-24
+
+### Changes
+
+- use default wiki label should there be neither a german nor english label
 
 ## [0.63.0] - 2025-07-10
 

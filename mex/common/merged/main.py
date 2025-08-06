@@ -1,10 +1,11 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any, Literal, overload
 
 from pydantic_core import ValidationError
 
 from mex.common.exceptions import MergingError
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from mex.common.logging import logger
 from mex.common.merged.utils import extend_list_in_dict, prune_list_in_dict
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
@@ -19,7 +20,7 @@ from mex.common.models import (
     AnySubtractiveModel,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import Identifier
+from mex.common.types import Identifier, Validation
 
 
 def _merge_extracted_items_and_apply_preventive_rule(
@@ -88,7 +89,7 @@ def create_merged_item(
     identifier: Identifier,
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
-    validate_cardinality: Literal[False],
+    validation: Literal[Validation.LENIENT],
 ) -> AnyPreviewModel: ...
 
 
@@ -97,7 +98,16 @@ def create_merged_item(
     identifier: Identifier,
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
-    validate_cardinality: Literal[True],
+    validation: Literal[Validation.STRICT],
+) -> AnyMergedModel: ...
+
+
+@overload
+def create_merged_item(
+    identifier: Identifier,
+    extracted_items: list[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.IGNORE],
 ) -> AnyMergedModel: ...
 
 
@@ -105,41 +115,47 @@ def create_merged_item(
     identifier: Identifier,
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
-    validate_cardinality: Literal[True, False],
-) -> AnyPreviewModel | AnyMergedModel:
+    validation: Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE],
+) -> AnyPreviewModel | AnyMergedModel | None:
     """Merge a list of extracted items with a set of rules.
 
     Args:
         identifier: Identifier the finished merged item should have
         extracted_items: List of extracted items, can be empty
         rule_set: Rule set, with potentially empty rules
-        validate_cardinality: Merged items validate the existence of required fields and
-            the lengths of lists, set this to `False` to avoid this and return a
-            "preview" of a merged item instead of a valid merged item
+        validation: Controls how strictly the merged item needs to validate:
+            - STRICT: Validates all required fields and list lengths. Returns a
+                fully validated merged item or raises MergingError on validation failure
+            - LENIENT: Skips validation checks and returns a "preview" merged item
+                that may be missing required fields and even may be using blocked values
+            - IGNORE: In case of validation errors, this mode will safely return None
 
     Raises:
-        MergingError: When the given items cannot be merged
+        MergingError: When the given items cannot be merged (in STRICT mode)
+        MergingError: When neither extracted nor rule items are given (in STRICT mode)
 
     Returns:
         Instance of a merged or preview item
     """
-    model_class_lookup: (
-        dict[str, type[AnyPreviewModel]] | dict[str, type[AnyMergedModel]]
-    )
-    if validate_cardinality:
-        model_prefix = "Merged"
-        model_class_lookup = MERGED_MODEL_CLASSES_BY_NAME
-    else:
+    model_class_lookup: Mapping[str, type[AnyPreviewModel | AnyMergedModel]]
+    if validation == Validation.LENIENT:
         model_prefix = "Preview"
         model_class_lookup = PREVIEW_MODEL_CLASSES_BY_NAME
+    else:
+        model_prefix = "Merged"
+        model_class_lookup = MERGED_MODEL_CLASSES_BY_NAME
 
     if rule_set:
         entity_type = ensure_prefix(rule_set.stemType, model_prefix)
     elif extracted_items:
         entity_type = ensure_prefix(extracted_items[0].stemType, model_prefix)
-    else:
+    elif validation == Validation.STRICT:
         msg = "One of rule_set or extracted_items is required."
         raise MergingError(msg)
+    else:
+        logger.debug("One of rule_set or extracted_items is required.")
+        return None
+
     fields = MERGEABLE_FIELDS_BY_CLASS_NAME[entity_type]
     cls = model_class_lookup[entity_type]
 
@@ -151,8 +167,12 @@ def create_merged_item(
     if rule_set:
         _apply_additive_rule(merged_dict, fields, rule_set.additive)
         _apply_subtractive_rule(merged_dict, fields, rule_set.subtractive)
+
     try:
         return cls.model_validate(merged_dict)
     except ValidationError as error:
         msg = "Could not validate merged model."
-        raise MergingError(msg) from error
+        if validation == Validation.STRICT:
+            raise MergingError(msg) from error
+        logger.debug("%s %s:%s", msg, entity_type, identifier)
+    return None

@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "0.63.0"
+version = "0.65.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -12,10 +12,10 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model==4.1.0",
+    "mex-model==4.1.1",
     "numpy>=2,<3",
     "pandas>=2,<3",
-    "pyarrow>=20,<21",
+    "pyarrow>=21,<22",
     "pydantic-settings>=2,<2.8,",
     "pydantic>=2,<2.10",
     "pytz>=2024,<2024.2",
