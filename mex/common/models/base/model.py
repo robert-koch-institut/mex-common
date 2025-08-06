@@ -1,5 +1,5 @@
 import hashlib
-import json
+import pickle
 from collections.abc import MutableMapping
 from typing import Any
 
@@ -9,7 +9,6 @@ from pydantic.json_schema import DEFAULT_REF_TEMPLATE, JsonSchemaMode
 from pydantic.json_schema import GenerateJsonSchema as PydanticJsonSchemaGenerator
 
 from mex.common.models.base.schema import JsonSchemaGenerator
-from mex.common.transform import MExEncoder
 from mex.common.utils import (
     get_alias_lookup,
     get_all_fields,
@@ -174,22 +173,19 @@ class BaseModel(
                     data[name] = cls._fix_value_listyness_for_field(field_name, value)
         return handler(data)
 
-    def checksum(self) -> str:
-        """Calculate md5 checksum for this model.
-
-        Creates a deterministic hash of the model by serializing it to JSON with
-        sorted keys and computing an MD5 digest.
-
-        Returns:
-            MD5 hexdigest string representing the model's current state.
-        """
-        json_str = json.dumps(self, sort_keys=True, cls=MExEncoder)
-        return hashlib.md5(json_str.encode()).hexdigest()  # noqa: S324
-
     def __str__(self) -> str:
-        """Format this model as a string for logging."""
-        return f"{self.__class__.__name__}: {self.checksum()}"
+        """Format this model as a string with its hash for identification."""
+        return f"{self.__class__.__name__}(hash='{hex(hash(self))}')"
 
     def __hash__(self) -> int:
-        """Calculates a hash value to make the object cacheable."""
-        return hash(self.checksum())
+        """Calculate a hash to make the model usable in sets, dicts and caches.
+
+        Creates a blake2b hash of the model by serializing it with pickle
+        and computing a hash digest.
+
+        Returns:
+            Hash representing the model's current state.
+        """
+        serialized = pickle.dumps(self, protocol=pickle.HIGHEST_PROTOCOL)
+        digest = hashlib.blake2b(serialized, usedforsecurity=False)
+        return int(digest.hexdigest(), 16)
