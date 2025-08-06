@@ -118,7 +118,11 @@ def find_descendants(items: list[_OrganizationalUnit], parent_id: str) -> list[s
         node: str,
         descendants: set[str],
     ) -> None:
-        """Starting from any parent unit all descendants are collected."""
+        """Starting from any parent unit the children are collected.
+
+        This functions collects children and their children and their children ...
+        (recursion, depth first).
+        """
         for child_id in child_map.get(node, []):
             descendants.add(child_id)
             collect_descendants(child_map, child_id, descendants)
