@@ -1,8 +1,13 @@
 from collections.abc import Generator
+from typing import TypeVar
 
 from mex.common.exceptions import MExError
 from mex.common.logging import logger
-from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models import (
+    ExtractedOrganizationalUnit,
+    ExtractedPrimarySource,
+    MergedOrganizationalUnit,
+)
 from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.models import OrganigramUnit
@@ -10,6 +15,13 @@ from mex.common.organigram.transform import (
     transform_organigram_unit_to_extracted_organizational_unit,
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
+
+_OrganizationalUnit = TypeVar(
+    "_OrganizationalUnit",
+    MergedOrganizationalUnit,
+    ExtractedOrganizationalUnit,
+    OrganigramUnit,
+)
 
 
 def get_extracted_organizational_unit_with_parents(
@@ -77,3 +89,40 @@ def get_extracted_organizational_unit_with_parents(
         len(extracted_unit_by_id_in_primary_source),
     )
     return list(extracted_unit_by_id_in_primary_source.values())
+
+
+def find_descendants(items: list[_OrganizationalUnit], parent_id: str) -> list[str]:
+    """Finds the ids of all descendant organizational units for a given parent unit id.
+
+    Args:
+        items: list of organizational units (extracted or merged or OrganigramUnit)
+        parent_id: identifier of the parent unit
+
+    Returns:
+        list of all unique descendant organizational unit ids (children,
+                grandchildren, ...), excluding the starting parent_id
+    """
+
+    def build_child_map(items: list[_OrganizationalUnit]) -> dict[str, list[str]]:
+        child_map: dict[str, list[str]] = {}
+        for item in items:
+            if item.parentUnit is not None:
+                child_map.setdefault(str(item.parentUnit), []).append(
+                    str(item.identifier)
+                )
+        return child_map
+
+    def collect_descendants(
+        child_map: dict[str, list[str]],
+        node: str,
+        descendants: set[str],
+    ) -> None:
+        for child_id in child_map.get(node, []):
+            descendants.add(child_id)
+            collect_descendants(child_map, child_id, descendants)
+
+    child_map = build_child_map(items)
+
+    descendants: set[str] = set()
+    collect_descendants(child_map, str(parent_id), descendants)
+    return list(descendants)
