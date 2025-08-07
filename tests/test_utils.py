@@ -20,6 +20,7 @@ from mex.common.utils import (
     contains_any,
     contains_any_types,
     contains_only_types,
+    ensure_list,
     get_alias_lookup,
     get_all_fields,
     get_field_names_allowing_none,
@@ -285,3 +286,32 @@ def test_jitter_sleep() -> None:
     time_slept = t1 - t0
 
     assert 0.1 < time_slept < 0.3  # giving 100ms of courtesy to pytest
+
+
+@pytest.mark.parametrize(
+    ("values", "expected"),
+    [
+        (None, []),
+        ([], []),
+        ([1, 2, 3], [1, 2, 3]),
+        ("single_string", ["single_string"]),
+        (42, [42]),
+        (True, [True]),
+        ({"key": "value"}, [{"key": "value"}]),
+        ([None], [None]),
+        (["nested", ["list"]], ["nested", ["list"]]),
+    ],
+    ids=[
+        "none_to_empty_list",
+        "empty_list_unchanged",
+        "list_unchanged",
+        "string_to_list",
+        "number_to_list",
+        "boolean_to_list",
+        "dict_to_list",
+        "list_with_none_unchanged",
+        "nested_list_unchanged",
+    ],
+)
+def test_ensure_list(values: Any, expected: list[Any]) -> None:  # noqa: ANN401
+    assert ensure_list(values) == expected

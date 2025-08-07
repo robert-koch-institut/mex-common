@@ -98,6 +98,7 @@ __all__ = (
     "AnyMergedIdentifier",
     "AnyNestedModel",
     "AnyPrimitiveType",
+    "AnyValidation",
     "AnyVocabularyEnum",
     "AssetsPath",
     "BibliographicResourceType",
@@ -247,5 +248,6 @@ EXTRACTED_IDENTIFIER_CLASSES_BY_NAME: Final[dict[str, type[AnyExtractedIdentifie
     cls.__name__: cls for cls in EXTRACTED_IDENTIFIER_CLASSES
 }
 
+AnyValidation = Literal[Validation.STRICT, Validation.LENIENT, Validation.IGNORE]
 AnyPrimitiveType = str | int | float | None | bool
 LiteralStringType = type(Literal["str"])
