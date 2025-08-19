@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add `Validation` enum to `mex.common.types`
 - add helper function to find organigram unit descendants
+- have ndjson sink handle special characters correctly
 
 ### Changes
 
