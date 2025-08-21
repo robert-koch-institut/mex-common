@@ -61,4 +61,4 @@ jobs:
         run: make install
 
       - name: Run linters
-        run: make linter
+        run: make lint

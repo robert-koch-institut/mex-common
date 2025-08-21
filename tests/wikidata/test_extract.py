@@ -16,6 +16,7 @@ def test_get_wikidata_organization() -> None:
         "labels": {
             "de": {"language": "de", "value": "Robert Koch-Institut"},
             "en": {"language": "en", "value": "Robert Koch Institute"},
+            "multiple": {"language": "mul", "value": "Robert Koch-Institut"},
         },
         "claims": {
             "website": [

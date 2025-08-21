@@ -80,7 +80,7 @@ jobs:
             printf '\n# Conflicts\n' >> .cruft-pr-body
           fi
           find . -type f -name "*.rej" | while read -r line ; do
-            printf '\n```' >> .cruft-pr-body
+            printf '\n```diff\n' >> .cruft-pr-body
             cat ${line} >> .cruft-pr-body
             printf '```\n' >> .cruft-pr-body
           done

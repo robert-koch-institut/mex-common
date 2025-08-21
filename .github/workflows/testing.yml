@@ -61,4 +61,4 @@ jobs:
         run: make install
 
       - name: Run test suite
-        run: make pytest
+        run: make unit

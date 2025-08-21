@@ -78,6 +78,7 @@ def test_base_model_listyness_fix(
         assert str(expected) in str(error)  # noqa: PT017
     else:
         actual = model.model_dump()
+        assert isinstance(expected, dict)
         for key, value in expected.items():
             assert actual[key] == value
 
@@ -130,7 +131,7 @@ def test_field_assignment_on_model_with_computed_field() -> None:
     with pytest.raises(
         AttributeError, match="property 'cpus' of 'Computer' object has no setter"
     ):
-        computer.cpus = 99
+        computer.cpus = 99  # type: ignore[misc]
 
     # non-computed field works as expected
     computer.ram = 32

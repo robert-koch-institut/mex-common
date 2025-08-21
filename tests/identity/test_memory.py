@@ -78,7 +78,7 @@ def test_fetch_found() -> None:
 
     # fetch the identity we just assigned by stableTargetId
     identities = provider.fetch(
-        stable_target_id=identity.stableTargetId,
+        stable_target_id=identity.stableTargetId,  # type: ignore[arg-type]
     )
 
     # we get a perfect match

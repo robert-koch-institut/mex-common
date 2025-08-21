@@ -33,8 +33,8 @@ repos:
     hooks:
     - id: mypy
       name: mypy
-      entry: pdm mypy-daemon
-      files: ^mex/
+      entry: pdm run dmypy run --timeout 7200 -- mex tests
+      files: ^(mex|tests)/
       language: system
       pass_filenames: false
       types: [python]
