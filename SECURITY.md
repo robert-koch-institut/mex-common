@@ -2,10 +2,10 @@
 
 ## Supported Versions
 
-This software package is currently in pre-release state. That means changes can
-occur frequently and only the latest released version will be supported with
-security and bug fixes. It is therefore not recommended to use this package in
-productive environments.
+This software package is in active development and designed for internal use.
+Changes to code and architecture can occur frequently and only the latest version will
+be supported with security and bug fixes. If you plan on re-using parts of MEx,
+please refer to the LICENSE for liability clarifications.
 
 ## Reporting a Vulnerability
 

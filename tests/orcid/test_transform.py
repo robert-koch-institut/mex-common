@@ -1,6 +1,8 @@
+from typing import Any
+
 import pytest
 
-from mex.common.models import ExtractedPerson, ExtractedPrimarySource
+from mex.common.models import ExtractedPrimarySource
 from mex.common.orcid.models import (
     OrcidEmail,
     OrcidEmails,
@@ -89,7 +91,7 @@ from mex.common.orcid.transform import transform_orcid_person_to_mex_person
 )
 def test_transform_orcid_person_to_mex_person(
     orcid_person: OrcidRecord,
-    expected_mex_person: ExtractedPerson,
+    expected_mex_person: dict[str, Any],
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
     orcid_primary_source = extracted_primary_sources["orcid"]
