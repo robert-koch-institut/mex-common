@@ -61,4 +61,4 @@ jobs:
         run: make install
 
       - name: Run test suite
-        run: make test
+        run: make unit

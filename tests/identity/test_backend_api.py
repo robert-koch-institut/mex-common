@@ -38,7 +38,7 @@ def test_assign_mocked(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=mocked_data)
-    mocked_backend_connector.request = MagicMock(return_value=mocked_response)
+    mocked_backend_connector.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     provider = BackendApiIdentityProvider.get()
     identity_first = provider.assign(
@@ -79,7 +79,7 @@ def test_fetch_mocked(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value=mocked_data)
-    mocked_backend_connector.request = MagicMock(return_value=mocked_response)
+    mocked_backend_connector.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     provider = BackendApiIdentityProvider.get()
 
@@ -92,8 +92,8 @@ def test_fetch_mocked(
     identities = provider.fetch(stable_target_id=contact_point.stableTargetId)
     assert identities == [
         Identity(
-            stableTargetId=mocked_data["items"][0]["stableTargetId"],
-            identifier=mocked_data["items"][0]["identifier"],
+            stableTargetId=mocked_data["items"][0]["stableTargetId"],  # type: ignore[index]
+            identifier=mocked_data["items"][0]["identifier"],  # type: ignore[index]
             hadPrimarySource=contact_point.hadPrimarySource,
             identifierInPrimarySource=contact_point.identifierInPrimarySource,
         )
@@ -105,8 +105,8 @@ def test_fetch_mocked(
     )
     assert identities == [
         Identity(
-            stableTargetId=mocked_data["items"][0]["stableTargetId"],
-            identifier=mocked_data["items"][0]["identifier"],
+            stableTargetId=mocked_data["items"][0]["stableTargetId"],  # type: ignore[index]
+            identifier=mocked_data["items"][0]["identifier"],  # type: ignore[index]
             hadPrimarySource=contact_point.hadPrimarySource,
             identifierInPrimarySource=contact_point.identifierInPrimarySource,
         )
@@ -119,7 +119,7 @@ def test_fetch_mocked_empty(
     mocked_response = Mock(spec=requests.Response)
     mocked_response.status_code = 200
     mocked_response.json = MagicMock(return_value={"items": [], "total": 0})
-    mocked_backend_connector.request = MagicMock(return_value=mocked_response)
+    mocked_backend_connector.request = MagicMock(return_value=mocked_response)  # type: ignore[method-assign]
 
     provider = BackendApiIdentityProvider.get()
 

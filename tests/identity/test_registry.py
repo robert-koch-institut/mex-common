@@ -35,7 +35,7 @@ class DummyProvider(BaseProvider):
 
 class DummySettings(BaseSettings):
     identity_provider: IdentityProvider | DummyIdentityProvider = (
-        IdentityProvider.MEMORY
+        IdentityProvider.MEMORY  # type: ignore[assignment]
     )
 
 
@@ -45,9 +45,9 @@ def test_register_provider_error() -> None:
 
 
 def test_register_provider() -> None:
-    register_provider(DummyIdentityProvider.DUMMY, DummyProvider)
+    register_provider(DummyIdentityProvider.DUMMY, DummyProvider)  # type: ignore[arg-type]
 
-    assert _PROVIDER_REGISTRY[DummyIdentityProvider.DUMMY] == DummyProvider
+    assert _PROVIDER_REGISTRY[DummyIdentityProvider.DUMMY] == DummyProvider  # type: ignore[index]
 
 
 def test_get_provider_error(monkeypatch: MonkeyPatch) -> None:
@@ -64,7 +64,7 @@ def test_get_provider() -> None:
     settings = DummySettings.get()
     settings.identity_provider = DummyIdentityProvider.DUMMY
 
-    register_provider(DummyIdentityProvider.DUMMY, DummyProvider)
+    register_provider(DummyIdentityProvider.DUMMY, DummyProvider)  # type: ignore[arg-type]
 
     provider = get_provider()
     assert isinstance(provider, DummyProvider)

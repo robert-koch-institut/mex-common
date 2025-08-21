@@ -1,6 +1,5 @@
-.PHONY: all test setup hooks install linter pytest wheel docs
-all: install test
-test: linter pytest
+.PHONY: all test setup hooks install lint test wheel docs
+all: install lint test
 
 LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
 PWD = $(shell pwd)
@@ -21,20 +20,25 @@ install: setup hooks
 	@ echo installing package; \
 	pdm install-all; \
 
-linter:
+lint:
 	# run the linter hooks from pre-commit on all files
 	@ echo linting all files; \
-	pdm lint; \
+	pre-commit run --all-files; \
 
-pytest:
-	# run the pytest test suite with all unit tests
+unit:
+	# run the test suite with all unit tests
 	@ echo running unit tests; \
-	pdm unit; \
+	pdm run pytest -m 'not integration'; \
+
+test:
+	# run the unit and integration test suites
+	@ echo running all tests; \
+	pdm run pytest --numprocesses=auto --dist=worksteal; \
 
 wheel:
 	# build the python package
 	@ echo building wheel; \
-	pdm wheel; \
+	pdm build --no-sdist; \
 
 docs:
 	# use sphinx to auto-generate html docs from code
