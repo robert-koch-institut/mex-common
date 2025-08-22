@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "0.65.0"
+version = "1.0.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -12,28 +12,28 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model==4.1.1",
+    "mex-model>=4.1.2,<4.2",
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=21,<22",
-    "pydantic-settings>=2,<2.8,",
+    "pydantic-settings>=2,<2.8",
     "pydantic>=2,<2.10",
     "pytz>=2024,<2024.2",
     "requests>=2,<3",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13",
-    "pandas-stubs>=2",
     "mypy>=1",
+    "pandas-stubs",
     "pytest-cov>=6",
     "pytest-random-order>=1",
     "pytest-xdist>=3",
     "pytest>=8",
-    "ruff>=0.11",
+    "ruff>=0.12",
     "sphinx>=8",
-    "types-ldap3>=2",
-    "types-pytz>=2025",
-    "types-requests>=2",
+    "types-ldap3",
+    "types-pytz",
+    "types-requests",
 ]
 
 [tool.cruft]
@@ -60,16 +60,11 @@ distribution = true
 update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
 lock-all = { cmd = "pdm lock --group :all --python='==3.11.*'" }
 install-all = { cmd = "pdm install --group :all --frozen-lockfile" }
-export-all = { cmd = "pdm export --group :all --no-hashes -f requirements" }
 apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
 sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
 doc = { composite = ["apidoc", "sphinx"] }
-wheel = { cmd = "pdm build --no-sdist" }
-mypy-daemon = { cmd = "pdm run dmypy run --timeout 7200 -- mex" }
 lint = { cmd = "pre-commit run --all-files" }
-unit = { cmd = "pdm run pytest -m 'not integration'" }
 test = { cmd = "pdm run pytest --numprocesses=auto --dist=worksteal" }
-all = { composite = ["install-all", "lint", "test", "doc"] }
 
 [tool.pydantic-mypy]
 warn_untyped_fields = true

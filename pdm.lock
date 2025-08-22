@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:1e2117f52b929388d5cc015b6b10553e012c121677c5be1dc1686db2e7db31fa"
+content_hash = "sha256:1365bf53ccaea34e0135102f2772dc9342fe75413894f73f4ed0e3c89a61733e"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -421,13 +421,16 @@ files = [
 
 [[package]]
 name = "mex-model"
-version = "4.1.1"
+version = "4.1.2"
 requires_python = ">=3.9"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
+dependencies = [
+    "importlib-resources>=1.3; python_version < \"3.10\"",
+]
 files = [
-    {file = "mex_model-4.1.1-py3-none-any.whl", hash = "sha256:cfe3359ae84c1b747a75f6ca44d1df886c0d66621a8a2c5e8f6d71729ebce19d"},
-    {file = "mex_model-4.1.1.tar.gz", hash = "sha256:702d016d8a96e5aeaa84aaea1ea6203d2648b7cbd1075d88eecb2a91c6fe08e1"},
+    {file = "mex_model-4.1.2-py3-none-any.whl", hash = "sha256:466182f2064d214a0fe272ba243424a490aa44c31bc53b6940d4787d71aa4337"},
+    {file = "mex_model-4.1.2.tar.gz", hash = "sha256:57dd5bf573b6faa817a4bad2e0ccb0446efa9addc90ade422a697bf4860537ec"},
 ]
 
 [[package]]
@@ -505,7 +508,7 @@ files = [
 
 [[package]]
 name = "pandas"
-version = "2.3.1"
+version = "2.3.2"
 requires_python = ">=3.9"
 summary = "Powerful data structures for data analysis, time series, and statistics"
 groups = ["default"]
@@ -518,14 +521,14 @@ dependencies = [
     "tzdata>=2022.7",
 ]
 files = [
-    {file = "pandas-2.3.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:2b0540963d83431f5ce8870ea02a7430adca100cec8a050f0811f8e31035541b"},
-    {file = "pandas-2.3.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:fe7317f578c6a153912bd2292f02e40c1d8f253e93c599e82620c7f69755c74f"},
-    {file = "pandas-2.3.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e6723a27ad7b244c0c79d8e7007092d7c8f0f11305770e2f4cd778b3ad5f9f85"},
-    {file = "pandas-2.3.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3462c3735fe19f2638f2c3a40bd94ec2dc5ba13abbb032dd2fa1f540a075509d"},
-    {file = "pandas-2.3.1-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:98bcc8b5bf7afed22cc753a28bc4d9e26e078e777066bc53fac7904ddef9a678"},
-    {file = "pandas-2.3.1-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:4d544806b485ddf29e52d75b1f559142514e60ef58a832f74fb38e48d757b299"},
-    {file = "pandas-2.3.1-cp311-cp311-win_amd64.whl", hash = "sha256:b3cd4273d3cb3707b6fffd217204c52ed92859533e31dc03b7c5008aa933aaab"},
-    {file = "pandas-2.3.1.tar.gz", hash = "sha256:0a95b9ac964fe83ce317827f80304d37388ea77616b1425f0ae41c9d2d0d7bb2"},
+    {file = "pandas-2.3.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:1333e9c299adcbb68ee89a9bb568fc3f20f9cbb419f1dd5225071e6cddb2a743"},
+    {file = "pandas-2.3.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:76972bcbd7de8e91ad5f0ca884a9f2c477a2125354af624e022c49e5bd0dfff4"},
+    {file = "pandas-2.3.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b98bdd7c456a05eef7cd21fd6b29e3ca243591fe531c62be94a2cc987efb5ac2"},
+    {file = "pandas-2.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1d81573b3f7db40d020983f78721e9bfc425f411e616ef019a10ebf597aedb2e"},
+    {file = "pandas-2.3.2-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:e190b738675a73b581736cc8ec71ae113d6c3768d0bd18bffa5b9a0927b0b6ea"},
+    {file = "pandas-2.3.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:c253828cb08f47488d60f43c5fc95114c771bbfff085da54bfc79cb4f9e3a372"},
+    {file = "pandas-2.3.2-cp311-cp311-win_amd64.whl", hash = "sha256:9467697b8083f9667b212633ad6aa4ab32436dcbaf4cd57325debb0ddef2012f"},
+    {file = "pandas-2.3.2.tar.gz", hash = "sha256:ab7b58f8f82706890924ccdfb5f48002b83d2b5a3845976a9fb705d36c34dcdb"},
 ]
 
 [[package]]
@@ -826,8 +829,8 @@ files = [
 
 [[package]]
 name = "requests"
-version = "2.32.4"
-requires_python = ">=3.8"
+version = "2.32.5"
+requires_python = ">=3.9"
 summary = "Python HTTP for Humans."
 groups = ["default", "dev"]
 dependencies = [
@@ -837,8 +840,8 @@ dependencies = [
     "urllib3<3,>=1.21.1",
 ]
 files = [
-    {file = "requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c"},
-    {file = "requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"},
+    {file = "requests-2.32.5-py3-none-any.whl", hash = "sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6"},
+    {file = "requests-2.32.5.tar.gz", hash = "sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf"},
 ]
 
 [[package]]

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.0.0] - 2025-08-21
+
+### Added
+
 - add `Validation` enum to `mex.common.types`
 - add helper function to find organigram unit descendants
 - have ndjson sink handle special characters correctly
@@ -18,15 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: change validation argument of `create_merged_item` helper
 - BREAKING: change model hash and string computation to faster black2/pickle
 
-### Deprecated
-
 ### Removed
 
 - BREAKING: remove unused `BaseModel.checksum` method
-
-### Fixed
-
-### Security
 
 ## [0.65.0] - 2025-07-25
 

@@ -1,4 +1,5 @@
 import re
+from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -51,7 +52,7 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     ],
 )
 @pytest.mark.integration
-def test_get_persons_ldap(kwargs: dict[str, str], pattern: str) -> None:
+def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
     connector = LDAPConnector.get()
     persons = list(connector.get_persons(**kwargs))
 
@@ -71,7 +72,7 @@ def test_get_persons_ldap(kwargs: dict[str, str], pattern: str) -> None:
     ],
 )
 @pytest.mark.integration
-def test_get_functional_accounts_ldap(kwargs: dict[str, str], pattern: str) -> None:
+def test_get_functional_accounts_ldap(kwargs: dict[str, Any], pattern: str) -> None:
     connector = LDAPConnector.get()
     functional_accounts = list(connector.get_functional_accounts(**kwargs))
 

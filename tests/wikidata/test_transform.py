@@ -1,5 +1,6 @@
 import json
 from operator import attrgetter, itemgetter
+from typing import Any, cast
 
 import pytest
 
@@ -65,7 +66,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
     assert sorted(
         extracted_organization.model_dump()["alternativeName"],
         key=itemgetter("value"),
-    ) == sorted(expected["alternativeName"], key=itemgetter("value"))
+    ) == sorted(cast("list[Any]", expected["alternativeName"]), key=itemgetter("value"))
 
     assert (
         extracted_organization.model_dump()["identifierInPrimarySource"]
@@ -128,7 +129,7 @@ def test_transform_wikidata_organization_to_organization(
     assert sorted(
         extracted_organization_dict["alternativeName"],
         key=itemgetter("value"),
-    ) == sorted(expected["alternativeName"], key=itemgetter("value"))
+    ) == sorted(cast("list[Any]", expected["alternativeName"]), key=itemgetter("value"))
 
     assert (
         extracted_organization_dict["identifierInPrimarySource"]
