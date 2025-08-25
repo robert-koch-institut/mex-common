@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `ensure_list` utility function
+
 ### Changes
+
+- BREAKING: change the behavior of merge previews to include blocked values
 
 ### Deprecated
 
