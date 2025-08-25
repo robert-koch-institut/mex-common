@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:1365bf53ccaea34e0135102f2772dc9342fe75413894f73f4ed0e3c89a61733e"
+content_hash = "sha256:e46c07c36b41bb39f38662ef70566c7bbae766e8fa547367e385ec03957c7848"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -703,17 +703,18 @@ files = [
 
 [[package]]
 name = "pydantic-settings"
-version = "2.7.1"
-requires_python = ">=3.8"
+version = "2.10.1"
+requires_python = ">=3.9"
 summary = "Settings management using Pydantic"
 groups = ["default"]
 dependencies = [
     "pydantic>=2.7.0",
     "python-dotenv>=0.21.0",
+    "typing-inspection>=0.4.0",
 ]
 files = [
-    {file = "pydantic_settings-2.7.1-py3-none-any.whl", hash = "sha256:590be9e6e24d06db33a4262829edef682500ef008565a969c73d39d5f8bfb3fd"},
-    {file = "pydantic_settings-2.7.1.tar.gz", hash = "sha256:10c9caad35e64bfb3c2fbf70a078c0e25cc92499782e5200747f942a065dec93"},
+    {file = "pydantic_settings-2.10.1-py3-none-any.whl", hash = "sha256:a60952460b99cf661dc25c29c0ef171721f98bfcb52ef8d9ea4c943d7c8cc796"},
+    {file = "pydantic_settings-2.10.1.tar.gz", hash = "sha256:06f0062169818d0f5524420a360d632d5857b83cffd4d42fe29597807a1614ee"},
 ]
 
 [[package]]
@@ -1088,6 +1089,20 @@ groups = ["default", "dev"]
 files = [
     {file = "typing_extensions-4.14.1-py3-none-any.whl", hash = "sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76"},
     {file = "typing_extensions-4.14.1.tar.gz", hash = "sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36"},
+]
+
+[[package]]
+name = "typing-inspection"
+version = "0.4.1"
+requires_python = ">=3.9"
+summary = "Runtime typing introspection tools"
+groups = ["default"]
+dependencies = [
+    "typing-extensions>=4.12.0",
+]
+files = [
+    {file = "typing_inspection-0.4.1-py3-none-any.whl", hash = "sha256:389055682238f53b04f7badcb49b989835495a96700ced5dab2d8feae4b26f51"},
+    {file = "typing_inspection-0.4.1.tar.gz", hash = "sha256:6ae134cc0203c33377d43188d4064e9b357dba58cff3185f22924610e70a9d28"},
 ]
 
 [[package]]
