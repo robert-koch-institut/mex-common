@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add `ensure_list` utility function
-
 ### Changes
-
-- BREAKING: change the behavior of merge previews to include blocked values
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.1.0] - 2025-08-25
+
+### Added
+
+- add `ensure_list` utility function
+
+### Changes
+
+- BREAKING: change the behavior of merge previews to include blocked values
 
 ## [1.0.0] - 2025-08-21
 
