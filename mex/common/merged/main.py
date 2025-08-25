@@ -309,7 +309,7 @@ def create_merged_item(
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.IGNORE],
-) -> AnyMergedModel: ...
+) -> AnyMergedModel | None: ...
 
 
 def create_merged_item(
