@@ -92,10 +92,11 @@ def get_extracted_organizational_unit_with_parents(
 
 
 def find_descendants(items: list[_OrganizationalUnit], parent_id: str) -> list[str]:
-    """Finds ids of all descendant (great{n}/grand/children) units for a parent unit id.
+    """Finds ids of all descendant (great{n}/grand/child) units for a parent unit id.
 
     Args:
-        items: list of organizational units (extracted or merged or OrganigramUnit)
+        items: list of organizational units (Extracted, Merged, or OrganigramUnit)
+                in which to search for descendants
         parent_id: identifier of the parent unit
 
     Returns:
