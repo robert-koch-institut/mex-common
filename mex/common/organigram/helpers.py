@@ -91,7 +91,7 @@ def get_extracted_organizational_unit_with_parents(
     return list(extracted_unit_by_id_in_primary_source.values())
 
 
-def find_descendants(items: list[_OrganizationalUnit], parent_id: str) -> list[str]:
+def find_descendants(items: list[_TOrganizationalUnit], parent_id: str) -> list[str]:
     """Finds ids of all descendant (great{n}/grand/child) units for a parent unit id.
 
     Args:
@@ -104,7 +104,7 @@ def find_descendants(items: list[_OrganizationalUnit], parent_id: str) -> list[s
                 grandchildren, ...), excluding the starting parent_id
     """
 
-    def build_child_map(items: list[_OrganizationalUnit]) -> dict[str, list[str]]:
+    def build_child_map(items: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
         """Builds a dictionary with all children per unit from a list of units."""
         child_map: dict[str, list[str]] = {}
         for item in items:
