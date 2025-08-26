@@ -16,8 +16,8 @@ from mex.common.organigram.transform import (
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
 
-_OrganizationalUnit = TypeVar(
-    "_OrganizationalUnit",
+_TOrganizationalUnit = TypeVar(
+    "_TOrganizationalUnit",
     MergedOrganizationalUnit,
     ExtractedOrganizationalUnit,
     OrganigramUnit,
