@@ -91,11 +91,27 @@ def get_extracted_organizational_unit_with_parents(
     return list(extracted_unit_by_id_in_primary_source.values())
 
 
-def find_descendants(items: list[_TOrganizationalUnit], parent_id: str) -> list[str]:
-    """Finds ids of all descendant (great{n}/grand/child) units for a parent unit id.
+def build_child_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
+    """Builds a dictionary with all children per unit from a list of units.
 
     Args:
-        items: list of organizational units (Extracted, Merged, or OrganigramUnit)
+        units: list of organizational units (Extracted, Merged, or OrganigramUnit)
+
+    Returns:
+        dict[str, list[str]]: Dictionary with a list of all child unit ids by unit id
+    """
+    child_map: dict[str, list[str]] = {}
+    for unit in units:
+        if unit.parentUnit is not None:
+            child_map.setdefault(str(unit.parentUnit), []).append(str(unit.identifier))
+    return child_map
+
+
+def find_descendants(units: list[_TOrganizationalUnit], parent_id: str) -> list[str]:
+    """Find ids of all descendant (great{n}/grand/child) units for any parent unit id.
+
+    Args:
+        units: list of organizational units (Extracted, Merged, or OrganigramUnit)
                 in which to search for descendants
         parent_id: identifier of the parent unit
 
@@ -104,32 +120,18 @@ def find_descendants(items: list[_TOrganizationalUnit], parent_id: str) -> list[
                 grandchildren, ...), excluding the starting parent_id
     """
 
-    def build_child_map(items: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
-        """Builds a dictionary with all children per unit from a list of units."""
-        child_map: dict[str, list[str]] = {}
-        for item in items:
-            if item.parentUnit is not None:
-                child_map.setdefault(str(item.parentUnit), []).append(
-                    str(item.identifier)
-                )
-        return child_map
-
     def collect_descendants(
         child_map: dict[str, list[str]],
-        node: str,
-        descendants: set[str],
+        unit_id: str,
+        descendant_ids: set[str],
     ) -> None:
-        """Starting from any parent unit the children are collected.
+        """Recursion to collect all children and their children, depth first."""
+        for child_id in child_map.get(unit_id, []):
+            descendant_ids.add(child_id)
+            collect_descendants(child_map, child_id, descendant_ids)
 
-        This functions collects children and their children and their children ...
-        (recursion, depth first).
-        """
-        for child_id in child_map.get(node, []):
-            descendants.add(child_id)
-            collect_descendants(child_map, child_id, descendants)
+    child_map = build_child_map(units)
+    descendant_ids: set[str] = set()
 
-    child_map = build_child_map(items)
-
-    descendants: set[str] = set()
-    collect_descendants(child_map, str(parent_id), descendants)
-    return list(descendants)
+    collect_descendants(child_map, str(parent_id), descendant_ids)
+    return list(descendant_ids)
