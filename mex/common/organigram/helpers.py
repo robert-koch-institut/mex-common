@@ -107,6 +107,26 @@ def build_child_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
     return child_map
 
 
+def _collect_descendants(
+    child_map: dict[str, list[str]],
+    unit_id: str,
+    descendant_ids: set[str],
+) -> None:
+    """Recursion to collect all children and their children, etc., depth first.
+
+    Args:
+        child_map: Dictionary with all child units of a unit by unit id
+        unit_id: Unit identifier
+        descendant_ids: Set of all descendant units
+
+    Returns:
+        None, the set descendant_ids is mutated in-place
+    """
+    for child_id in child_map.get(unit_id, []):
+        descendant_ids.add(child_id)
+        _collect_descendants(child_map, child_id, descendant_ids)
+
+
 def find_descendants(units: list[_TOrganizationalUnit], parent_id: str) -> list[str]:
     """Find ids of all descendant (great{n}/grand/child) units for any parent unit id.
 
@@ -119,19 +139,8 @@ def find_descendants(units: list[_TOrganizationalUnit], parent_id: str) -> list[
         list of all unique descendant organizational unit ids (children,
                 grandchildren, ...), excluding the starting parent_id
     """
-
-    def collect_descendants(
-        child_map: dict[str, list[str]],
-        unit_id: str,
-        descendant_ids: set[str],
-    ) -> None:
-        """Recursion to collect all children and their children, depth first."""
-        for child_id in child_map.get(unit_id, []):
-            descendant_ids.add(child_id)
-            collect_descendants(child_map, child_id, descendant_ids)
-
     child_map = build_child_map(units)
     descendant_ids: set[str] = set()
 
-    collect_descendants(child_map, str(parent_id), descendant_ids)
+    _collect_descendants(child_map, str(parent_id), descendant_ids)
     return list(descendant_ids)
