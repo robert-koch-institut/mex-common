@@ -1,5 +1,4 @@
-from mex.common.models import ExtractedPrimarySource
-from mex.common.models.organization import ExtractedOrganization
+from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,

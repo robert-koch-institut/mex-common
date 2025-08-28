@@ -211,7 +211,7 @@ class Computer(BaseModel):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def cpus(self) -> int:
+    def cpus(self) -> int:  # pragma: no cover
         return 42
 
 
@@ -232,7 +232,7 @@ class ComplexDummyModel(BaseModel):
 
     @computed_field(alias="computedInt")  # type: ignore[prop-decorator]
     @property
-    def computed_int(self) -> int:
+    def computed_int(self) -> int:  # pragma: no cover
         return 42
 
 

@@ -34,11 +34,11 @@ class LDAPPersonWithQuery(BaseModel):
     query: str
 
 
-class LDAPFunctional(LDAPActor):
+class LDAPFunctionalAccount(LDAPActor):
     """Model class for LDAP functional accounts."""
 
     ou: list[Literal["Funktion"]] = []
 
 
-AnyLDAPActor = LDAPPerson | LDAPFunctional
+AnyLDAPActor = LDAPPerson | LDAPFunctionalAccount
 LDAPActorTypeAdapter: TypeAdapter[AnyLDAPActor] = TypeAdapter(AnyLDAPActor)

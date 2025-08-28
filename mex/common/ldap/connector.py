@@ -14,7 +14,7 @@ from mex.common.exceptions import (
 from mex.common.ldap.models import (
     AnyLDAPActor,
     LDAPActorTypeAdapter,
-    LDAPFunctional,
+    LDAPFunctionalAccount,
     LDAPPerson,
 )
 from mex.common.logging import logger
@@ -95,7 +95,7 @@ class LDAPConnector(BaseConnector):
             attributes for item in response if (attributes := item.get("attributes"))
         ]
 
-    def get_persons_or_accounts(
+    def get_persons_or_functional_accounts(
         self,
         *,
         displayName: str = "*",  # noqa: N803
@@ -128,7 +128,7 @@ class LDAPConnector(BaseConnector):
         sAMAccountName: str = "*",  # noqa: N803
         limit: int = 10,
         **filters: str | None,
-    ) -> list[LDAPFunctional]:
+    ) -> list[LDAPFunctionalAccount]:
         """Get LDAP functional accounts that match provided filters.
 
         Some projects/resources declare functional mailboxes as their contact.
@@ -152,7 +152,7 @@ class LDAPConnector(BaseConnector):
             sAMAccountName=sAMAccountName,
             **filters,
         )
-        return [LDAPFunctional.model_validate(item) for item in raw_items]
+        return [LDAPFunctionalAccount.model_validate(item) for item in raw_items]
 
     def get_persons(  # noqa: PLR0913
         self,
@@ -208,7 +208,7 @@ class LDAPConnector(BaseConnector):
         objectGUID: str = "*",  # noqa: N803
         sAMAccountName: str = "*",  # noqa: N803
         **filters: str | None,
-    ) -> LDAPFunctional:
+    ) -> LDAPFunctionalAccount:
         """Get a single LDAP functional account for the given filters.
 
         Args:

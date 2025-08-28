@@ -146,7 +146,7 @@ def test_request_success(
 @pytest.mark.parametrize(
     (
         "fake_response_time",
-        "error_or_response",
+        "error_instance",
         "expected_response",
         "expected_retries",
     ),
@@ -199,15 +199,13 @@ def test_request_failure(  # noqa: PLR0913
     monkeypatch: MonkeyPatch,
     caplog: LogCaptureFixture,
     fake_response_time: float,
-    error_or_response: Exception | Response,
+    error_instance: Exception,
     expected_response: str | dict[str, Any],
     expected_retries: int,
 ) -> None:
     def mock_request(*_: Any, **__: Any) -> Response:  # noqa: ANN401
         time.sleep(fake_response_time)
-        if isinstance(error_or_response, Exception):
-            raise error_or_response
-        return error_or_response
+        raise error_instance
 
     mocked_session = MagicMock(spec=requests.Session, name="dummy_session")
     mocked_session.request = mock_request

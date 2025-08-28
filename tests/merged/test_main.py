@@ -563,8 +563,7 @@ def test_create_merged_item(
             validation,
         )
     except MExError as error:
-        if str(expected) not in f"{error}: {error.__cause__}":
-            raise AssertionError(expected) from error
+        assert str(expected) in f"{error}: {error.__cause__}"  # noqa: PT017
     else:
         if merged_item is None:
             assert expected is None

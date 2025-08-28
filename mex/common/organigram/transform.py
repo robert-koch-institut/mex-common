@@ -1,8 +1,11 @@
 from collections.abc import Iterable
 
 from mex.common.logging import logger
-from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
-from mex.common.models.organization import ExtractedOrganization
+from mex.common.models import (
+    ExtractedOrganization,
+    ExtractedOrganizationalUnit,
+    ExtractedPrimarySource,
+)
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import Email, MergedOrganizationalUnitIdentifier
 
