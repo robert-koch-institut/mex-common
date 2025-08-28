@@ -4,14 +4,12 @@ import pytest
 
 from mex.common.identity import get_provider
 from mex.common.ldap.extract import (
-    get_ldap_persons,
     get_merged_ids_by_employee_ids,
     get_merged_ids_by_query_string,
 )
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
-from tests.ldap.conftest import SAMPLE_PERSON_ATTRS, LDAPMocker
 
 
 @pytest.fixture
@@ -124,27 +122,3 @@ def test_get_merged_ids_by_query_string(
         ldap_persons_with_query, ldap_primary_source
     )
     assert merged_ids_by_query_string == expected
-
-
-def test_get_ldap_persons_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons = get_ldap_persons("Sam Sample")
-    persons_list = list(persons)
-    expected = {
-        "company": "RKI",
-        "department": "XY",
-        "departmentNumber": "XY2",
-        "displayName": "Sample, Sam",
-        "employeeID": "1024",
-        "givenName": ["Sam"],
-        "mail": ["SampleS@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
-        "ou": ["XY"],
-        "sAMAccountName": "SampleS",
-        "sn": "Sample",
-    }
-    assert len(persons_list) == 1
-    assert (
-        persons_list[0].model_dump(exclude_none=True)["givenName"]
-        == expected["givenName"]
-    )

@@ -9,10 +9,10 @@ from mex.common.types import Email
 class LDAPActor(BaseModel):
     """Model class for generic LDAP accounts."""
 
-    displayName: str | None = None
-    mail: list[Email] = []
-    objectGUID: UUID4
     sAMAccountName: str | None = None
+    objectGUID: UUID4
+    mail: list[Email] = []
+    displayName: str | None = None
 
 
 class LDAPPerson(LDAPActor):
@@ -37,7 +37,7 @@ class LDAPPersonWithQuery(BaseModel):
 class LDAPFunctionalAccount(LDAPActor):
     """Model class for LDAP functional accounts."""
 
-    ou: list[Literal["Funktion"]] = []
+    ou: list[Literal["Funktion"]]
 
 
 AnyLDAPActor = LDAPPerson | LDAPFunctionalAccount

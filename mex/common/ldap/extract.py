@@ -2,7 +2,6 @@ from collections import defaultdict
 from collections.abc import Iterable
 
 from mex.common.identity import get_provider
-from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import MergedPersonIdentifier
@@ -64,20 +63,3 @@ def get_merged_ids_by_query_string(
                 MergedPersonIdentifier(identities[0].stableTargetId)
             )
     return merged_ids_by_attribute
-
-
-def get_ldap_persons(display_name: str | None, limit: int = 10) -> list[LDAPPerson]:
-    """Get all ldap persons matching the filters.
-
-    Args:
-        display_name: Display name of a person
-        limit: How many items to return
-
-    Returns:
-        List of LDAP persons
-    """
-    connector = LDAPConnector.get()
-    return connector.get_persons(
-        displayName=display_name,
-        limit=limit,
-    )
