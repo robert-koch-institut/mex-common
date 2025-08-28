@@ -77,8 +77,8 @@ def test_get_persons_or_functional_accounts_ldap() -> None:
 def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS, SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
-    actors = connector.get_persons_or_functional_accounts(displayName="XY")
-    assert actors == [
+    functional_accounts = connector.get_persons_or_functional_accounts(displayName="XY")
+    assert functional_accounts == [
         LDAPFunctionalAccount(
             displayName=None,
             mail=[Email("XY@mail.tld")],

@@ -9,16 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add `get_persons_or_functional_accounts` to get persons and contact points in one go
+- add connector function and transformer to get persons and contact points in one go
+- add `deprecated` util to simplify renaming of functions
 
 ### Changes
 
 ### Deprecated
 
+- deprecated multiple ldap functions to be replaced by more precise naming
+
 ### Removed
 
 - remove redundant function `get_ldap_persons` to use connector directly instead
-- remove unused functions `get_merged_ids_by_email`, `get_ldap_fields`
+- remove unused functions `get_merged_ids_by_email` and `get_ldap_fields`
 
 ### Fixed
 

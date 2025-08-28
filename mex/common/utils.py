@@ -1,3 +1,5 @@
+import functools
+import warnings
 from collections.abc import Callable, Container, Generator, Iterable, Iterator, Mapping
 from dataclasses import dataclass
 from functools import lru_cache
@@ -5,11 +7,22 @@ from itertools import zip_longest
 from random import random
 from time import sleep
 from types import NoneType, UnionType
-from typing import Annotated, Any, Literal, TypeVar, Union, get_args, get_origin
+from typing import (
+    Annotated,
+    Any,
+    Literal,
+    ParamSpec,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
 T = TypeVar("T")
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 @dataclass
@@ -294,3 +307,18 @@ def ensure_list(values: list[T] | T | None) -> list[T]:
     if isinstance(values, list):
         return values
     return [values]
+
+
+def deprecated(old_name: str, new_func: Callable[P, R]) -> Callable[P, R]:
+    """Create a deprecated wrapper for a function."""
+
+    @functools.wraps(new_func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        warnings.warn(
+            f"{old_name} is deprecated, use {new_func.__name__} instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return new_func(*args, **kwargs)
+
+    return wrapper

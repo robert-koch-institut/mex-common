@@ -3,7 +3,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from functools import lru_cache
 
-from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPPersonWithQuery
+from mex.common.ldap.models import (
+    AnyLDAPActor,
+    LDAPFunctionalAccount,
+    LDAPPerson,
+    LDAPPersonWithQuery,
+)
 from mex.common.logging import logger
 from mex.common.models import (
     ExtractedContactPoint,
@@ -11,9 +16,10 @@ from mex.common.models import (
     ExtractedPerson,
     ExtractedPrimarySource,
 )
+from mex.common.utils import deprecated
 
 
-def transform_ldap_persons_to_mex_persons(
+def transform_ldap_persons_to_extracted_persons(
     ldap_persons: Iterable[LDAPPerson],
     primary_source: ExtractedPrimarySource,
     units: Iterable[ExtractedOrganizationalUnit],
@@ -32,7 +38,7 @@ def transform_ldap_persons_to_mex_persons(
         unit.identifierInPrimarySource: unit for unit in units
     }
     extracted_persons = [
-        transform_ldap_person_to_mex_person(
+        transform_ldap_person_to_extracted_person(
             person, primary_source, units_by_identifier_in_primary_source
         )
         for person in ldap_persons
@@ -41,22 +47,24 @@ def transform_ldap_persons_to_mex_persons(
     return extracted_persons
 
 
-def transform_ldap_actors_to_mex_contact_points(
-    ldap_actors: Iterable[LDAPActor],
+def transform_ldap_functional_accounts_to_extracted_contact_points(
+    ldap_functional_accounts: Iterable[LDAPFunctionalAccount],
     primary_source: ExtractedPrimarySource,
 ) -> list[ExtractedContactPoint]:
-    """Transform LDAP actors (e.g. functional accounts) to ExtractedContactPoints.
+    """Transform LDAP functional accounts to ExtractedContactPoints.
 
     Args:
-        ldap_actors: LDAP actors
+        ldap_functional_accounts: LDAP functional accounts
         primary_source: Primary source for LDAP
 
     Returns:
         List of extracted contact points
     """
     extracted_contact_points = [
-        transform_ldap_actor_to_mex_contact_point(actor, primary_source)
-        for actor in ldap_actors
+        transform_ldap_functional_account_to_extracted_contact_point(
+            functional_account, primary_source
+        )
+        for functional_account in ldap_functional_accounts
     ]
     logger.info(
         "transformed %s extracted contact points from ldap",
@@ -65,7 +73,7 @@ def transform_ldap_actors_to_mex_contact_points(
     return extracted_contact_points
 
 
-def transform_ldap_persons_with_query_to_mex_persons(
+def transform_ldap_persons_with_query_to_extracted_persons(
     ldap_persons_with_query: Iterable[LDAPPersonWithQuery],
     primary_source: ExtractedPrimarySource,
     units: Iterable[ExtractedOrganizationalUnit],
@@ -80,12 +88,12 @@ def transform_ldap_persons_with_query_to_mex_persons(
     Returns:
         List of extracted persons
     """
-    return transform_ldap_persons_to_mex_persons(
+    return transform_ldap_persons_to_extracted_persons(
         (a.person for a in ldap_persons_with_query), primary_source, units
     )
 
 
-def transform_ldap_person_to_mex_person(
+def transform_ldap_person_to_extracted_person(
     ldap_person: LDAPPerson,
     primary_source: ExtractedPrimarySource,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
@@ -118,24 +126,56 @@ def transform_ldap_person_to_mex_person(
     )
 
 
-def transform_ldap_actor_to_mex_contact_point(
-    ldap_actor: LDAPActor,
+def transform_ldap_functional_account_to_extracted_contact_point(
+    ldap_functional_account: LDAPFunctionalAccount,
     primary_source: ExtractedPrimarySource,
 ) -> ExtractedContactPoint:
-    """Transform a single LDAPActor (a functional account) to an ExtractedContactPoint.
+    """Transform a single LDAP functional account to an ExtractedContactPoint.
 
     Args:
-        ldap_actor: LDAP actor
+        ldap_functional_account: LDAP functional account
         primary_source: Primary source for LDAP
 
     Returns:
         Extracted contact point
     """
     return ExtractedContactPoint(
-        identifierInPrimarySource=str(ldap_actor.objectGUID),
+        identifierInPrimarySource=str(ldap_functional_account.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
-        email=ldap_actor.mail,
+        email=ldap_functional_account.mail,
     )
+
+
+def transform_any_ldap_actor_to_extracted_persons_or_contact_points(
+    ldap_actors: Iterable[AnyLDAPActor],
+    units: Iterable[ExtractedOrganizationalUnit],
+    primary_source: ExtractedPrimarySource,
+) -> list[ExtractedPerson | ExtractedContactPoint]:
+    """Transform any LDAP actors to extracted person or contact points.
+
+    Args:
+        ldap_actors: Iterable of LDAP functional account or LDAP persons
+        units: Extracted organizational units
+        primary_source: Primary source for LDAP
+
+    Returns:
+        Extracted persons or contact points
+    """
+    units_by_identifier_in_primary_source = {
+        unit.identifierInPrimarySource: unit for unit in units
+    }
+    extracted_actors = [
+        transform_ldap_person_to_extracted_person(
+            actor, primary_source, units_by_identifier_in_primary_source
+        )
+        if isinstance(actor, LDAPPerson)
+        else transform_ldap_functional_account_to_extracted_contact_point(
+            actor, primary_source
+        )
+        for actor in ldap_actors
+    ]
+    logger.info("transformed %s extracted actors from ldap", len(extracted_actors))
+    return extracted_actors
 
 
 @dataclass
@@ -213,3 +253,26 @@ def analyse_person_string(string: str) -> list[PersonName]:
 
     # found no one
     return []
+
+
+# Deprecated old function names
+transform_ldap_persons_to_mex_persons = deprecated(
+    "transform_ldap_persons_to_mex_persons",
+    transform_ldap_persons_to_extracted_persons,
+)
+transform_ldap_actors_to_mex_contact_points = deprecated(
+    "transform_ldap_actors_to_mex_contact_points",
+    transform_ldap_functional_accounts_to_extracted_contact_points,
+)
+transform_ldap_persons_with_query_to_mex_persons = deprecated(
+    "transform_ldap_persons_with_query_to_mex_persons",
+    transform_ldap_persons_with_query_to_extracted_persons,
+)
+transform_ldap_person_to_mex_person = deprecated(
+    "transform_ldap_person_to_mex_person",
+    transform_ldap_person_to_extracted_person,
+)
+transform_ldap_actor_to_mex_contact_point = deprecated(
+    "transform_ldap_actor_to_mex_contact_point",
+    transform_ldap_functional_account_to_extracted_contact_point,
+)
