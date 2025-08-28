@@ -4,9 +4,7 @@ import pytest
 
 from mex.common.identity import get_provider
 from mex.common.ldap.extract import (
-    _get_merged_ids_by_attribute,
     get_ldap_persons,
-    get_merged_ids_by_email,
     get_merged_ids_by_employee_ids,
     get_merged_ids_by_query_string,
 )
@@ -98,41 +96,6 @@ def merged_id_of_person_with_identity(
     return identities[0].stableTargetId
 
 
-def test_get_merged_ids_by_attribute(
-    ldap_persons: list[LDAPPerson],
-    ldap_primary_source: ExtractedPrimarySource,
-    ldap_person_with_identity: LDAPPerson,
-    merged_id_of_person_with_identity: Identifier,
-) -> None:
-    # single attribute
-    merged_ids_by_attribute = _get_merged_ids_by_attribute(
-        "sn",
-        ldap_persons,
-        ldap_primary_source,
-    )
-    assert merged_ids_by_attribute == {
-        ldap_person_with_identity.sn: [merged_id_of_person_with_identity]
-    }
-
-    # nested attribute
-    merged_ids_by_attribute = _get_merged_ids_by_attribute(
-        "mail",
-        ldap_persons,
-        ldap_primary_source,
-    )
-    assert merged_ids_by_attribute == {
-        str(mail): [merged_id_of_person_with_identity]
-        for mail in ldap_person_with_identity.mail
-    }
-
-    with pytest.raises(RuntimeError):
-        _get_merged_ids_by_attribute(
-            "foo",
-            ldap_persons,
-            ldap_primary_source,
-        )
-
-
 def test_get_merged_ids_by_employee_ids(
     ldap_persons: list[LDAPPerson],
     ldap_primary_source: ExtractedPrimarySource,
@@ -146,20 +109,6 @@ def test_get_merged_ids_by_employee_ids(
         ldap_persons, ldap_primary_source
     )
     assert merged_ids_by_employee_ids == expected
-
-
-def test_get_merged_ids_by_email(
-    ldap_persons: list[LDAPPerson],
-    ldap_primary_source: ExtractedPrimarySource,
-    merged_id_of_person_with_identity: Identifier,
-    ldap_person_with_identity: LDAPPerson,
-) -> None:
-    expected = {
-        mail: [merged_id_of_person_with_identity]
-        for mail in ldap_person_with_identity.mail
-    }
-    merged_ids_by_email = get_merged_ids_by_email(ldap_persons, ldap_primary_source)
-    assert merged_ids_by_email == expected
 
 
 def test_get_merged_ids_by_query_string(

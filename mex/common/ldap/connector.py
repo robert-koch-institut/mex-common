@@ -1,4 +1,4 @@
-from typing import TypeVar, cast
+from typing import Any, cast
 from urllib.parse import urlsplit
 
 import backoff
@@ -11,11 +11,14 @@ from mex.common.exceptions import (
     FoundMoreThanOneError,
     MExError,
 )
-from mex.common.ldap.models import LDAPActor, LDAPPerson, LDAPUnit
+from mex.common.ldap.models import (
+    AnyLDAPActor,
+    LDAPActorTypeAdapter,
+    LDAPFunctional,
+    LDAPPerson,
+)
 from mex.common.logging import logger
 from mex.common.settings import BaseSettings
-
-_LDAPActorT = TypeVar("_LDAPActorT", bound=LDAPActor)
 
 
 class LDAPConnector(BaseConnector):
@@ -68,21 +71,15 @@ class LDAPConnector(BaseConnector):
             "LDAPConnector", details["args"][0]
         ).reconnect(),
     )
-    def _fetch(
-        self,
-        model_cls: type[_LDAPActorT],
-        limit: int = 10,
-        **filters: str | None,
-    ) -> list[_LDAPActorT]:
-        """Fetch all items that match the given filters and parse to given model.
+    def _fetch(self, limit: int, **filters: str | None) -> list[dict[str, Any]]:
+        """Fetch all items that match the given filters.
 
         Args:
-            model_cls: Pydantic model class
             limit: How many items to return
-            **filters: LDAP compatible filters, will be joined in AND-condition
+            filters: LDAP compatible filters, will be joined in AND-condition
 
         Returns:
-            List of instances of `model_cls`
+            List of raw ldap items
         """
         search_filter = "".join(
             f"({key}={value})" for key, value in filters.items() if value
@@ -90,15 +87,38 @@ class LDAPConnector(BaseConnector):
         response = self._connection.extend.standard.paged_search(
             search_base=self._search_base,
             search_filter=f"(&{search_filter})",
-            attributes=model_cls.get_ldap_fields(),
+            attributes=tuple(sorted(LDAPPerson.model_fields)),
             generator=False,
             size_limit=limit,
         )
         return [
-            model_cls.model_validate(attributes)
-            for item in response
-            if (attributes := item.get("attributes"))
+            attributes for item in response if (attributes := item.get("attributes"))
         ]
+
+    def get_persons_or_accounts(
+        self,
+        *,
+        displayName: str = "*",  # noqa: N803
+        limit: int = 10,
+        **filters: str | None,
+    ) -> list[AnyLDAPActor]:
+        """Get LDAP persons or functional accounts that match provided filters.
+
+        Args:
+            displayName: Display name of the items to find
+            limit: How many items to return
+            **filters: Additional filters
+
+        Returns:
+            List of LDAP persons and functional accounts
+        """
+        raw_items = self._fetch(
+            limit=limit,
+            objectCategory="Person",
+            displayName=displayName,
+            **filters,
+        )
+        return [LDAPActorTypeAdapter.validate_python(item) for item in raw_items]
 
     def get_functional_accounts(
         self,
@@ -108,7 +128,7 @@ class LDAPConnector(BaseConnector):
         sAMAccountName: str = "*",  # noqa: N803
         limit: int = 10,
         **filters: str | None,
-    ) -> list[LDAPActor]:
+    ) -> list[LDAPFunctional]:
         """Get LDAP functional accounts that match provided filters.
 
         Some projects/resources declare functional mailboxes as their contact.
@@ -123,16 +143,16 @@ class LDAPConnector(BaseConnector):
         Returns:
             List of LDAP functional accounts
         """
-        return self._fetch(
-            LDAPUnit,
+        raw_items = self._fetch(
+            limit=limit,
             mail=mail,
             objectCategory="Person",
             objectGUID=objectGUID,
             OU="Funktion",
             sAMAccountName=sAMAccountName,
-            limit=limit,
             **filters,
         )
+        return [LDAPFunctional.model_validate(item) for item in raw_items]
 
     def get_persons(  # noqa: PLR0913
         self,
@@ -167,8 +187,8 @@ class LDAPConnector(BaseConnector):
         Returns:
             List of LDAP persons
         """
-        return self._fetch(
-            LDAPPerson,
+        raw_items = self._fetch(
+            limit=limit,
             objectClass="user",
             objectCategory="Person",
             employeeID=employeeID,
@@ -177,9 +197,9 @@ class LDAPConnector(BaseConnector):
             objectGUID=objectGUID,
             sAMAccountName=sAMAccountName,
             sn=surname,
-            limit=limit,
             **filters,
         )
+        return [LDAPPerson.model_validate(item) for item in raw_items]
 
     def get_functional_account(
         self,
@@ -188,7 +208,7 @@ class LDAPConnector(BaseConnector):
         objectGUID: str = "*",  # noqa: N803
         sAMAccountName: str = "*",  # noqa: N803
         **filters: str | None,
-    ) -> LDAPActor:
+    ) -> LDAPFunctional:
         """Get a single LDAP functional account for the given filters.
 
         Args:

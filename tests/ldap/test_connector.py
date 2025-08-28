@@ -9,7 +9,6 @@ from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
     XY2_FUNC_ACCOUNT_ATTRS,
@@ -192,8 +191,8 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     )
     connector = LDAPConnector.get()
     assert connector._connection is first_connection
-    result = connector._fetch(LDAPActor)
-    assert result[0].model_dump(exclude_defaults=True) == {
+    result = connector._fetch(1)
+    assert result[0] == {
         "sAMAccountName": "foo",
         "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
     }

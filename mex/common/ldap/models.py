@@ -1,6 +1,6 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import UUID4, Field
+from pydantic import UUID4, Field, TypeAdapter
 
 from mex.common.models import BaseModel
 from mex.common.types import Email
@@ -9,14 +9,10 @@ from mex.common.types import Email
 class LDAPActor(BaseModel):
     """Model class for generic LDAP accounts."""
 
-    sAMAccountName: str | None = None
-    objectGUID: UUID4
+    displayName: str | None = None
     mail: list[Email] = []
-
-    @staticmethod
-    def get_ldap_fields() -> tuple[str, ...]:
-        """Return the fields that should be fetched from LDAP."""
-        return tuple(sorted(LDAPActor.model_fields))
+    objectGUID: UUID4
+    sAMAccountName: str | None = None
 
 
 class LDAPPerson(LDAPActor):
@@ -25,16 +21,10 @@ class LDAPPerson(LDAPActor):
     company: str | None = None
     department: str | None = None
     departmentNumber: str | None = None
-    displayName: str | None = None
     employeeID: str
     givenName: Annotated[list[str], Field(min_length=1)]
     ou: list[str] = []
     sn: str
-
-    @classmethod
-    def get_ldap_fields(cls) -> tuple[str, ...]:
-        """Return the fields that should be fetched from LDAP."""
-        return tuple(sorted(cls.model_fields))
 
 
 class LDAPPersonWithQuery(BaseModel):
@@ -44,7 +34,11 @@ class LDAPPersonWithQuery(BaseModel):
     query: str
 
 
-class LDAPUnit(LDAPActor):
-    """Model class for LDAP organizational units."""
+class LDAPFunctional(LDAPActor):
+    """Model class for LDAP functional accounts."""
 
-    parent_label: str | None = None
+    ou: list[Literal["Funktion"]] = []
+
+
+AnyLDAPActor = LDAPPerson | LDAPFunctional
+LDAPActorTypeAdapter: TypeAdapter[AnyLDAPActor] = TypeAdapter(AnyLDAPActor)
