@@ -60,6 +60,8 @@ class NdjsonSink(BaseSink):
                             class_name,
                             file.as_posix(),
                         )
-                    dumped_json = json.dumps(item, sort_keys=True, cls=MExEncoder)
+                    dumped_json = json.dumps(
+                        item, sort_keys=True, cls=MExEncoder, ensure_ascii=False
+                    )
                     fh.write(f"{dumped_json}\n")
                     yield item

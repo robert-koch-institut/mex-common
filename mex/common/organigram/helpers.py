@@ -1,8 +1,13 @@
 from collections.abc import Generator
+from typing import TypeVar
 
 from mex.common.exceptions import MExError
 from mex.common.logging import logger
-from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models import (
+    ExtractedOrganizationalUnit,
+    ExtractedPrimarySource,
+    MergedOrganizationalUnit,
+)
 from mex.common.models.organization import ExtractedOrganization
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.models import OrganigramUnit
@@ -10,6 +15,13 @@ from mex.common.organigram.transform import (
     transform_organigram_unit_to_extracted_organizational_unit,
 )
 from mex.common.types import MergedOrganizationalUnitIdentifier
+
+_TOrganizationalUnit = TypeVar(
+    "_TOrganizationalUnit",
+    MergedOrganizationalUnit,
+    ExtractedOrganizationalUnit,
+    OrganigramUnit,
+)
 
 
 def get_extracted_organizational_unit_with_parents(
@@ -77,3 +89,58 @@ def get_extracted_organizational_unit_with_parents(
         len(extracted_unit_by_id_in_primary_source),
     )
     return list(extracted_unit_by_id_in_primary_source.values())
+
+
+def build_child_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
+    """Builds a dictionary with all children per unit from a list of units.
+
+    Args:
+        units: list of organizational units (Extracted, Merged, or OrganigramUnit)
+
+    Returns:
+        dict[str, list[str]]: Dictionary with a list of all child unit ids by unit id
+    """
+    child_map: dict[str, list[str]] = {}
+    for unit in units:
+        if unit.parentUnit is not None:
+            child_map.setdefault(str(unit.parentUnit), []).append(str(unit.identifier))
+    return child_map
+
+
+def _collect_descendants(
+    child_map: dict[str, list[str]],
+    unit_id: str,
+    descendant_ids: set[str],
+) -> None:
+    """Recursion to collect all children and their children, etc., depth first.
+
+    Args:
+        child_map: Dictionary with all child units of a unit by unit id
+        unit_id: Unit identifier
+        descendant_ids: Set of all descendant units
+
+    Returns:
+        None, the set descendant_ids is mutated in-place
+    """
+    for child_id in child_map.get(unit_id, []):
+        descendant_ids.add(child_id)
+        _collect_descendants(child_map, child_id, descendant_ids)
+
+
+def find_descendants(units: list[_TOrganizationalUnit], parent_id: str) -> list[str]:
+    """Find ids of all descendant (great{n}/grand/child) units for any parent unit id.
+
+    Args:
+        units: list of organizational units (Extracted, Merged, or OrganigramUnit)
+                in which to search for descendants
+        parent_id: identifier of the parent unit
+
+    Returns:
+        list of all unique descendant organizational unit ids (children,
+                grandchildren, ...), excluding the starting parent_id
+    """
+    child_map = build_child_map(units)
+    descendant_ids: set[str] = set()
+
+    _collect_descendants(child_map, str(parent_id), descendant_ids)
+    return list(descendant_ids)
