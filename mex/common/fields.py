@@ -13,10 +13,12 @@ from mex.common.types import (
     NESTED_MODEL_CLASSES_BY_NAME,
     TEMPORAL_ENTITIES,
     VOCABULARY_ENUMS,
+    AnyTemporalEntity,
     AnyVocabularyEnum,
     Email,
     Link,
     LiteralStringType,
+    TemporalEntityPrecision,
     Text,
 )
 from mex.common.utils import (
@@ -100,6 +102,26 @@ TEMPORAL_FIELDS_BY_CLASS_NAME = group_fields_by_class_name(
     lambda field_info: contains_only_types(field_info, *TEMPORAL_ENTITIES),
 )
 
+# allowed temporal precisions grouped by field and class names
+TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES = {
+    class_name: {
+        field_name: sorted(
+            {
+                precision
+                for temporal_type in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][
+                    field_name
+                ]
+                for precision in cast(
+                    "type[AnyTemporalEntity]", temporal_type
+                ).ALLOWED_PRECISION_LEVELS
+            },
+            key=lambda precision: list(TemporalEntityPrecision).index(precision),
+        )
+        for field_name in field_names
+    }
+    for class_name, field_names in TEMPORAL_FIELDS_BY_CLASS_NAME.items()
+}
+
 # fields annotated as any vocabulary enum
 VOCABULARY_FIELDS_BY_CLASS_NAME = group_fields_by_class_name(
     ALL_MODEL_CLASSES_BY_NAME,
@@ -165,6 +187,18 @@ FINAL_FIELDS_BY_CLASS_NAME = {
                 *LITERAL_FIELDS_BY_CLASS_NAME[name],
                 *REFERENCE_FIELDS_BY_CLASS_NAME[name],
             )
+        }
+    )
+    for name, cls in ALL_MODEL_CLASSES_BY_NAME.items()
+}
+
+# list of fields by class name that are not allowed to be null or an empty list
+REQUIRED_FIELDS_BY_CLASS_NAME = {
+    name: sorted(
+        {
+            field_name
+            for field_name, field_info in cls.model_fields.items()
+            if field_info.is_required()
         }
     )
     for name, cls in ALL_MODEL_CLASSES_BY_NAME.items()

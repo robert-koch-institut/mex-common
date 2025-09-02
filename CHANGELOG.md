@@ -11,8 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add connector function and transformer to get persons and contact points in one go
 - add `deprecated` util to simplify renaming of functions
+- add `REQUIRED_FIELDS_BY_CLASS_NAME` and `TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES`
+- add models for `Status` and `VersionStatus`
 
 ### Changes
+
+- change BackendApiConnector.search_person_in_ldap to allow contact points
 
 ### Deprecated
 
