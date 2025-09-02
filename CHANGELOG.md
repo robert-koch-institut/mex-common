@@ -9,17 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add connector function and transformer to get persons and contact points in one go
+- add `deprecated` util to simplify renaming of functions
+- add `REQUIRED_FIELDS_BY_CLASS_NAME` and `TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES`
+- add models for `Status` and `VersionStatus`
+
 ### Changes
+
+- change BackendApiConnector.search_person_in_ldap to allow contact points
 
 ### Deprecated
 
+- deprecated multiple ldap functions to be replaced by more precise naming
+
 ### Removed
+
+- remove redundant function `get_ldap_persons` to use connector directly instead
+- remove unused functions `get_merged_ids_by_email` and `get_ldap_fields`
 
 ### Fixed
 
 ### Security
 
 ## [1.2.0] - 2025-08-28
+
+### Added
+
+- add helper function to find organigram unit descendants
+- have ndjson sink handle special characters correctly
 
 ## [1.1.0] - 2025-08-25
 
@@ -36,8 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add `Validation` enum to `mex.common.types`
-- add helper function to find organigram unit descendants
-- have ndjson sink handle special characters correctly
 
 ### Changes
 

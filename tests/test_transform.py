@@ -21,8 +21,7 @@ from mex.common.transform import (
     split_to_caps,
     to_key_and_values,
 )
-from mex.common.types import Identifier, TemporalEntity
-from mex.common.types.path import PathWrapper
+from mex.common.types import Identifier, PathWrapper, TemporalEntity
 
 
 class DummyModel(PydanticModel):

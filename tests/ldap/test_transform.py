@@ -2,12 +2,13 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models import LDAPActor, LDAPPerson
+from mex.common.ldap.models import AnyLDAPActor, LDAPFunctionalAccount, LDAPPerson
 from mex.common.ldap.transform import (
     PersonName,
     analyse_person_string,
-    transform_ldap_actors_to_mex_contact_points,
-    transform_ldap_persons_to_mex_persons,
+    transform_any_ldap_actor_to_extracted_persons_or_contact_points,
+    transform_ldap_functional_accounts_to_extracted_contact_points,
+    transform_ldap_persons_to_extracted_persons,
 )
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.testing import Joker
@@ -24,17 +25,20 @@ def extracted_unit(
     )
 
 
-def test_transform_ldap_actors_to_mex_contact_points(
+def test_transform_ldap_functional_accounts_to_extracted_contact_points(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
-    ldap_actor = LDAPActor(
+    ldap_functional_account = LDAPFunctionalAccount(
         mail=["mail@example3.com"],
         objectGUID=UUID(int=42, version=4),
         sAMAccountName="samples",
+        ou=["Funktion"],
     )
 
-    extracted_contact_points = transform_ldap_actors_to_mex_contact_points(
-        [ldap_actor], extracted_primary_sources["ldap"]
+    extracted_contact_points = (
+        transform_ldap_functional_accounts_to_extracted_contact_points(
+            [ldap_functional_account], extracted_primary_sources["ldap"]
+        )
     )
     extracted_contact_point = extracted_contact_points[0]
 
@@ -52,7 +56,7 @@ def test_transform_ldap_actors_to_mex_contact_points(
     )
 
 
-def test_transform_ldap_persons_to_mex_persons(
+def test_transform_ldap_persons_to_extracted_persons(
     extracted_unit: ExtractedOrganizationalUnit,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
 ) -> None:
@@ -70,7 +74,7 @@ def test_transform_ldap_persons_to_mex_persons(
         sn="Sample",
     )
 
-    extracted_persons = transform_ldap_persons_to_mex_persons(
+    extracted_persons = transform_ldap_persons_to_extracted_persons(
         [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
     )
     extracted_person = extracted_persons[0]
@@ -91,6 +95,57 @@ def test_transform_ldap_persons_to_mex_persons(
         extracted_person.model_dump(exclude_none=True, exclude_defaults=True)
         == expected
     )
+
+
+def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_unit: ExtractedOrganizationalUnit,
+) -> None:
+    ldap_actors: list[AnyLDAPActor] = [
+        LDAPFunctionalAccount(
+            mail=["postfach@example.com"],
+            objectGUID=UUID(int=42, version=4),
+            sAMAccountName="postfach",
+            ou=["Funktion"],
+        ),
+        LDAPPerson(
+            department="MF",
+            displayName="Sample, Sam, Dr.",
+            employeeID="SampleS",
+            givenName="Sam",
+            mail=["mail@example.com"],
+            objectGUID=UUID(int=43, version=4),
+            sAMAccountName="samples",
+            sn="Sample",
+        ),
+    ]
+
+    extracted_actors = transform_any_ldap_actor_to_extracted_persons_or_contact_points(
+        ldap_actors, [extracted_unit], extracted_primary_sources["ldap"]
+    )
+
+    assert [
+        a.model_dump(exclude_none=True, exclude_defaults=True) for a in extracted_actors
+    ] == [
+        {
+            "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
+            "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
+            "email": ["postfach@example.com"],
+            "identifier": Joker(),
+            "stableTargetId": Joker(),
+        },
+        {
+            "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
+            "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002b",
+            "email": ["mail@example.com"],
+            "familyName": ["Sample"],
+            "fullName": ["Sample, Sam, Dr."],
+            "givenName": ["Sam"],
+            "memberOf": [extracted_unit.stableTargetId],
+            "identifier": Joker(),
+            "stableTargetId": Joker(),
+        },
+    ]
 
 
 @pytest.mark.parametrize(

@@ -1,13 +1,15 @@
 import pytest
 
-from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
-from mex.common.models.organization import ExtractedOrganization
+from mex.common.models import (
+    ExtractedOrganization,
+    ExtractedOrganizationalUnit,
+    ExtractedPrimarySource,
+)
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import Link, LinkLanguage, Text
-from mex.common.types.identifier import MergedPrimarySourceIdentifier
+from mex.common.types import Link, LinkLanguage, MergedPrimarySourceIdentifier, Text
 
 
 @pytest.fixture

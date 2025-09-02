@@ -26,28 +26,18 @@ SAMPLE_PERSON_ATTRS = {
     "sn": ["Sample"],
 }
 
-XY_DEPARTMENT_ATTRS = {
-    "mail": ["XY@mail.tld"],
-    "objectGUID": ["{00000000-0000-4000-8000-000000000042}"],
-    "sAMAccountName": ["XY"],
-}
-
-XY2_DEPARTMENT_ATTRS = {
-    "mail": ["XY2@mail.tld"],
-    "objectGUID": ["{00000000-0000-4000-8000-000000000043}"],
-    "sAMAccountName": ["XY2"],
-}
-
 XY_FUNC_ACCOUNT_ATTRS = {
     "mail": ["XY@mail.tld"],
     "objectGUID": ["{00000000-0000-4000-8000-000000000044}"],
     "sAMAccountName": ["XY"],
+    "ou": ["Funktion"],
 }
 
 XY2_FUNC_ACCOUNT_ATTRS = {
     "mail": ["XY2@mail.tld"],
     "objectGUID": ["{00000000-0000-4000-8000-000000000045}"],
     "sAMAccountName": ["XY2"],
+    "ou": ["Funktion"],
 }
 
 

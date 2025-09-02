@@ -20,6 +20,7 @@ from mex.common.utils import (
     contains_any,
     contains_any_types,
     contains_only_types,
+    deprecated,
     ensure_list,
     get_alias_lookup,
     get_all_fields,
@@ -211,7 +212,7 @@ class Computer(BaseModel):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def cpus(self) -> int:
+    def cpus(self) -> int:  # pragma: no cover
         return 42
 
 
@@ -232,7 +233,7 @@ class ComplexDummyModel(BaseModel):
 
     @computed_field(alias="computedInt")  # type: ignore[prop-decorator]
     @property
-    def computed_int(self) -> int:
+    def computed_int(self) -> int:  # pragma: no cover
         return 42
 
 
@@ -315,3 +316,18 @@ def test_jitter_sleep() -> None:
 )
 def test_ensure_list(values: Any, expected: list[Any]) -> None:  # noqa: ANN401
     assert ensure_list(values) == expected
+
+
+def test_deprecated_warning_message() -> None:
+    def cool_new_func() -> str:
+        return "cool"
+
+    old_func_bah = deprecated("old_func_bah", cool_new_func)
+
+    with pytest.warns(DeprecationWarning, match="deprecated") as warning_info:
+        old_func_bah()
+
+    assert (
+        str(warning_info[0].message)
+        == "old_func_bah is deprecated, use cool_new_func instead"
+    )

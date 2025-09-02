@@ -120,6 +120,7 @@ from mex.common.models.base.mapping import BaseMapping, MappingField, MappingRul
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.base.status import Status, VersionStatus
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
     BaseBibliographicResource,
@@ -445,6 +446,7 @@ __all__ = (
     "RuleModelTypeAdapter",
     "RuleSetRequestTypeAdapter",
     "RuleSetResponseTypeAdapter",
+    "Status",
     "SubtractiveAccessPlatform",
     "SubtractiveActivity",
     "SubtractiveBibliographicResource",
@@ -468,6 +470,7 @@ __all__ = (
     "VariableMapping",
     "VariableRuleSetRequest",
     "VariableRuleSetResponse",
+    "VersionStatus",
 )
 
 MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")

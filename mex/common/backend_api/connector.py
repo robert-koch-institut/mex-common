@@ -10,6 +10,7 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ExtractedContactPoint,
     ExtractedModelTypeAdapter,
     ExtractedOrganization,
     ExtractedPerson,
@@ -370,28 +371,30 @@ class BackendApiConnector(HTTPConnector):
         )
         return PaginatedItemsContainer[ExtractedOrganization].model_validate(response)
 
-    def search_person_in_ldap(
+    def search_person_or_contact_point_in_ldap(
         self,
         q: str,
         offset: int = 0,
         limit: int = 10,
-    ) -> PaginatedItemsContainer[ExtractedPerson]:
-        """Search for persons in LDAP.
+    ) -> PaginatedItemsContainer[ExtractedPerson | ExtractedContactPoint]:
+        """Search for persons or contact points in LDAP.
 
         Args:
-            q: The name of the person to be searched
+            q: The name of the person or contact point
             offset: The starting index for pagination
             limit: The maximum number of results to return
 
         Returns:
-            Paginated list of ExtractedPersons
+            Paginated list of ExtractedPersons and ExtractedContactPoints
         """
         response = self.request(
             method="GET",
             endpoint="ldap",
             params={"q": q, "offset": str(offset), "limit": str(limit)},
         )
-        return PaginatedItemsContainer[ExtractedPerson].model_validate(response)
+        return PaginatedItemsContainer[
+            ExtractedPerson | ExtractedContactPoint
+        ].model_validate(response)
 
     def search_person_in_orcid(
         self,

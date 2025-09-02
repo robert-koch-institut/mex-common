@@ -4,16 +4,12 @@ import pytest
 
 from mex.common.identity import get_provider
 from mex.common.ldap.extract import (
-    _get_merged_ids_by_attribute,
-    get_ldap_persons,
-    get_merged_ids_by_email,
     get_merged_ids_by_employee_ids,
     get_merged_ids_by_query_string,
 )
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
 from mex.common.models import ExtractedPrimarySource
 from mex.common.types import Identifier
-from tests.ldap.conftest import SAMPLE_PERSON_ATTRS, LDAPMocker
 
 
 @pytest.fixture
@@ -98,41 +94,6 @@ def merged_id_of_person_with_identity(
     return identities[0].stableTargetId
 
 
-def test_get_merged_ids_by_attribute(
-    ldap_persons: list[LDAPPerson],
-    ldap_primary_source: ExtractedPrimarySource,
-    ldap_person_with_identity: LDAPPerson,
-    merged_id_of_person_with_identity: Identifier,
-) -> None:
-    # single attribute
-    merged_ids_by_attribute = _get_merged_ids_by_attribute(
-        "sn",
-        ldap_persons,
-        ldap_primary_source,
-    )
-    assert merged_ids_by_attribute == {
-        ldap_person_with_identity.sn: [merged_id_of_person_with_identity]
-    }
-
-    # nested attribute
-    merged_ids_by_attribute = _get_merged_ids_by_attribute(
-        "mail",
-        ldap_persons,
-        ldap_primary_source,
-    )
-    assert merged_ids_by_attribute == {
-        str(mail): [merged_id_of_person_with_identity]
-        for mail in ldap_person_with_identity.mail
-    }
-
-    with pytest.raises(RuntimeError):
-        _get_merged_ids_by_attribute(
-            "foo",
-            ldap_persons,
-            ldap_primary_source,
-        )
-
-
 def test_get_merged_ids_by_employee_ids(
     ldap_persons: list[LDAPPerson],
     ldap_primary_source: ExtractedPrimarySource,
@@ -148,20 +109,6 @@ def test_get_merged_ids_by_employee_ids(
     assert merged_ids_by_employee_ids == expected
 
 
-def test_get_merged_ids_by_email(
-    ldap_persons: list[LDAPPerson],
-    ldap_primary_source: ExtractedPrimarySource,
-    merged_id_of_person_with_identity: Identifier,
-    ldap_person_with_identity: LDAPPerson,
-) -> None:
-    expected = {
-        mail: [merged_id_of_person_with_identity]
-        for mail in ldap_person_with_identity.mail
-    }
-    merged_ids_by_email = get_merged_ids_by_email(ldap_persons, ldap_primary_source)
-    assert merged_ids_by_email == expected
-
-
 def test_get_merged_ids_by_query_string(
     ldap_person_with_identity_with_query: LDAPPersonWithQuery,
     ldap_persons_with_query: list[LDAPPersonWithQuery],
@@ -175,27 +122,3 @@ def test_get_merged_ids_by_query_string(
         ldap_persons_with_query, ldap_primary_source
     )
     assert merged_ids_by_query_string == expected
-
-
-def test_get_ldap_persons_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
-    persons = get_ldap_persons("Sam Sample")
-    persons_list = list(persons)
-    expected = {
-        "company": "RKI",
-        "department": "XY",
-        "departmentNumber": "XY2",
-        "displayName": "Sample, Sam",
-        "employeeID": "1024",
-        "givenName": ["Sam"],
-        "mail": ["SampleS@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
-        "ou": ["XY"],
-        "sAMAccountName": "SampleS",
-        "sn": "Sample",
-    }
-    assert len(persons_list) == 1
-    assert (
-        persons_list[0].model_dump(exclude_none=True)["givenName"]
-        == expected["givenName"]
-    )

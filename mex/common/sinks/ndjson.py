@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import IO, Any, TypeVar
 
 from mex.common.logging import logger, watch
-from mex.common.models.base.model import BaseModel
+from mex.common.models import BaseModel
 from mex.common.settings import BaseSettings
 from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder

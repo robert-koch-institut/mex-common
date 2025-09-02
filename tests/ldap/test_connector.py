@@ -9,7 +9,8 @@ from pytest import MonkeyPatch
 
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPActor
+from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
+from mex.common.types import Email
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
     XY2_FUNC_ACCOUNT_ATTRS,
@@ -22,7 +23,7 @@ from tests.ldap.conftest import (
 def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
-    persons = list(connector.get_persons(surname="Sample", given_name="Kim"))
+    persons = connector.get_persons(surname="Sample", given_name="Kim")
 
     assert len(persons) == 1
     assert persons[0].model_dump(exclude_none=True) == {
@@ -54,10 +55,51 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
 @pytest.mark.integration
 def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
     connector = LDAPConnector.get()
-    persons = list(connector.get_persons(**kwargs))
+    persons = connector.get_persons(**kwargs)
 
     flat_result = ",".join(str(p.objectGUID) for p in persons)
     assert re.match(pattern, flat_result)
+
+
+@pytest.mark.integration
+def test_get_persons_or_functional_accounts_ldap() -> None:
+    connector = LDAPConnector.get()
+    assert len(connector.get_persons_or_functional_accounts(displayName="MEx")) >= 1
+    assert (
+        len(connector.get_persons_or_functional_accounts(displayName="*a*", limit=7))
+        == 7
+    )
+    assert not connector.get_persons_or_functional_accounts(
+        displayName="non-existent-bla-bla"
+    )
+
+
+def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
+    ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS, SAMPLE_PERSON_ATTRS]])
+    connector = LDAPConnector.get()
+    functional_accounts = connector.get_persons_or_functional_accounts(displayName="XY")
+    assert functional_accounts == [
+        LDAPFunctionalAccount(
+            displayName=None,
+            mail=[Email("XY@mail.tld")],
+            objectGUID=UUID("00000000-0000-4000-8000-000000000044"),
+            sAMAccountName="XY",
+            ou=["Funktion"],
+        ),
+        LDAPPerson(
+            displayName="Sample, Sam",
+            mail=[Email("SampleS@mail.tld")],
+            objectGUID=UUID("00000000-0000-4000-8000-000000000000"),
+            sAMAccountName="SampleS",
+            company="RKI",
+            department="XY",
+            departmentNumber="XY2",
+            employeeID="1024",
+            givenName=["Sam"],
+            ou=["XY"],
+            sn="Sample",
+        ),
+    ]
 
 
 @pytest.mark.parametrize(
@@ -74,7 +116,7 @@ def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
 @pytest.mark.integration
 def test_get_functional_accounts_ldap(kwargs: dict[str, Any], pattern: str) -> None:
     connector = LDAPConnector.get()
-    functional_accounts = list(connector.get_functional_accounts(**kwargs))
+    functional_accounts = connector.get_functional_accounts(**kwargs)
 
     flat_result = ",".join(str(p.objectGUID) for p in functional_accounts)
     assert re.match(pattern, flat_result)
@@ -83,13 +125,14 @@ def test_get_functional_accounts_ldap(kwargs: dict[str, Any], pattern: str) -> N
 def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
     connector = LDAPConnector.get()
-    functional_accounts = list(connector.get_functional_accounts(sAMAccountName="XY"))
+    functional_accounts = connector.get_functional_accounts(sAMAccountName="XY")
 
     assert len(functional_accounts) == 1
     assert functional_accounts[0].model_dump(exclude_none=True) == {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
+        "ou": ["Funktion"],
     }
 
 
@@ -162,6 +205,7 @@ def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
+        "ou": ["Funktion"],
     }
     assert unit.model_dump(exclude_none=True) == expected
 
@@ -180,6 +224,7 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
                 "attributes": {
                     "sAMAccountName": "foo",
                     "objectGUID": "00000000-0000-4000-8000-000000000000",
+                    "ou": ["Funktion"],
                 }
             }
         ]
@@ -192,9 +237,10 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     )
     connector = LDAPConnector.get()
     assert connector._connection is first_connection
-    result = connector._fetch(LDAPActor)
-    assert result[0].model_dump(exclude_defaults=True) == {
+    result = connector._fetch(1)
+    assert result[0] == {
         "sAMAccountName": "foo",
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
+        "objectGUID": "00000000-0000-4000-8000-000000000000",
+        "ou": ["Funktion"],
     }
     assert connector._connection is second_connection
