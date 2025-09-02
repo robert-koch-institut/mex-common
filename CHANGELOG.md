@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.3.0] - 2025-09-02
+
+### Added
+
 - add connector function and transformer to get persons and contact points in one go
 - add `deprecated` util to simplify renaming of functions
 - add `REQUIRED_FIELDS_BY_CLASS_NAME` and `TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES`
@@ -26,10 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - remove redundant function `get_ldap_persons` to use connector directly instead
 - remove unused functions `get_merged_ids_by_email` and `get_ldap_fields`
-
-### Fixed
-
-### Security
 
 ## [1.2.0] - 2025-08-28
 
