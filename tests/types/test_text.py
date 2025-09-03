@@ -12,7 +12,9 @@ def test_text_language_detect() -> None:
     assert en_text.language == TextLanguage.EN
     fr_text = Text(value="Ces profonds soupirs ont un sens. Expliquez-les-nous.")
     assert fr_text.language == TextLanguage.FR
-    es_text = Text(value="Estos profundos suspiros tienen un significado. Tradúcelos para nosotros.")
+    es_text = Text(
+        value="Estos profundos suspiros tienen un significado. Tradúcelos para nosotros."
+    )
     assert es_text.language == TextLanguage.ES
     ru_text = Text(value="Эти глубокие вздохи имеют смысл. Объясните их нам.")
     assert ru_text.language == TextLanguage.RU
