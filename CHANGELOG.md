@@ -23,8 +23,6 @@ added fr, es and ru as selectable language
 
 ### Security
 
-## [2.0.0] - 2025-09-03
-
 ## [1.3.0] - 2025-09-02
 
 ### Added
