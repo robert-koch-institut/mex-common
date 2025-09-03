@@ -326,7 +326,7 @@ def test_mapping_model_schema() -> None:
             },
             "TextLanguage": {
                 "description": "Possible language tags for `Text` values.",
-                "enum": ["de", "en"],
+                "enum": ["de", "en", "fr", "es", "ru"],
                 "title": "TextLanguage",
                 "type": "string",
             },

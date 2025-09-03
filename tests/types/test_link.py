@@ -32,6 +32,42 @@ def test_link_validation() -> None:
         }
     }
 
+    # FR
+    model = DummyModel.model_validate(
+        {"link": {"url": "https://example.com", "title": "Exemple", "language": "fr"}}
+    )
+    assert model.model_dump() == {
+        "link": {
+            "language": LinkLanguage.FR,
+            "title": "Exemple",
+            "url": "https://example.com",
+        }
+    }
+
+    # ES
+    model = DummyModel.model_validate(
+        {"link": {"url": "https://example.com", "title": "Ejemplo", "language": "es"}}
+    )
+    assert model.model_dump() == {
+        "link": {
+            "language": LinkLanguage.ES,
+            "title": "Ejemplo",
+            "url": "https://example.com",
+        }
+    }
+
+    # RU
+    model = DummyModel.model_validate(
+        {"link": {"url": "https://example.com", "title": "Пример", "language": "ru"}}
+    )
+    assert model.model_dump() == {
+        "link": {
+            "language": LinkLanguage.RU,
+            "title": "Пример",
+            "url": "https://example.com",
+        }
+    }
+
 
 def test_link_hash() -> None:
     link = Link(url="https://foo.bar", title="Hallo Welt.", language=LinkLanguage.DE)
