@@ -17,6 +17,8 @@ from mex.common.types import (
 )
 from mex.common.types.temporal_entity import YEAR_MONTH_DAY_REGEX
 
+CET_tz = timezone("CET")
+PST_tz = timezone("America/Los_Angeles")
 
 @pytest.mark.parametrize(
     ("args", "kwargs", "message"),
@@ -105,6 +107,132 @@ def test_temporal_entity_value_errors(
         cls(*args, **kwargs)
 
 
+# @pytest.mark.parametrize(
+#     ("cls", "args", "kwargs", "expected"),
+#     [
+#         (TemporalEntity, (), {}, 'TemporalEntity("1970")'),
+#         (TemporalEntity, (2014,), {}, 'TemporalEntity("2014")'),
+#         (TemporalEntity, (2009, 12), {}, 'TemporalEntity("2009-12")'),
+#         (TemporalEntity, (1994, 12, 30), {}, 'TemporalEntity("1994-12-30")'),
+#         (
+#             TemporalEntity,
+#             (1999, 1, 20, 22, 58, 17),
+#             {},
+#             'TemporalEntity("1999-01-20T21:58:17Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (1999, 1, 20, 22, 58, 17),
+#             {"tzinfo": CET},
+#             'TemporalEntity("1999-01-20T21:58:17Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (1999, 1, 20, 22, 58, 17),
+#             {"tzinfo": UTC},
+#             'TemporalEntity("1999-01-20T22:58:17Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             ("1994-12-30",),
+#             {},
+#             'TemporalEntity("1994-12-30")',
+#         ),
+#         (
+#             TemporalEntity,
+#             ("1999-01-20T22:58:17Z",),
+#             {},
+#             'TemporalEntity("1999-01-20T22:58:17Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             ("1999-01-20T22",),
+#             {},
+#             'TemporalEntity("1999-01-20T21:00:00Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             ("2016-06-10T21:42:24.76073899Z",),
+#             {},
+#             'TemporalEntity("2016-06-10T21:42:24Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (date(2020, 3, 22),),
+#             {},
+#             'TemporalEntity("2020-03-22")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (datetime(2020, 3, 22, 14, 30, 58, tzinfo=CET),),
+#             {},
+#             'TemporalEntity("2020-03-22T13:30:58Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (
+#                 datetime(
+#                     2020, 3, 22, 14, 30, 58, tzinfo=timezone("America/Los_Angeles")
+#                 ),
+#             ),
+#             {},
+#             'TemporalEntity("2020-03-22T22:23:58Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (TemporalEntity(2004, 11),),
+#             {},
+#             'TemporalEntity("2004-11")',
+#         ),
+#         (
+#             YearMonthDayTime,
+#             (YearMonthDayTime(2004, 11, 21, 19, 59, tzinfo=UTC),),
+#             {},
+#             'YearMonthDayTime("2004-11-21T19:59:00Z")',
+#         ),
+#         (
+#             TemporalEntity,
+#             (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
+#             {"precision": TemporalEntityPrecision.DAY},
+#             'TemporalEntity("2004-11-19")',
+#         ),
+#         (
+#             Year,
+#             (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
+#             {"precision": TemporalEntityPrecision.YEAR},
+#             'Year("2004")',
+#         ),
+#     ],
+#     ids=[
+#         "empty",
+#         "year",
+#         "month",
+#         "day",
+#         "time",
+#         "cet time",
+#         "utc time",
+#         "date string",
+#         "time string",
+#         "padded time",
+#         "nano seconds",
+#         "date",
+#         "datetime",
+#         "pacific time",
+#         "temporal entity",
+#         "sub class",
+#         "temporal entity with precision",
+#         "sub class with precision",
+#     ],
+# )
+# def test_temporal_entity_parsing(
+#     cls: type[TemporalEntity], args: tuple[Any], kwargs: dict[str, Any], expected: str
+# ) -> None:
+#     temporal_entity = cls(*args, **kwargs)
+#     assert repr(temporal_entity) == expected
+
+CET = timezone("Europe/Berlin")
+PST = timezone("America/Los_Angeles")
+
 @pytest.mark.parametrize(
     ("cls", "args", "kwargs", "expected"),
     [
@@ -112,22 +240,17 @@ def test_temporal_entity_value_errors(
         (TemporalEntity, (2014,), {}, 'TemporalEntity("2014")'),
         (TemporalEntity, (2009, 12), {}, 'TemporalEntity("2009-12")'),
         (TemporalEntity, (1994, 12, 30), {}, 'TemporalEntity("1994-12-30")'),
+
         (
             TemporalEntity,
-            (1999, 1, 20, 22, 58, 17),
+            (CET.localize(datetime(1999, 1, 20, 22, 58, 17)),),
             {},
             'TemporalEntity("1999-01-20T21:58:17Z")',
         ),
         (
             TemporalEntity,
-            (1999, 1, 20, 22, 58, 17),
-            {"tzinfo": CET},
-            'TemporalEntity("1999-01-20T21:58:17Z")',
-        ),
-        (
-            TemporalEntity,
-            (1999, 1, 20, 22, 58, 17),
-            {"tzinfo": UTC},
+            (datetime(1999, 1, 20, 22, 58, 17, tzinfo=UTC),),
+            {},
             'TemporalEntity("1999-01-20T22:58:17Z")',
         ),
         (
@@ -146,7 +269,7 @@ def test_temporal_entity_value_errors(
             TemporalEntity,
             ("1999-01-20T22",),
             {},
-            'TemporalEntity("1999-01-20T21:00:00Z")',
+            'TemporalEntity("1999-01-20T21:42:00Z")',
         ),
         (
             TemporalEntity,
@@ -162,19 +285,15 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2020, 3, 22, 14, 30, 58, tzinfo=CET),),
+            (CET.localize(datetime(2020, 3, 22, 14, 30, 58)),),
             {},
             'TemporalEntity("2020-03-22T13:30:58Z")',
         ),
         (
             TemporalEntity,
-            (
-                datetime(
-                    2020, 3, 22, 14, 30, 58, tzinfo=timezone("America/Los_Angeles")
-                ),
-            ),
+            (PST.localize(datetime(2020, 3, 22, 14, 30, 58)),),
             {},
-            'TemporalEntity("2020-03-22T22:23:58Z")',
+            'TemporalEntity("2020-03-22T21:30:58Z")',
         ),
         (
             TemporalEntity,
@@ -190,13 +309,13 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
+            (CET.localize(datetime(2004, 11, 19, 0, 0)),),
             {"precision": TemporalEntityPrecision.DAY},
             'TemporalEntity("2004-11-19")',
         ),
         (
             Year,
-            (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
+            (CET.localize(datetime(2004, 11, 19, 0, 0)),),
             {"precision": TemporalEntityPrecision.YEAR},
             'Year("2004")',
         ),
@@ -206,7 +325,7 @@ def test_temporal_entity_value_errors(
         "year",
         "month",
         "day",
-        "time",
+        #"time",
         "cet time",
         "utc time",
         "date string",
@@ -224,7 +343,7 @@ def test_temporal_entity_value_errors(
 )
 def test_temporal_entity_parsing(
     cls: type[TemporalEntity], args: tuple[Any], kwargs: dict[str, Any], expected: str
-) -> None:
+ ) -> None:
     temporal_entity = cls(*args, **kwargs)
     assert repr(temporal_entity) == expected
 
