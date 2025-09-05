@@ -15,6 +15,9 @@ class TextLanguage(StrEnum):
 
     DE = "de"
     EN = "en"
+    FR = "fr"
+    ES = "es"
+    RU = "ru"
 
 
 class Text(BaseModel):

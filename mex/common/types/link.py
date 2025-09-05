@@ -13,6 +13,9 @@ class LinkLanguage(StrEnum):
 
     DE = "de"
     EN = "en"
+    FR = "fr"
+    ES = "es"
+    RU = "ru"
 
 
 class Link(BaseModel):

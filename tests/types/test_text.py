@@ -5,11 +5,19 @@ from mex.common.types import Text, TextLanguage
 
 
 def test_text_language_detect() -> None:
-    # accepted languages are only German and English for now
+    # accepted languages are only German, English, French, Spanish and Russian for now
     de_text = Text(value="Diese tiefen Seufzern haben einen Sinn. Legt sie uns aus.")
     assert de_text.language == TextLanguage.DE
     en_text = Text(value="There's matter in these sighs. You must translate.")
     assert en_text.language == TextLanguage.EN
+    fr_text = Text(value="Ces profonds soupirs ont un sens. Expliquez-les-nous.")
+    assert fr_text.language == TextLanguage.FR
+    es_text = Text(
+        value="Estos profundos suspiros tienen un significado. Tradúcelos para nosotros."
+    )
+    assert es_text.language == TextLanguage.ES
+    ru_text = Text(value="Эти глубокие вздохи имеют смысл. Объясните их нам.")
+    assert ru_text.language == TextLanguage.RU
 
     # language that can be detected by langdetect but should be excluded from results
     ko_text = Text(value="이 한숨에는 문제가 있습니다. 번역해야 합니다.")
