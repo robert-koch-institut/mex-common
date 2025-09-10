@@ -20,6 +20,19 @@ from tests.ldap.conftest import (
 )
 
 
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("", ""),
+        ("Tést@exämple.com", "Tést@exämple.com"),
+        ("test*wildcard and spaces", "test*wildcard and spaces"),
+        ("bad$chars#(here)!", "bad*chars*here*"),
+    ],
+)
+def test_sanitize_value(value: str, expected: str) -> None:
+    assert LDAPConnector._sanitize(value) == expected
+
+
 def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
@@ -64,20 +77,15 @@ def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
 @pytest.mark.integration
 def test_get_persons_or_functional_accounts_ldap() -> None:
     connector = LDAPConnector.get()
-    assert len(connector.get_persons_or_functional_accounts(displayName="MEx")) >= 1
-    assert (
-        len(connector.get_persons_or_functional_accounts(displayName="*a*", limit=7))
-        == 7
-    )
-    assert not connector.get_persons_or_functional_accounts(
-        displayName="non-existent-bla-bla"
-    )
+    assert len(connector.get_persons_or_functional_accounts(query="mex@rki.de")) == 1
+    assert len(connector.get_persons_or_functional_accounts(query="*a*", limit=7)) == 7
+    assert not connector.get_persons_or_functional_accounts(query="non-existent-bla")
 
 
 def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS, SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
-    functional_accounts = connector.get_persons_or_functional_accounts(displayName="XY")
+    functional_accounts = connector.get_persons_or_functional_accounts(query="XY")
     assert functional_accounts == [
         LDAPFunctionalAccount(
             displayName=None,
@@ -103,10 +111,10 @@ def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> N
 
 
 @pytest.mark.parametrize(
-    ("kwargs", "pattern"),
+    ("mail", "pattern"),
     [
-        ({"mail": "mex@rki.de"}, r".{36}"),  # exactly one guid
-        ({"mail": "non-existent@function.xyz"}, r"^$"),  # empty result
+        ("mex@rki.de", r".{36}"),  # exactly one guid
+        ("non-existent@function.xyz", r"^$"),  # empty result
     ],
     ids=[
         "mex_functional_account",
@@ -114,9 +122,9 @@ def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> N
     ],
 )
 @pytest.mark.integration
-def test_get_functional_accounts_ldap(kwargs: dict[str, Any], pattern: str) -> None:
+def test_get_functional_accounts_ldap(mail: str, pattern: str) -> None:
     connector = LDAPConnector.get()
-    functional_accounts = connector.get_functional_accounts(**kwargs)
+    functional_accounts = connector.get_functional_accounts(mail=mail)
 
     flat_result = ",".join(str(p.objectGUID) for p in functional_accounts)
     assert re.match(pattern, flat_result)
@@ -125,7 +133,7 @@ def test_get_functional_accounts_ldap(kwargs: dict[str, Any], pattern: str) -> N
 def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
     connector = LDAPConnector.get()
-    functional_accounts = connector.get_functional_accounts(sAMAccountName="XY")
+    functional_accounts = connector.get_functional_accounts(mail="XY@mail.tld")
 
     assert len(functional_accounts) == 1
     assert functional_accounts[0].model_dump(exclude_none=True) == {
@@ -149,14 +157,14 @@ def test_get_person_mocked_error(
     ldap_mocker(search_results)
     connector = LDAPConnector.get()
     with pytest.raises(MExError, match=error_text):
-        connector.get_person(objectGUID="whatever")
+        connector.get_person(object_guid="whatever")
 
 
 def test_get_person_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
 
-    person = connector.get_person(objectGUID=SAMPLE_PERSON_ATTRS["objectGUID"][0])
+    person = connector.get_person(object_guid=SAMPLE_PERSON_ATTRS["objectGUID"][0])
 
     expected = {
         "company": "RKI",
@@ -190,16 +198,14 @@ def test_get_functional_account_mocked_error(
     ldap_mocker(search_results)
     connector = LDAPConnector.get()
     with pytest.raises(MExError, match=error_text):
-        connector.get_functional_account(sAMAccountName="whatever")
+        connector.get_functional_account(mail="whatever")
 
 
 def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
     connector = LDAPConnector.get()
 
-    unit = connector.get_functional_account(
-        sAMAccountName=XY_FUNC_ACCOUNT_ATTRS["sAMAccountName"][0]
-    )
+    unit = connector.get_functional_account(mail=XY_FUNC_ACCOUNT_ATTRS["mail"][0])
 
     expected = {
         "mail": ["XY@mail.tld"],
@@ -237,7 +243,7 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     )
     connector = LDAPConnector.get()
     assert connector._connection is first_connection
-    result = connector._fetch(1)
+    result = connector._fetch("(objectCategory=Person)", 1)
     assert result[0] == {
         "sAMAccountName": "foo",
         "objectGUID": "00000000-0000-4000-8000-000000000000",
