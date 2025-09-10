@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix ldap functional account and user search
+- fix error for getting unknown wiki item
 
 ### Security
 
