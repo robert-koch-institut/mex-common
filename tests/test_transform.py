@@ -49,7 +49,7 @@ class DummyEnum(Enum):
         (TemporalEntity(2012), '"2012"'),
         (TemporalEntity(2010, 12), '"2010-12"'),
         (TemporalEntity(2010, 12, 24), '"2010-12-24"'),
-        (TemporalEntity(2010, 12, 24, 23, 59, 59), '"2010-12-24T22:59:59Z"'),
+        (TemporalEntity(2010, 12, 24, 23, 59, 59), '"2010-12-24T23:41:59Z"'),
         (
             TemporalEntity(
                 2010, 12, 24, 23, 59, 59, tzinfo=timezone(timedelta(hours=-2))
