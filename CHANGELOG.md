@@ -9,13 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.4.0] - 2025-09-11
+
+### Added
+
 - added fr, es and ru as selectable languages to Link and Text
 
 ### Changes
 
 - make LDAPConnector filter options snake_case and keyword-only
-
-### Deprecated
 
 ### Removed
 
@@ -25,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix ldap functional account and user search
 - fix error for getting unknown wiki item
-
-### Security
 
 ## [1.3.0] - 2025-09-02
 
