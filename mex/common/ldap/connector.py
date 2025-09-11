@@ -1,3 +1,4 @@
+import re
 from typing import Any, cast
 from urllib.parse import urlsplit
 
@@ -12,10 +13,13 @@ from mex.common.exceptions import (
     MExError,
 )
 from mex.common.ldap.models import (
+    LDAP_MODEL_CLASSES,
     AnyLDAPActor,
-    LDAPActorTypeAdapter,
+    AnyLDAPActorsTypeAdapter,
     LDAPFunctionalAccount,
+    LDAPFunctionalAccountsTypeAdapter,
     LDAPPerson,
+    LDAPPersonsTypeAdapter,
 )
 from mex.common.logging import logger
 from mex.common.settings import BaseSettings
@@ -71,63 +75,71 @@ class LDAPConnector(BaseConnector):
             "LDAPConnector", details["args"][0]
         ).reconnect(),
     )
-    def _fetch(self, limit: int, **filters: str | None) -> list[dict[str, Any]]:
+    def _fetch(self, search_filter: str, limit: int) -> list[dict[str, Any]]:
         """Fetch all items that match the given filters.
 
         Args:
+            search_filter: LDAP search query
             limit: How many items to return
-            filters: LDAP compatible filters, will be joined in AND-condition
 
         Returns:
             List of raw ldap items
         """
-        search_filter = "".join(
-            f"({key}={value})" for key, value in filters.items() if value
-        )
         response = self._connection.extend.standard.paged_search(
             search_base=self._search_base,
-            search_filter=f"(&{search_filter})",
-            attributes=tuple(sorted(LDAPPerson.model_fields)),
-            generator=False,
+            search_filter=search_filter.strip(),
+            attributes=tuple(
+                sorted({f for m in LDAP_MODEL_CLASSES for f in m.model_fields})
+            ),
             size_limit=limit,
         )
         return [
             attributes for item in response if (attributes := item.get("attributes"))
         ]
 
+    @staticmethod
+    def _sanitize(value: str) -> str:
+        """Sanitize a query value by removing invalid chars."""
+        return re.sub(r"[^a-zA-ZÀ-ÿ0-9\*\.\-_@ ]+", "*", value)
+
     def get_persons_or_functional_accounts(
         self,
         *,
-        displayName: str = "*",  # noqa: N803
+        query: str = "*",
         limit: int = 10,
-        **filters: str | None,
     ) -> list[AnyLDAPActor]:
-        """Get LDAP persons or functional accounts that match provided filters.
+        """Get LDAP persons or functional accounts.
 
         Args:
-            displayName: Display name of the items to find
+            query: Display name of person or email of functional account
             limit: How many items to return
-            **filters: Additional filters
 
         Returns:
-            List of LDAP persons and functional accounts
+            List of LDAP persons and/or functional accounts
         """
-        raw_items = self._fetch(
-            limit=limit,
-            objectCategory="Person",
-            displayName=displayName,
-            **filters,
+        search_filter = f"""
+        (|
+            (&
+                (objectCategory=Person)
+                (sAMAccountName=*)
+                (employeeID=*)
+                (displayName={self._sanitize(query)})
+            )
+            (&
+                (objectCategory=Person)
+                (OU=Funktion)
+                (mail={self._sanitize(query)})
+            )
         )
-        return [LDAPActorTypeAdapter.validate_python(item) for item in raw_items]
+        """
+        raw_items = self._fetch(search_filter, limit)
+        return AnyLDAPActorsTypeAdapter.validate_python(raw_items)
 
     def get_functional_accounts(
         self,
         *,
         mail: str = "*",
-        objectGUID: str = "*",  # noqa: N803
-        sAMAccountName: str = "*",  # noqa: N803
         limit: int = 10,
-        **filters: str | None,
     ) -> list[LDAPFunctionalAccount]:
         """Get LDAP functional accounts that match provided filters.
 
@@ -135,163 +147,135 @@ class LDAPConnector(BaseConnector):
 
         Args:
             mail: Email address of the functional account
-            objectGUID: Internal LDAP identifier
-            sAMAccountName: Account name
             limit: How many items to return
-            **filters: Additional filters
 
         Returns:
             List of LDAP functional accounts
         """
-        raw_items = self._fetch(
-            limit=limit,
-            mail=mail,
-            objectCategory="Person",
-            objectGUID=objectGUID,
-            OU="Funktion",
-            sAMAccountName=sAMAccountName,
-            **filters,
+        search_filter = f"""
+        (&
+            (objectCategory=Person)
+            (OU=Funktion)
+            (mail={self._sanitize(mail)})
         )
-        return [LDAPFunctionalAccount.model_validate(item) for item in raw_items]
+        """
+        raw_items = self._fetch(search_filter, limit)
+        return LDAPFunctionalAccountsTypeAdapter.validate_python(raw_items)
 
     def get_persons(  # noqa: PLR0913
         self,
         *,
-        employeeID: str = "*",  # noqa: N803
+        display_name: str = "*",
+        employee_id: str = "*",
         given_name: str = "*",
         mail: str = "*",
-        objectGUID: str = "*",  # noqa: N803
-        sAMAccountName: str = "*",  # noqa: N803
+        object_guid: str = "*",
+        sam_account_name: str = "*",
         surname: str = "*",
         limit: int = 10,
-        **filters: str | None,
     ) -> list[LDAPPerson]:
         """Get LDAP persons that match the provided filters.
 
         An LDAP person's objectGUIDs is stable across name changes, whereas name based
         person identifiers of the schema SurnameF are not stable.
 
-        Only consider LDAP entries of objectClass 'user', ObjectCategory 'Person'.
-        Additional required attributes are: sAMAccountName, employeeID.
-
         Args:
-            employeeID: Employee identifier
+            display_name: Display name of the person
+            employee_id: Employee identifier
             given_name: Given name of a person, defaults to non-null
             mail: Email address, defaults to non-null
-            objectGUID: Internal LDAP identifier
-            sAMAccountName: Account name
+            object_guid: Internal LDAP identifier
+            sam_account_name: Account name
             surname: Surname of a person, defaults to non-null
             limit: How many items to return
-            **filters: Additional filters
 
         Returns:
             List of LDAP persons
         """
-        raw_items = self._fetch(
-            limit=limit,
-            objectClass="user",
-            objectCategory="Person",
-            employeeID=employeeID,
-            givenName=given_name,
-            mail=mail,
-            objectGUID=objectGUID,
-            sAMAccountName=sAMAccountName,
-            sn=surname,
-            **filters,
+        search_filter = f"""
+        (&
+            (objectCategory=Person)
+            (displayName={self._sanitize(display_name)})
+            (employeeID={self._sanitize(employee_id)})
+            (givenName={self._sanitize(given_name)})
+            (mail={self._sanitize(mail)})
+            (objectGUID={self._sanitize(object_guid)})
+            (sAMAccountName={self._sanitize(sam_account_name)})
+            (sn={self._sanitize(surname)})
         )
-        return [LDAPPerson.model_validate(item) for item in raw_items]
+        """
+        raw_items = self._fetch(search_filter, limit)
+        return LDAPPersonsTypeAdapter.validate_python(raw_items)
 
     def get_functional_account(
         self,
         *,
         mail: str = "*",
-        objectGUID: str = "*",  # noqa: N803
-        sAMAccountName: str = "*",  # noqa: N803
-        **filters: str | None,
     ) -> LDAPFunctionalAccount:
-        """Get a single LDAP functional account for the given filters.
+        """Get a single LDAP functional account for the given mail address.
 
         Args:
             mail: Email address of the functional account
-            objectGUID: Internal LDAP identifier
-            sAMAccountName: Account name
-            **filters: Filters for LDAP search
 
         Raises:
-            MExError: If number of LDAP entries that match the filters is not 1
+            EmptySearchResultError: If no LDAP entry matching filters was found
+            FoundMoreThanOneError: If more than one LDAP entry was found
 
         Returns:
-            Single LDAP functional account matching the filters
+            Single LDAP functional account
         """
-        functional_accounts = self.get_functional_accounts(
-            mail=mail,
-            objectGUID=objectGUID,
-            sAMAccountName=sAMAccountName,
-            limit=2,
-            **filters,
-        )
+        functional_accounts = self.get_functional_accounts(mail=mail, limit=2)
         if not functional_accounts:
-            msg = (
-                "Cannot find AD functional account for filters "
-                f"'objectGUID: {objectGUID}, {filters}'"
-            )
+            msg = f"Cannot find AD functional account for filters mail: {mail}"
             raise EmptySearchResultError(msg)
         if len(functional_accounts) > 1:
-            msg = (
-                "Found multiple AD functional accounts for filters "
-                f"'objectGUID: {objectGUID}, {filters}'"
-            )
+            msg = f"Found multiple AD functional accounts for mail: {mail}"
             raise FoundMoreThanOneError(msg)
         return functional_accounts[0]
 
     def get_person(  # noqa: PLR0913
         self,
         *,
-        employeeID: str = "*",  # noqa: N803
+        display_name: str = "*",
+        employee_id: str = "*",
         given_name: str = "*",
         mail: str = "*",
-        objectGUID: str = "*",  # noqa: N803
-        sAMAccountName: str = "*",  # noqa: N803
+        object_guid: str = "*",
+        sam_account_name: str = "*",
         surname: str = "*",
-        **filters: str | None,
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 
         Args:
-            employeeID: Employee ID, must be present
+            display_name: Display name of the person
+            employee_id: Employee identifier
             given_name: Given name of a person, defaults to non-null
             mail: Email address, defaults to non-null
-            objectGUID: Internal LDAP identifier
-            sAMAccountName: str = "*",  # noqa: N803
+            object_guid: Internal LDAP identifier
+            sam_account_name: Account name
             surname: Surname of a person, defaults to non-null
-            **filters: Filters for LDAP search
 
         Raises:
-            MExError: If number of LDAP entries that match the filters is not 1
+            EmptySearchResultError: If no LDAP entry matching filters was found
+            FoundMoreThanOneError: If more than one LDAP entry was found
 
         Returns:
             Single LDAP person matching the filters
         """
         persons = self.get_persons(
-            employeeID=employeeID,
+            employee_id=employee_id,
             given_name=given_name,
             mail=mail,
-            objectGUID=objectGUID,
-            sAMAccountName=sAMAccountName,
+            object_guid=object_guid,
+            sam_account_name=sam_account_name,
             surname=surname,
+            display_name=display_name,
             limit=2,
-            **filters,
         )
         if not persons:
-            msg = (
-                f"Cannot find AD person for filters 'objectGUID: {objectGUID}, "
-                f"employeeID: {employeeID}, {filters}'"
-            )
+            msg = "Cannot find AD person for filters"
             raise EmptySearchResultError(msg)
         if len(persons) > 1:
-            msg = (
-                f"Found multiple AD persons for filters 'objectGUID: {objectGUID}, "
-                f"employeeID: {employeeID}, {filters}'"
-            )
+            msg = "Found multiple AD persons for filters"
             raise FoundMoreThanOneError(msg)
         return persons[0]

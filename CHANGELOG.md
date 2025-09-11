@@ -13,11 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- make LDAPConnector filter options snake_case and keyword-only
+
 ### Deprecated
 
 ### Removed
 
+- removed unused filter options from LDAPConnector
+
 ### Fixed
+
+- fix ldap functional account and user search
+- fix error for getting unknown wiki item
 
 ### Security
 

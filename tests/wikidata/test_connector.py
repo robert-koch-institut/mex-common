@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, Mock
 import pytest
 import requests
 
+from mex.common.exceptions import EmptySearchResultError
 from mex.common.wikidata.connector import WikidataAPIConnector
 
 
@@ -28,6 +29,14 @@ def test_get_wikidata_item_details_by_id() -> None:
     ]
     assert response.get("title") == "Q26678"
     assert response.get("type") == "item"
+
+
+@pytest.mark.integration
+def test_get_wikidata_item_details_by_id_error() -> None:
+    """Test if items details can be fetched by its ID."""
+    connector = WikidataAPIConnector.get()
+    with pytest.raises(EmptySearchResultError, match="NOPE_NOPE_NOPE"):
+        connector.get_wikidata_item_details_by_id("NOPE_NOPE_NOPE")
 
 
 def test_get_wikidata_items_details_by_id_mocked(

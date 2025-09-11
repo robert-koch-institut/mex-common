@@ -1,6 +1,6 @@
-from typing import Annotated, Literal
+from typing import Final, Literal, get_args
 
-from pydantic import UUID4, Field, TypeAdapter
+from pydantic import UUID4, TypeAdapter
 
 from mex.common.models import BaseModel
 from mex.common.types import Email
@@ -9,22 +9,22 @@ from mex.common.types import Email
 class LDAPActor(BaseModel):
     """Model class for generic LDAP accounts."""
 
-    sAMAccountName: str | None = None
     objectGUID: UUID4
+    sAMAccountName: str | None = None
     mail: list[Email] = []
-    displayName: str | None = None
 
 
 class LDAPPerson(LDAPActor):
     """Model class for LDAP persons."""
 
+    employeeID: str
+    givenName: list[str]
+    sn: str
     company: str | None = None
     department: str | None = None
     departmentNumber: str | None = None
-    employeeID: str
-    givenName: Annotated[list[str], Field(min_length=1)]
+    displayName: str | None = None
     ou: list[str] = []
-    sn: str
 
 
 class LDAPPersonWithQuery(BaseModel):
@@ -41,4 +41,11 @@ class LDAPFunctionalAccount(LDAPActor):
 
 
 AnyLDAPActor = LDAPPerson | LDAPFunctionalAccount
-LDAPActorTypeAdapter: TypeAdapter[AnyLDAPActor] = TypeAdapter(AnyLDAPActor)
+LDAP_MODEL_CLASSES: Final[list[type[AnyLDAPActor]]] = list(get_args(AnyLDAPActor))
+AnyLDAPActorsTypeAdapter: TypeAdapter[list[AnyLDAPActor]] = TypeAdapter(
+    list[AnyLDAPActor]
+)
+LDAPFunctionalAccountsTypeAdapter: TypeAdapter[list[LDAPFunctionalAccount]] = (
+    TypeAdapter(list[LDAPFunctionalAccount])
+)
+LDAPPersonsTypeAdapter: TypeAdapter[list[LDAPPerson]] = TypeAdapter(list[LDAPPerson])
