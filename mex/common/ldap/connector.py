@@ -111,7 +111,7 @@ class LDAPConnector(BaseConnector):
         """Get LDAP persons or functional accounts.
 
         Args:
-            query: Display name or email of the item
+            query: Display name of person or email of functional account
             limit: How many items to return
 
         Returns:
@@ -236,13 +236,13 @@ class LDAPConnector(BaseConnector):
     def get_person(  # noqa: PLR0913
         self,
         *,
+        display_name: str = "*",
         employee_id: str = "*",
         given_name: str = "*",
         mail: str = "*",
         object_guid: str = "*",
         sam_account_name: str = "*",
         surname: str = "*",
-        display_name: str = "*",
     ) -> LDAPPerson:
         """Get a single LDAP person for the given filters.
 
