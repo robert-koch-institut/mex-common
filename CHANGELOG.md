@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
 ### Changes
-- upgraded pytz to 2024.2
+
+### Deprecated
+
+### Removed
 
 ### Fixed
-- fixed temporal entity tests because pytz 2024.2 updated IANA database
+
+### Security
 
 ## [1.3.0] - 2025-09-02
 
