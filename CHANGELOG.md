@@ -10,8 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - bumped pytz to newest version >=2025
 
+### Changes
+
+### Deprecated
+
+### Removed
+
 ### Fixed
 - fixed temporal entity tests for newest pytz version
+
+### Security
 
 ## [1.4.0] - 2025-09-11
 
