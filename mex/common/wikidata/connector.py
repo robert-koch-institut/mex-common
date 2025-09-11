@@ -1,6 +1,7 @@
 from typing import cast
 
 from mex.common.connector.http import HTTPConnector
+from mex.common.exceptions import EmptySearchResultError
 from mex.common.settings import BaseSettings
 
 
@@ -49,4 +50,9 @@ class WikidataAPIConnector(HTTPConnector):
                 "formatversion": "2",
             },
         )
-        return cast("dict[str, str]", results["entities"][item_id])
+        if entities := results.get("entities"):
+            return cast("dict[str, str]", entities[item_id])
+        if (error := results.get("error")) and error["code"] == "no-such-entity":
+            raise EmptySearchResultError(error["info"])
+        msg = f"unexpected error getting wikidata item: {item_id}"
+        raise RuntimeError(msg)
