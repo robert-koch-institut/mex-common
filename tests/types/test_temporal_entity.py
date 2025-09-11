@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from pytz import timezone
 
 from mex.common.types import (
-    CET,
     UTC,
     TemporalEntity,
     TemporalEntityPrecision,
@@ -16,6 +15,9 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.common.types.temporal_entity import YEAR_MONTH_DAY_REGEX
+
+CET_tz = timezone("Europe/Berlin")
+PST_tz = timezone("America/Los_Angeles")
 
 
 @pytest.mark.parametrize(
@@ -114,20 +116,14 @@ def test_temporal_entity_value_errors(
         (TemporalEntity, (1994, 12, 30), {}, 'TemporalEntity("1994-12-30")'),
         (
             TemporalEntity,
-            (1999, 1, 20, 22, 58, 17),
+            (CET_tz.localize(datetime(1999, 1, 20, 22, 58, 17)),),  # noqa: DTZ001
             {},
             'TemporalEntity("1999-01-20T21:58:17Z")',
         ),
         (
             TemporalEntity,
-            (1999, 1, 20, 22, 58, 17),
-            {"tzinfo": CET},
-            'TemporalEntity("1999-01-20T21:58:17Z")',
-        ),
-        (
-            TemporalEntity,
-            (1999, 1, 20, 22, 58, 17),
-            {"tzinfo": UTC},
+            (datetime(1999, 1, 20, 22, 58, 17, tzinfo=UTC),),
+            {},
             'TemporalEntity("1999-01-20T22:58:17Z")',
         ),
         (
@@ -146,7 +142,7 @@ def test_temporal_entity_value_errors(
             TemporalEntity,
             ("1999-01-20T22",),
             {},
-            'TemporalEntity("1999-01-20T21:00:00Z")',
+            'TemporalEntity("1999-01-20T21:42:00Z")',
         ),
         (
             TemporalEntity,
@@ -162,19 +158,15 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2020, 3, 22, 14, 30, 58, tzinfo=CET),),
+            (CET_tz.localize(datetime(2020, 3, 22, 14, 30, 58)),),  # noqa: DTZ001
             {},
             'TemporalEntity("2020-03-22T13:30:58Z")',
         ),
         (
             TemporalEntity,
-            (
-                datetime(
-                    2020, 3, 22, 14, 30, 58, tzinfo=timezone("America/Los_Angeles")
-                ),
-            ),
+            (PST_tz.localize(datetime(2020, 3, 22, 14, 30, 58)),),  # noqa: DTZ001
             {},
-            'TemporalEntity("2020-03-22T22:23:58Z")',
+            'TemporalEntity("2020-03-22T21:30:58Z")',
         ),
         (
             TemporalEntity,
@@ -190,13 +182,13 @@ def test_temporal_entity_value_errors(
         ),
         (
             TemporalEntity,
-            (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
+            (CET_tz.localize(datetime(2004, 11, 19, 0, 0)),),  # noqa: DTZ001
             {"precision": TemporalEntityPrecision.DAY},
             'TemporalEntity("2004-11-19")',
         ),
         (
             Year,
-            (datetime(2004, 11, 19, 00, 00, tzinfo=CET),),
+            (CET_tz.localize(datetime(2004, 11, 19, 0, 0)),),  # noqa: DTZ001
             {"precision": TemporalEntityPrecision.YEAR},
             'Year("2004")',
         ),
@@ -206,7 +198,6 @@ def test_temporal_entity_value_errors(
         "year",
         "month",
         "day",
-        "time",
         "cet time",
         "utc time",
         "date string",
@@ -255,13 +246,13 @@ def test_temporal_entity_str() -> None:
     assert str(TemporalEntity(2004, 11, 26)) == "2004-11-26"
     assert str(YearMonth(2004, 11)) == "2004-11"
     assert str(YearMonthDay(2004, 11, 26)) == "2004-11-26"
-    assert str(YearMonthDayTime(2018, 3, 2, 13, 0, 1)) == "2018-03-02T12:00:01Z"
+    assert str(YearMonthDayTime(2018, 3, 2, 13, 0, 1)) == "2018-03-02T12:42:01Z"
 
 
 def test_temporal_entity_repr() -> None:
     assert (
-        repr(TemporalEntity(2018, 3, 2, 13, 0, 1))
-        == 'TemporalEntity("2018-03-02T12:00:01Z")'
+        repr(TemporalEntity(2018, 3, 2, 13, 0, 1, tzinfo=UTC))
+        == 'TemporalEntity("2018-03-02T13:00:01Z")'
     )
     assert repr(Year("2022")) == 'Year("2022")'
     assert repr(YearMonth("2022-10")) == 'YearMonth("2022-10")'

@@ -18,7 +18,7 @@ dependencies = [
     "pyarrow>=21,<22",
     "pydantic-settings>=2,<2.11",
     "pydantic>=2,<2.10",
-    "pytz>=2024,<2024.2",
+    "pytz==2024.2",
     "requests>=2,<3",
 ]
 optional-dependencies.dev = [

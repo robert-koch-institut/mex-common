@@ -7,19 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- added fr, es and ru as selectable languages to Link and Text
-
 ### Changes
-
-### Deprecated
-
-### Removed
+- upgraded pytz to 2024.2
 
 ### Fixed
-
-### Security
+- fixed temporal entity tests because pytz 2024.2 updated IANA database
 
 ## [1.3.0] - 2025-09-02
 
