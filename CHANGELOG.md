@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - bumped pytz to newest version >=2025
+- added `flatten_pydantic_model` to flatten a pydantic model to fields and strings
 
 ### Changes
 

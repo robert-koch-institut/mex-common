@@ -4,6 +4,7 @@ import pytest
 
 from mex.common.models import (
     AdditivePerson,
+    ExtractedDistribution,
     ExtractedPerson,
     MergedPerson,
     PersonRuleSetRequest,
@@ -13,15 +14,42 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
+    AccessRestriction,
     Email,
     ExtractedPersonIdentifier,
+    Link,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    Text,
+    YearMonthDayTime,
 )
 
 pytest_plugins = ("mex.common.testing.plugin",)
+
+
+@pytest.fixture
+def extracted_distribution() -> ExtractedDistribution:
+    """Return a dummy extracted person for testing purposes."""
+    return ExtractedDistribution.model_construct(
+        accessRestriction=AccessRestriction(
+            "https://mex.rki.de/item/access-restriction-1"
+        ),
+        accessURL=[
+            Link(url="Extracted@Distribution.org", language="en", title="Title"),
+            Link(url="lorem@Ipsum.org", language=None),
+        ],
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=200),
+        issued=YearMonthDayTime("1970-01-01T00:00:00Z"),
+        identifierInPrimarySource=str(UUID(int=990, version=4)),
+        identifier=ExtractedPersonIdentifier.generate(seed=550),
+        stableTargetId=MergedPersonIdentifier.generate(seed=876),
+        title=[
+            Text(value="Extracted Distribution", language="en"),
+            Text(value="lorem Ipsum", language=None),
+        ],
+    )
 
 
 @pytest.fixture

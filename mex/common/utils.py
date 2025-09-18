@@ -322,3 +322,46 @@ def deprecated(old_name: str, new_func: Callable[P, R]) -> Callable[P, R]:
         return new_func(*args, **kwargs)
 
     return wrapper
+
+
+def flatten_pydantic_model(instance: BaseModel, sep: str) -> dict[str, str | None]:
+    """Flatten a pydantic model to fields contaning strings.
+
+    Args:
+        instance: a pydantic BaseModel
+        sep: seperator characters to separate e.g. list entries
+
+    Returns:
+        a dictionary mapping field names to stringified entry values of those fields.
+    """
+    flattened: dict[str, str | None] = {}
+
+    for field_name, field in instance.model_fields.items():
+        if getattr(field, "exclude", False):
+            continue  # Skip fields marked as exclude=True
+
+        field_denotation = field.alias or field_name
+        value = getattr(instance, field_name)
+        if value is None:
+            flattened[field_denotation] = None
+        elif isinstance(value, (str, int, float, bool)):
+            flattened[field_denotation] = str(value)  # Simple types stay as they are
+        elif isinstance(value, list):
+            flattened_items = []  # Flatten list items
+            for item in value:
+                if isinstance(item, BaseModel):
+                    flattened_items.append(
+                        item.model_dump_json(by_alias=True, exclude_none=True)
+                    )  # turn nested models into dicts
+                else:
+                    flattened_items.append(str(item))
+            flattened[field_denotation] = sep.join(flattened_items)
+        elif isinstance(value, BaseModel):
+            # Nested pydantic model, convert to JSON string
+            flattened[field_denotation] = value.model_dump_json(
+                by_alias=True, exclude_none=True
+            )
+        else:
+            flattened[field_denotation] = str(value)  # Fallback: convert to string
+
+    return flattened
