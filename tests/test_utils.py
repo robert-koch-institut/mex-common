@@ -8,7 +8,7 @@ import pytest
 from pydantic import computed_field
 from pydantic.fields import FieldInfo
 
-from mex.common.models import BaseModel
+from mex.common.models import BaseModel, ExtractedDistribution
 from mex.common.types import (
     MERGED_IDENTIFIER_CLASSES,
     Identifier,
@@ -22,6 +22,7 @@ from mex.common.utils import (
     contains_only_types,
     deprecated,
     ensure_list,
+    flatten_pydantic_model,
     get_alias_lookup,
     get_all_fields,
     get_field_names_allowing_none,
@@ -331,3 +332,26 @@ def test_deprecated_warning_message() -> None:
         str(warning_info[0].message)
         == "old_func_bah is deprecated, use cool_new_func instead"
     )
+
+
+def test_flatten_pydantic_model(extracted_distribution: ExtractedDistribution) -> None:
+    assert flatten_pydantic_model(extracted_distribution, "__#*#*#__") == {
+        "$type": "ExtractedDistribution",
+        "accessService": None,
+        "accessRestriction": "AccessRestriction.OPEN",
+        "accessURL": (
+            '{"language":"en","title":"Title","url":"Extracted@Distribution.org"}'
+            '__#*#*#__{"url":"lorem@Ipsum.org"}'
+        ),
+        "downloadURL": "",
+        "hadPrimarySource": "bFQoRhcVH5DHXE",
+        "issued": "1970-01-01T00:00:00Z",
+        "identifierInPrimarySource": "00000000-0000-4000-8000-0000000003de",
+        "license": None,
+        "mediaType": None,
+        "modified": None,
+        "title": (
+            '{"value":"Extracted Distribution","language":"en"}__#*#*#__'
+            '{"value":"lorem Ipsum"}'
+        ),
+    }
