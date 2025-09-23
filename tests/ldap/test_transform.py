@@ -87,6 +87,7 @@ def test_transform_ldap_persons_to_extracted_persons(
         "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
         "identifier": Joker(),
         "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
+        "affiliation": Joker(),
         "memberOf": [extracted_unit.stableTargetId],
         "stableTargetId": Joker(),
     }
@@ -142,6 +143,7 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
             "fullName": ["Sample, Sam, Dr."],
             "givenName": ["Sam"],
             "memberOf": [extracted_unit.stableTargetId],
+            "affiliation": Joker(),
             "identifier": Joker(),
             "stableTargetId": Joker(),
         },

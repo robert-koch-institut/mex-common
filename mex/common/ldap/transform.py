@@ -3,6 +3,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from functools import lru_cache
 
+from mex.common.ldap.helpers import get_wikidata_rki_organization
 from mex.common.ldap.models import (
     AnyLDAPActor,
     LDAPFunctionalAccount,
@@ -108,10 +109,11 @@ def transform_ldap_person_to_extracted_person(
     Returns:
         Extracted person
     """
+    rki_organization = get_wikidata_rki_organization()
     return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
-        affiliation=[],  # TODO(HS): resolve organization for person.company/RKI
+        affiliation=[rki_organization] if rki_organization else [],
         email=ldap_person.mail,
         familyName=[ldap_person.sn],
         fullName=[ldap_person.displayName] if ldap_person.displayName else [],
