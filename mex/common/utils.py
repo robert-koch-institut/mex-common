@@ -337,8 +337,8 @@ def flatten_pydantic_model(instance: BaseModel, sep: str) -> dict[str, str | Non
     flattened: dict[str, str | None] = {}
 
     for field_name, field in instance.model_fields.items():
-        if getattr(field, "exclude", False):
-            continue  # Skip fields marked as exclude=True
+        if field.exclude:
+            continue
 
         field_denotation = field.alias or field_name
         value = getattr(instance, field_name)
@@ -362,6 +362,6 @@ def flatten_pydantic_model(instance: BaseModel, sep: str) -> dict[str, str | Non
                 by_alias=True, exclude_none=True
             )
         else:
-            flattened[field_denotation] = str(value)  # Fallback: convert to string
-
+            # Fallback: convert to string
+            flattened[field_denotation] = getattr(value, "name", str(value))
     return flattened

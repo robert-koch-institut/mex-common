@@ -335,13 +335,13 @@ def test_deprecated_warning_message() -> None:
 
 
 def test_flatten_pydantic_model(extracted_distribution: ExtractedDistribution) -> None:
-    assert flatten_pydantic_model(extracted_distribution, "__#*#*#__") == {
+    assert flatten_pydantic_model(extracted_distribution, ",") == {
         "$type": "ExtractedDistribution",
         "accessService": None,
         "accessRestriction": "AccessRestriction.OPEN",
         "accessURL": (
-            '{"language":"en","title":"Title","url":"Extracted@Distribution.org"}'
-            '__#*#*#__{"url":"lorem@Ipsum.org"}'
+            '{"language":"en","title":"Title","url":"Extracted@Distribution.org"},'
+            '{"url":"lorem@Ipsum.org"}'
         ),
         "downloadURL": "",
         "hadPrimarySource": "bFQoRhcVH5DHXE",
@@ -351,7 +351,6 @@ def test_flatten_pydantic_model(extracted_distribution: ExtractedDistribution) -
         "mediaType": None,
         "modified": None,
         "title": (
-            '{"value":"Extracted Distribution","language":"en"}__#*#*#__'
-            '{"value":"lorem Ipsum"}'
+            '{"value":"Extracted Distribution","language":"en"},{"value":"lorem Ipsum"}'
         ),
     }
