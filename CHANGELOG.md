@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - bumped pytz to newest version >=2025
+- add RKI organization as affiliation to ldap persons
 
 ### Changes
 
@@ -189,6 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - added MEX_BACKEND_API_PARALLELIZATION and MEX_BACKEND_API_CHUNK_SIZE settings
 - added support for sending batches of data to the backend in parallel
+
 
 ### Changes
 
