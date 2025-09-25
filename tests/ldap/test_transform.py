@@ -92,11 +92,11 @@ def test_transform_ldap_persons_to_extracted_persons(
         "familyName": ["Sample"],
         "fullName": ["Sample, Sam, Dr."],
         "givenName": ["Sam"],
-        "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources["ldap"].stableTargetId),
         "identifier": Joker(),
         "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
-        "affiliation": extracted_organization_rki.stableTargetId,
-        "memberOf": [extracted_unit.stableTargetId],
+        "affiliation": [str(extracted_organization_rki.stableTargetId)],
+        "memberOf": [str(extracted_unit.stableTargetId)],
         "stableTargetId": Joker(),
     }
 
@@ -141,7 +141,7 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
         a.model_dump(exclude_none=True, exclude_defaults=True) for a in extracted_actors
     ] == [
         {
-            "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
+            "hadPrimarySource": str(extracted_primary_sources["ldap"].stableTargetId),
             "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
             "email": ["postfach@example.com"],
             "identifier": Joker(),
@@ -154,8 +154,8 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
             "familyName": ["Sample"],
             "fullName": ["Sample, Sam, Dr."],
             "givenName": ["Sam"],
-            "memberOf": [extracted_unit.stableTargetId],
-            "affiliation": extracted_organization_rki.stableTargetId,
+            "memberOf": [str(extracted_unit.stableTargetId)],
+            "affiliation": [str(extracted_organization_rki.stableTargetId)],
             "identifier": Joker(),
             "stableTargetId": Joker(),
         },
