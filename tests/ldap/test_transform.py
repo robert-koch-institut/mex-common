@@ -2,16 +2,23 @@ from uuid import UUID
 
 import pytest
 
-from mex.common.ldap.models import AnyLDAPActor, LDAPFunctionalAccount, LDAPPerson
+from mex.common.ldap.models import (
+    AnyLDAPActor,
+    LDAPFunctionalAccount,
+    LDAPPerson,
+    LDAPPersonWithQuery,
+)
 from mex.common.ldap.transform import (
     PersonName,
     analyse_person_string,
     transform_any_ldap_actor_to_extracted_persons_or_contact_points,
     transform_ldap_functional_accounts_to_extracted_contact_points,
     transform_ldap_persons_to_extracted_persons,
+    transform_ldap_persons_with_query_to_extracted_persons,
 )
 from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
 from mex.common.testing import Joker
+from tests.ldap.conftest import SAMPLE_PERSON_ATTRS
 
 
 @pytest.fixture
@@ -218,3 +225,34 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
 def test_analyse_person_string(string: str, expected: list[PersonName]) -> None:
     names = analyse_person_string(string)
     assert names == expected
+
+
+def test_transform_ldap_persons_with_query_to_extracted_persons(
+    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_unit: ExtractedOrganizationalUnit,
+) -> None:
+    ldap_person = LDAPPerson.model_validate(SAMPLE_PERSON_ATTRS)
+    ldap_persons_with_query = [LDAPPersonWithQuery(person=ldap_person, query="test")]
+
+    extracted_persons = transform_ldap_persons_with_query_to_extracted_persons(
+        ldap_persons_with_query,
+        extracted_primary_sources["ldap"],
+        [extracted_unit],
+    )
+
+    assert len(extracted_persons) == 1
+    assert extracted_persons[0].model_dump() == {
+        "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
+        "identifierInPrimarySource": "00000000-0000-4000-8000-000000000000",
+        "affiliation": [],
+        "email": ["SampleS@mail.tld"],
+        "familyName": ["Sample"],
+        "fullName": ["Sample, Sam"],
+        "givenName": ["Sam"],
+        "isniId": [],
+        "memberOf": [],
+        "orcidId": [],
+        "entityType": "ExtractedPerson",
+        "identifier": "cXTehc7a4YxNw6j7UpSq0b",
+        "stableTargetId": "fWYZKuwfymRj0ItP1CfTO4",
+    }
