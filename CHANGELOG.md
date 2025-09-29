@@ -8,15 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - bumped pytz to newest version >=2025
 
 ### Changes
+
+- don't require env settings for ldap and wiki tests
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
 - fixed temporal entity tests for newest pytz version
 
 ### Security
