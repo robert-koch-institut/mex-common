@@ -4,6 +4,7 @@ import pytest
 
 from mex.common.models import (
     AdditivePerson,
+    ExtractedOrganization,
     ExtractedPerson,
     MergedPerson,
     PersonRuleSetRequest,
@@ -19,6 +20,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    Text,
 )
 
 pytest_plugins = ("mex.common.testing.plugin",)
@@ -62,6 +64,20 @@ def merged_person() -> MergedPerson:
             MergedOrganizationalUnitIdentifier.generate(seed=101),
         ],
         orcidId=["https://orcid.org/0000-0002-9079-593X"],
+    )
+
+
+@pytest.fixture
+def extracted_organization_rki() -> ExtractedOrganization:
+    """Return a dummy rki extracted organization for testing purposes."""
+    return ExtractedOrganization.model_construct(
+        identifierInPrimarySource="RKI",
+        identifier=ExtractedPersonIdentifier.generate(seed=551),
+        stableTargetId=MergedOrganizationIdentifier.generate(seed=301),
+        hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=201),
+        officialName=[Text(value="Robert Koch-Institut")],
+        shortName=[Text(value="RKI")],
+        email=[Email("info@rki.de")],
     )
 
 

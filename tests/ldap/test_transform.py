@@ -16,7 +16,11 @@ from mex.common.ldap.transform import (
     transform_ldap_persons_to_extracted_persons,
     transform_ldap_persons_with_query_to_extracted_persons,
 )
-from mex.common.models import ExtractedOrganizationalUnit, ExtractedPrimarySource
+from mex.common.models import (
+    ExtractedOrganization,
+    ExtractedOrganizationalUnit,
+    ExtractedPrimarySource,
+)
 from mex.common.testing import Joker
 from tests.ldap.conftest import SAMPLE_PERSON_ATTRS
 
@@ -66,6 +70,7 @@ def test_transform_ldap_functional_accounts_to_extracted_contact_points(
 def test_transform_ldap_persons_to_extracted_persons(
     extracted_unit: ExtractedOrganizationalUnit,
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     ldap_person = LDAPPerson(
         company="RKI",
@@ -82,7 +87,10 @@ def test_transform_ldap_persons_to_extracted_persons(
     )
 
     extracted_persons = transform_ldap_persons_to_extracted_persons(
-        [ldap_person], extracted_primary_sources["ldap"], [extracted_unit]
+        [ldap_person],
+        extracted_primary_sources["ldap"],
+        [extracted_unit],
+        extracted_organization_rki,
     )
     extracted_person = extracted_persons[0]
 
@@ -91,10 +99,11 @@ def test_transform_ldap_persons_to_extracted_persons(
         "familyName": ["Sample"],
         "fullName": ["Sample, Sam, Dr."],
         "givenName": ["Sam"],
-        "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
+        "hadPrimarySource": str(extracted_primary_sources["ldap"].stableTargetId),
         "identifier": Joker(),
         "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
-        "memberOf": [extracted_unit.stableTargetId],
+        "affiliation": [str(extracted_organization_rki.stableTargetId)],
+        "memberOf": [str(extracted_unit.stableTargetId)],
         "stableTargetId": Joker(),
     }
 
@@ -107,6 +116,7 @@ def test_transform_ldap_persons_to_extracted_persons(
 def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_unit: ExtractedOrganizationalUnit,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     ldap_actors: list[AnyLDAPActor] = [
         LDAPFunctionalAccount(
@@ -128,14 +138,17 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
     ]
 
     extracted_actors = transform_any_ldap_actor_to_extracted_persons_or_contact_points(
-        ldap_actors, [extracted_unit], extracted_primary_sources["ldap"]
+        ldap_actors,
+        [extracted_unit],
+        extracted_primary_sources["ldap"],
+        extracted_organization_rki,
     )
 
     assert [
         a.model_dump(exclude_none=True, exclude_defaults=True) for a in extracted_actors
     ] == [
         {
-            "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
+            "hadPrimarySource": str(extracted_primary_sources["ldap"].stableTargetId),
             "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
             "email": ["postfach@example.com"],
             "identifier": Joker(),
@@ -148,7 +161,8 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
             "familyName": ["Sample"],
             "fullName": ["Sample, Sam, Dr."],
             "givenName": ["Sam"],
-            "memberOf": [extracted_unit.stableTargetId],
+            "memberOf": [str(extracted_unit.stableTargetId)],
+            "affiliation": [str(extracted_organization_rki.stableTargetId)],
             "identifier": Joker(),
             "stableTargetId": Joker(),
         },
