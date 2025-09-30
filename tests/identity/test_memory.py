@@ -92,3 +92,15 @@ def test_fetch_found() -> None:
 
     # we get a match again
     assert identities == [identity]
+
+
+def test_metrics() -> None:
+    provider = MemoryIdentityProvider.get()
+    had_primary_source = MergedPrimarySourceIdentifier("00000000000000")
+    assert provider.metrics() == {"database_size": 1}
+
+    provider.assign(had_primary_source, "thing-X")
+    assert provider.metrics() == {"database_size": 2}
+
+    provider.assign(had_primary_source, "thing-Y")
+    assert provider.metrics() == {"database_size": 3}
