@@ -124,7 +124,7 @@ def transform_ldap_person_to_extracted_person(
     return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source.stableTargetId,
-        affiliation=[rki_organization.stableTargetId] if rki_organization else [],
+        affiliation=[rki_organization.stableTargetId],
         email=ldap_person.mail,
         familyName=[ldap_person.sn],
         fullName=[ldap_person.displayName] if ldap_person.displayName else [],
