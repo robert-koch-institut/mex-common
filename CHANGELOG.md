@@ -8,8 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- bumped pytz to newest version >=2025
-- BREAKING: add RKI organization as affiliation to ldap persons
 
 ### Changes
 
@@ -18,9 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
-- fixed temporal entity tests for newest pytz version
 
 ### Security
+
+## [1.5.0] - 2025-09-30
+
+### Added
+- bumped pytz to newest version >=2025
+- BREAKING: add RKI organization as affiliation to ldap persons
+
+### Fixed
+- fixed temporal entity tests for newest pytz version
 
 ## [1.4.0] - 2025-09-11
 
