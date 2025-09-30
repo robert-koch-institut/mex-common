@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - bumped pytz to newest version >=2025
-- add RKI organization as affiliation to ldap persons
+- BREAKING: add RKI organization as affiliation to ldap persons
 
 ### Changes
 
