@@ -258,7 +258,7 @@ def test_transform_ldap_persons_with_query_to_extracted_persons(
 
     assert len(extracted_persons) == 1
     assert extracted_persons[0].model_dump() == {
-        "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
+        "hadPrimarySource": extracted_primary_sources["ldap"].stableTargetId,
         "identifierInPrimarySource": "00000000-0000-4000-8000-000000000000",
         "affiliation": [extracted_organization_rki.stableTargetId],
         "email": ["SampleS@mail.tld"],
