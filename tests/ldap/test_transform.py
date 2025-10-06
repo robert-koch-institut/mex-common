@@ -244,6 +244,7 @@ def test_analyse_person_string(string: str, expected: list[PersonName]) -> None:
 def test_transform_ldap_persons_with_query_to_extracted_persons(
     extracted_primary_sources: dict[str, ExtractedPrimarySource],
     extracted_unit: ExtractedOrganizationalUnit,
+    extracted_organization_rki: ExtractedOrganization,
 ) -> None:
     ldap_person = LDAPPerson.model_validate(SAMPLE_PERSON_ATTRS)
     ldap_persons_with_query = [LDAPPersonWithQuery(person=ldap_person, query="test")]
@@ -252,13 +253,14 @@ def test_transform_ldap_persons_with_query_to_extracted_persons(
         ldap_persons_with_query,
         extracted_primary_sources["ldap"],
         [extracted_unit],
+        extracted_organization_rki,
     )
 
     assert len(extracted_persons) == 1
     assert extracted_persons[0].model_dump() == {
         "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
         "identifierInPrimarySource": "00000000-0000-4000-8000-000000000000",
-        "affiliation": [],
+        "affiliation": [extracted_organization_rki.stableTargetId],
         "email": ["SampleS@mail.tld"],
         "familyName": ["Sample"],
         "fullName": ["Sample, Sam"],
