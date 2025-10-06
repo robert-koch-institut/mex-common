@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from mex.common.models import BaseModel
 from mex.common.settings import SETTINGS_STORE, BaseSettings
@@ -36,6 +37,12 @@ class BarSettings(BaseSettings):
     """Second dummy settings subclass for testing."""
 
     bar: str = "bar"
+
+
+class BazSettings(BaseSettings):
+    """Third dummy settings subclass for testing."""
+
+    foo: BaseSettings = FooSettings()
 
 
 def test_settings_getting_caches_singleton() -> None:
@@ -93,3 +100,12 @@ def test_resolve_paths() -> None:
     assert settings.rel_work_path == WorkPath(settings.work_dir / relative)
     assert settings.assets_path == AssetsPath(absolute / "assets_dir" / relative)
     assert settings.sub_model.sub_model_path == WorkPath(settings.work_dir / relative)
+
+
+def test_no_settings_as_attributes() -> None:
+    # regular settings instantiation passes
+    FooSettings()
+
+    # setting with attribute that inherits from BaseSettings fails
+    with pytest.raises(ValidationError):
+        BazSettings()

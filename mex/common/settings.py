@@ -254,3 +254,25 @@ class BaseSettings(PydanticBaseSettings):
         for name in self.model_fields:
             _resolve(self, name)
         return self
+
+    @model_validator(mode="after")
+    def no_settings_as_attributes(self) -> Self:
+        """Validate that no attribute inherits from pydantic.BaseSettings."""
+
+        def _validate(model: PydanticBaseModel, _name: str) -> None:
+            value = getattr(model, _name)
+            if isinstance(value, PydanticBaseSettings):
+                msg = (
+                    "settings class (inheriting from BaseSettings) has attribute '"
+                    f"{_name}' that also inherits from BaseSettings.) Only top level "
+                    "may inherit from BaseSettings. Did you mean to inherit from "
+                    "BaseModel?"
+                )
+                raise ValueError(msg)  # noqa: TRY004  stfu ruff, pydantic wants ValueError
+            if isinstance(value, PydanticBaseModel):
+                for sub_model_field_name in value.model_fields:
+                    _validate(value, sub_model_field_name)
+
+        for name in self.model_fields:
+            _validate(self, name)
+        return self
