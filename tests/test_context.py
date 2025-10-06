@@ -1,6 +1,6 @@
 import pytest
 
-from mex.common.context import SingleSingletonStore
+from mex.common.context import SingleSingletonStore, SingletonStore
 
 
 class Parent:
@@ -9,6 +9,21 @@ class Parent:
 
 class Child(Parent):
     pass
+
+
+def test_singleton_store() -> None:
+    store = SingletonStore["Parent"]()
+    parent = store.load(Parent)
+
+    popped = store.pop(Parent)
+    assert popped is parent
+
+    new_parent = store.load(Parent)
+    assert new_parent is not parent
+
+    store.reset()
+
+    assert not store._instances_by_class
 
 
 def test_single_singleton_store() -> None:

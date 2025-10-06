@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- don't require env settings for ldap and wiki tests
+
 ### Deprecated
 
 ### Removed
@@ -24,10 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.0] - 2025-09-30
 
 ### Added
+
 - bumped pytz to newest version >=2025
 - BREAKING: add RKI organization as affiliation to ldap persons
 
 ### Fixed
+
 - fixed temporal entity tests for newest pytz version
 
 ## [1.4.0] - 2025-09-11
@@ -198,7 +202,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - added MEX_BACKEND_API_PARALLELIZATION and MEX_BACKEND_API_CHUNK_SIZE settings
 - added support for sending batches of data to the backend in parallel
-
 
 ### Changes
 
