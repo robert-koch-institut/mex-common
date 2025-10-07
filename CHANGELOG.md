@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - don't require env settings for ldap and wiki tests
+- update mex-model to 4.2.1
 
 ### Deprecated
 
