@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Settings validator to prevent attributes that inherit from BaseSettings
-
 ### Changes
-
-- don't require env settings for ldap and wiki tests
-- update mex-model to 4.2.1
 
 ### Deprecated
 
@@ -23,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.5.1] - 2025-10-07
+
+### Added
+
+- Settings validator to prevent attributes that inherit from BaseSettings
+
+### Changes
+
+- don't require env settings for ldap and wiki tests
+- update mex-model to 4.2.1
 
 ## [1.5.0] - 2025-09-30
 
