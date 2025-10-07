@@ -3,7 +3,7 @@ from datetime import date, datetime, tzinfo
 from enum import Enum
 from functools import total_ordering
 from itertools import zip_longest
-from typing import Any, Literal, Union, cast, overload
+from typing import Any, Union, cast, overload
 
 from pandas._libs.tslibs import parsing
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
@@ -84,7 +84,7 @@ class TemporalEntity:
         self,
         *args: Union[str, date, datetime, "TemporalEntity"],
         precision: TemporalEntityPrecision | None = None,
-        tzinfo: Literal[None] = None,
+        tzinfo: None = None,
     ) -> None: ...  # pragma: no cover
 
     @overload
