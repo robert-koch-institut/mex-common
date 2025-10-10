@@ -76,6 +76,7 @@ jobs:
           git checkout -b cruft/cookiecutter-template-${template_ref}
           cruft update --skip-apply-ask
           printf '# Changes\n\n- bumped cookiecutter template to %s/commit/%s\n' "$template_url" "$template_ref" > .cruft-pr-body
+          sed -i "0,/^### Changes/s|^### Changes.*|&\n- bumped cookiecutter template to ${template_url}/commit/${template_ref}|" CHANGELOG.md
           if [[ $(find . -type f -name "*.rej" | wc -l) -ne 0 ]]; then
             printf '\n# Conflicts\n' >> .cruft-pr-body
           fi
