@@ -90,8 +90,8 @@ def parse_csv(
 
                 if total_rows_processed % summary_batch_size == 0 and error_summary:
                     logger.error(
-                        "Summarizing errors for batch starting at row %s",
-                        total_rows_processed - summary_batch_size,
+                        "Summarizing errors for batch with rows %s to %s",
+                        total_rows_processed - summary_batch_size + 1, total_rows_processed 
                     )
                     for error_type, count in error_summary.items():
                         logger.error(
