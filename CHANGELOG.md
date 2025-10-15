@@ -11,9 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: email changed typing to annotated str for ContactPoint, OrgUnit and Person
+
 ### Deprecated
 
 ### Removed
+
+- BREAKING: EMAIL_PATTERN and Email removed from mex.common.types
+- BREAKING: EMAIL_FIELDS_BY_CLASS_NAME removed from mex.common.fields
 
 ### Fixed
 
