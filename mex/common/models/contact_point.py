@@ -17,11 +17,19 @@ from mex.common.models.base.rules import (
     SubtractiveRule,
 )
 from mex.common.types import (
-    Email,
     ExtractedContactPointIdentifier,
     MergedContactPointIdentifier,
     MergedPrimarySourceIdentifier,
 )
+
+EmailStr = Annotated[
+    str,
+    Field(
+        examples=["info@rki.de"],
+        pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
+        json_schema_extra={"format": "email"},
+    ),
+]
 
 
 class _Stem(BaseModel):
@@ -31,11 +39,11 @@ class _Stem(BaseModel):
 
 
 class _RequiredLists(_Stem):
-    email: Annotated[list[Email], Field(min_length=1)]
+    email: Annotated[list[EmailStr], Field(min_length=1)]
 
 
 class _SparseLists(_Stem):
-    email: list[Email] = []
+    email: list[EmailStr] = []
 
 
 class BaseContactPoint(_RequiredLists):
@@ -138,7 +146,7 @@ class ContactPointMapping(_Stem, BaseMapping):
         list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
     ]
     identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
-    email: Annotated[list[MappingField[list[Email]]], Field(min_length=1)]
+    email: Annotated[list[MappingField[list[EmailStr]]], Field(min_length=1)]
 
 
 class ContactPointFilter(_Stem, BaseFilter):

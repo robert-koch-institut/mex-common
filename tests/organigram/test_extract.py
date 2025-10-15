@@ -8,7 +8,7 @@ from mex.common.organigram.extract import (
     get_unit_merged_ids_by_synonyms,
 )
 from mex.common.organigram.models import OrganigramUnit
-from mex.common.types import Email, Text
+from mex.common.types import Text
 
 
 def test_extract_organigram_units(
@@ -48,17 +48,17 @@ def test_get_unit_merged_ids_by_synonyms_error(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    erroneus_extracted_child_unit = extracted_child_unit
-    erroneus_extracted_child_unit.name.append(Text(value="PARENT Dept."))
+    erroneous_extracted_child_unit = extracted_child_unit
+    erroneous_extracted_child_unit.name.append(Text(value="PARENT Dept."))
 
     msg = (
         f"MExError: Conflict: label 'PARENT Dept.' is associated with "
-        f"merged unit IDs {erroneus_extracted_child_unit.stableTargetId} and "
+        f"merged unit IDs {erroneous_extracted_child_unit.stableTargetId} and "
         f"{extracted_parent_unit.stableTargetId}."
     )
     with pytest.raises(MExError, match=msg):
         get_unit_merged_ids_by_synonyms(
-            [erroneus_extracted_child_unit, extracted_parent_unit]
+            [erroneous_extracted_child_unit, extracted_parent_unit]
         )
 
 
@@ -80,15 +80,15 @@ def test_get_unit_merged_ids_by_emails_error(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    erroneus_extracted_child_unit = extracted_child_unit
-    erroneus_extracted_child_unit.email.append(Email("PARENT@example.com"))
+    erroneous_extracted_child_unit = extracted_child_unit
+    erroneous_extracted_child_unit.email.append("PARENT@example.com")
 
     msg = (
         f"MExError: Conflict: email 'PARENT@example.com' is associated with "
-        f"merged unit IDs {erroneus_extracted_child_unit.stableTargetId} and "
+        f"merged unit IDs {erroneous_extracted_child_unit.stableTargetId} and "
         f"{extracted_parent_unit.stableTargetId}."
     )
     with pytest.raises(MExError, match=msg):
         get_unit_merged_ids_by_emails(
-            [erroneus_extracted_child_unit, extracted_parent_unit]
+            [erroneous_extracted_child_unit, extracted_parent_unit]
         )

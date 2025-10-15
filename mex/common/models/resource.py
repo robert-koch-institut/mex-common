@@ -47,7 +47,17 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 
-ConformsToStr = Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-10"])]
+ConformsToStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "FHIR",
+            "LOINC",
+            "SNOMED",
+            "ICD-10",
+        ]
+    ),
+]
 DoiStr = Annotated[
     str,
     Field(

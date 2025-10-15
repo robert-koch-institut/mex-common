@@ -10,7 +10,6 @@ from pytest import MonkeyPatch
 from mex.common.exceptions import MExError
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
-from mex.common.types import Email
 from tests.ldap.conftest import (
     SAMPLE_PERSON_ATTRS,
     XY2_FUNC_ACCOUNT_ATTRS,
@@ -89,14 +88,14 @@ def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> N
     assert functional_accounts == [
         LDAPFunctionalAccount(
             displayName=None,
-            mail=[Email("XY@mail.tld")],
+            mail=["XY@mail.tld"],
             objectGUID=UUID("00000000-0000-4000-8000-000000000044"),
             sAMAccountName="XY",
             ou=["Funktion"],
         ),
         LDAPPerson(
             displayName="Sample, Sam",
-            mail=[Email("SampleS@mail.tld")],
+            mail=["SampleS@mail.tld"],
             objectGUID=UUID("00000000-0000-4000-8000-000000000000"),
             sAMAccountName="SampleS",
             company="RKI",

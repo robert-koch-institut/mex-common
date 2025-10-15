@@ -3,7 +3,6 @@ from typing import Final, Literal, get_args
 from pydantic import UUID4, TypeAdapter
 
 from mex.common.models import BaseModel
-from mex.common.types import Email
 
 
 class LDAPActor(BaseModel):
@@ -11,7 +10,7 @@ class LDAPActor(BaseModel):
 
     objectGUID: UUID4
     sAMAccountName: str | None = None
-    mail: list[Email] = []
+    mail: list[str] = []
 
 
 class LDAPPerson(LDAPActor):
