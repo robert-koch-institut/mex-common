@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
-from mex.common.transform import dromedary_to_kebab
+from mex.common.transform import dromedary_to_kebab, snake_to_camel, split_to_camel
 from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
 from mex.model import ENTITY_JSON_BY_NAME
 
@@ -45,8 +45,7 @@ GENERATED_SCHEMAS = dict(
 SPECIFIED_SCHEMAS = dict(
     sorted(
         {
-            schema["title"].replace(" ", ""): schema
-            for schema in ENTITY_JSON_BY_NAME.values()
+            snake_to_camel(name): schema for name, schema in ENTITY_JSON_BY_NAME.items()
         }.items()
     )
 )
@@ -88,7 +87,7 @@ def test_entity_type_matches_class_name(
 ) -> None:
     assert generated["title"] == generated["properties"]["$type"]["const"]
     assert (
-        specified["title"].replace(" ", "") in generated["properties"]["$type"]["const"]
+        split_to_camel(specified["title"]) in generated["properties"]["$type"]["const"]
     )
 
 
@@ -129,7 +128,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
 
     # discard annotations that we can safely ignore
     # (these have no use-case and no implementation plans yet)
-    obj.pop("sameAs", None)  # only in spec
+    # obj.pop("sameAs", None)  # only in spec
     obj.pop("subPropertyOf", None)  # only in spec
     obj.pop("description", None)  # only in model (mostly implementation hints)
     obj.pop("$comment", None)  # only in model

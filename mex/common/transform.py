@@ -78,6 +78,14 @@ def kebab_to_camel(string: str) -> str:
 
 
 @lru_cache(maxsize=1024)
+def snake_to_camel(string: str) -> str:
+    """Convert the given string from `snake_case` into `CamelCase`."""
+    if len(tokens := re.split(r"_+", string)) > 1:
+        return "".join(word.title() for word in tokens)
+    return string[:1].upper() + string[1:]
+
+
+@lru_cache(maxsize=1024)
 def normalize(string: str) -> str:
     """Normalize the given string to lowercase, numerals and single spaces."""
     return " ".join(re.sub(r"[^a-z0-9]", " ", string.lower()).split())
@@ -87,6 +95,12 @@ def normalize(string: str) -> str:
 def split_to_caps(string: str) -> str:
     """Convert the given string from `Split case` into `CAPS_CASE`."""
     return "_".join(word.upper() for word in re.split("[^a-zA-Z]", string) if word)
+
+
+@lru_cache(maxsize=1024)
+def split_to_camel(string: str) -> str:
+    """Convert the given string from `Split case` into `CamelCase`."""
+    return "".join(word.title() for word in re.split("[^a-zA-Z]", string) if word)
 
 
 def ensure_prefix(string_like: object, prefix: object) -> str:
