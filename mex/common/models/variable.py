@@ -57,31 +57,78 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     belongsTo: list[MergedVariableGroupIdentifier] = []
-    description: list[Text] = []
+    description: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+    ] = []
     valueSet: list[ValueSetStr] = []
 
 
 class _RequiredLists(_Stem):
     label: Annotated[
         list[LabelText],
-        Field(min_length=1),
+        Field(
+            min_length=1,
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/title",
+                    "http://www.w3.org/2000/01/rdf-schema#label",
+                ]
+            },
+        ),
     ]
     usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
 
 
 class _SparseLists(_Stem):
-    label: list[LabelText] = []
+    label: Annotated[
+        list[LabelText],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/title",
+                    "http://www.w3.org/2000/01/rdf-schema#label",
+                ]
+            }
+        ),
+    ] = []
     usedIn: list[MergedResourceIdentifier] = []
 
 
 class _OptionalValues(_Stem):
-    codingSystem: CodingSystemStr | None = None
-    dataType: DataTypeStr | None = None
+    codingSystem: Annotated[
+        CodingSystemStr | None,
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/conformsTo",
+                    "https://schema.org/codingSystem",
+                ]
+            }
+        ),
+    ] = None
+    dataType: Annotated[
+        DataTypeStr | None,
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    codingSystem: list[CodingSystemStr] = []
-    dataType: list[DataTypeStr] = []
+    codingSystem: Annotated[
+        list[CodingSystemStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/conformsTo",
+                    "https://schema.org/codingSystem",
+                ]
+            }
+        ),
+    ] = []
+    dataType: Annotated[
+        list[DataTypeStr],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+    ] = []
 
 
 class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):

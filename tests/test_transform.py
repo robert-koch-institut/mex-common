@@ -19,7 +19,6 @@ from mex.common.transform import (
     normalize,
     snake_to_camel,
     snake_to_dromedary,
-    split_to_camel,
     split_to_caps,
     to_key_and_values,
 )
@@ -200,28 +199,6 @@ def test_normalize(string: str, expected: str) -> None:
 )
 def test_split_to_caps(string: str, expected: str) -> None:
     assert split_to_caps(string) == expected
-
-
-@pytest.mark.parametrize(
-    ("string", "expected"),
-    [
-        ("", ""),
-        ("word", "Word"),
-        ("AlreadyCamel", "Alreadycamel"),
-        ("Split Case Like This", "SplitCaseLikeThis"),
-        ("Foo(Bar) 99 - Batz", "FooBarBatz"),
-    ],
-    ids=[
-        "empty",
-        "single word",
-        "already camel",
-        "split case",
-        "mixed separators",
-    ],
-)
-def test_split_to_camel(string: str, expected: str) -> None:
-    result = split_to_camel(string)
-    assert result == expected
 
 
 @pytest.mark.parametrize(

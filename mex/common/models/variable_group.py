@@ -33,12 +33,21 @@ class _Stem(BaseModel):
 
 class _RequiredLists(_Stem):
     containedBy: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
-    label: Annotated[list[Text], Field(min_length=1)]
+    label: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
     containedBy: list[MergedResourceIdentifier] = []
-    label: list[Text] = []
+    label: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]}),
+    ] = []
 
 
 class BaseVariableGroup(_RequiredLists):

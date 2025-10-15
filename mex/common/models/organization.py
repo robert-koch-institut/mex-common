@@ -107,22 +107,52 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeName: list[Text] = []
-    geprisId: list[GeprisIdStr] = []
-    gndId: list[GndIdStr] = []
-    isniId: list[IsniIdStr] = []
-    rorId: list[RorIdStr] = []
-    shortName: list[Text] = []
-    viafId: list[ViafIdStr] = []
+    alternativeName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    geprisId: Annotated[
+        list[GeprisIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]}),
+    ] = []
+    gndId: Annotated[
+        list[GndIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]}),
+    ] = []
+    isniId: Annotated[
+        list[IsniIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]}),
+    ] = []
+    rorId: Annotated[
+        list[RorIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]}),
+    ] = []
+    shortName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+    ] = []
+    viafId: Annotated[
+        list[ViafIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]}),
+    ] = []
     wikidataId: list[WikidataIdStr] = []
 
 
 class _RequiredLists(_Stem):
-    officialName: Annotated[list[Text], Field(min_length=1)]
+    officialName: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    officialName: list[Text] = []
+    officialName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]}),
+    ] = []
 
 
 class BaseOrganization(_OptionalLists, _RequiredLists):

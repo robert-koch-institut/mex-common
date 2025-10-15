@@ -97,12 +97,6 @@ def split_to_caps(string: str) -> str:
     return "_".join(word.upper() for word in re.split("[^a-zA-Z]", string) if word)
 
 
-@lru_cache(maxsize=1024)
-def split_to_camel(string: str) -> str:
-    """Convert the given string from `Split case` into `CamelCase`."""
-    return "".join(word.title() for word in re.split("[^a-zA-Z]", string) if word)
-
-
 def ensure_prefix(string_like: object, prefix: object) -> str:
     """Return a string with the given prefix prepended if it is not present yet.
 

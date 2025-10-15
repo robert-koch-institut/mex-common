@@ -36,9 +36,18 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
-    hasConsentStatus: ConsentStatus
-    hasDataSubject: MergedPersonIdentifier
-    isIndicatedAtTime: YearMonthDayTime
+    hasConsentStatus: Annotated[
+        ConsentStatus,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]}),
+    ]
+    hasDataSubject: Annotated[
+        MergedPersonIdentifier,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]}),
+    ]
+    isIndicatedAtTime: Annotated[
+        YearMonthDayTime,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]}),
+    ]
 
 
 class _SparseValues(_Stem):

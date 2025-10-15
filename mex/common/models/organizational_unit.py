@@ -34,19 +34,58 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeName: list[Text] = []
-    email: list[Email] = []
-    shortName: list[Text] = []
-    unitOf: list[MergedOrganizationIdentifier] = []
-    website: list[Link] = []
+    alternativeName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    email: Annotated[
+        list[Email],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.w3.org/2006/vcard/ns#hasEmail",
+                    "https://schema.org/email",
+                ]
+            }
+        ),
+    ] = []
+    shortName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+    ] = []
+    unitOf: Annotated[
+        list[MergedOrganizationIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]}),
+    ] = []
+    website: Annotated[
+        list[Link],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.wikidata.org/entity/P856",
+                    "http://www.w3.org/2006/vcard/ns#hasUrl",
+                    "http://xmlns.com/foaf/0.1/homepage",
+                ]
+            }
+        ),
+    ] = []
 
 
 class _RequiredLists(_Stem):
-    name: Annotated[list[Text], Field(min_length=1)]
+    name: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    name: list[Text] = []
+    name: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"}),
+    ] = []
 
 
 class _OptionalValues(_Stem):

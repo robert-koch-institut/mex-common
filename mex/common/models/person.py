@@ -74,14 +74,72 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    affiliation: list[MergedOrganizationIdentifier] = []
-    email: list[Email] = []
-    familyName: list[FamilyNameStr] = []
-    fullName: list[FullNameStr] = []
-    givenName: list[GivenNameStr] = []
-    isniId: list[IsniIdStr] = []
-    memberOf: list[MergedOrganizationalUnitIdentifier] = []
-    orcidId: list[OrcidIdStr] = []
+    affiliation: Annotated[
+        list[MergedOrganizationIdentifier],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "https://schema.org/affiliation",
+                    "http://www.wikidata.org/entity/P1416",
+                ]
+            }
+        ),
+    ] = []
+    email: Annotated[
+        list[Email],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.w3.org/2006/vcard/ns#hasEmail",
+                    "https://schema.org/email",
+                ]
+            }
+        ),
+    ] = []
+    familyName: Annotated[
+        list[FamilyNameStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://xmlns.com/foaf/0.1/familyName",
+                    "https://schema.org/familyName",
+                ]
+            }
+        ),
+    ] = []
+    fullName: Annotated[
+        list[FullNameStr],
+        Field(json_schema_extra={"sameAs": ["http://xmlns.com/foaf/0.1/name"]}),
+    ] = []
+    givenName: Annotated[
+        list[GivenNameStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://xmlns.com/foaf/0.1/givenName",
+                    "https://schema.org/givenName",
+                ]
+            }
+        ),
+    ] = []
+    isniId: Annotated[
+        list[IsniIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]}),
+    ] = []
+    memberOf: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of"
+                ]
+            }
+        ),
+    ] = []
+    orcidId: Annotated[
+        list[OrcidIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P496"]}),
+    ] = []
 
 
 class BasePerson(_OptionalLists):

@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
-from mex.common.transform import dromedary_to_kebab, snake_to_camel, split_to_camel
+from mex.common.transform import dromedary_to_kebab, snake_to_camel
 from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
 from mex.model import ENTITY_JSON_BY_NAME
 
@@ -86,9 +86,7 @@ def test_entity_type_matches_class_name(
     generated: dict[str, Any], specified: dict[str, Any]
 ) -> None:
     assert generated["title"] == generated["properties"]["$type"]["const"]
-    assert (
-        split_to_camel(specified["title"]) in generated["properties"]["$type"]["const"]
-    )
+    assert specified["title"] in generated["properties"]["$type"]["const"]
 
 
 @pytest.mark.parametrize(
@@ -128,7 +126,6 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
 
     # discard annotations that we can safely ignore
     # (these have no use-case and no implementation plans yet)
-    # obj.pop("sameAs", None)  # only in spec
     obj.pop("subPropertyOf", None)  # only in spec
     obj.pop("description", None)  # only in model (mostly implementation hints)
     obj.pop("$comment", None)  # only in model
@@ -141,8 +138,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     # (the paths to referenced vocabularies and types differ between the models
     # and the specification, so we need to make sure they match before comparing)
     if obj.get("pattern") == IDENTIFIER_PATTERN:
-        obj.pop("pattern")
-        obj.pop("type")
+        obj.clear()
         if field in ("identifier", "stableTargetId"):
             obj["$ref"] = "/schema/fields/identifier"
         else:

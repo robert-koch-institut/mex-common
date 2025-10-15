@@ -48,13 +48,30 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeTitle: list[Text] = []
-    contact: list[AnyContactIdentifier] = []
-    description: list[Text] = []
+    alternativeTitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+    ] = []
+    description: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+    ] = []
     documentation: list[Link] = []
     locatedAt: list[Link] = []
-    title: list[Text] = []
-    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
+    title: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+    ] = []
+    unitInCharge: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+        ),
+    ] = []
 
 
 class _OptionalValues(_Stem):

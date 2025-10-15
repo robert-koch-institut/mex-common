@@ -31,7 +31,13 @@ class _Stem(BaseModel):
 
 
 class _RequiredLists(_Stem):
-    email: Annotated[list[Email], Field(min_length=1)]
+    email: Annotated[
+        list[Email],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.w3.org/2006/vcard/ns#hasEmail", "https://schema.org/email"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):

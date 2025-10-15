@@ -134,19 +134,46 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    abstract: list[Text] = []
-    alternateIdentifier: list[str] = []
-    alternativeTitle: list[Text] = []
+    abstract: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]}),
+    ] = []
+    alternateIdentifier: Annotated[
+        list[str],
+        Field(json_schema_extra={"sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]}),
+    ] = []
+    alternativeTitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
     bibliographicResourceType: list[BibliographicResourceType] = []
     contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
     distribution: list[MergedDistributionIdentifier] = []
-    editor: list[MergedPersonIdentifier] = []
-    editorOfSeries: list[MergedPersonIdentifier] = []
-    isbnIssn: list[IsbnIssnStr] = []
+    editor: Annotated[
+        list[MergedPersonIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+    ] = []
+    editorOfSeries: Annotated[
+        list[MergedPersonIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+    ] = []
+    isbnIssn: Annotated[
+        list[IsbnIssnStr],
+        Field(json_schema_extra={"sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]}),
+    ] = []
     journal: list[Text] = []
-    keyword: list[Text] = []
-    language: list[Language] = []
-    publisher: list[MergedOrganizationIdentifier] = []
+    keyword: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]}),
+    ] = []
+    language: Annotated[
+        list[Language],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/language"]}),
+    ] = []
+    publisher: Annotated[
+        list[MergedOrganizationIdentifier],
+        Field(json_schema_extra={"sameAs": "http://purl.org/dc/terms/publisher"}),
+    ] = []
     repositoryURL: list[Link] = []
     subtitle: list[Text] = []
     titleOfBook: list[Text] = []
@@ -154,8 +181,20 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
-    creator: Annotated[list[MergedPersonIdentifier], Field(min_length=1)]
-    title: Annotated[list[Text], Field(min_length=1)]
+    creator: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/creator"]},
+        ),
+    ]
+    title: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
@@ -167,18 +206,30 @@ class _OptionalValues(_Stem):
     doi: DoiStr | None = None
     edition: EditionStr | None = None
     issue: VolumeOrIssueStr | None = None
-    issued: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
-    license: License | None = None
+    issued: Annotated[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]}),
+    ] = None
+    license: Annotated[
+        License | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+    ] = None
     pages: PagesStr | None = None
     publicationPlace: PublicationPlaceStr | None = None
-    publicationYear: Year | None = None
+    publicationYear: Annotated[
+        Year | None,
+        Field(json_schema_extra={"sameAs": "http://datacite.org/schema/kernel-4/publicationYear"}),
+    ] = None
     section: SectionStr | None = None
     volume: VolumeOrIssueStr | None = None
     volumeOfSeries: VolumeOrIssueStr | None = None
 
 
 class _RequiredValues(_Stem):
-    accessRestriction: AccessRestriction
+    accessRestriction: Annotated[
+        AccessRestriction,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+    ]
 
 
 class _SparseValues(_Stem):

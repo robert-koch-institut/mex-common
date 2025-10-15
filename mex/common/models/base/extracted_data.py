@@ -23,6 +23,7 @@ HadPrimarySource = Annotated[
             "The extracted primary source for MEx has its own merged item as a "
             "primary source."
         ),
+        json_schema_extra={"sameAs": ["http://www.w3.org/ns/prov#hadPrimarySource"]},
         frozen=True,
     ),
 ]

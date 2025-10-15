@@ -45,18 +45,42 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeTitle: list[Text] = []
-    contact: list[AnyContactIdentifier] = []
-    description: list[Text] = []
-    landingPage: list[Link] = []
-    title: list[Text] = []
-    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
+    alternativeTitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+    ] = []
+    description: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+    ] = []
+    landingPage: Annotated[
+        list[Link],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#landingPage"]}),
+    ] = []
+    title: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+    ] = []
+    unitInCharge: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}),
+    ] = []
 
 
 class _OptionalValues(_Stem):
-    endpointDescription: Link | None = None
+    endpointDescription: Annotated[
+        Link | None,
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]}),
+    ] = None
     endpointType: APIType | None = None
-    endpointURL: Link | None = None
+    endpointURL: Annotated[
+        Link | None,
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]}),
+    ] = None
 
 
 class _RequiredValues(_Stem):

@@ -55,31 +55,86 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    abstract: list[Text] = []
+    abstract: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]}),
+    ] = []
     activityType: list[ActivityType] = []
-    alternativeTitle: list[Text] = []
+    alternativeTitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
     documentation: list[Link] = []
-    end: list[YearMonthDay | YearMonth | Year] = []
-    externalAssociate: list[AnyExternalAssociateIdentifier] = []
-    funderOrCommissioner: list[MergedOrganizationIdentifier] = []
+    end: Annotated[
+        list[YearMonthDay | YearMonth | Year],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P582"]}),
+    ] = []
+    externalAssociate: Annotated[
+        list[AnyExternalAssociateIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+    ] = []
+    funderOrCommissioner: Annotated[
+        list[MergedOrganizationIdentifier],
+        Field(json_schema_extra={"sameAs": "http://www.wikidata.org/entity/P8324"}),
+    ] = []
     fundingProgram: list[str] = []
-    involvedPerson: list[MergedPersonIdentifier] = []
-    involvedUnit: list[MergedOrganizationalUnitIdentifier] = []
-    isPartOfActivity: list[MergedActivityIdentifier] = []
+    involvedPerson: Annotated[
+        list[MergedPersonIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+    ] = []
+    involvedUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+    ] = []
+    isPartOfActivity: Annotated[
+        list[MergedActivityIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isPartOf", "http://www.cidoc-crm.org/cidoc-crm/P9i_forms_part_of"]}),
+    ] = []
     publication: list[MergedBibliographicResourceIdentifier] = []
-    shortName: list[Text] = []
-    start: list[YearMonthDay | YearMonth | Year] = []
-    succeeds: list[MergedActivityIdentifier] = []
-    theme: list[Theme] = []
-    website: list[Link] = []
+    shortName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+    ] = []
+    start: Annotated[
+        list[YearMonthDay | YearMonth | Year],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P580"]}),
+    ] = []
+    succeeds: Annotated[
+        list[MergedActivityIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.cidoc-crm.org/cidoc-crm/P173_start_before_or_with_the_end_of"]}),
+    ] = []
+    theme: Annotated[
+        list[Theme],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]}),
+    ] = []
+    website: Annotated[
+        list[Link],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P856", "http://xmlns.com/foaf/0.1/homepage"]}),
+    ] = []
 
 
 class _RequiredLists(_Stem):
-    contact: Annotated[list[AnyContactIdentifier], Field(min_length=1)]
-    responsibleUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+        ),
     ]
-    title: Annotated[list[Text], Field(min_length=1)]
+    responsibleUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": "http.//dcat-ap.de/def/dcatde/maintainer"},
+        ),
+    ]
+    title: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
