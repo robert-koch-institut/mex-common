@@ -3,13 +3,12 @@ from collections.abc import Iterable
 
 from mex.common.identity import get_provider
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
-from mex.common.models import ExtractedPrimarySource
-from mex.common.types import MergedPersonIdentifier
+from mex.common.types import MergedPersonIdentifier, MergedPrimarySourceIdentifier
 
 
 def get_merged_ids_by_employee_ids(
     persons: Iterable[LDAPPerson],
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Return a mapping from a person's employeeID to their merged person ids.
 
@@ -18,7 +17,7 @@ def get_merged_ids_by_employee_ids(
 
     Args:
         persons: Iterable of LDAP persons
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
 
     Returns:
         Mapping from `LDAPPerson.employeeID` to corresponding MergedPersonIdentifiers
@@ -27,7 +26,7 @@ def get_merged_ids_by_employee_ids(
     provider = get_provider()
     for person in persons:
         if identities := provider.fetch(
-            had_primary_source=primary_source.stableTargetId,
+            had_primary_source=primary_source_id,
             identifier_in_primary_source=str(person.objectGUID),
         ):
             merged_id = MergedPersonIdentifier(identities[0].stableTargetId)
@@ -37,7 +36,7 @@ def get_merged_ids_by_employee_ids(
 
 def get_merged_ids_by_query_string(
     persons_with_query: Iterable[LDAPPersonWithQuery],
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> dict[str, list[MergedPersonIdentifier]]:
     """Return a mapping from a person query string to their merged person ids.
 
@@ -46,7 +45,7 @@ def get_merged_ids_by_query_string(
 
     Args:
         persons_with_query: Iterable of LDP persons with query
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source for LDAP
 
     Returns:
         Mapping from `LDAPPersonWithQuery.query` to corresponding
@@ -56,7 +55,7 @@ def get_merged_ids_by_query_string(
     provider = get_provider()
     for person_with_query in persons_with_query:
         if identities := provider.fetch(
-            had_primary_source=primary_source.stableTargetId,
+            had_primary_source=primary_source_id,
             identifier_in_primary_source=str(person_with_query.person.objectGUID),
         ):
             merged_ids_by_attribute[str(person_with_query.query)].append(

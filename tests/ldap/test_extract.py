@@ -8,20 +8,12 @@ from mex.common.ldap.extract import (
     get_merged_ids_by_query_string,
 )
 from mex.common.ldap.models import LDAPPerson, LDAPPersonWithQuery
-from mex.common.models import ExtractedPrimarySource
-from mex.common.types import Identifier
-
-
-@pytest.fixture
-def ldap_primary_source(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
-) -> ExtractedPrimarySource:
-    return extracted_primary_sources["ldap"]
+from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
 
 @pytest.fixture
 def ldap_person_with_identity(
-    ldap_primary_source: ExtractedPrimarySource,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> LDAPPerson:
     person = LDAPPerson(
         objectGUID=UUID(int=1, version=4),
@@ -31,7 +23,7 @@ def ldap_person_with_identity(
         sn="Has Identity",
     )
     provider = get_provider()
-    provider.assign(ldap_primary_source.stableTargetId, str(person.objectGUID))
+    provider.assign(extracted_primary_source_ids["ldap"], str(person.objectGUID))
     return person
 
 
@@ -84,11 +76,11 @@ def ldap_persons_with_query(
 @pytest.fixture
 def merged_id_of_person_with_identity(
     ldap_person_with_identity: LDAPPerson,
-    ldap_primary_source: ExtractedPrimarySource,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> Identifier:
     provider = get_provider()
     identities = provider.fetch(
-        had_primary_source=ldap_primary_source.stableTargetId,
+        had_primary_source=extracted_primary_source_ids["ldap"],
         identifier_in_primary_source=str(ldap_person_with_identity.objectGUID),
     )
     return identities[0].stableTargetId
@@ -96,7 +88,7 @@ def merged_id_of_person_with_identity(
 
 def test_get_merged_ids_by_employee_ids(
     ldap_persons: list[LDAPPerson],
-    ldap_primary_source: ExtractedPrimarySource,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
     merged_id_of_person_with_identity: Identifier,
     ldap_person_with_identity: LDAPPerson,
 ) -> None:
@@ -104,7 +96,7 @@ def test_get_merged_ids_by_employee_ids(
         ldap_person_with_identity.employeeID: [merged_id_of_person_with_identity]
     }
     merged_ids_by_employee_ids = get_merged_ids_by_employee_ids(
-        ldap_persons, ldap_primary_source
+        ldap_persons, extracted_primary_source_ids["ldap"]
     )
     assert merged_ids_by_employee_ids == expected
 
@@ -112,13 +104,13 @@ def test_get_merged_ids_by_employee_ids(
 def test_get_merged_ids_by_query_string(
     ldap_person_with_identity_with_query: LDAPPersonWithQuery,
     ldap_persons_with_query: list[LDAPPersonWithQuery],
-    ldap_primary_source: ExtractedPrimarySource,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
     merged_id_of_person_with_identity: Identifier,
 ) -> None:
     expected = {
         ldap_person_with_identity_with_query.query: [merged_id_of_person_with_identity]
     }
     merged_ids_by_query_string = get_merged_ids_by_query_string(
-        ldap_persons_with_query, ldap_primary_source
+        ldap_persons_with_query, extracted_primary_source_ids["ldap"]
     )
     assert merged_ids_by_query_string == expected
