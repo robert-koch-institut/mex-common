@@ -72,7 +72,7 @@ def parse_csv(
                 into.__name__,
                 i,
             )
-            for row in chunk.iterrows():
+            for _, row in chunk.iterrows():
                 try:
                     model = into.model_validate(
                         row.replace(to_replace=np.nan, value=None)
