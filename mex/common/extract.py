@@ -91,18 +91,19 @@ def parse_csv(
                 if total_rows_processed % summary_batch_size == 0 and error_summary:
                     logger.error(
                         "Summarizing errors for batch with rows %s to %s",
-                        total_rows_processed - summary_batch_size + 1, total_rows_processed 
+                        total_rows_processed - summary_batch_size + 1,
+                        total_rows_processed,
                     )
                     for error_type, count in error_summary.items():
                         logger.error(
-                            " - Error type '%s': %s occurences", error_type, count
+                            " - Error type '%s': %s occurrences", error_type, count
                         )
                     error_summary.clear()
 
     if error_summary:
         logger.error("Summarizing errors for remaining rows")
         for error_type, count in error_summary.items():
-            logger.error(" - Error type '%s': %s occurences", error_type, count)
+            logger.error(" - Error type '%s': %s occurrences", error_type, count)
         logger.info(
             "Successfully processed %s items.", total_rows_successfully_processed
         )
