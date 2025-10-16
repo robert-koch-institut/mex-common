@@ -2,7 +2,6 @@ from typing import Any
 
 import pytest
 
-from mex.common.models import ExtractedPrimarySource
 from mex.common.orcid.models import (
     OrcidEmail,
     OrcidEmails,
@@ -14,6 +13,7 @@ from mex.common.orcid.models import (
     OrcidRecord,
 )
 from mex.common.orcid.transform import transform_orcid_person_to_mex_person
+from mex.common.types import MergedPrimarySourceIdentifier
 
 
 @pytest.mark.parametrize(
@@ -92,10 +92,9 @@ from mex.common.orcid.transform import transform_orcid_person_to_mex_person
 def test_transform_orcid_person_to_mex_person(
     orcid_person: OrcidRecord,
     expected_mex_person: dict[str, Any],
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> None:
-    orcid_primary_source = extracted_primary_sources["orcid"]
     mex_person = transform_orcid_person_to_mex_person(
-        orcid_person, orcid_primary_source
+        orcid_person, extracted_primary_source_ids["orcid"]
     )
     assert mex_person.model_dump() == expected_mex_person
