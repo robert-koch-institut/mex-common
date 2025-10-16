@@ -1,21 +1,21 @@
-from mex.common.models import ExtractedPerson, ExtractedPrimarySource
+from mex.common.models import ExtractedPerson
 from mex.common.orcid.models import OrcidRecord
+from mex.common.types import MergedPrimarySourceIdentifier
 
 
 def transform_orcid_person_to_mex_person(
     orcid_record: OrcidRecord,
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> ExtractedPerson:
     """Transforms a single ORCID person to an ExtractedPerson.
 
     Args:
         orcid_record: OrcidRecord object of a person.
-        primary_source: Primary source for Orcid.
+        primary_source_id: Primary source identifier for Orcid.
 
     Returns:
         ExtractedPerson.
     """
-    had_primary_source = primary_source.stableTargetId
     id_in_primary_source = orcid_record.orcid_identifier.path
     orcid_id = orcid_record.orcid_identifier.uri
     email = [e for emails in orcid_record.person.emails.email for e in emails.email]
@@ -35,7 +35,7 @@ def transform_orcid_person_to_mex_person(
 
     return ExtractedPerson(
         identifierInPrimarySource=id_in_primary_source,
-        hadPrimarySource=had_primary_source,
+        hadPrimarySource=primary_source_id,
         givenName=given_names,
         familyName=family_name,
         fullName=full_name,

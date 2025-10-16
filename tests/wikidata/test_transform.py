@@ -4,9 +4,8 @@ from typing import Any, cast
 
 import pytest
 
-from mex.common.models import ExtractedPrimarySource
 from mex.common.testing import Joker
-from mex.common.types import Text, TextLanguage
+from mex.common.types import MergedPrimarySourceIdentifier, Text, TextLanguage
 from mex.common.wikidata.models import (
     Aliases,
     Claim,
@@ -25,7 +24,7 @@ from tests.wikidata.conftest import TESTDATA_DIR
 
 
 def test_transform_wikidata_organization_to_extracted_organization(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> None:
     expected = {
         "identifier": Joker(),
@@ -58,7 +57,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
         wikidata_organization = WikidataOrganization.model_validate(json.load(fh)[0])
 
     extracted_organization = transform_wikidata_organization_to_extracted_organization(
-        wikidata_organization, extracted_primary_sources["wikidata"]
+        wikidata_organization, extracted_primary_source_ids["wikidata"]
     )
 
     assert extracted_organization
@@ -80,7 +79,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
 
 
 def test_transform_wikidata_organization_to_organization(
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> None:
     """Test wikidata organization transformation to extracted organization."""
     expected = {
@@ -118,7 +117,7 @@ def test_transform_wikidata_organization_to_organization(
 
     extracted_organizations = list(
         transform_wikidata_organizations_to_extracted_organizations(
-            wikidata_organizations, extracted_primary_sources["wikidata"]
+            wikidata_organizations, extracted_primary_source_ids["wikidata"]
         )
     )
 
