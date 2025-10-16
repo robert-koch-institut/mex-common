@@ -1,7 +1,7 @@
 import hashlib
 import pickle
 from collections.abc import MutableMapping
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ValidatorFunctionWrapHandler, model_validator
@@ -37,6 +37,8 @@ class BaseModel(
         ref_template: str = DEFAULT_REF_TEMPLATE,
         schema_generator: type[PydanticJsonSchemaGenerator] = JsonSchemaGenerator,
         mode: JsonSchemaMode = "validation",
+        *,
+        union_format: Literal["any_of", "primitive_type_array"] = "any_of",
     ) -> dict[str, Any]:
         """Generates a JSON schema for a model class.
 
@@ -45,6 +47,8 @@ class BaseModel(
             ref_template: The reference template.
             schema_generator: Overriding the logic used to generate the JSON schema
             mode: The mode in which to generate the schema.
+            union_format: The format to use when combining schemas from unions together.
+
 
         Returns:
             The JSON schema for the given model class.
@@ -54,6 +58,7 @@ class BaseModel(
             ref_template=ref_template,
             schema_generator=schema_generator,
             mode=mode,
+            union_format=union_format,
         )
 
     @classmethod

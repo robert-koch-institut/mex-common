@@ -1,9 +1,8 @@
 from pathlib import Path
 from typing import Any, Self, cast
 
-from pydantic import AnyUrl, Field, SecretStr, model_validator
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic_core import Url
+from pydantic import Field, HttpUrl, SecretStr, model_validator
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
@@ -120,8 +119,8 @@ class BaseSettings(PydanticBaseSettings):
         description="Provider to assign identifiers to new model instances.",
         validation_alias="MEX_IDENTITY_PROVIDER",
     )
-    backend_api_url: AnyUrl = Field(
-        Url("http://localhost:8080/"),
+    backend_api_url: HttpUrl = Field(
+        HttpUrl("http://localhost:8080/"),
         description="MEx backend API url.",
         validation_alias="MEX_BACKEND_API_URL",
     )
@@ -182,8 +181,8 @@ class BaseSettings(PydanticBaseSettings):
         description="Search base for the ldap connector.",
         validation_alias="MEX_LDAP_SEARCH_BASE",
     )
-    wiki_api_url: AnyUrl = Field(
-        Url("http://wikidata/"),
+    wiki_api_url: HttpUrl = Field(
+        HttpUrl("http://wikidata/"),
         description="URL of the Wikidata API used to resolve an ID to an organization.",
         validation_alias="MEX_WIKI_API_URL",
     )
@@ -192,8 +191,8 @@ class BaseSettings(PydanticBaseSettings):
         description="User agent is sent in request headers to external services.",
         validation_alias="MEX_WEB_USER_AGENT",
     )
-    orcid_api_url: AnyUrl = Field(
-        Url("https://orcid"),
+    orcid_api_url: HttpUrl = Field(
+        HttpUrl("https://orcid"),
         description="URL of orcid api.",
         validation_alias="MEX_ORCID_API_URL",
     )
