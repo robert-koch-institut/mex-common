@@ -15,14 +15,14 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
-    ExtractedPrimarySource,
 )
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.common.utils import deprecated
 
 
 def transform_ldap_persons_to_extracted_persons(
     ldap_persons: Iterable[LDAPPerson],
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
     units: Iterable[ExtractedOrganizationalUnit],
     rki_organization: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
@@ -30,7 +30,7 @@ def transform_ldap_persons_to_extracted_persons(
 
     Args:
         ldap_persons: LDAP persons
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
         units: Extracted organizational units
         rki_organization: RKI organization to which persons belong
 
@@ -43,7 +43,7 @@ def transform_ldap_persons_to_extracted_persons(
     extracted_persons = [
         transform_ldap_person_to_extracted_person(
             person,
-            primary_source,
+            primary_source_id,
             units_by_identifier_in_primary_source,
             rki_organization,
         )
@@ -55,20 +55,20 @@ def transform_ldap_persons_to_extracted_persons(
 
 def transform_ldap_functional_accounts_to_extracted_contact_points(
     ldap_functional_accounts: Iterable[LDAPFunctionalAccount],
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> list[ExtractedContactPoint]:
     """Transform LDAP functional accounts to ExtractedContactPoints.
 
     Args:
         ldap_functional_accounts: LDAP functional accounts
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
 
     Returns:
         List of extracted contact points
     """
     extracted_contact_points = [
         transform_ldap_functional_account_to_extracted_contact_point(
-            functional_account, primary_source
+            functional_account, primary_source_id
         )
         for functional_account in ldap_functional_accounts
     ]
@@ -81,7 +81,7 @@ def transform_ldap_functional_accounts_to_extracted_contact_points(
 
 def transform_ldap_persons_with_query_to_extracted_persons(
     ldap_persons_with_query: Iterable[LDAPPersonWithQuery],
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
     units: Iterable[ExtractedOrganizationalUnit],
     rki_organization: ExtractedOrganization,
 ) -> list[ExtractedPerson]:
@@ -89,7 +89,7 @@ def transform_ldap_persons_with_query_to_extracted_persons(
 
     Args:
         ldap_persons_with_query: LDAP persons with query
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
         units: Extracted organizational units
         rki_organization: RKI organization to which persons belong
 
@@ -98,7 +98,7 @@ def transform_ldap_persons_with_query_to_extracted_persons(
     """
     return transform_ldap_persons_to_extracted_persons(
         (a.person for a in ldap_persons_with_query),
-        primary_source,
+        primary_source_id,
         units,
         rki_organization,
     )
@@ -106,7 +106,7 @@ def transform_ldap_persons_with_query_to_extracted_persons(
 
 def transform_ldap_person_to_extracted_person(
     ldap_person: LDAPPerson,
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
     units_by_identifier_in_primary_source: dict[str, ExtractedOrganizationalUnit],
     rki_organization: ExtractedOrganization,
 ) -> ExtractedPerson:
@@ -114,7 +114,7 @@ def transform_ldap_person_to_extracted_person(
 
     Args:
         ldap_person: LDAP person
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
         units_by_identifier_in_primary_source: Mapping to get units by LDAP ID
         rki_organization: RKI Organization
 
@@ -123,7 +123,7 @@ def transform_ldap_person_to_extracted_person(
     """
     return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
-        hadPrimarySource=primary_source.stableTargetId,
+        hadPrimarySource=primary_source_id,
         affiliation=[rki_organization.stableTargetId],
         email=ldap_person.mail,
         familyName=[ldap_person.sn],
@@ -141,20 +141,20 @@ def transform_ldap_person_to_extracted_person(
 
 def transform_ldap_functional_account_to_extracted_contact_point(
     ldap_functional_account: LDAPFunctionalAccount,
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
 ) -> ExtractedContactPoint:
     """Transform a single LDAP functional account to an ExtractedContactPoint.
 
     Args:
         ldap_functional_account: LDAP functional account
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
 
     Returns:
         Extracted contact point
     """
     return ExtractedContactPoint(
         identifierInPrimarySource=str(ldap_functional_account.objectGUID),
-        hadPrimarySource=primary_source.stableTargetId,
+        hadPrimarySource=primary_source_id,
         email=ldap_functional_account.mail,
     )
 
@@ -162,7 +162,7 @@ def transform_ldap_functional_account_to_extracted_contact_point(
 def transform_any_ldap_actor_to_extracted_persons_or_contact_points(
     ldap_actors: Iterable[AnyLDAPActor],
     units: Iterable[ExtractedOrganizationalUnit],
-    primary_source: ExtractedPrimarySource,
+    primary_source_id: MergedPrimarySourceIdentifier,
     rki_organization: ExtractedOrganization,
 ) -> list[ExtractedPerson | ExtractedContactPoint]:
     """Transform any LDAP actors to extracted person or contact points.
@@ -170,7 +170,7 @@ def transform_any_ldap_actor_to_extracted_persons_or_contact_points(
     Args:
         ldap_actors: Iterable of LDAP functional account or LDAP persons
         units: Extracted organizational units
-        primary_source: Primary source for LDAP
+        primary_source_id: Primary source identifier for LDAP
         rki_organization: RKI organization to which persons belong
 
     Returns:
@@ -182,13 +182,13 @@ def transform_any_ldap_actor_to_extracted_persons_or_contact_points(
     extracted_actors = [
         transform_ldap_person_to_extracted_person(
             actor,
-            primary_source,
+            primary_source_id,
             units_by_identifier_in_primary_source,
             rki_organization,
         )
         if isinstance(actor, LDAPPerson)
         else transform_ldap_functional_account_to_extracted_contact_point(
-            actor, primary_source
+            actor, primary_source_id
         )
         for actor in ldap_actors
     ]

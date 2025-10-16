@@ -337,7 +337,6 @@ def test_mapping_model_schema() -> None:
             "$type": {
                 "const": "VariableGroupMapping",
                 "default": "VariableGroupMapping",
-                "enum": ["VariableGroupMapping"],
                 "title": "$Type",
                 "type": "string",
             },

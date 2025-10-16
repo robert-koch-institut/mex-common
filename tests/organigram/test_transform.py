@@ -1,21 +1,26 @@
-from mex.common.models import ExtractedOrganization, ExtractedPrimarySource
+from mex.common.models import ExtractedOrganization
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.testing import Joker
-from mex.common.types import LinkLanguage, Text, TextLanguage
+from mex.common.types import (
+    LinkLanguage,
+    MergedPrimarySourceIdentifier,
+    Text,
+    TextLanguage,
+)
 
 
 def test_transform_organigram_units_to_organizational_units(
     child_unit: OrganigramUnit,
     parent_unit: OrganigramUnit,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
     rki_organization: ExtractedOrganization,
 ) -> None:
     extracted_units = transform_organigram_units_to_organizational_units(
         [child_unit, parent_unit],
-        extracted_primary_sources["organigram"],
+        extracted_primary_source_ids["organigram"],
         rki_organization,
     )
 
@@ -39,7 +44,7 @@ def test_transform_organigram_units_to_organizational_units(
     # check serialized as expected
     assert parent_extracted_unit.model_dump(exclude_none=True) == {
         "identifier": Joker(),
-        "hadPrimarySource": extracted_primary_sources["organigram"].stableTargetId,
+        "hadPrimarySource": extracted_primary_source_ids["organigram"],
         "identifierInPrimarySource": "parent-unit",
         "stableTargetId": Joker(),
         "alternativeName": [

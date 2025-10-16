@@ -67,17 +67,19 @@ def test_parse_env_file() -> None:
     assert settings.model_fields_set != {"work_dir", "assets_dir"}
 
 
+class SubModel(BaseModel):
+    sub_model_path: WorkPath
+
+
+class DummySettings(BaseSettings):
+    non_path: str
+    abs_work_path: WorkPath
+    rel_work_path: WorkPath
+    assets_path: AssetsPath
+    sub_model: SubModel
+
+
 def test_resolve_paths() -> None:
-    class SubModel(BaseModel):
-        sub_model_path: WorkPath
-
-    class DummySettings(BaseSettings):
-        non_path: str
-        abs_work_path: WorkPath
-        rel_work_path: WorkPath
-        assets_path: AssetsPath
-        sub_model: SubModel
-
     if platform.system() == "Windows":  # pragma: no cover
         absolute = WorkPath(r"C:\absolute\path")
     else:  # pragma: no cover
