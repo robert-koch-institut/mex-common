@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated pydantic to 2.12.2 and pydantic settings to 2.11
+
 ### Deprecated
 
 ### Removed
