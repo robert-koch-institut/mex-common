@@ -83,13 +83,15 @@ def test_base_model_listyness_fix(
             assert actual[key] == value
 
 
+class Pet(BaseModel):
+    name: str
+
+
+class Shelter(Pet):
+    inhabitants: list[Pet]
+
+
 def test_base_model_listyness_fix_only_runs_on_mutable_mapping() -> None:
-    class Pet(BaseModel):
-        name: str
-
-    class Shelter(Pet):
-        inhabitants: list[Pet]
-
     # make sure this raises a validation error and does not fail in fix_listyness
     with pytest.raises(
         ValidationError, match="Input should be a valid dictionary or instance of Pet"

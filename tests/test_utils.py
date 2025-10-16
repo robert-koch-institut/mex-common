@@ -261,14 +261,16 @@ def test_get_field_names_allowing_none() -> None:
     ]
 
 
+class DummyModel(BaseModel):
+    number: int
+    text: str
+
+
+class PseudoModel(BaseModel):
+    title: str
+
+
 def test_group_fields_by_class_name() -> None:
-    class DummyModel(BaseModel):
-        number: int
-        text: str
-
-    class PseudoModel(BaseModel):
-        title: str
-
     lookup: dict[str, type[BaseModel]] = {"Dummy": DummyModel, "Pseudo": PseudoModel}
     expected = {"Dummy": ["text"], "Pseudo": ["title"]}
     assert group_fields_by_class_name(lookup, lambda f: f.annotation is str) == expected
