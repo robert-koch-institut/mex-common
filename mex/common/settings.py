@@ -247,10 +247,10 @@ class BaseSettings(PydanticBaseSettings):
             elif isinstance(value, WorkPath) and value.is_relative():
                 setattr(model, _name, self.work_dir.resolve() / value)
             elif isinstance(value, PydanticBaseModel):
-                for sub_model_field_name in value.model_fields:
+                for sub_model_field_name in type(value).model_fields:
                     _resolve(value, sub_model_field_name)
 
-        for name in self.model_fields:
+        for name in type(self).model_fields:
             _resolve(self, name)
         return self
 
@@ -269,9 +269,9 @@ class BaseSettings(PydanticBaseSettings):
                 )
                 raise ValueError(msg)  # noqa: TRY004  stfu ruff, pydantic wants ValueError
             if isinstance(value, PydanticBaseModel):
-                for sub_model_field_name in value.model_fields:
+                for sub_model_field_name in type(value).model_fields:
                     _validate(value, sub_model_field_name)
 
-        for name in self.model_fields:
+        for name in type(self).model_fields:
             _validate(self, name)
         return self
