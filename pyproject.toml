@@ -16,8 +16,8 @@ dependencies = [
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=21,<22",
-    "pydantic-settings>=2,<2.11",
-    "pydantic>=2,<2.13",
+    "pydantic-settings>=2,<3",
+    "pydantic>=2,<3",
     "pytz>=2025",
     "requests>=2,<3",
 ]
