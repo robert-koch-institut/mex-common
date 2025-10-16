@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.6.0] - 2025-10-16
+
+### Changes
+
+- updated pydantic to 2.12.2 and pydantic settings to 2.11
+
 ## [1.5.1] - 2025-10-07
 
 ### Added
