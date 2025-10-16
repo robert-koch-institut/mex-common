@@ -95,7 +95,7 @@ def test_contains_only_types(
     types: list[type],
     expected: bool,  # noqa: FBT001
 ) -> None:
-    class DummyModel(BaseModel):  # type: ignore[no-untyped-def]
+    class DummyModel(BaseModel):
         attribute: annotation
 
     field_info = get_all_fields(DummyModel)["attribute"]
