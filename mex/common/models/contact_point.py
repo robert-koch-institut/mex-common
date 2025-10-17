@@ -72,7 +72,13 @@ class BaseContactPoint(_RequiredLists):
 
 
 class ExtractedContactPoint(
-    BaseContactPoint, ExtractedData, json_schema_extra={"title": "Contact Point"}
+    BaseContactPoint,
+    ExtractedData,
+    json_schema_extra={
+        "description": "A mail address, where a group of people has access to.",
+        "sameAs": ["https://schema.org/ContactPoint"],
+        "title": "Contact Point",
+    },
 ):
     """An automatically extracted metadata set describing a contact point."""
 

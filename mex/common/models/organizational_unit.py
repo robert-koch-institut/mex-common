@@ -111,7 +111,20 @@ class BaseOrganizationalUnit(_OptionalLists, _RequiredLists, _OptionalValues):
 class ExtractedOrganizationalUnit(
     BaseOrganizationalUnit,
     ExtractedData,
-    json_schema_extra={"title": "Organizational Unit"},
+    json_schema_extra={
+        "description": (
+            "An Organization such as a department or support unit which is part of "
+            "some larger Organization and only has full recognition within the context "
+            "of that Organization. In particular the unit would not be regarded as a "
+            "legal entity in its own right."
+        ),
+        "sameAs": [
+            "http://www.w3.org/ns/org#OrganizationalUnit",
+            "http://www.w3.org/2006/vcard/ns#Group",
+            "http://www.cidoc-crm.org/cidoc-crm/E_74_Group",
+        ],
+        "title": "Organizational Unit",
+    },
 ):
     """An automatically extracted metadata set describing an organizational unit."""
 

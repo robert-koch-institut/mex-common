@@ -185,7 +185,21 @@ class BaseActivity(_OptionalLists, _RequiredLists):
 
 
 class ExtractedActivity(
-    BaseActivity, ExtractedData, json_schema_extra={"title": "Activity"}
+    BaseActivity,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "An activity carried out by RKI. This may be a research activity, such as "
+            "a funded project, or a task that RKI performs under federal law.  "
+            "Activities provide useful context information for resources."
+        ),
+        "sameAs": [
+            "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+            "http://purl.org/dc/terms/Activity",
+            "http://www.w3.org/ns/prov#Activity",
+        ],
+        "title": "Activity",
+    },
 ):
     """An automatically extracted metadata set describing an activity."""
 

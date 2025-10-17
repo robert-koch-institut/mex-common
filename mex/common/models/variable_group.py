@@ -70,7 +70,15 @@ class BaseVariableGroup(_RequiredLists):
 
 
 class ExtractedVariableGroup(
-    BaseVariableGroup, ExtractedData, json_schema_extra={"title": "Variable Group"}
+    BaseVariableGroup,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "The grouping of variables according to a certain aspect, e.g. how the "
+            "information is modelled in the primary source."
+        ),
+        "title": "Variable Group",
+    },
 ):
     """An automatically extracted metadata set describing a variable group."""
 

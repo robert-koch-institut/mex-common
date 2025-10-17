@@ -160,7 +160,25 @@ class BaseOrganization(_OptionalLists, _RequiredLists):
 
 
 class ExtractedOrganization(
-    BaseOrganization, ExtractedData, json_schema_extra={"title": "Organization"}
+    BaseOrganization,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "Represents a collection of people organized together into a community or "
+            "other social, commercial or political structure. The group has some "
+            "common purpose or reason for existence which goes beyond the set of "
+            "people belonging to it and can act as an Agent. Organizations are often "
+            "decomposable into hierarchical structures ([The Organization Ontology, "
+            "2014-01-16](http://www.w3.org/TR/2014/REC-vocab-org-20140116/))."
+        ),
+        "sameAs": [
+            "http://www.w3.org/ns/org#Organization",
+            "http://xmlns.com/foaf/0.1/Organization",
+            "http://www.w3.org/2006/vcard/ns#Organization",
+            "http://www.wikidata.org/entity/Q43229",
+        ],
+        "title": "Organization",
+    },
 ):
     """An automatically extracted metadata set describing an organization."""
 

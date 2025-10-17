@@ -152,7 +152,18 @@ class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
 
 
 class ExtractedVariable(
-    BaseVariable, ExtractedData, json_schema_extra={"title": "Variable"}
+    BaseVariable,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            " Variables are defined for the data-based evaluation of investigations "
+            "(e.g. studies). A variable is characterized by its data type (e.g. "
+            "integer, string, date) and value range. The variable can be either "
+            "quantitative or qualitative, i.e. the value range can take numerical or "
+            "categorical values."
+        ),
+        "title": "Variable",
+    },
 ):
     """An automatically extracted metadata set describing a variable."""
 

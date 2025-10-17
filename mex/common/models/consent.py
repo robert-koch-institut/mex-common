@@ -78,7 +78,13 @@ class BaseConsent(_OptionalValues, _RequiredValues):
 
 
 class ExtractedConsent(
-    BaseConsent, ExtractedData, json_schema_extra={"title": "Consent"}
+    BaseConsent,
+    ExtractedData,
+    json_schema_extra={
+        "description": "Consent of the Data Subject for specified process or activity.",
+        "sameAs": ["https://w3id.org/dpv#Consent"],
+        "title": "Consent",
+    },
 ):
     """An automatically extracted metadata set describing a consent."""
 

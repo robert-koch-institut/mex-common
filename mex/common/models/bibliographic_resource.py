@@ -292,7 +292,11 @@ class BaseBibliographicResource(
 class ExtractedBibliographicResource(
     BaseBibliographicResource,
     ExtractedData,
-    json_schema_extra={"title": "Bibliographic Resource"},
+    json_schema_extra={
+        "description": "A book, article, or other documentary resource.",
+        "sameAs": ["http://purl.org/dc/terms/BibliographicResource"],
+        "title": "Bibliographic Resource",
+    },
 ):
     """An automatically extracted metadata item describing a bibliographic resource."""
 

@@ -402,7 +402,18 @@ class BaseResource(_OptionalLists, _RequiredLists, _OptionalValues, _RequiredVal
 
 
 class ExtractedResource(
-    BaseResource, ExtractedData, json_schema_extra={"title": "Resource"}
+    BaseResource,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "A defined piece of information or collection of information on Public "
+            "Health, that has been generated as part of a (research) activity at the "
+            "RKI or to comply with a (federal) law or regulation that applies to the "
+            "RKI."
+        ),
+        "sameAs": ["http://www.w3.org/ns/dcat#Dataset"],
+        "title": "Resource",
+    },
 ):
     """An automatically extracted metadata set describing a resource."""
 

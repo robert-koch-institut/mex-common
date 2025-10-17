@@ -124,7 +124,16 @@ class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
 
 
 class ExtractedAccessPlatform(
-    BaseAccessPlatform, ExtractedData, json_schema_extra={"title": "Access Platform"}
+    BaseAccessPlatform,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "A technical system or service that provides access to distributions or "
+            "resources."
+        ),
+        "sameAs": ["http://www.w3.org/ns/dcat#DataService"],
+        "title": "Access Platform",
+    },
 ):
     """An automatically extracted metadata item describing an access platform."""
 

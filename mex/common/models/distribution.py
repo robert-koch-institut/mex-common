@@ -160,7 +160,20 @@ class BaseDistribution(
 
 
 class ExtractedDistribution(
-    BaseDistribution, ExtractedData, json_schema_extra={"title": "Distribution"}
+    BaseDistribution,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "A specific representation of a dataset. A dataset might be available in "
+            "multiple serializations that may differ in various ways, including "
+            "natural language, media-type or format, schematic organization, temporal "
+            "and spatial resolution, level of detail or profiles (which might specify "
+            "any or all of the above) ([DCAT, 2020-02-04]"
+            "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
+        ),
+        "sameAs": ["http://www.w3.org/ns/dcat#Distribution"],
+        "title": "Distribution",
+    },
 ):
     """An automatically extracted metadata set describing a distribution."""
 

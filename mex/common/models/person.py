@@ -153,7 +153,23 @@ class BasePerson(_OptionalLists):
     """All fields for a valid person except for provenance."""
 
 
-class ExtractedPerson(BasePerson, ExtractedData, json_schema_extra={"title": "Person"}):
+class ExtractedPerson(
+    BasePerson,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "A person ([FOAF, 2004-05-01](http://xmlns.com/foaf/0.1/)). This class "
+            "comprises real persons who live or are assumed to have lived ([CIDOC CRM, "
+            "version 7.1.1](https://cidoc-crm.org/html/cidoc_crm_v7.1.1.html))."
+        ),
+        "sameAs": [
+            "http://www.cidoc-crm.org/cidoc-crm/E21_Person",
+            "http://xmlns.com/foaf/0.1/Person",
+            "http://www.w3.org/2006/vcard/ns#Individual",
+        ],
+        "title": "Person",
+    },
+):
     """An automatically extracted metadata set describing a person."""
 
     entityType: Annotated[

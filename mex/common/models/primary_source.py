@@ -94,7 +94,19 @@ class BasePrimarySource(_OptionalLists, _OptionalValues):
 
 
 class ExtractedPrimarySource(
-    BasePrimarySource, ExtractedData, json_schema_extra={"title": "Primary Source"}
+    BasePrimarySource,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "A collection of information, that is managed and curated by an RKI unit "
+            "and lists activities and/or resources."
+        ),
+        "sameAs": [
+            "http://www.w3.org/ns/dcat#Catalog",
+            "http://www.w3.org/ns/prov#PrimarySource",
+        ],
+        "title": "Primary Source",
+    },
 ):
     """An automatically extracted metadata set describing a primary source."""
 
