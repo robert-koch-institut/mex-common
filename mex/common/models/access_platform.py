@@ -67,14 +67,20 @@ class _OptionalLists(_Stem):
     ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+        ),
     ] = []
 
 
 class _OptionalValues(_Stem):
     endpointDescription: Annotated[
         Link | None,
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]
+            }
+        ),
     ] = None
     endpointType: APIType | None = None
     endpointURL: Annotated[
@@ -102,7 +108,9 @@ class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
     """All fields for a valid access platform except for provenance."""
 
 
-class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
+class ExtractedAccessPlatform(
+    BaseAccessPlatform, ExtractedData, json_schema_extra={"title": "Access Platform"}
+):
     """An automatically extracted metadata item describing an access platform."""
 
     entityType: Annotated[
@@ -111,7 +119,14 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedAccessPlatformIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedAccessPlatformIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedAccessPlatformIdentifier)
 

@@ -135,7 +135,9 @@ class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
     """All fields for a valid variable except for provenance."""
 
 
-class ExtractedVariable(BaseVariable, ExtractedData):
+class ExtractedVariable(
+    BaseVariable, ExtractedData, json_schema_extra={"title": "Variable"}
+):
     """An automatically extracted metadata set describing a variable."""
 
     entityType: Annotated[
@@ -144,7 +146,14 @@ class ExtractedVariable(BaseVariable, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedVariableIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedVariableIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableIdentifier)
 

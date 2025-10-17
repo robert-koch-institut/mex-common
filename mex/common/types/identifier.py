@@ -65,7 +65,6 @@ class Identifier(str):
         json_schema_ = handler.resolve_ref_schema(json_schema_)
         json_schema_["title"] = cls.__name__
         json_schema_["pattern"] = IDENTIFIER_PATTERN
-        json_schema_["sameAs"] = ["http://purl.org/dc/elements/1.1/identifier"]
         return json_schema_
 
     def __repr__(self) -> str:

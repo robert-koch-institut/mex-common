@@ -108,7 +108,11 @@ class BaseOrganizationalUnit(_OptionalLists, _RequiredLists, _OptionalValues):
     """All fields for a valid organizational unit except for provenance."""
 
 
-class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
+class ExtractedOrganizationalUnit(
+    BaseOrganizationalUnit,
+    ExtractedData,
+    json_schema_extra={"title": "Organizational Unit"},
+):
     """An automatically extracted metadata set describing an organizational unit."""
 
     entityType: Annotated[
@@ -117,7 +121,14 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedOrganizationalUnitIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedOrganizationalUnitIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
 

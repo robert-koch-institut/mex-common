@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
-from mex.common.transform import dromedary_to_kebab, snake_to_camel
+from mex.common.transform import dromedary_to_kebab
 from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
 from mex.model import ENTITY_JSON_BY_NAME
 
@@ -38,16 +38,13 @@ def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
 GENERATED_SCHEMAS = dict(
     sorted(
         {
-            model.stemType: model_to_schema(model) for model in EXTRACTED_MODEL_CLASSES
+            schema["title"]: schema
+            for schema in [model_to_schema(model) for model in EXTRACTED_MODEL_CLASSES]
         }.items()
     )
 )
 SPECIFIED_SCHEMAS = dict(
-    sorted(
-        {
-            snake_to_camel(name): schema for name, schema in ENTITY_JSON_BY_NAME.items()
-        }.items()
-    )
+    sorted({schema["title"]: schema for schema in ENTITY_JSON_BY_NAME.values()}.items())
 )
 ENTITY_TYPES_AND_FIELD_NAMES_BY_FQN = {
     f"{entity_type}.{field_name}": (entity_type, field_name)
@@ -85,8 +82,7 @@ def test_field_names_match_spec(
 def test_entity_type_matches_class_name(
     generated: dict[str, Any], specified: dict[str, Any]
 ) -> None:
-    assert generated["title"] == generated["properties"]["$type"]["const"]
-    assert specified["title"] in generated["properties"]["$type"]["const"]
+    assert generated["title"] == specified["title"]
 
 
 @pytest.mark.parametrize(
@@ -128,7 +124,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     # (these have no use-case and no implementation plans yet)
     obj.pop("subPropertyOf", None)  # only in spec
     obj.pop("description", None)  # only in model (mostly implementation hints)
-    obj.pop("$comment", None)  # only in model
+    obj.pop("$comment", None)  # only in spec
     obj.pop("readOnly", None)  # only in model (but could be in spec)
 
     # pop annotations that we don't compare directly but use for other comparisons
@@ -138,7 +134,8 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     # (the paths to referenced vocabularies and types differ between the models
     # and the specification, so we need to make sure they match before comparing)
     if obj.get("pattern") == IDENTIFIER_PATTERN:
-        obj.clear()
+        obj.pop("pattern")
+        obj.pop("type")
         if field in ("identifier", "stableTargetId"):
             obj["$ref"] = "/schema/fields/identifier"
         else:

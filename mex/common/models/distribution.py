@@ -70,7 +70,9 @@ class _SparseLists(_Stem):
 class _OptionalValues(_Stem):
     accessService: Annotated[
         MergedAccessPlatformIdentifier | None,
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+        ),
     ] = None
     license: Annotated[
         License | None,
@@ -122,7 +124,9 @@ class _VariadicValues(_Stem):
     ] = []
     accessService: Annotated[
         list[MergedAccessPlatformIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+        ),
     ] = []
     issued: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
@@ -155,7 +159,9 @@ class BaseDistribution(
     """All fields for a valid distribution except for provenance."""
 
 
-class ExtractedDistribution(BaseDistribution, ExtractedData):
+class ExtractedDistribution(
+    BaseDistribution, ExtractedData, json_schema_extra={"title": "Distribution"}
+):
     """An automatically extracted metadata set describing a distribution."""
 
     entityType: Annotated[
@@ -164,7 +170,14 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedDistributionIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedDistributionIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedDistributionIdentifier)
 

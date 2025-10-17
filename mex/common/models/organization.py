@@ -159,7 +159,9 @@ class BaseOrganization(_OptionalLists, _RequiredLists):
     """All fields for a valid organization except for provenance."""
 
 
-class ExtractedOrganization(BaseOrganization, ExtractedData):
+class ExtractedOrganization(
+    BaseOrganization, ExtractedData, json_schema_extra={"title": "Organization"}
+):
     """An automatically extracted metadata set describing an organization."""
 
     entityType: Annotated[
@@ -168,7 +170,14 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedOrganizationIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedOrganizationIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationIdentifier)
 

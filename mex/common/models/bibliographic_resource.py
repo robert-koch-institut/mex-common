@@ -140,7 +140,11 @@ class _OptionalLists(_Stem):
     ] = []
     alternateIdentifier: Annotated[
         list[str],
-        Field(json_schema_extra={"sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
+            }
+        ),
     ] = []
     alternativeTitle: Annotated[
         list[Text],
@@ -159,7 +163,11 @@ class _OptionalLists(_Stem):
     ] = []
     isbnIssn: Annotated[
         list[IsbnIssnStr],
-        Field(json_schema_extra={"sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
+            }
+        ),
     ] = []
     journal: list[Text] = []
     keyword: Annotated[
@@ -218,7 +226,11 @@ class _OptionalValues(_Stem):
     publicationPlace: PublicationPlaceStr | None = None
     publicationYear: Annotated[
         Year | None,
-        Field(json_schema_extra={"sameAs": "http://datacite.org/schema/kernel-4/publicationYear"}),
+        Field(
+            json_schema_extra={
+                "sameAs": "http://datacite.org/schema/kernel-4/publicationYear"
+            }
+        ),
     ] = None
     section: SectionStr | None = None
     volume: VolumeOrIssueStr | None = None
@@ -258,7 +270,11 @@ class BaseBibliographicResource(
     """All fields for a valid bibliographic resource except for provenance."""
 
 
-class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
+class ExtractedBibliographicResource(
+    BaseBibliographicResource,
+    ExtractedData,
+    json_schema_extra={"title": "Bibliographic Resource"},
+):
     """An automatically extracted metadata item describing a bibliographic resource."""
 
     entityType: Annotated[
@@ -267,7 +283,14 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedBibliographicResourceIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedBibliographicResourceIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedBibliographicResourceIdentifier)
 

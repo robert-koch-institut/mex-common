@@ -364,7 +364,9 @@ class BaseResource(_OptionalLists, _RequiredLists, _OptionalValues, _RequiredVal
     """All fields for a valid resource except for provenance."""
 
 
-class ExtractedResource(BaseResource, ExtractedData):
+class ExtractedResource(
+    BaseResource, ExtractedData, json_schema_extra={"title": "Resource"}
+):
     """An automatically extracted metadata set describing a resource."""
 
     entityType: Annotated[
@@ -373,7 +375,14 @@ class ExtractedResource(BaseResource, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedResourceIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedResourceIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedResourceIdentifier)
 

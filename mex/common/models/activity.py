@@ -88,7 +88,14 @@ class _OptionalLists(_Stem):
     ] = []
     isPartOfActivity: Annotated[
         list[MergedActivityIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isPartOf", "http://www.cidoc-crm.org/cidoc-crm/P9i_forms_part_of"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/isPartOf",
+                    "http://www.cidoc-crm.org/cidoc-crm/P9i_forms_part_of",
+                ]
+            }
+        ),
     ] = []
     publication: list[MergedBibliographicResourceIdentifier] = []
     shortName: Annotated[
@@ -101,7 +108,13 @@ class _OptionalLists(_Stem):
     ] = []
     succeeds: Annotated[
         list[MergedActivityIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.cidoc-crm.org/cidoc-crm/P173_start_before_or_with_the_end_of"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.cidoc-crm.org/cidoc-crm/P173_start_before_or_with_the_end_of"
+                ]
+            }
+        ),
     ] = []
     theme: Annotated[
         list[Theme],
@@ -109,7 +122,14 @@ class _OptionalLists(_Stem):
     ] = []
     website: Annotated[
         list[Link],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P856", "http://xmlns.com/foaf/0.1/homepage"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.wikidata.org/entity/P856",
+                    "http://xmlns.com/foaf/0.1/homepage",
+                ]
+            }
+        ),
     ] = []
 
 
@@ -147,7 +167,9 @@ class BaseActivity(_OptionalLists, _RequiredLists):
     """All fields for a valid activity except for provenance."""
 
 
-class ExtractedActivity(BaseActivity, ExtractedData):
+class ExtractedActivity(
+    BaseActivity, ExtractedData, json_schema_extra={"title": "Activity"}
+):
     """An automatically extracted metadata set describing an activity."""
 
     entityType: Annotated[
@@ -156,7 +178,14 @@ class ExtractedActivity(BaseActivity, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedActivityIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedActivityIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedActivityIdentifier)
 

@@ -86,7 +86,9 @@ class BasePrimarySource(_OptionalLists, _OptionalValues):
     """All fields for a valid primary source except for provenance."""
 
 
-class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
+class ExtractedPrimarySource(
+    BasePrimarySource, ExtractedData, json_schema_extra={"title": "Primary Source"}
+):
     """An automatically extracted metadata set describing a primary source."""
 
     entityType: Annotated[
@@ -95,7 +97,14 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedPrimarySourceIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedPrimarySourceIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedPrimarySourceIdentifier)
 

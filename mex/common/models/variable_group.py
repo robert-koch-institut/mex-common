@@ -37,7 +37,9 @@ class _RequiredLists(_Stem):
         list[Text],
         Field(
             min_length=1,
-            json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]},
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
+            },
         ),
     ]
 
@@ -46,7 +48,9 @@ class _SparseLists(_Stem):
     containedBy: list[MergedResourceIdentifier] = []
     label: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]}
+        ),
     ] = []
 
 
@@ -54,7 +58,9 @@ class BaseVariableGroup(_RequiredLists):
     """All fields for a valid variable group except for provenance."""
 
 
-class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
+class ExtractedVariableGroup(
+    BaseVariableGroup, ExtractedData, json_schema_extra={"title": "Variable Group"}
+):
     """An automatically extracted metadata set describing a variable group."""
 
     entityType: Annotated[
@@ -63,7 +69,14 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedVariableGroupIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedVariableGroupIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableGroupIdentifier)
 
