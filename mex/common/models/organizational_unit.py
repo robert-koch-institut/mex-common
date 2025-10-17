@@ -42,19 +42,58 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeName: list[Text] = []
-    email: list[EmailStr] = []
-    shortName: list[Text] = []
-    unitOf: list[MergedOrganizationIdentifier] = []
-    website: list[Link] = []
+    alternativeName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    email: Annotated[
+        list[EmailStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.w3.org/2006/vcard/ns#hasEmail",
+                    "https://schema.org/email",
+                ]
+            }
+        ),
+    ] = []
+    shortName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+    ] = []
+    unitOf: Annotated[
+        list[MergedOrganizationIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]}),
+    ] = []
+    website: Annotated[
+        list[Link],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.wikidata.org/entity/P856",
+                    "http://www.w3.org/2006/vcard/ns#hasUrl",
+                    "http://xmlns.com/foaf/0.1/homepage",
+                ]
+            }
+        ),
+    ] = []
 
 
 class _RequiredLists(_Stem):
-    name: Annotated[list[Text], Field(min_length=1)]
+    name: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    name: list[Text] = []
+    name: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"}),
+    ] = []
 
 
 class _OptionalValues(_Stem):
@@ -69,7 +108,24 @@ class BaseOrganizationalUnit(_OptionalLists, _RequiredLists, _OptionalValues):
     """All fields for a valid organizational unit except for provenance."""
 
 
-class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
+class ExtractedOrganizationalUnit(
+    BaseOrganizationalUnit,
+    ExtractedData,
+    json_schema_extra={
+        "description": (
+            "An Organization such as a department or support unit which is part of "
+            "some larger Organization and only has full recognition within the context "
+            "of that Organization. In particular the unit would not be regarded as a "
+            "legal entity in its own right."
+        ),
+        "sameAs": [
+            "http://www.w3.org/ns/org#OrganizationalUnit",
+            "http://www.w3.org/2006/vcard/ns#Group",
+            "http://www.cidoc-crm.org/cidoc-crm/E_74_Group",
+        ],
+        "title": "Organizational Unit",
+    },
+):
     """An automatically extracted metadata set describing an organizational unit."""
 
     entityType: Annotated[
@@ -78,7 +134,14 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedOrganizationalUnitIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedOrganizationalUnitIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
 

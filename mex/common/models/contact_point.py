@@ -39,18 +39,47 @@ class _Stem(BaseModel):
 
 
 class _RequiredLists(_Stem):
-    email: Annotated[list[EmailStr], Field(min_length=1)]
+    email: Annotated[
+        list[EmailStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.w3.org/2006/vcard/ns#hasEmail",
+                    "https://schema.org/email",
+                ]
+            },
+            min_length=1,
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    email: list[EmailStr] = []
+    email: Annotated[
+        list[EmailStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://www.w3.org/2006/vcard/ns#hasEmail",
+                    "https://schema.org/email",
+                ]
+            }
+        ),
+    ] = []
 
 
 class BaseContactPoint(_RequiredLists):
     """All fields for a valid contact point except for provenance."""
 
 
-class ExtractedContactPoint(BaseContactPoint, ExtractedData):
+class ExtractedContactPoint(
+    BaseContactPoint,
+    ExtractedData,
+    json_schema_extra={
+        "description": "A mail address, where a group of people has access to.",
+        "sameAs": ["https://schema.org/ContactPoint"],
+        "title": "Contact Point",
+    },
+):
     """An automatically extracted metadata set describing a contact point."""
 
     entityType: Annotated[
@@ -59,7 +88,14 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedContactPointIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedContactPointIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedContactPointIdentifier)
 

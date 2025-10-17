@@ -32,23 +32,42 @@ class _Stem(BaseModel):
 
 
 class _OptionalValues(_Stem):
-    hasConsentType: ConsentType | None = None
+    hasConsentType: Annotated[
+        ConsentType | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
 
 
 class _RequiredValues(_Stem):
-    hasConsentStatus: ConsentStatus
-    hasDataSubject: MergedPersonIdentifier
-    isIndicatedAtTime: YearMonthDayTime
+    hasConsentStatus: Annotated[
+        ConsentStatus,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]}),
+    ]
+    hasDataSubject: Annotated[
+        MergedPersonIdentifier,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]}),
+    ]
+    isIndicatedAtTime: Annotated[
+        YearMonthDayTime,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]}),
+    ]
 
 
 class _SparseValues(_Stem):
     hasConsentStatus: ConsentStatus | None = None
     hasDataSubject: MergedPersonIdentifier | None = None
+    hasConsentType: Annotated[
+        ConsentType | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
     isIndicatedAtTime: YearMonthDayTime | None = None
 
 
 class _VariadicValues(_Stem):
-    hasConsentType: list[ConsentType] = []
+    hasConsentType: Annotated[
+        list[ConsentType],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
     hasConsentStatus: list[ConsentStatus] = []
     hasDataSubject: list[MergedPersonIdentifier] = []
     isIndicatedAtTime: list[YearMonthDayTime] = []
@@ -58,7 +77,15 @@ class BaseConsent(_OptionalValues, _RequiredValues):
     """All fields for a valid consent except for provenance."""
 
 
-class ExtractedConsent(BaseConsent, ExtractedData):
+class ExtractedConsent(
+    BaseConsent,
+    ExtractedData,
+    json_schema_extra={
+        "description": "Consent of the Data Subject for specified process or activity.",
+        "sameAs": ["https://w3id.org/dpv#Consent"],
+        "title": "Consent",
+    },
+):
     """An automatically extracted metadata set describing a consent."""
 
     entityType: Annotated[
@@ -67,7 +94,14 @@ class ExtractedConsent(BaseConsent, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedConsentIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedConsentIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedConsentIdentifier)
 
