@@ -32,7 +32,13 @@ class _Stem(BaseModel):
 
 
 class _RequiredLists(_Stem):
-    containedBy: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
+    containedBy: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+        ),
+    ]
     label: Annotated[
         list[Text],
         Field(
@@ -45,7 +51,12 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
-    containedBy: list[MergedResourceIdentifier] = []
+    containedBy: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+        ),
+    ] = []
     label: Annotated[
         list[Text],
         Field(

@@ -59,12 +59,22 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]}),
     ] = []
-    activityType: list[ActivityType] = []
+    activityType: Annotated[
+        list[ActivityType],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
     alternativeTitle: Annotated[
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
     ] = []
-    documentation: list[Link] = []
+    documentation: Annotated[
+        list[Link],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+            }
+        ),
+    ] = []
     end: Annotated[
         list[YearMonthDay | YearMonth | Year],
         Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P582"]}),
@@ -97,7 +107,14 @@ class _OptionalLists(_Stem):
             }
         ),
     ] = []
-    publication: list[MergedBibliographicResourceIdentifier] = []
+    publication: Annotated[
+        list[MergedBibliographicResourceIdentifier],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+            }
+        ),
+    ] = []
     shortName: Annotated[
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),

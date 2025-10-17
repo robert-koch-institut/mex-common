@@ -82,7 +82,10 @@ class _OptionalValues(_Stem):
             }
         ),
     ] = None
-    endpointType: APIType | None = None
+    endpointType: Annotated[
+        APIType | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
     endpointURL: Annotated[
         Link | None,
         Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]}),
@@ -90,18 +93,30 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
-    technicalAccessibility: TechnicalAccessibility
+    technicalAccessibility: Annotated[
+        TechnicalAccessibility,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ]
 
 
 class _SparseValues(_Stem):
-    technicalAccessibility: TechnicalAccessibility | None = None
+    technicalAccessibility: Annotated[
+        TechnicalAccessibility | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
 
 
 class _VariadicValues(_Stem):
     endpointDescription: list[Link] = []
-    endpointType: list[APIType] = []
+    endpointType: Annotated[
+        list[APIType],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
     endpointURL: list[Link] = []
-    technicalAccessibility: list[TechnicalAccessibility] = []
+    technicalAccessibility: Annotated[
+        list[TechnicalAccessibility],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
 
 
 class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):

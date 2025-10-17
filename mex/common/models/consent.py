@@ -32,7 +32,10 @@ class _Stem(BaseModel):
 
 
 class _OptionalValues(_Stem):
-    hasConsentType: ConsentType | None = None
+    hasConsentType: Annotated[
+        ConsentType | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
 
 
 class _RequiredValues(_Stem):
@@ -53,11 +56,18 @@ class _RequiredValues(_Stem):
 class _SparseValues(_Stem):
     hasConsentStatus: ConsentStatus | None = None
     hasDataSubject: MergedPersonIdentifier | None = None
+    hasConsentType: Annotated[
+        ConsentType | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
     isIndicatedAtTime: YearMonthDayTime | None = None
 
 
 class _VariadicValues(_Stem):
-    hasConsentType: list[ConsentType] = []
+    hasConsentType: Annotated[
+        list[ConsentType],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
     hasConsentStatus: list[ConsentStatus] = []
     hasDataSubject: list[MergedPersonIdentifier] = []
     isIndicatedAtTime: list[YearMonthDayTime] = []

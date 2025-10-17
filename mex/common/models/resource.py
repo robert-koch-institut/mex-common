@@ -136,8 +136,22 @@ class _OptionalLists(_Stem):
         list[ConformsToStr],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/conformsTo"]}),
     ] = []
-    contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
-    contributor: list[MergedPersonIdentifier] = []
+    contributingUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
+            }
+        ),
+    ] = []
+    contributor: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
+            }
+        ),
+    ] = []
     creator: Annotated[
         list[MergedPersonIdentifier],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/creator"]}),
@@ -147,7 +161,14 @@ class _OptionalLists(_Stem):
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
     ] = []
     distribution: list[MergedDistributionIdentifier] = []
-    documentation: list[Link] = []
+    documentation: Annotated[
+        list[Link],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+            }
+        ),
+    ] = []
     externalPartner: Annotated[
         list[MergedOrganizationIdentifier],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
@@ -177,7 +198,14 @@ class _OptionalLists(_Stem):
     loincId: list[LoincIdStr] = []
     meshId: list[MeshIdStr] = []
     method: list[Text] = []
-    methodDescription: list[Text] = []
+    methodDescription: Annotated[
+        list[Text],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/description"]
+            }
+        ),
+    ] = []
     populationCoverage: list[Text] = []
     provenance: Annotated[
         list[Text],
@@ -198,9 +226,18 @@ class _OptionalLists(_Stem):
             }
         ),
     ] = []
-    resourceCreationMethod: list[ResourceCreationMethod] = []
-    resourceTypeGeneral: list[ResourceTypeGeneral] = []
-    resourceTypeSpecific: list[Text] = []
+    resourceCreationMethod: Annotated[
+        list[ResourceCreationMethod],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
+    resourceTypeGeneral: Annotated[
+        list[ResourceTypeGeneral],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
+    resourceTypeSpecific: Annotated[
+        list[Text],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
     rights: Annotated[
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/rights"]}),

@@ -56,7 +56,12 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    belongsTo: list[MergedVariableGroupIdentifier] = []
+    belongsTo: Annotated[
+        list[MergedVariableGroupIdentifier],
+        Field(
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+        ),
+    ] = []
     description: Annotated[
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
@@ -77,7 +82,13 @@ class _RequiredLists(_Stem):
             },
         ),
     ]
-    usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
+    usedIn: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
@@ -92,7 +103,12 @@ class _SparseLists(_Stem):
             }
         ),
     ] = []
-    usedIn: list[MergedResourceIdentifier] = []
+    usedIn: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+        ),
+    ] = []
 
 
 class _OptionalValues(_Stem):

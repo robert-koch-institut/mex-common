@@ -150,8 +150,18 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
     ] = []
-    bibliographicResourceType: list[BibliographicResourceType] = []
-    contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
+    bibliographicResourceType: Annotated[
+        list[BibliographicResourceType],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
+    contributingUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
+            }
+        ),
+    ] = []
     distribution: list[MergedDistributionIdentifier] = []
     editor: Annotated[
         list[MergedPersonIdentifier],
@@ -183,9 +193,18 @@ class _OptionalLists(_Stem):
         Field(json_schema_extra={"sameAs": "http://purl.org/dc/terms/publisher"}),
     ] = []
     repositoryURL: list[Link] = []
-    subtitle: list[Text] = []
-    titleOfBook: list[Text] = []
-    titleOfSeries: list[Text] = []
+    subtitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]}),
+    ] = []
+    titleOfBook: Annotated[
+        list[Text],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]}),
+    ] = []
+    titleOfSeries: Annotated[
+        list[Text],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]}),
+    ] = []
 
 
 class _RequiredLists(_Stem):

@@ -60,7 +60,14 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
     ] = []
-    documentation: list[Link] = []
+    documentation: Annotated[
+        list[Link],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+            }
+        ),
+    ] = []
     locatedAt: list[Link] = []
     title: Annotated[
         list[Text],

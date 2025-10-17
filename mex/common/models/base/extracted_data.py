@@ -12,17 +12,10 @@ from mex.common.types import (
 _MergedIdentifierT = TypeVar("_MergedIdentifierT", bound=MergedIdentifier)
 _ExtractedIdentifierT = TypeVar("_ExtractedIdentifierT", bound=ExtractedIdentifier)
 
+
 HadPrimarySource = Annotated[
     MergedPrimarySourceIdentifier,
     Field(
-        description=(
-            "The stableTargetId of the primary source, that this item was "
-            "extracted from. This field is mandatory for all extracted items to "
-            "aid with data provenance. Extracted primary sources also have this "
-            "field and are all extracted from a static primary source for MEx. "
-            "The extracted primary source for MEx has its own merged item as a "
-            "primary source."
-        ),
         json_schema_extra={"sameAs": ["http://www.w3.org/ns/prov#hadPrimarySource"]},
         frozen=True,
     ),
@@ -30,14 +23,6 @@ HadPrimarySource = Annotated[
 IdentifierInPrimarySource = Annotated[
     str,
     Field(
-        description=(
-            "This is the identifier the original item had in its source system. "
-            "It is only unique amongst items coming from the same system, because "
-            "identifier formats are likely to overlap between systems. "
-            "The value for `identifierInPrimarySource` is therefore only unique in "
-            "composition with `hadPrimarySource`. MEx uses this composite key to "
-            "assign a stable and globally unique `identifier` per extracted item."
-        ),
         examples=["123456", "item-501", "D7/x4/zz.final3"],
         min_length=1,
         max_length=1000,
@@ -59,7 +44,19 @@ class ExtractedData(BaseModel, extra="forbid"):
     This class also adds a validator to automatically set identifiers for provenance.
     """
 
+    # The stableTargetId of the primary source, that this item was
+    # extracted from. This field is mandatory for all extracted items to
+    # aid with data provenance. Extracted primary sources also have this
+    # field and are all extracted from a static primary source for MEx.
+    # The extracted primary source for MEx has its own merged item as a
+    # primary source.
     hadPrimarySource: HadPrimarySource
+    # This is the identifier the original item had in its source system.
+    # It is only unique amongst items coming from the same system, because
+    # identifier formats are likely to overlap between systems.
+    # The value for `identifierInPrimarySource` is therefore only unique in
+    # composition with `hadPrimarySource`. MEx uses this composite key to
+    # assign a stable and globally unique `identifier` per extracted item.
     identifierInPrimarySource: IdentifierInPrimarySource
 
     def _get_identifier(
