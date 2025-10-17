@@ -110,7 +110,10 @@ from mex.common.models.activity import (
     PreviewActivity,
     SubtractiveActivity,
 )
-from mex.common.models.base.container import ItemsContainer, PaginatedItemsContainer
+from mex.common.models.base.container import (
+    ItemsContainer,
+    PaginatedItemsContainer,
+)
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField, FilterRule
 from mex.common.models.base.mapping import BaseMapping, MappingField, MappingRule
