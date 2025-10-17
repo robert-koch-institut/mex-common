@@ -17,7 +17,6 @@ from mex.common.models.base.rules import (
     SubtractiveRule,
 )
 from mex.common.types import (
-    Email,
     ExtractedPersonIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -25,6 +24,14 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
 )
 
+EmailStr = Annotated[
+    str,
+    Field(
+        examples=["info@rki.de"],
+        pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
+        json_schema_extra={"format": "email"},
+    ),
+]
 FamilyNameStr = Annotated[
     str,
     Field(
@@ -75,7 +82,7 @@ class _Stem(BaseModel):
 
 class _OptionalLists(_Stem):
     affiliation: list[MergedOrganizationIdentifier] = []
-    email: list[Email] = []
+    email: list[EmailStr] = []
     familyName: list[FamilyNameStr] = []
     fullName: list[FullNameStr] = []
     givenName: list[GivenNameStr] = []
@@ -192,7 +199,7 @@ class PersonMapping(_Stem, BaseMapping):
     ]
     identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     affiliation: list[MappingField[list[MergedOrganizationIdentifier]]] = []
-    email: list[MappingField[list[Email]]] = []
+    email: list[MappingField[list[EmailStr]]] = []
     familyName: list[MappingField[list[FamilyNameStr]]] = []
     fullName: list[MappingField[list[FullNameStr]]] = []
     givenName: list[MappingField[list[GivenNameStr]]] = []

@@ -1,6 +1,5 @@
 from typing import Final, Literal, get_args
 
-from mex.common.types.email import EMAIL_PATTERN, Email
 from mex.common.types.identifier import (
     IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,
@@ -76,7 +75,6 @@ from mex.common.types.vocabulary import (
 
 __all__ = (
     "CET",
-    "EMAIL_PATTERN",
     "EXTRACTED_IDENTIFIER_CLASSES",
     "EXTRACTED_IDENTIFIER_CLASSES_BY_NAME",
     "IDENTIFIER_PATTERN",
@@ -105,7 +103,6 @@ __all__ = (
     "ConsentStatus",
     "ConsentType",
     "DataProcessingState",
-    "Email",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
     "ExtractedBibliographicResourceIdentifier",

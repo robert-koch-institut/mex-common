@@ -14,7 +14,6 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
-    Email,
     ExtractedPersonIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
@@ -35,7 +34,7 @@ def extracted_person() -> ExtractedPerson:
         stableTargetId=MergedPersonIdentifier.generate(seed=876),
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=200),
         affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
-        email=[Email("TintzmannM@rki.de")],
+        email=["TintzmannM@rki.de"],
         familyName=["Tintzmann"],
         givenName=["Meinrad"],
         fullName=["Meinrad I. Tintzmann"],
@@ -54,7 +53,7 @@ def merged_person() -> MergedPerson:
     return MergedPerson.model_construct(
         identifier=MergedPersonIdentifier.generate(seed=876),
         affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
-        email=[Email("TintzmannM@rki.de")],
+        email=["TintzmannM@rki.de"],
         familyName=["Tintzmann"],
         givenName=["Meinrad"],
         fullName=["Meinrad I. Tintzmann"],
@@ -77,7 +76,7 @@ def extracted_organization_rki() -> ExtractedOrganization:
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=201),
         officialName=[Text(value="Robert Koch-Institut")],
         shortName=[Text(value="RKI")],
-        email=[Email("info@rki.de")],
+        email=["info@rki.de"],
     )
 
 
@@ -87,7 +86,7 @@ def preview_person() -> PreviewPerson:
     return PreviewPerson(
         identifier=MergedPersonIdentifier.generate(seed=876),
         affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
-        email=[Email("TintzmannM@rki.de")],
+        email=["TintzmannM@rki.de"],
     )
 
 

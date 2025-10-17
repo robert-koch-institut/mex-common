@@ -13,12 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - BREAKING: expects primary source id instead of primary source in get_merged_ids_by_employee_ids, get_merged_ids_by_query_string, transform_ldap_persons_to_extracted_persons, transform_ldap_functional_accounts_to_extracted_contact_points, transform_ldap_persons_with_query_to_extracted_persons, transform_ldap_person_to_extracted_person, transform_ldap_functional_account_to_extracted_contact_point, transform_any_ldap_actor_to_extracted_persons_or_contact_points, transform_orcid_person_to_mex_person, get_extracted_organizational_unit_with_parents, transform_organigram_unit_to_extracted_organizational_unit, transform_organigram_units_to_organizational_units, transform_wikidata_organizations_to_extracted_organizations, transform_wikidata_organization_to_extracted_organization
 - BREAKING: returns primary source id dict instead of primary source dict in extracted_primary_sources
+- BREAKING: email changed typing to annotated str for ContactPoint, OrgUnit and Person
 
 ### Deprecated
 
 ### Removed
 
 - BREAKING: get_primary_sources_by_name
+- BREAKING: EMAIL_PATTERN and Email removed from mex.common.types
+- BREAKING: EMAIL_FIELDS_BY_CLASS_NAME removed from mex.common.fields
 
 ### Fixed
 

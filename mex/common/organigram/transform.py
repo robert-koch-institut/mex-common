@@ -7,7 +7,6 @@ from mex.common.models import (
 )
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import (
-    Email,
     MergedOrganizationalUnitIdentifier,
     MergedPrimarySourceIdentifier,
 )
@@ -33,7 +32,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
         hadPrimarySource=primary_source_id,
         alternativeName=organigram_unit.alternativeName,
         unitOf=[rki_organization.stableTargetId],
-        email=[Email(email) for email in organigram_unit.email],
+        email=organigram_unit.email,
         name=organigram_unit.name,
         shortName=organigram_unit.shortName,
         website=[organigram_unit.website] if organigram_unit.website else [],
