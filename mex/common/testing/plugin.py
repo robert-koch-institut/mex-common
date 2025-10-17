@@ -19,7 +19,6 @@ from pydantic import AnyUrl
 from requests import HTTPError, Response
 
 from mex.common.connector import CONNECTOR_STORE
-from mex.common.models import ExtractedPrimarySource
 from mex.common.orcid.connector import OrcidConnector
 from mex.common.orcid.models import OrcidRecord, OrcidSearchResponse
 from mex.common.primary_source.extract import extract_seed_primary_sources
@@ -27,6 +26,7 @@ from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
 from mex.common.settings import SETTINGS_STORE, BaseSettings
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.common.wikidata.connector import WikidataAPIConnector
 from mex.common.wikidata.models import WikidataOrganization
 
@@ -121,7 +121,7 @@ def faker_session_locale() -> list[str]:
 
 
 @pytest.fixture()
-def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
+def extracted_primary_source_ids() -> dict[str, MergedPrimarySourceIdentifier]:
     """Return a mapping from `identifierInPrimarySource` to ExtractedPrimarySources."""
     seed_primary_sources = extract_seed_primary_sources()
     extracted_primary_sources = (
@@ -129,7 +129,9 @@ def extracted_primary_sources() -> dict[str, ExtractedPrimarySource]:
             seed_primary_sources
         )
     )
-    return {p.identifierInPrimarySource: p for p in extracted_primary_sources}
+    return {
+        p.identifierInPrimarySource: p.stableTargetId for p in extracted_primary_sources
+    }
 
 
 @pytest.fixture

@@ -15,7 +15,6 @@ from mex.common.types import (
     VOCABULARY_ENUMS,
     AnyTemporalEntity,
     AnyVocabularyEnum,
-    Email,
     Link,
     LiteralStringType,
     TemporalEntityPrecision,
@@ -76,12 +75,6 @@ TEXT_FIELDS_BY_CLASS_NAME = group_fields_by_class_name(
 LINK_FIELDS_BY_CLASS_NAME = group_fields_by_class_name(
     ALL_MODEL_CLASSES_BY_NAME,
     lambda field_info: contains_only_types(field_info, Link),
-)
-
-# fields annotated as `Email` type
-EMAIL_FIELDS_BY_CLASS_NAME = group_fields_by_class_name(
-    ALL_MODEL_CLASSES_BY_NAME,
-    lambda field_info: contains_only_types(field_info, Email),
 )
 
 # fields annotated as `int` type

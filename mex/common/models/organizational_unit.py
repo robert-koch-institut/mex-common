@@ -17,7 +17,6 @@ from mex.common.models.base.rules import (
     SubtractiveRule,
 )
 from mex.common.types import (
-    Email,
     ExtractedOrganizationalUnitIdentifier,
     Link,
     MergedOrganizationalUnitIdentifier,
@@ -25,6 +24,15 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
+
+EmailStr = Annotated[
+    str,
+    Field(
+        examples=["info@rki.de"],
+        pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
+        json_schema_extra={"format": "email"},
+    ),
+]
 
 
 class _Stem(BaseModel):
@@ -39,7 +47,7 @@ class _OptionalLists(_Stem):
         Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
     ] = []
     email: Annotated[
-        list[Email],
+        list[EmailStr],
         Field(
             json_schema_extra={
                 "sameAs": [
@@ -211,7 +219,7 @@ class OrganizationalUnitMapping(_Stem, BaseMapping):
     parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
     name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
-    email: list[MappingField[list[Email]]] = []
+    email: list[MappingField[list[EmailStr]]] = []
     shortName: list[MappingField[list[Text]]] = []
     unitOf: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     website: list[MappingField[list[Link]]] = []

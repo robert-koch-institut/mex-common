@@ -7,6 +7,16 @@ URL_PATTERN = (
     "^(?:(?:[^:/?#]+):)?(?://(?:[^/?#]*))?(?:[^?#]*)(?:\\?(?:[^#]*))?(?:#(?:.*))?$"
 )
 
+UrlStr = Annotated[
+    str,
+    Field(
+        pattern=URL_PATTERN,
+        min_length=1,
+        examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
+        json_schema_extra={"format": "uri"},
+    ),
+]
+
 
 class LinkLanguage(StrEnum):
     """Possible language tags for `Link` values."""
@@ -29,15 +39,7 @@ class Link(BaseModel):
 
     language: LinkLanguage | None = None
     title: str | None = None
-    url: Annotated[
-        str,
-        Field(
-            pattern=URL_PATTERN,
-            min_length=1,
-            examples=["https://hello-world.org", "file://S:/OE/MF4/Projekte/MEx"],
-            json_schema_extra={"format": "uri"},
-        ),
-    ]
+    url: UrlStr
 
     @model_validator(mode="before")
     @classmethod

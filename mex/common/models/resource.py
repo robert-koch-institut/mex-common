@@ -47,7 +47,17 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 
-ConformsToStr = Annotated[str, Field(examples=["FHIR", "LOINC", "SNOMED", "ICD-10"])]
+ConformsToStr = Annotated[
+    str,
+    Field(
+        examples=[
+            "FHIR",
+            "LOINC",
+            "SNOMED",
+            "ICD-10",
+        ]
+    ),
+]
 DoiStr = Annotated[
     str,
     Field(
@@ -113,7 +123,9 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     accessPlatform: Annotated[
         list[MergedAccessPlatformIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+        ),
     ] = []
     alternativeTitle: Annotated[
         list[Text],
@@ -173,12 +185,18 @@ class _OptionalLists(_Stem):
     ] = []
     publication: Annotated[
         list[MergedBibliographicResourceIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isReferencedBy"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isReferencedBy"]}
+        ),
     ] = []
     publisher: list[MergedOrganizationIdentifier] = []
     qualityInformation: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dqv#hasQualityAnnotation"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/ns/dqv#hasQualityAnnotation"]
+            }
+        ),
     ] = []
     resourceCreationMethod: list[ResourceCreationMethod] = []
     resourceTypeGeneral: list[ResourceTypeGeneral] = []
@@ -240,14 +258,20 @@ class _SparseLists(_Stem):
     ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}),
+        Field(
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+        ),
     ] = []
 
 
 class _OptionalValues(_Stem):
     accrualPeriodicity: Annotated[
         Frequency | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+            }
+        ),
     ] = None
     created: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
@@ -300,7 +324,11 @@ class _VariadicValues(_Stem):
     ] = []
     accrualPeriodicity: Annotated[
         list[Frequency],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]}),
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+            }
+        ),
     ] = []
     created: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],

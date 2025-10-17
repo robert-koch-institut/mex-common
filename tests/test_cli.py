@@ -231,10 +231,11 @@ def test_faulty_entrypoint_exits_non_zero() -> None:
     assert result.exit_code == 1, result.stdout
 
 
-def test_entrypoint_logs_docs_and_settings(caplog: LogCaptureFixture) -> None:
-    class ChattySettings(BaseSettings):
-        custom_setting: str = "default"
+class ChattySettings(BaseSettings):
+    custom_setting: str = "default"
 
+
+def test_entrypoint_logs_docs_and_settings(caplog: LogCaptureFixture) -> None:
     @entrypoint(ChattySettings)
     def chatty_entrypoint() -> None:
         """Hi, I am Pointy McEntryFace."""

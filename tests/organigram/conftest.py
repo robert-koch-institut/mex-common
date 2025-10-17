@@ -3,7 +3,6 @@ import pytest
 from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
-    ExtractedPrimarySource,
 )
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
@@ -34,12 +33,12 @@ def child_unit() -> OrganigramUnit:
 @pytest.fixture
 def extracted_child_unit(
     child_unit: OrganigramUnit,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
     rki_organization: ExtractedOrganization,
 ) -> ExtractedOrganizationalUnit:
     """Return the child unit transformed to an ExtractedOrganizationalUnit."""
     return transform_organigram_units_to_organizational_units(
-        [child_unit], extracted_primary_sources["organigram"], rki_organization
+        [child_unit], extracted_primary_source_ids["organigram"], rki_organization
     )[0]
 
 
@@ -66,12 +65,12 @@ def parent_unit() -> OrganigramUnit:
 @pytest.fixture
 def extracted_parent_unit(
     parent_unit: OrganigramUnit,
-    extracted_primary_sources: dict[str, ExtractedPrimarySource],
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
     rki_organization: ExtractedOrganization,
 ) -> ExtractedOrganizationalUnit:
     """Return the parent unit transformed to an ExtractedOrganizationalUnit."""
     return transform_organigram_units_to_organizational_units(
-        [parent_unit], extracted_primary_sources["organigram"], rki_organization
+        [parent_unit], extracted_primary_source_ids["organigram"], rki_organization
     )[0]
 
 
