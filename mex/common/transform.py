@@ -78,14 +78,6 @@ def kebab_to_camel(string: str) -> str:
 
 
 @lru_cache(maxsize=1024)
-def snake_to_camel(string: str) -> str:
-    """Convert the given string from `snake_case` into `CamelCase`."""
-    if len(tokens := re.split(r"_+", string)) > 1:
-        return "".join(word.title() for word in tokens)
-    return string[:1].upper() + string[1:]
-
-
-@lru_cache(maxsize=1024)
 def normalize(string: str) -> str:
     """Normalize the given string to lowercase, numerals and single spaces."""
     return " ".join(re.sub(r"[^a-z0-9]", " ", string.lower()).split())

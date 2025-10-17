@@ -12,7 +12,6 @@ from mex.common.types import (
 _MergedIdentifierT = TypeVar("_MergedIdentifierT", bound=MergedIdentifier)
 _ExtractedIdentifierT = TypeVar("_ExtractedIdentifierT", bound=ExtractedIdentifier)
 
-
 HadPrimarySource = Annotated[
     MergedPrimarySourceIdentifier,
     Field(

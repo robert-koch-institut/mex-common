@@ -17,7 +17,6 @@ from mex.common.transform import (
     ensure_prefix,
     kebab_to_camel,
     normalize,
-    snake_to_camel,
     snake_to_dromedary,
     split_to_caps,
     to_key_and_values,
@@ -157,28 +156,6 @@ def test_dromedary_to_kebab(string: str, expected: str) -> None:
 )
 def test_kebab_to_camel(string: str, expected: str) -> None:
     result = kebab_to_camel(string)
-    assert result == expected
-
-
-@pytest.mark.parametrize(
-    ("string", "expected"),
-    [
-        ("", ""),
-        ("word", "Word"),
-        ("AlreadyCamel", "AlreadyCamel"),
-        ("Mixed_CASE", "MixedCase"),
-        ("multiple_words_in_a_string", "MultipleWordsInAString"),
-    ],
-    ids=[
-        "empty",
-        "single word",
-        "already camel",
-        "mixed case",
-        "multiple words",
-    ],
-)
-def test_snake_to_camel(string: str, expected: str) -> None:
-    result = snake_to_camel(string)
     assert result == expected
 
 
