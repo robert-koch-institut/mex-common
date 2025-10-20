@@ -1,5 +1,3 @@
-"""A consent - for example, an interdepartmental project."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -73,19 +71,19 @@ class _VariadicValues(_Stem):
     isIndicatedAtTime: list[YearMonthDayTime] = []
 
 
-class BaseConsent(_OptionalValues, _RequiredValues):
-    """All fields for a valid consent except for provenance."""
-
-
-class ExtractedConsent(
-    BaseConsent,
-    ExtractedData,
+class BaseConsent(
+    _OptionalValues,
+    _RequiredValues,
     json_schema_extra={
         "description": "Consent of the Data Subject for specified process or activity.",
         "sameAs": ["https://w3id.org/dpv#Consent"],
         "title": "Consent",
     },
 ):
+    """All fields for a valid consent except for provenance."""
+
+
+class ExtractedConsent(BaseConsent, ExtractedData):
     """An automatically extracted metadata set describing a consent."""
 
     entityType: Annotated[

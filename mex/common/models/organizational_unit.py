@@ -1,5 +1,3 @@
-"""An organizational unit which is part of some larger organization."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -104,13 +102,10 @@ class _VariadicValues(_Stem):
     parentUnit: list[MergedOrganizationalUnitIdentifier] = []
 
 
-class BaseOrganizationalUnit(_OptionalLists, _RequiredLists, _OptionalValues):
-    """All fields for a valid organizational unit except for provenance."""
-
-
-class ExtractedOrganizationalUnit(
-    BaseOrganizationalUnit,
-    ExtractedData,
+class BaseOrganizationalUnit(
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
     json_schema_extra={
         "description": (
             "An Organization such as a department or support unit which is part of "
@@ -126,6 +121,10 @@ class ExtractedOrganizationalUnit(
         "title": "Organizational Unit",
     },
 ):
+    """All fields for a valid organizational unit except for provenance."""
+
+
+class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     """An automatically extracted metadata set describing an organizational unit."""
 
     entityType: Annotated[

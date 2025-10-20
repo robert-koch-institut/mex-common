@@ -1,8 +1,3 @@
-"""Represents a collection of people organized together.
-
-This can be any community or other social, commercial or political structure.
-"""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -155,13 +150,9 @@ class _SparseLists(_Stem):
     ] = []
 
 
-class BaseOrganization(_OptionalLists, _RequiredLists):
-    """All fields for a valid organization except for provenance."""
-
-
-class ExtractedOrganization(
-    BaseOrganization,
-    ExtractedData,
+class BaseOrganization(
+    _OptionalLists,
+    _RequiredLists,
     json_schema_extra={
         "description": (
             "Represents a collection of people organized together into a community or "
@@ -180,6 +171,10 @@ class ExtractedOrganization(
         "title": "Organization",
     },
 ):
+    """All fields for a valid organization except for provenance."""
+
+
+class ExtractedOrganization(BaseOrganization, ExtractedData):
     """An automatically extracted metadata set describing an organization."""
 
     entityType: Annotated[

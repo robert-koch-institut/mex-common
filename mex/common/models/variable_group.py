@@ -1,5 +1,3 @@
-"""The grouping of variables according to a certain aspect."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -65,13 +63,8 @@ class _SparseLists(_Stem):
     ] = []
 
 
-class BaseVariableGroup(_RequiredLists):
-    """All fields for a valid variable group except for provenance."""
-
-
-class ExtractedVariableGroup(
-    BaseVariableGroup,
-    ExtractedData,
+class BaseVariableGroup(
+    _RequiredLists,
     json_schema_extra={
         "description": (
             "The grouping of variables according to a certain aspect, e.g. how the "
@@ -80,6 +73,10 @@ class ExtractedVariableGroup(
         "title": "Variable Group",
     },
 ):
+    """All fields for a valid variable group except for provenance."""
+
+
+class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     """An automatically extracted metadata set describing a variable group."""
 
     entityType: Annotated[

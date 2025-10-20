@@ -1,5 +1,3 @@
-"""A way of physically accessing the Resource for re-use."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -119,13 +117,10 @@ class _VariadicValues(_Stem):
     ] = []
 
 
-class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
-    """All fields for a valid access platform except for provenance."""
-
-
-class ExtractedAccessPlatform(
-    BaseAccessPlatform,
-    ExtractedData,
+class BaseAccessPlatform(
+    _OptionalLists,
+    _OptionalValues,
+    _RequiredValues,
     json_schema_extra={
         "description": (
             "A technical system or service that provides access to distributions or "
@@ -135,6 +130,10 @@ class ExtractedAccessPlatform(
         "title": "Access Platform",
     },
 ):
+    """All fields for a valid access platform except for provenance."""
+
+
+class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     """An automatically extracted metadata item describing an access platform."""
 
     entityType: Annotated[

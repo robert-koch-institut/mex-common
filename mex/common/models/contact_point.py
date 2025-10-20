@@ -1,5 +1,3 @@
-"""A contact point - for example, an interdepartmental project."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -67,19 +65,18 @@ class _SparseLists(_Stem):
     ] = []
 
 
-class BaseContactPoint(_RequiredLists):
-    """All fields for a valid contact point except for provenance."""
-
-
-class ExtractedContactPoint(
-    BaseContactPoint,
-    ExtractedData,
+class BaseContactPoint(
+    _RequiredLists,
     json_schema_extra={
         "description": "A mail address, where a group of people has access to.",
         "sameAs": ["https://schema.org/ContactPoint"],
         "title": "Contact Point",
     },
 ):
+    """All fields for a valid contact point except for provenance."""
+
+
+class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     """An automatically extracted metadata set describing a contact point."""
 
     entityType: Annotated[

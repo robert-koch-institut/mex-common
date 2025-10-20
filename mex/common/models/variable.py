@@ -1,5 +1,3 @@
-"""A single piece of information within a resource."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -147,13 +145,10 @@ class _VariadicValues(_Stem):
     ] = []
 
 
-class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
-    """All fields for a valid variable except for provenance."""
-
-
-class ExtractedVariable(
-    BaseVariable,
-    ExtractedData,
+class BaseVariable(
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
     json_schema_extra={
         "description": (
             " Variables are defined for the data-based evaluation of investigations "
@@ -165,6 +160,10 @@ class ExtractedVariable(
         "title": "Variable",
     },
 ):
+    """All fields for a valid variable except for provenance."""
+
+
+class ExtractedVariable(BaseVariable, ExtractedData):
     """An automatically extracted metadata set describing a variable."""
 
     entityType: Annotated[

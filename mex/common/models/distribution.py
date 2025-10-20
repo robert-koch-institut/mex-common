@@ -1,5 +1,3 @@
-"""A specific representation of a dataset."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -154,14 +152,10 @@ class _VariadicValues(_Stem):
 
 
 class BaseDistribution(
-    _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
-):
-    """All fields for a valid distribution except for provenance."""
-
-
-class ExtractedDistribution(
-    BaseDistribution,
-    ExtractedData,
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
+    _RequiredValues,
     json_schema_extra={
         "description": (
             "A specific representation of a dataset. A dataset might be available in "
@@ -175,6 +169,10 @@ class ExtractedDistribution(
         "title": "Distribution",
     },
 ):
+    """All fields for a valid distribution except for provenance."""
+
+
+class ExtractedDistribution(BaseDistribution, ExtractedData):
     """An automatically extracted metadata set describing a distribution."""
 
     entityType: Annotated[

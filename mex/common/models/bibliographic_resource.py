@@ -1,5 +1,3 @@
-"""A book, article, or other documentary resource."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -284,20 +282,20 @@ class _VariadicValues(_Stem):
 
 
 class BaseBibliographicResource(
-    _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
-):
-    """All fields for a valid bibliographic resource except for provenance."""
-
-
-class ExtractedBibliographicResource(
-    BaseBibliographicResource,
-    ExtractedData,
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
+    _RequiredValues,
     json_schema_extra={
         "description": "A book, article, or other documentary resource.",
         "sameAs": ["http://purl.org/dc/terms/BibliographicResource"],
         "title": "Bibliographic Resource",
     },
 ):
+    """All fields for a valid bibliographic resource except for provenance."""
+
+
+class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
     """An automatically extracted metadata item describing a bibliographic resource."""
 
     entityType: Annotated[

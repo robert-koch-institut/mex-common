@@ -1,5 +1,3 @@
-"""A person related to a source and/or resource, i.e. a project leader."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -149,13 +147,8 @@ class _OptionalLists(_Stem):
     ] = []
 
 
-class BasePerson(_OptionalLists):
-    """All fields for a valid person except for provenance."""
-
-
-class ExtractedPerson(
-    BasePerson,
-    ExtractedData,
+class BasePerson(
+    _OptionalLists,
     json_schema_extra={
         "description": (
             "A person ([FOAF, 2004-05-01](http://xmlns.com/foaf/0.1/)). This class "
@@ -170,6 +163,10 @@ class ExtractedPerson(
         "title": "Person",
     },
 ):
+    """All fields for a valid person except for provenance."""
+
+
+class ExtractedPerson(BasePerson, ExtractedData):
     """An automatically extracted metadata set describing a person."""
 
     entityType: Annotated[

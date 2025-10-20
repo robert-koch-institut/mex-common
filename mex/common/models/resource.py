@@ -1,5 +1,3 @@
-"""A defined piece or collection of information."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -397,13 +395,11 @@ class _VariadicValues(_Stem):
     ] = []
 
 
-class BaseResource(_OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues):
-    """All fields for a valid resource except for provenance."""
-
-
-class ExtractedResource(
-    BaseResource,
-    ExtractedData,
+class BaseResource(
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
+    _RequiredValues,
     json_schema_extra={
         "description": (
             "A defined piece of information or collection of information on Public "
@@ -415,6 +411,10 @@ class ExtractedResource(
         "title": "Resource",
     },
 ):
+    """All fields for a valid resource except for provenance."""
+
+
+class ExtractedResource(BaseResource, ExtractedData):
     """An automatically extracted metadata set describing a resource."""
 
     entityType: Annotated[

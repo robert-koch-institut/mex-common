@@ -1,8 +1,3 @@
-"""The context a resource was generated in.
-
-This may be a project, an area of work or an administrative procedure.
-"""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -180,13 +175,9 @@ class _SparseLists(_Stem):
     title: list[Text] = []
 
 
-class BaseActivity(_OptionalLists, _RequiredLists):
-    """All fields for a valid activity except for provenance."""
-
-
-class ExtractedActivity(
-    BaseActivity,
-    ExtractedData,
+class BaseActivity(
+    _OptionalLists,
+    _RequiredLists,
     json_schema_extra={
         "description": (
             "An activity carried out by RKI. This may be a research activity, such as "
@@ -201,6 +192,10 @@ class ExtractedActivity(
         "title": "Activity",
     },
 ):
+    """All fields for a valid activity except for provenance."""
+
+
+class ExtractedActivity(BaseActivity, ExtractedData):
     """An automatically extracted metadata set describing an activity."""
 
     entityType: Annotated[

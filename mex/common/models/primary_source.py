@@ -1,5 +1,3 @@
-"""A collection of information, that is managed and curated by an RKI unit."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -89,13 +87,9 @@ class _VariadicValues(_Stem):
     version: list[VersionStr] = []
 
 
-class BasePrimarySource(_OptionalLists, _OptionalValues):
-    """All fields for a valid primary source except for provenance."""
-
-
-class ExtractedPrimarySource(
-    BasePrimarySource,
-    ExtractedData,
+class BasePrimarySource(
+    _OptionalLists,
+    _OptionalValues,
     json_schema_extra={
         "description": (
             "A collection of information, that is managed and curated by an RKI unit "
@@ -108,6 +102,10 @@ class ExtractedPrimarySource(
         "title": "Primary Source",
     },
 ):
+    """All fields for a valid primary source except for provenance."""
+
+
+class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     """An automatically extracted metadata set describing a primary source."""
 
     entityType: Annotated[
