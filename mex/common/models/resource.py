@@ -1,5 +1,3 @@
-"""A defined piece or collection of information."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -121,99 +119,298 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    accessPlatform: list[MergedAccessPlatformIdentifier] = []
-    alternativeTitle: list[Text] = []
+    accessPlatform: Annotated[
+        list[MergedAccessPlatformIdentifier],
+        Field(
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+        ),
+    ] = []
+    alternativeTitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
     anonymizationPseudonymization: list[AnonymizationPseudonymization] = []
-    conformsTo: list[ConformsToStr] = []
-    contributingUnit: list[MergedOrganizationalUnitIdentifier] = []
-    contributor: list[MergedPersonIdentifier] = []
-    creator: list[MergedPersonIdentifier] = []
-    description: list[Text] = []
+    conformsTo: Annotated[
+        list[ConformsToStr],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/conformsTo"]}),
+    ] = []
+    contributingUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
+            }
+        ),
+    ] = []
+    contributor: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
+            }
+        ),
+    ] = []
+    creator: Annotated[
+        list[MergedPersonIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/creator"]}),
+    ] = []
+    description: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+    ] = []
     distribution: list[MergedDistributionIdentifier] = []
-    documentation: list[Link] = []
-    externalPartner: list[MergedOrganizationIdentifier] = []
-    hasLegalBasis: list[Text] = []
-    hasPurpose: list[Text] = []
+    documentation: Annotated[
+        list[Link],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+            }
+        ),
+    ] = []
+    externalPartner: Annotated[
+        list[MergedOrganizationIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+    ] = []
+    hasLegalBasis: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasLegalBasis"]}),
+    ] = []
+    hasPurpose: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPurpose"]}),
+    ] = []
     icd10code: list[str] = []
     instrumentToolOrApparatus: list[Text] = []
-    isPartOf: list[MergedResourceIdentifier] = []
-    keyword: list[Text] = []
-    language: list[Language] = []
+    isPartOf: Annotated[
+        list[MergedResourceIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isPartOf"]}),
+    ] = []
+    keyword: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]}),
+    ] = []
+    language: Annotated[
+        list[Language],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/language"]}),
+    ] = []
     loincId: list[LoincIdStr] = []
     meshId: list[MeshIdStr] = []
     method: list[Text] = []
-    methodDescription: list[Text] = []
+    methodDescription: Annotated[
+        list[Text],
+        Field(
+            json_schema_extra={
+                "subPropertyOf": ["http://purl.org/dc/terms/description"]
+            }
+        ),
+    ] = []
     populationCoverage: list[Text] = []
-    provenance: list[Text] = []
-    publication: list[MergedBibliographicResourceIdentifier] = []
+    provenance: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/provenance"]}),
+    ] = []
+    publication: Annotated[
+        list[MergedBibliographicResourceIdentifier],
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isReferencedBy"]}
+        ),
+    ] = []
     publisher: list[MergedOrganizationIdentifier] = []
-    qualityInformation: list[Text] = []
-    resourceCreationMethod: list[ResourceCreationMethod] = []
-    resourceTypeGeneral: list[ResourceTypeGeneral] = []
-    resourceTypeSpecific: list[Text] = []
-    rights: list[Text] = []
-    spatial: list[Text] = []
+    qualityInformation: Annotated[
+        list[Text],
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/ns/dqv#hasQualityAnnotation"]
+            }
+        ),
+    ] = []
+    resourceCreationMethod: Annotated[
+        list[ResourceCreationMethod],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
+    resourceTypeGeneral: Annotated[
+        list[ResourceTypeGeneral],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
+    resourceTypeSpecific: Annotated[
+        list[Text],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
+    rights: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/rights"]}),
+    ] = []
+    spatial: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/spatial"]}),
+    ] = []
     stateOfDataProcessing: list[DataProcessingState] = []
 
 
 class _RequiredLists(_Stem):
-    contact: Annotated[list[AnyContactIdentifier], Field(min_length=1)]
-    theme: Annotated[list[Theme], Field(min_length=1)]
-    title: Annotated[list[Text], Field(min_length=1)]
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+        ),
+    ]
+    theme: Annotated[
+        list[Theme],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]},
+        ),
+    ]
+    title: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
+    ]
     unitInCharge: Annotated[
-        list[MergedOrganizationalUnitIdentifier], Field(min_length=1)
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
+        ),
     ]
 
 
 class _SparseLists(_Stem):
-    contact: list[AnyContactIdentifier] = []
-    theme: list[Theme] = []
-    title: list[Text] = []
-    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+    ] = []
+    theme: Annotated[
+        list[Theme],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]}),
+    ] = []
+    title: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+    ] = []
+    unitInCharge: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+        ),
+    ] = []
 
 
 class _OptionalValues(_Stem):
-    accrualPeriodicity: Frequency | None = None
-    created: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
+    accrualPeriodicity: Annotated[
+        Frequency | None,
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+            }
+        ),
+    ] = None
+    created: Annotated[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]}),
+    ] = None
     doi: DoiStr | None = None
-    hasPersonalData: PersonalData | None = None
-    license: License | None = None
+    hasPersonalData: Annotated[
+        PersonalData | None,
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPersonalData"]}),
+    ] = None
+    license: Annotated[
+        License | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+    ] = None
     maxTypicalAge: MaxTypicalAgeInt | None = None
     minTypicalAge: MinTypicalAgeInt | None = None
-    modified: YearMonthDayTime | YearMonthDay | YearMonth | Year | None = None
+    modified: Annotated[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]}),
+    ] = None
     sizeOfDataBasis: str | None = None
-    temporal: (
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
-    ) = None
-    wasGeneratedBy: MergedActivityIdentifier | None = None
+    temporal: Annotated[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/temporal"]}),
+    ] = None
+    wasGeneratedBy: Annotated[
+        MergedActivityIdentifier | None,
+        Field(json_schema_extra={"sameAs": "http://www.w3.org/ns/prov#wasGeneratedBy"}),
+    ] = None
 
 
 class _RequiredValues(_Stem):
-    accessRestriction: AccessRestriction
+    accessRestriction: Annotated[
+        AccessRestriction,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+    ]
 
 
 class _SparseValues(_Stem):
-    accessRestriction: AccessRestriction | None = None
+    accessRestriction: Annotated[
+        AccessRestriction | None,
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    accessRestriction: list[AccessRestriction] = []
-    accrualPeriodicity: list[Frequency] = []
-    created: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
+    accessRestriction: Annotated[
+        list[AccessRestriction],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+    ] = []
+    accrualPeriodicity: Annotated[
+        list[Frequency],
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+            }
+        ),
+    ] = []
+    created: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]}),
+    ] = []
     doi: list[DoiStr] = []
-    hasPersonalData: list[PersonalData] = []
-    license: list[License] = []
+    hasPersonalData: Annotated[
+        list[PersonalData],
+        Field(json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPersonalData"]}),
+    ] = []
+    license: Annotated[
+        list[License],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+    ] = []
     maxTypicalAge: list[MaxTypicalAgeInt] = []
     minTypicalAge: list[MinTypicalAgeInt] = []
-    modified: list[YearMonthDayTime | YearMonthDay | YearMonth | Year] = []
-    sizeOfDataBasis: list[str] = []
-    temporal: list[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr
+    modified: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]}),
     ] = []
-    wasGeneratedBy: list[MergedActivityIdentifier] = []
+    sizeOfDataBasis: list[str] = []
+    temporal: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/temporal"]}),
+    ] = []
+    wasGeneratedBy: Annotated[
+        list[MergedActivityIdentifier],
+        Field(json_schema_extra={"sameAs": "http://www.w3.org/ns/prov#wasGeneratedBy"}),
+    ] = []
 
 
-class BaseResource(_OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues):
+class BaseResource(
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
+    _RequiredValues,
+    json_schema_extra={
+        "description": (
+            "A defined piece of information or collection of information on Public "
+            "Health, that has been generated as part of a (research) activity at the "
+            "RKI or to comply with a (federal) law or regulation that applies to the "
+            "RKI."
+        ),
+        "sameAs": ["http://www.w3.org/ns/dcat#Dataset"],
+        "title": "Resource",
+    },
+):
     """All fields for a valid resource except for provenance."""
 
 
@@ -226,7 +423,14 @@ class ExtractedResource(BaseResource, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedResourceIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedResourceIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedResourceIdentifier)
 

@@ -1,5 +1,3 @@
-"""A single piece of information within a resource."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -56,35 +54,112 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    belongsTo: list[MergedVariableGroupIdentifier] = []
-    description: list[Text] = []
+    belongsTo: Annotated[
+        list[MergedVariableGroupIdentifier],
+        Field(
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+        ),
+    ] = []
+    description: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+    ] = []
     valueSet: list[ValueSetStr] = []
 
 
 class _RequiredLists(_Stem):
     label: Annotated[
         list[LabelText],
-        Field(min_length=1),
+        Field(
+            min_length=1,
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/title",
+                    "http://www.w3.org/2000/01/rdf-schema#label",
+                ]
+            },
+        ),
     ]
-    usedIn: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
+    usedIn: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    label: list[LabelText] = []
-    usedIn: list[MergedResourceIdentifier] = []
+    label: Annotated[
+        list[LabelText],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/title",
+                    "http://www.w3.org/2000/01/rdf-schema#label",
+                ]
+            }
+        ),
+    ] = []
+    usedIn: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+        ),
+    ] = []
 
 
 class _OptionalValues(_Stem):
-    codingSystem: CodingSystemStr | None = None
-    dataType: DataTypeStr | None = None
+    codingSystem: Annotated[
+        CodingSystemStr | None,
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/conformsTo",
+                    "https://schema.org/codingSystem",
+                ]
+            }
+        ),
+    ] = None
+    dataType: Annotated[
+        DataTypeStr | None,
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    codingSystem: list[CodingSystemStr] = []
-    dataType: list[DataTypeStr] = []
+    codingSystem: Annotated[
+        list[CodingSystemStr],
+        Field(
+            json_schema_extra={
+                "sameAs": [
+                    "http://purl.org/dc/terms/conformsTo",
+                    "https://schema.org/codingSystem",
+                ]
+            }
+        ),
+    ] = []
+    dataType: Annotated[
+        list[DataTypeStr],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+    ] = []
 
 
-class BaseVariable(_OptionalLists, _RequiredLists, _OptionalValues):
+class BaseVariable(
+    _OptionalLists,
+    _RequiredLists,
+    _OptionalValues,
+    json_schema_extra={
+        "description": (
+            " Variables are defined for the data-based evaluation of investigations "
+            "(e.g. studies). A variable is characterized by its data type (e.g. "
+            "integer, string, date) and value range. The variable can be either "
+            "quantitative or qualitative, i.e. the value range can take numerical or "
+            "categorical values."
+        ),
+        "title": "Variable",
+    },
+):
     """All fields for a valid variable except for provenance."""
 
 
@@ -97,7 +172,14 @@ class ExtractedVariable(BaseVariable, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedVariableIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedVariableIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableIdentifier)
 

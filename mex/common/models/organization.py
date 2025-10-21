@@ -1,8 +1,3 @@
-"""Represents a collection of people organized together.
-
-This can be any community or other social, commercial or political structure.
-"""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -107,25 +102,75 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeName: list[Text] = []
-    geprisId: list[GeprisIdStr] = []
-    gndId: list[GndIdStr] = []
-    isniId: list[IsniIdStr] = []
-    rorId: list[RorIdStr] = []
-    shortName: list[Text] = []
-    viafId: list[ViafIdStr] = []
+    alternativeName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    geprisId: Annotated[
+        list[GeprisIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]}),
+    ] = []
+    gndId: Annotated[
+        list[GndIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]}),
+    ] = []
+    isniId: Annotated[
+        list[IsniIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]}),
+    ] = []
+    rorId: Annotated[
+        list[RorIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]}),
+    ] = []
+    shortName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+    ] = []
+    viafId: Annotated[
+        list[ViafIdStr],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]}),
+    ] = []
     wikidataId: list[WikidataIdStr] = []
 
 
 class _RequiredLists(_Stem):
-    officialName: Annotated[list[Text], Field(min_length=1)]
+    officialName: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    officialName: list[Text] = []
+    officialName: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]}),
+    ] = []
 
 
-class BaseOrganization(_OptionalLists, _RequiredLists):
+class BaseOrganization(
+    _OptionalLists,
+    _RequiredLists,
+    json_schema_extra={
+        "description": (
+            "Represents a collection of people organized together into a community or "
+            "other social, commercial or political structure. The group has some "
+            "common purpose or reason for existence which goes beyond the set of "
+            "people belonging to it and can act as an Agent. Organizations are often "
+            "decomposable into hierarchical structures ([The Organization Ontology, "
+            "2014-01-16](http://www.w3.org/TR/2014/REC-vocab-org-20140116/))."
+        ),
+        "sameAs": [
+            "http://www.w3.org/ns/org#Organization",
+            "http://xmlns.com/foaf/0.1/Organization",
+            "http://www.w3.org/2006/vcard/ns#Organization",
+            "http://www.wikidata.org/entity/Q43229",
+        ],
+        "title": "Organization",
+    },
+):
     """All fields for a valid organization except for provenance."""
 
 
@@ -138,7 +183,14 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedOrganizationIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedOrganizationIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationIdentifier)
 
