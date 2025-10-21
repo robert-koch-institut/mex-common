@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - better align mex.common.models with mex-model
 - update mex-model dependency to 4.3
+- parse_csv now summarizes error logs in batches with amount of successful validations.
 
 ### Deprecated
 
