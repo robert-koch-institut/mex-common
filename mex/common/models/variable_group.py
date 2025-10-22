@@ -1,5 +1,3 @@
-"""The grouping of variables according to a certain aspect."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, computed_field
@@ -32,16 +30,49 @@ class _Stem(BaseModel):
 
 
 class _RequiredLists(_Stem):
-    containedBy: Annotated[list[MergedResourceIdentifier], Field(min_length=1)]
-    label: Annotated[list[Text], Field(min_length=1)]
+    containedBy: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            min_length=1,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+        ),
+    ]
+    label: Annotated[
+        list[Text],
+        Field(
+            min_length=1,
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
+            },
+        ),
+    ]
 
 
 class _SparseLists(_Stem):
-    containedBy: list[MergedResourceIdentifier] = []
-    label: list[Text] = []
+    containedBy: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+        ),
+    ] = []
+    label: Annotated[
+        list[Text],
+        Field(
+            json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]}
+        ),
+    ] = []
 
 
-class BaseVariableGroup(_RequiredLists):
+class BaseVariableGroup(
+    _RequiredLists,
+    json_schema_extra={
+        "description": (
+            "The grouping of variables according to a certain aspect, e.g. how the "
+            "information is modelled in the primary source."
+        ),
+        "title": "Variable Group",
+    },
+):
     """All fields for a valid variable group except for provenance."""
 
 
@@ -54,7 +85,14 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedVariableGroupIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedVariableGroupIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableGroupIdentifier)
 

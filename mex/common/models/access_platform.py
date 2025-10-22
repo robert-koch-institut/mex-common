@@ -1,5 +1,3 @@
-"""A way of physically accessing the Resource for re-use."""
-
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -45,36 +43,93 @@ class _Stem(BaseModel):
 
 
 class _OptionalLists(_Stem):
-    alternativeTitle: list[Text] = []
-    contact: list[AnyContactIdentifier] = []
-    description: list[Text] = []
-    landingPage: list[Link] = []
-    title: list[Text] = []
-    unitInCharge: list[MergedOrganizationalUnitIdentifier] = []
+    alternativeTitle: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+    ] = []
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+    ] = []
+    description: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+    ] = []
+    landingPage: Annotated[
+        list[Link],
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#landingPage"]}),
+    ] = []
+    title: Annotated[
+        list[Text],
+        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+    ] = []
+    unitInCharge: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+        ),
+    ] = []
 
 
 class _OptionalValues(_Stem):
-    endpointDescription: Link | None = None
-    endpointType: APIType | None = None
-    endpointURL: Link | None = None
+    endpointDescription: Annotated[
+        Link | None,
+        Field(
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]
+            }
+        ),
+    ] = None
+    endpointType: Annotated[
+        APIType | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
+    endpointURL: Annotated[
+        Link | None,
+        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]}),
+    ] = None
 
 
 class _RequiredValues(_Stem):
-    technicalAccessibility: TechnicalAccessibility
+    technicalAccessibility: Annotated[
+        TechnicalAccessibility,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ]
 
 
 class _SparseValues(_Stem):
-    technicalAccessibility: TechnicalAccessibility | None = None
+    technicalAccessibility: Annotated[
+        TechnicalAccessibility | None,
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = None
 
 
 class _VariadicValues(_Stem):
     endpointDescription: list[Link] = []
-    endpointType: list[APIType] = []
+    endpointType: Annotated[
+        list[APIType],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
     endpointURL: list[Link] = []
-    technicalAccessibility: list[TechnicalAccessibility] = []
+    technicalAccessibility: Annotated[
+        list[TechnicalAccessibility],
+        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+    ] = []
 
 
-class BaseAccessPlatform(_OptionalLists, _OptionalValues, _RequiredValues):
+class BaseAccessPlatform(
+    _OptionalLists,
+    _OptionalValues,
+    _RequiredValues,
+    json_schema_extra={
+        "description": (
+            "A technical system or service that provides access to distributions or "
+            "resources."
+        ),
+        "sameAs": ["http://www.w3.org/ns/dcat#DataService"],
+        "title": "Access Platform",
+    },
+):
     """All fields for a valid access platform except for provenance."""
 
 
@@ -87,7 +142,14 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(self) -> ExtractedAccessPlatformIdentifier:
+    def identifier(
+        self,
+    ) -> Annotated[
+        ExtractedAccessPlatformIdentifier,
+        Field(
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+        ),
+    ]:
         """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedAccessPlatformIdentifier)
 

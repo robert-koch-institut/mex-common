@@ -5,10 +5,10 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:ea71f0982c32abe5c2daab15a8723633933968b98b27dfc9bf48d9fbc6dffe8b"
+content_hash = "sha256:625e2ddcfb5f32fe2496ac1b5b056777d7093c594fd52d6ae8919f1d00d8b0c4"
 
 [[metadata.targets]]
-requires_python = "==3.11.*"
+requires_python = ">=3.11,<3.12"
 
 [[package]]
 name = "alabaster"
@@ -431,7 +431,7 @@ files = [
 
 [[package]]
 name = "mex-model"
-version = "4.2.1"
+version = "4.3.0"
 requires_python = ">=3.9"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
@@ -439,8 +439,8 @@ dependencies = [
     "importlib-resources>=1.3; python_version < \"3.10\"",
 ]
 files = [
-    {file = "mex_model-4.2.1-py3-none-any.whl", hash = "sha256:fb170b44038bcec0720d6b88b4de90be35cdb36af5143f70bdfb8186be7f6195"},
-    {file = "mex_model-4.2.1.tar.gz", hash = "sha256:df13f4cc91e3cbe4962524ccc0c3fa168b28d10dec9f6458df2287e373cbf6a4"},
+    {file = "mex_model-4.3.0-py3-none-any.whl", hash = "sha256:895846e34d31180bc9f319a4be722d84d91bf6b3ab6bae2d89701b21f7d2a6ea"},
+    {file = "mex_model-4.3.0.tar.gz", hash = "sha256:54cc3b9656e335c5e5990fdf08fb7828b3d942ea9f8b52e206e79ea4d42fac9c"},
 ]
 
 [[package]]
