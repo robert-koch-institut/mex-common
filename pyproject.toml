@@ -13,6 +13,7 @@ dependencies = [
     "langdetect>=1,<2",
     "ldap3>=2,<3",
     "mex-model>=4.2.1,<4.3",
+    "networkx>=3",
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=21,<22",
