@@ -5,10 +5,10 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:625e2ddcfb5f32fe2496ac1b5b056777d7093c594fd52d6ae8919f1d00d8b0c4"
+content_hash = "sha256:14589f5fd82df0c27d975ddba8511f0987cb41173f167427f1395c4a05f0f0c9"
 
 [[metadata.targets]]
-requires_python = ">=3.11,<3.12"
+requires_python = "==3.11.*"
 
 [[package]]
 name = "alabaster"
@@ -1073,6 +1073,20 @@ dependencies = [
 files = [
     {file = "types_ldap3-2.9.13.20250622-py3-none-any.whl", hash = "sha256:c18d0320327fa0017eb3d95acdf38921542d80939255e4ba130ca2d13ca3375f"},
     {file = "types_ldap3-2.9.13.20250622.tar.gz", hash = "sha256:4770a8701daddf1ee936d46414205a329211b6f6e655c2764f6b70c89b023c47"},
+]
+
+[[package]]
+name = "types-networkx"
+version = "3.5.0.20251001"
+requires_python = ">=3.10"
+summary = "Typing stubs for networkx"
+groups = ["dev"]
+dependencies = [
+    "numpy>=1.20",
+]
+files = [
+    {file = "types_networkx-3.5.0.20251001-py3-none-any.whl", hash = "sha256:4bb9dd0378a52ca57d68f8215f8662e736d800a8ff892b457646eccd828a0230"},
+    {file = "types_networkx-3.5.0.20251001.tar.gz", hash = "sha256:8e3c5c491ba5870d75e175751d70ddeac81df43caf2a64bae161e181f5e8ea7a"},
 ]
 
 [[package]]

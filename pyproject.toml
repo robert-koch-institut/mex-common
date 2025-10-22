@@ -33,6 +33,7 @@ optional-dependencies.dev = [
     "ruff>=0.14",
     "sphinx>=8",
     "types-ldap3",
+    "types-networkx",
     "types-pytz",
     "types-requests",
 ]
