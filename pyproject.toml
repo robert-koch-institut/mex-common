@@ -13,6 +13,7 @@ dependencies = [
     "langdetect>=1,<2",
     "ldap3>=2,<3",
     "mex-model>=4.3,<4.4",
+    "networkx>=3",
     "numpy>=2,<3",
     "pandas>=2,<3",
     "pyarrow>=21,<22",
@@ -32,6 +33,7 @@ optional-dependencies.dev = [
     "ruff>=0.14",
     "sphinx>=8",
     "types-ldap3",
+    "types-networkx",
     "types-pytz",
     "types-requests",
 ]
