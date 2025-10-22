@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "1.7.0"
+version = "1.8.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }

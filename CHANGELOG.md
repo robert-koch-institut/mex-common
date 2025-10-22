@@ -11,11 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- move `topological_sort` from extractors to common
-- better align mex.common.models with mex-model
-- update mex-model dependency to 4.3
-- parse_csv now summarizes error logs in batches with amount of successful validations.
-
 ### Deprecated
 
 ### Removed
@@ -23,6 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.8.0] - 2025-10-22
+
+### Changes
+
+- move `topological_sort` from extractors to common
+- better align mex.common.models with mex-model
+- update mex-model dependency to 4.3
+- parse_csv now summarizes error logs in batches with amount of successful validations.
 
 ## [1.7.0] - 2025-10-17
 
