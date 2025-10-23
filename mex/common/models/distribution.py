@@ -274,8 +274,8 @@ class DistributionRuleSetResponse(_BaseRuleSet):
     """Set of rules to retrieve a distribution item."""
 
     entityType: Annotated[
-        Literal["DistributionRuleSetRequest"], Field(alias="$type", frozen=True)
-    ] = "DistributionRuleSetRequest"
+        Literal["DistributionRuleSetResponse"], Field(alias="$type", frozen=True)
+    ] = "DistributionRuleSetResponse"
     stableTargetId: MergedAccessPlatformIdentifier
 
 
