@@ -17,10 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [1.8.2] - 2025-10-28
+
+### Fixed
+
 - fix TemporalEntity equality check
 - fix DistributionRuleSetResponse entity type
-
-### Security
 
 ## [1.8.1] - 2025-10-22
 
