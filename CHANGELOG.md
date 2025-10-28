@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix TemporalEntity equality check
 - fix DistributionRuleSetResponse entity type
 
 ### Security
