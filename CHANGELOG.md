@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- organigram convenience function preparation
+
 ### Changes
 
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d

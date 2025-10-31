@@ -8,7 +8,9 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     MergedOrganizationalUnit,
 )
-from mex.common.organigram.extract import extract_organigram_units
+from mex.common.organigram.extract import (
+    extract_organigram_units,
+)
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_unit_to_extracted_organizational_unit,
