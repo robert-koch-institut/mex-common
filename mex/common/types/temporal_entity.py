@@ -277,7 +277,7 @@ class TemporalEntity:
         """Return whether the given other value is the same as this one."""
         try:
             other_temporal = TemporalEntity(other)  # type: ignore[call-overload]
-        except TypeError:
+        except (TypeError, ValueError):
             return False
         return bool(
             self.date_time == other_temporal.date_time
