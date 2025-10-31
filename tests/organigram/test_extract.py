@@ -4,6 +4,7 @@ from mex.common.exceptions import MExError
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.extract import (
     extract_organigram_units,
+    get_extracted_unit_by_synonyms,
     get_unit_merged_ids_by_emails,
     get_unit_merged_ids_by_synonyms,
 )
@@ -16,6 +17,18 @@ def test_extract_organigram_units(
 ) -> None:
     units = list(extract_organigram_units())
     assert units == [child_unit, parent_unit]
+
+
+def test_get_extracted_unit_by_synonyms(
+    extracted_child_unit: ExtractedOrganizationalUnit,
+    extracted_parent_unit: ExtractedOrganizationalUnit,
+) -> None:
+    mapping = get_extracted_unit_by_synonyms(
+        [extracted_child_unit, extracted_parent_unit]
+    )
+
+    assert mapping["Abteilung"].stableTargetId == extracted_parent_unit.stableTargetId
+    assert mapping["C1"].stableTargetId == extracted_child_unit.stableTargetId
 
 
 def test_get_unit_merged_ids_by_synonyms(
@@ -57,7 +70,7 @@ def test_get_unit_merged_ids_by_synonyms_error(
         f"{extracted_parent_unit.stableTargetId}."
     )
     with pytest.raises(MExError, match=msg):
-        get_unit_merged_ids_by_synonyms(
+        get_extracted_unit_by_synonyms(
             [erroneous_extracted_child_unit, extracted_parent_unit]
         )
 
