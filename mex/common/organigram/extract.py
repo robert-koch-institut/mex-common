@@ -67,7 +67,7 @@ def get_extracted_unit_by_synonyms(
         MExError: If the same entry maps to different organizational units
 
     Returns:
-        Mapping from unit synonyms to stableTargetIds
+        Mapping from unit synonyms to extracted units
     """
     synonym_dict: dict[str, ExtractedOrganizationalUnit] = {}
     for extracted_unit in extracted_units:
