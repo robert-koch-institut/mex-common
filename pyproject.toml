@@ -16,7 +16,7 @@ dependencies = [
     "networkx>=3",
     "numpy>=2,<3",
     "pandas>=2,<3",
-    "pyarrow>=21,<22",
+    "pyarrow>=22,<23",
     "pydantic-settings",
     "pydantic>=2,<3",
     "pytz>=2025",
