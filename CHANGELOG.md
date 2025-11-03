@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add organigram convenience function to get extracted units
-
 ### Changes
-
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.9.0] - 2025-11-03
+
+### Added
+
+- add organigram convenience function to get extracted units
+
+### Changes
+
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 
 ## [1.8.2] - 2025-10-28
 
