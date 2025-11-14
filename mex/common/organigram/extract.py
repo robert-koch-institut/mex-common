@@ -3,7 +3,6 @@ from collections.abc import Iterable
 from functools import lru_cache
 from pathlib import Path
 
-from mex.common.exceptions import MExError
 from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
@@ -55,50 +54,43 @@ def get_unit_synonyms(extracted_unit: ExtractedOrganizationalUnit) -> list[str]:
 
 def get_extracted_unit_by_synonyms(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, ExtractedOrganizationalUnit]:
+) -> dict[str, list[ExtractedOrganizationalUnit]]:
     """Return a mapping from unit alt_label and label to their organizational units.
 
-    There will be multiple entries per unit mapping to the same organizational unit.
+    Multiple units can share the same synonym, all will be included in the list.
 
     Args:
         extracted_units: Iterable of extracted units
 
-    Raises:
-        MExError: If the same entry maps to different organizational units
-
     Returns:
-        Mapping from unit synonyms to extracted units
+        Mapping from unit synonyms to list of extracted units
     """
-    synonym_dict: dict[str, ExtractedOrganizationalUnit] = {}
+    synonym_dict: dict[str, list[ExtractedOrganizationalUnit]] = {}
     for extracted_unit in extracted_units:
         for synonym in get_unit_synonyms(extracted_unit):
-            if synonym in synonym_dict and synonym_dict[synonym] != extracted_unit:
-                msg = (
-                    f"Conflict: label '{synonym}' is associated with merged unit IDs "
-                    f"{synonym_dict[synonym].stableTargetId} and "
-                    f"{extracted_unit.stableTargetId}."
-                )
-                raise MExError(msg)
-            synonym_dict[synonym] = extracted_unit
+            if synonym not in synonym_dict:
+                synonym_dict[synonym] = []
+            if extracted_unit not in synonym_dict[synonym]:
+                synonym_dict[synonym].append(extracted_unit)
     return synonym_dict
 
 
 def get_unit_merged_ids_by_synonyms(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, MergedOrganizationalUnitIdentifier]:
+) -> dict[str, list[MergedOrganizationalUnitIdentifier]]:
     """Return a mapping from unit alt_label and label to their merged IDs.
 
-    There will be multiple entries per unit mapping to the same merged ID.
+    Multiple units can share the same synonym, all will be included in the list.
 
     Args:
         extracted_units: Iterable of extracted units
 
     Returns:
-        Mapping from unit synonyms to stableTargetIds
+        Mapping from unit synonyms to list of stableTargetIds
     """
+    unit_dict = get_extracted_unit_by_synonyms(extracted_units)
     return {
-        key: value.stableTargetId
-        for key, value in get_extracted_unit_by_synonyms(extracted_units).items()
+        key: [unit.stableTargetId for unit in units] for key, units in unit_dict.items()
     }
 
 

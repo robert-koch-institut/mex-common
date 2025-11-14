@@ -1,6 +1,3 @@
-import pytest
-
-from mex.common.exceptions import MExError
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.extract import (
     extract_organigram_units,
@@ -27,8 +24,10 @@ def test_get_extracted_unit_by_synonyms(
         [extracted_child_unit, extracted_parent_unit]
     )
 
-    assert mapping["Abteilung"].stableTargetId == extracted_parent_unit.stableTargetId
-    assert mapping["C1"].stableTargetId == extracted_child_unit.stableTargetId
+    assert (
+        mapping["Abteilung"][0].stableTargetId == extracted_parent_unit.stableTargetId
+    )
+    assert mapping["C1"][0].stableTargetId == extracted_child_unit.stableTargetId
 
 
 def test_get_unit_merged_ids_by_synonyms(
@@ -41,38 +40,54 @@ def test_get_unit_merged_ids_by_synonyms(
     child_id = extracted_child_unit.stableTargetId
     parent_id = extracted_parent_unit.stableTargetId
     assert mapping == {
-        "Abteilung": parent_id,
-        "C1": child_id,
-        "C1 Sub-Unit": child_id,
-        "C1 Unterabteilung": child_id,
-        "C1: Sub Unit": child_id,
-        "CHLD": child_id,
-        "CHLD Unterabteilung": child_id,
-        "child-unit": child_id,
-        "Department": parent_id,
-        "PARENT Dept.": parent_id,
-        "PRNT": parent_id,
-        "PRNT Abteilung": parent_id,
-        "parent-unit": parent_id,
+        "Abteilung": [parent_id],
+        "C1": [child_id],
+        "C1 Sub-Unit": [child_id],
+        "C1 Unterabteilung": [child_id],
+        "C1: Sub Unit": [child_id],
+        "CHLD": [child_id],
+        "CHLD Unterabteilung": [child_id],
+        "child-unit": [child_id],
+        "Department": [parent_id],
+        "PARENT Dept.": [parent_id],
+        "PRNT": [parent_id],
+        "PRNT Abteilung": [parent_id],
+        "parent-unit": [parent_id],
     }
 
 
-def test_get_unit_merged_ids_by_synonyms_error(
+def test_get_extracted_unit_by_synonyms_multiple_units_same_label(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    erroneous_extracted_child_unit = extracted_child_unit
-    erroneous_extracted_child_unit.name.append(Text(value="PARENT Dept."))
+    extracted_child_unit.name.append(Text(value="SHARED Dept."))
+    extracted_parent_unit.name.append(Text(value="SHARED Dept."))
 
-    msg = (
-        f"MExError: Conflict: label 'PARENT Dept.' is associated with "
-        f"merged unit IDs {erroneous_extracted_child_unit.stableTargetId} and "
-        f"{extracted_parent_unit.stableTargetId}."
+    mapping = get_extracted_unit_by_synonyms(
+        [extracted_child_unit, extracted_parent_unit]
     )
-    with pytest.raises(MExError, match=msg):
-        get_extracted_unit_by_synonyms(
-            [erroneous_extracted_child_unit, extracted_parent_unit]
-        )
+
+    assert "SHARED Dept." in mapping
+    assert len(mapping["SHARED Dept."]) == 2
+    assert extracted_child_unit in mapping["SHARED Dept."]
+    assert extracted_parent_unit in mapping["SHARED Dept."]
+
+
+def test_get_unit_merged_ids_by_synonyms_multiple_units_same_label(
+    extracted_child_unit: ExtractedOrganizationalUnit,
+    extracted_parent_unit: ExtractedOrganizationalUnit,
+) -> None:
+    extracted_child_unit.name.append(Text(value="SHARED Dept."))
+    extracted_parent_unit.name.append(Text(value="SHARED Dept."))
+
+    mapping = get_unit_merged_ids_by_synonyms(
+        [extracted_child_unit, extracted_parent_unit]
+    )
+
+    assert "SHARED Dept." in mapping
+    assert len(mapping["SHARED Dept."]) == 2
+    assert extracted_child_unit.stableTargetId in mapping["SHARED Dept."]
+    assert extracted_parent_unit.stableTargetId in mapping["SHARED Dept."]
 
 
 def test_get_unit_merged_ids_by_emails(
