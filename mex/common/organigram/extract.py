@@ -104,32 +104,23 @@ def get_unit_merged_ids_by_synonyms(
 
 def get_unit_merged_ids_by_emails(
     extracted_units: Iterable[ExtractedOrganizationalUnit],
-) -> dict[str, MergedOrganizationalUnitIdentifier]:
+) -> dict[str, list[MergedOrganizationalUnitIdentifier]]:
     """Return a mapping from unit emails to their merged IDs.
 
-    There may be multiple emails per unit mapping to the same merged ID.
+    Multiple units can share the same email, all will be included in the list.
 
     Args:
         extracted_units: Iterable of extracted units
 
-    Raises:
-        MExError: If the same entry maps to different merged IDs
-
     Returns:
-        Mapping from lowercased `email` to stableTargetIds
+        Mapping from lowercased `email` to list of stableTargetIds
     """
-    email_dict: dict[str, MergedOrganizationalUnitIdentifier] = {}
+    email_dict: dict[str, list[MergedOrganizationalUnitIdentifier]] = {}
     for extracted_unit in extracted_units:
         for email in extracted_unit.email:
             lower_email = email.lower()
-            if (
-                lower_email in email_dict
-                and email_dict[lower_email] != extracted_unit.stableTargetId
-            ):
-                msg = (
-                    f"Conflict: email '{email}' is associated with merged unit IDs "
-                    f"{email_dict[lower_email]} and {extracted_unit.stableTargetId}."
-                )
-                raise MExError(msg)
-            email_dict[lower_email] = extracted_unit.stableTargetId
+            if lower_email not in email_dict:
+                email_dict[lower_email] = []
+            if extracted_unit.stableTargetId not in email_dict[lower_email]:
+                email_dict[lower_email].append(extracted_unit.stableTargetId)
     return email_dict

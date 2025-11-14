@@ -83,25 +83,27 @@ def test_get_unit_merged_ids_by_emails(
         [extracted_child_unit, extracted_parent_unit]
     )
     assert mapping == {
-        "parent@example.com": extracted_parent_unit.stableTargetId,
-        "pu@example.com": extracted_parent_unit.stableTargetId,
+        "parent@example.com": [extracted_parent_unit.stableTargetId],
+        "pu@example.com": [extracted_parent_unit.stableTargetId],
         # child unit has no emails
     }
 
 
-def test_get_unit_merged_ids_by_emails_error(
+def test_get_unit_merged_ids_by_emails_multiple_units_same_email(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    erroneous_extracted_child_unit = extracted_child_unit
-    erroneous_extracted_child_unit.email.append("PARENT@example.com")
+    """Test that multiple units with the same email are all included in the list."""
+    extracted_child_unit.email = ["shared@example.com"]
+    extracted_parent_unit.email = ["shared@example.com", "parent@example.com"]
 
-    msg = (
-        f"MExError: Conflict: email 'PARENT@example.com' is associated with "
-        f"merged unit IDs {erroneous_extracted_child_unit.stableTargetId} and "
-        f"{extracted_parent_unit.stableTargetId}."
+    mapping = get_unit_merged_ids_by_emails(
+        [extracted_child_unit, extracted_parent_unit]
     )
-    with pytest.raises(MExError, match=msg):
-        get_unit_merged_ids_by_emails(
-            [erroneous_extracted_child_unit, extracted_parent_unit]
-        )
+
+    assert "shared@example.com" in mapping
+    assert len(mapping["shared@example.com"]) == 2
+    assert extracted_child_unit.stableTargetId in mapping["shared@example.com"]
+    assert extracted_parent_unit.stableTargetId in mapping["shared@example.com"]
+
+    assert mapping["parent@example.com"] == [extracted_parent_unit.stableTargetId]

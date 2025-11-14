@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- organigram email lookup now return lists of units to support organizational units sharing same email
 
 ### Deprecated
 
