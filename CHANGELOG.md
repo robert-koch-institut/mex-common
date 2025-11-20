@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- RestrictedTextLanguage allowing only EN or DE if confidence >=0.75
 
 ### Changes
+- detect_language does not support FR, RU or ES anymore.
 
 ### Deprecated
 
