@@ -42,6 +42,19 @@ def test_mapping_model_schema() -> None:
             "MappingField_MergedPrimarySourceIdentifier_": {
                 "additionalProperties": False,
                 "properties": {
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
+                    "examplesInPrimarySource": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "examplesInPrimarySource",
+                    },
                     "fieldInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
@@ -51,14 +64,6 @@ def test_mapping_model_schema() -> None:
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "locationInPrimarySource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "examplesInPrimarySource",
                     },
                     "mappingRules": {
                         "items": {
@@ -68,11 +73,6 @@ def test_mapping_model_schema() -> None:
                         "title": "mappingRules",
                         "type": "array",
                     },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "comment",
-                    },
                 },
                 "required": ["mappingRules"],
                 "title": "MappingField[MergedPrimarySourceIdentifier]",
@@ -81,6 +81,19 @@ def test_mapping_model_schema() -> None:
             "MappingField_list_MergedResourceIdentifier__": {
                 "additionalProperties": False,
                 "properties": {
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
+                    "examplesInPrimarySource": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "examplesInPrimarySource",
+                    },
                     "fieldInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
@@ -90,14 +103,6 @@ def test_mapping_model_schema() -> None:
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "locationInPrimarySource",
-                    },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "examplesInPrimarySource",
                     },
                     "mappingRules": {
                         "items": {
@@ -107,11 +112,6 @@ def test_mapping_model_schema() -> None:
                         "title": "mappingRules",
                         "type": "array",
                     },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "comment",
-                    },
                 },
                 "required": ["mappingRules"],
                 "title": "MappingField[list[MergedResourceIdentifier]]",
@@ -120,6 +120,19 @@ def test_mapping_model_schema() -> None:
             "MappingField_list_Text__": {
                 "additionalProperties": False,
                 "properties": {
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
+                    "examplesInPrimarySource": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "examplesInPrimarySource",
+                    },
                     "fieldInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
@@ -130,24 +143,11 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "locationInPrimarySource",
                     },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "examplesInPrimarySource",
-                    },
                     "mappingRules": {
                         "items": {"$ref": "#/$defs/MappingRule_list_Text__"},
                         "minItems": 1,
                         "title": "mappingRules",
                         "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "comment",
                     },
                 },
                 "required": ["mappingRules"],
@@ -157,6 +157,19 @@ def test_mapping_model_schema() -> None:
             "MappingField_str_": {
                 "additionalProperties": False,
                 "properties": {
+                    "comment": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "comment",
+                    },
+                    "examplesInPrimarySource": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "examplesInPrimarySource",
+                    },
                     "fieldInPrimarySource": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
@@ -167,24 +180,11 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "locationInPrimarySource",
                     },
-                    "examplesInPrimarySource": {
-                        "anyOf": [
-                            {"items": {"type": "string"}, "type": "array"},
-                            {"type": "null"},
-                        ],
-                        "default": None,
-                        "title": "examplesInPrimarySource",
-                    },
                     "mappingRules": {
                         "items": {"$ref": "#/$defs/MappingRule_str_"},
                         "minItems": 1,
                         "title": "mappingRules",
                         "type": "array",
-                    },
-                    "comment": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "comment",
                     },
                 },
                 "required": ["mappingRules"],
@@ -202,6 +202,11 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "forValues",
                     },
+                    "rule": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "rule",
+                    },
                     "setValues": {
                         "anyOf": [
                             {
@@ -213,11 +218,6 @@ def test_mapping_model_schema() -> None:
                         ],
                         "default": None,
                         "title": "setValues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "rule",
                     },
                 },
                 "title": "MappingRule[MergedPrimarySourceIdentifier]",
@@ -234,6 +234,11 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "forValues",
                     },
+                    "rule": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "rule",
+                    },
                     "setValues": {
                         "anyOf": [
                             {
@@ -248,11 +253,6 @@ def test_mapping_model_schema() -> None:
                         ],
                         "default": None,
                         "title": "setValues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "rule",
                     },
                 },
                 "title": "MappingRule[list[MergedResourceIdentifier]]",
@@ -269,6 +269,11 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "forValues",
                     },
+                    "rule": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "rule",
+                    },
                     "setValues": {
                         "anyOf": [
                             {"items": {"$ref": "#/$defs/Text"}, "type": "array"},
@@ -276,11 +281,6 @@ def test_mapping_model_schema() -> None:
                         ],
                         "default": None,
                         "title": "setValues",
-                    },
-                    "rule": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "rule",
                     },
                 },
                 "title": "MappingRule[list[Text]]",
@@ -297,28 +297,48 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "forValues",
                     },
-                    "setValues": {
-                        "anyOf": [{"type": "string"}, {"type": "null"}],
-                        "default": None,
-                        "title": "setValues",
-                    },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "rule",
                     },
+                    "setValues": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "setValues",
+                    },
                 },
                 "title": "MappingRule[str]",
                 "type": "object",
             },
+            "RestrictedTextLanguage": {
+                "description": "Allowes only English and "
+                "German as language tags "
+                "for `Text` values.",
+                "enum": ["de", "en"],
+                "title": "RestrictedTextLanguage",
+                "type": "string",
+            },
             "Text": {
-                "description": 'Type class for text objects.\n\nTexts can be parsed from nested JSON objects or from raw strings.\n\nExample:\n    Text(value="foo") == Text.model_validate("foo")',
+                "description": "Type class for text objects.\n"
+                "\n"
+                "Texts can be parsed from nested JSON "
+                "objects or from raw strings.\n"
+                "\n"
+                "Example:\n"
+                '    Text(value="foo") == '
+                'Text.model_validate("foo")',
                 "properties": {
-                    "value": {"minLength": 1, "title": "Value", "type": "string"},
                     "language": {
-                        "anyOf": [{"$ref": "#/$defs/TextLanguage"}, {"type": "null"}],
+                        "anyOf": [
+                            {"$ref": "#/$defs/RestrictedTextLanguage"},
+                            {"$ref": "#/$defs/TextLanguage"},
+                            {"type": "null"},
+                        ],
                         "default": None,
+                        "title": "Language",
                     },
+                    "value": {"minLength": 1, "title": "Value", "type": "string"},
                 },
                 "required": ["value"],
                 "title": "Text",
@@ -340,6 +360,14 @@ def test_mapping_model_schema() -> None:
                 "title": "$Type",
                 "type": "string",
             },
+            "containedBy": {
+                "items": {
+                    "$ref": "#/$defs/MappingField_list_MergedResourceIdentifier__"
+                },
+                "minItems": 1,
+                "title": "Containedby",
+                "type": "array",
+            },
             "hadPrimarySource": {
                 "items": {
                     "$ref": "#/$defs/MappingField_MergedPrimarySourceIdentifier_"
@@ -352,14 +380,6 @@ def test_mapping_model_schema() -> None:
                 "items": {"$ref": "#/$defs/MappingField_str_"},
                 "minItems": 1,
                 "title": "Identifierinprimarysource",
-                "type": "array",
-            },
-            "containedBy": {
-                "items": {
-                    "$ref": "#/$defs/MappingField_list_MergedResourceIdentifier__"
-                },
-                "minItems": 1,
-                "title": "Containedby",
                 "type": "array",
             },
             "label": {
