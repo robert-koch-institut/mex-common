@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 
 ### Deprecated
 
@@ -20,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.10.0] - 2025-11-20
+
+### Changes
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- organigram lookup now returns lists of units to support organizational units sharing same details like email
 
 ## [1.9.0] - 2025-11-03
 
