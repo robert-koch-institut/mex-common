@@ -1,0 +1,35 @@
+name: Check changelog
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-changelog:
+    name: Check changelog
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check for CHANGELOG.md changes
+        run: |
+          if [ "${{ github.actor }}" = "RKIMetadataExchange" ]; then
+            echo "Actor is 'RKIMetadataExchange'. Skipping changelog check."
+            exit 0;
+          fi
+
+          if git diff --quiet "origin/${{ github.base_ref }}"...HEAD -- "CHANGELOG.md"; then
+            echo "Error: The CHANGELOG.md has not been modified."
+            echo "Please add your changes to CHANGELOG.md before merging."
+            exit 1
+          else
+            echo "CHANGELOG.md has been modified."
+            exit 0
+          fi
