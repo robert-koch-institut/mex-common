@@ -21,7 +21,7 @@ class TextLanguage(StrEnum):
 
 
 class RestrictedTextLanguage(StrEnum):
-    """Allowes only English and German as language tags for `Text` values."""
+    """Allows only English and German as language tags for `Text` values."""
 
     DE = "de"
     EN = "en"
