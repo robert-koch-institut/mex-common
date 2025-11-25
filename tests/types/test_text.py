@@ -2,15 +2,18 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from mex.common.types import Text
-from mex.common.types.text import RestrictedTextLanguage, get_language_confidence
+from mex.common.types.text import (
+    TextLanguage,
+    get_language_by_confidence,
+)
 
 
 def test_text_language_detect() -> None:
     # accepted languages are only German and English. Other languages are None.
     de_text = Text(value="Diese tiefen Seufzern haben einen Sinn. Legt sie uns aus.")
-    assert de_text.language == RestrictedTextLanguage.DE
+    assert de_text.language == TextLanguage.DE
     en_text = Text(value="There's matter in these sighs. You must translate.")
-    assert en_text.language == RestrictedTextLanguage.EN
+    assert en_text.language == TextLanguage.EN
 
     # language that can be detected by langdetect but should be excluded from results
     fr_text = Text(value="Ces profonds soupirs ont un sens. Expliquez-les-nous.")
@@ -31,9 +34,9 @@ def test_text_language_detect() -> None:
     # check that we can overwrite the language
     overwrite_text = Text(
         value="There's matter in these sighs. You must translate",
-        language=RestrictedTextLanguage.DE,
+        language=TextLanguage.DE,
     )
-    assert overwrite_text.language == RestrictedTextLanguage.DE
+    assert overwrite_text.language == TextLanguage.DE
 
     # check that we can explicitly null the language
     none_text = Text(
@@ -54,7 +57,7 @@ def test_text_validation() -> None:
     assert model.model_dump() == {
         "text": {
             "value": "we are parsing a string here",
-            "language": RestrictedTextLanguage.EN,
+            "language": TextLanguage.EN,
         }
     }
 
@@ -64,7 +67,7 @@ def test_text_validation() -> None:
     assert model.model_dump() == {
         "text": {
             "value": "and here, we are parsing an object",
-            "language": RestrictedTextLanguage.EN,
+            "language": TextLanguage.EN,
         }
     }
 
@@ -79,14 +82,14 @@ def test_text_validation() -> None:
     assert model.model_dump() == {
         "text": {
             "value": "now we parse an object with a language key",
-            "language": RestrictedTextLanguage.DE,
+            "language": TextLanguage.DE,
         }
     }
 
 
 def test_text_hash() -> None:
-    text = Text(value="Hallo Welt.", language=RestrictedTextLanguage.DE)
-    assert hash(text) == hash(("Hallo Welt.", RestrictedTextLanguage.DE))
+    text = Text(value="Hallo Welt.", language=TextLanguage.DE)
+    assert hash(text) == hash(("Hallo Welt.", TextLanguage.DE))
 
 
 class Prob:
@@ -106,13 +109,13 @@ class MockedDetector:
 @pytest.mark.parametrize(
     ("probs", "expected"),
     [
-        ([Prob("en", 0.95)], RestrictedTextLanguage.EN),
-        ([Prob("de", 0.88)], RestrictedTextLanguage.DE),
+        ([Prob("en", 0.95)], TextLanguage.EN),
+        ([Prob("de", 0.88)], TextLanguage.DE),
         ([Prob("fr", 0.92)], None),
         ([Prob("en", 0.40)], None),
         (
             [Prob("de", 0.40), Prob("en", 0.20), Prob("de", 0.80)],
-            RestrictedTextLanguage.DE,
+            TextLanguage.DE,
         ),
         ([], None),
     ],
@@ -125,10 +128,10 @@ class MockedDetector:
         "no_language_detected_none",
     ],
 )
-def test_get_language_confidence(
+def test_get_language_by_confidence(
     probs: list[Prob],
-    expected: RestrictedTextLanguage | None,
+    expected: TextLanguage | None,
 ) -> None:
     detector = MockedDetector(probs)
-    result = get_language_confidence(detector)
+    result = get_language_by_confidence(detector)
     assert result == expected

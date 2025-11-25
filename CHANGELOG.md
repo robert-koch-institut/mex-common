@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - RestrictedTextLanguage allowing only EN or DE if confidence >=0.75
-- updated test for model schema mapping
 
 ### Changes
 - detect_language does not support FR, RU or ES anymore.

@@ -21,13 +21,15 @@ class TextLanguage(StrEnum):
 
 
 class RestrictedTextLanguage(StrEnum):
-    """Allowes only English and German as language tags for `Text` values."""
+    """Allows only English and German as language tags for `Text` values."""
 
     DE = "de"
     EN = "en"
 
 
-def get_language_confidence(detector: DetectorFactory) -> RestrictedTextLanguage | None:
+def get_language_by_confidence(
+    detector: DetectorFactory,
+) -> TextLanguage | None:
     """Assigns None as Language if confidence is below 0.75 or is not En or DE."""
     probs = detector.get_probabilities()
     if not probs:
@@ -39,7 +41,7 @@ def get_language_confidence(detector: DetectorFactory) -> RestrictedTextLanguage
     if best.prob < confidence_threshold:
         return None
     try:
-        return RestrictedTextLanguage(best.lang)
+        return TextLanguage(RestrictedTextLanguage(best.lang).value)
     except ValueError:
         return None
 
@@ -54,7 +56,7 @@ class Text(BaseModel):
     """
 
     value: Annotated[str, Field(min_length=1)]
-    language: RestrictedTextLanguage | TextLanguage | None = None
+    language: TextLanguage | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -66,7 +68,7 @@ class Text(BaseModel):
             try:
                 detector = DETECTOR_FACTORY.create()
                 detector.append(value)
-                language = get_language_confidence(detector)
+                language = get_language_by_confidence(detector)
             except (LangDetectException, ValueError):
                 pass
         return {"language": language, "value": value}
