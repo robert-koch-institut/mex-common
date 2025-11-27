@@ -28,7 +28,7 @@ class RestrictedTextLanguage(StrEnum):
 
 
 def get_language_by_confidence(
-    detector: DetectorFactory,
+    detector: DetectorFactory, confidence_threshold: float = 0.75
 ) -> TextLanguage | None:
     """Assigns None as Language if confidence is below 0.75 or is not En or DE."""
     probs = detector.get_probabilities()
@@ -36,7 +36,6 @@ def get_language_by_confidence(
         return None
 
     best = max(probs, key=lambda p: p.prob)
-    confidence_threshold = 0.75
 
     if best.prob < confidence_threshold:
         return None
