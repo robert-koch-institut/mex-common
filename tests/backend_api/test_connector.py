@@ -296,3 +296,26 @@ def test_get_rule_set_mocked(
         },
         timeout=10,
     )
+
+
+def test_merged_person_from_login_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    mocked_return = merged_person.model_dump()
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.merged_person_from_login()
+
+    assert response == merged_person
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/merged-person-from-login",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )

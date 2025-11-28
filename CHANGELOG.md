@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- add `merged_person_from_login` method to BackendApiConnector
 - RestrictedTextLanguage allowing only EN or DE if confidence >=0.75
 
 ### Changes

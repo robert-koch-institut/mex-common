@@ -20,6 +20,7 @@ from mex.common.models import (
     PreviewModelTypeAdapter,
     RuleSetResponseTypeAdapter,
 )
+from mex.common.models.person import MergedPerson
 from mex.common.settings import BaseSettings
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
@@ -478,3 +479,21 @@ class BackendApiConnector(HTTPConnector):
             payload=ItemsContainer[_IngestibleModelT](items=ingestible_models),
             **kwargs,
         )
+
+    def merged_person_from_login(self) -> MergedPerson:
+        """Fetch a MergedPerson by their login username.
+
+        The username is automatically extracted from authentication headers
+        by the backend endpoint dependency.
+
+        Raises:
+            HTTPError: If authentication fails or user is not authorized
+
+        Returns:
+            MergedPerson: The merged person corresponding to the authenticated user
+        """
+        response = self.request(
+            method="POST",
+            endpoint="merged-person-from-login",
+        )
+        return MergedPerson.model_validate(response)
