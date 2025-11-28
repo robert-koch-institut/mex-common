@@ -20,6 +20,31 @@ class TextLanguage(StrEnum):
     RU = "ru"
 
 
+class RestrictedTextLanguage(StrEnum):
+    """Allows only English and German as language tags for `Text` values."""
+
+    DE = "de"
+    EN = "en"
+
+
+def get_language_by_confidence(
+    detector: DetectorFactory, confidence_threshold: float = 0.75
+) -> TextLanguage | None:
+    """Assigns None as Language if confidence is below 0.75 or is not En or DE."""
+    probs = detector.get_probabilities()
+    if not probs:
+        return None
+
+    best = max(probs, key=lambda p: p.prob)
+
+    if best.prob < confidence_threshold:
+        return None
+    try:
+        return TextLanguage(RestrictedTextLanguage(best.lang).value)
+    except ValueError:
+        return None
+
+
 class Text(BaseModel):
     """Type class for text objects.
 
@@ -42,7 +67,7 @@ class Text(BaseModel):
             try:
                 detector = DETECTOR_FACTORY.create()
                 detector.append(value)
-                language = TextLanguage(detector.detect())
+                language = get_language_by_confidence(detector)
             except (LangDetectException, ValueError):
                 pass
         return {"language": language, "value": value}
