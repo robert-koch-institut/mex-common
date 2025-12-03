@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - RestrictedTextLanguage allowing only EN or DE if confidence >=0.75
+- add 'supersededBy' to merged and preventive items, and to additive rules
 
 ### Changes
 
