@@ -25,6 +25,7 @@ EmailStr = Annotated[
     Field(
         examples=["info@rki.de"],
         pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
+        description="The email address associated to the contact point.",
         json_schema_extra={"format": "email"},
     ),
 ]
@@ -40,6 +41,7 @@ class _RequiredLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -55,12 +57,13 @@ class _SparseLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
-            }
+            },
         ),
     ] = []
 
@@ -70,7 +73,6 @@ class BaseContactPoint(
     json_schema_extra={
         "description": "A mail address, where a group of people has access to.",
         "sameAs": ["https://schema.org/ContactPoint"],
-        "title": "Contact Point",
     },
 ):
     """All fields for a valid contact point except for provenance."""
@@ -90,20 +92,25 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     ) -> Annotated[
         ExtractedContactPointIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedContactPointIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedContactPointIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedContactPointIdentifier)
 
 
-class MergedContactPoint(BaseContactPoint, MergedItem):
+class MergedContactPoint(
+    BaseContactPoint, MergedItem, json_schema_extra={"title": "Merged Contact Point"}
+):
     """The result of merging all extracted items and rules for a contact point."""
 
     entityType: Annotated[
@@ -175,11 +182,9 @@ class ContactPointMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ContactPointMapping"], Field(alias="$type", frozen=True)
     ] = "ContactPointMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    email: Annotated[
+        list[MappingField[list[EmailStr]]], Field(description=None, min_length=1)
     ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
-    email: Annotated[list[MappingField[list[EmailStr]]], Field(min_length=1)]
 
 
 class ContactPointFilter(_Stem, BaseFilter):
@@ -188,4 +193,4 @@ class ContactPointFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ContactPointFilter"], Field(alias="$type", frozen=True)
     ] = "ContactPointFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

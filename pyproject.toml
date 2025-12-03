@@ -80,7 +80,7 @@ addopts = [
     "--cov-fail-under=96",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
-    "--random-order-bucket=global",
+    #"--random-order-bucket=global",
 ]
 markers = "integration: mark a test as integration test"
 

@@ -25,11 +25,21 @@ from mex.common.types import (
 
 CodingSystemStr = Annotated[
     str,
-    Field(examples=["SF-36 Version 1"]),
+    Field(
+        examples=["SF-36 Version 1"],
+        description=(
+            "An established standard to which the described resource conforms "
+            "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/"
+            "dcmi-terms/2020-01-20/))."
+        ),
+    ),
 ]
 DataTypeStr = Annotated[
     str,
-    Field(examples=["integer", "string", "image", "int55", "number"]),
+    Field(
+        examples=["integer", "string", "image", "int55", "number"],
+        description="The defined data type of the variable.",
+    ),
 ]
 ValueSetStr = Annotated[
     str,
@@ -39,11 +49,13 @@ ValueSetStr = Annotated[
             "Ja, etwas eingeschränkt",
             "Nein, überhaupt nicht eingeschränkt",
         ],
+        description="A set of predefined values as given in the primary source.",
     ),
 ]
 LabelText = Annotated[
     Text,
     Field(
+        description=None,
         examples=[{"language": "de", "value": "Mehrere Treppenabsätze steigen"}],
     ),
 ]
@@ -57,12 +69,16 @@ class _OptionalLists(_Stem):
     belongsTo: Annotated[
         list[MergedVariableGroupIdentifier],
         Field(
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+            description=None,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+        ),
     ] = []
     valueSet: list[ValueSetStr] = []
 
@@ -71,6 +87,7 @@ class _RequiredLists(_Stem):
     label: Annotated[
         list[LabelText],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={
                 "sameAs": [
@@ -83,6 +100,7 @@ class _RequiredLists(_Stem):
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -93,18 +111,20 @@ class _SparseLists(_Stem):
     label: Annotated[
         list[LabelText],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/title",
                     "http://www.w3.org/2000/01/rdf-schema#label",
                 ]
-            }
+            },
         ),
     ] = []
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+            description=None,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
 
@@ -113,17 +133,21 @@ class _OptionalValues(_Stem):
     codingSystem: Annotated[
         CodingSystemStr | None,
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
                     "https://schema.org/codingSystem",
                 ]
-            }
+            },
         ),
     ] = None
     dataType: Annotated[
         DataTypeStr | None,
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
+        ),
     ] = None
 
 
@@ -131,17 +155,21 @@ class _VariadicValues(_Stem):
     codingSystem: Annotated[
         list[CodingSystemStr],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
                     "https://schema.org/codingSystem",
                 ]
-            }
+            },
         ),
     ] = []
     dataType: Annotated[
         list[DataTypeStr],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
+        ),
     ] = []
 
 
@@ -151,13 +179,12 @@ class BaseVariable(
     _OptionalValues,
     json_schema_extra={
         "description": (
-            " Variables are defined for the data-based evaluation of investigations "
+            "Variables are defined for the data-based evaluation of investigations "
             "(e.g. studies). A variable is characterized by its data type (e.g. "
             "integer, string, date) and value range. The variable can be either "
             "quantitative or qualitative, i.e. the value range can take numerical or "
             "categorical values."
         ),
-        "title": "Variable",
     },
 ):
     """All fields for a valid variable except for provenance."""
@@ -177,20 +204,25 @@ class ExtractedVariable(BaseVariable, ExtractedData):
     ) -> Annotated[
         ExtractedVariableIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedVariableIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedVariableIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedVariableIdentifier)
 
 
-class MergedVariable(BaseVariable, MergedItem):
+class MergedVariable(
+    BaseVariable, MergedItem, json_schema_extra={"title": "Merged Variable"}
+):
     """The result of merging all extracted items and rules for a variable."""
 
     entityType: Annotated[
@@ -270,15 +302,14 @@ class VariableMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["VariableMapping"], Field(alias="$type", frozen=True)
     ] = "VariableMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     codingSystem: list[MappingField[CodingSystemStr | None]] = []
     dataType: list[MappingField[DataTypeStr | None]] = []
-    label: Annotated[list[MappingField[list[LabelText]]], Field(min_length=1)]
+    label: Annotated[
+        list[MappingField[list[LabelText]]], Field(description=None, min_length=1)
+    ]
     usedIn: Annotated[
-        list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
+        list[MappingField[list[MergedResourceIdentifier]]],
+        Field(description=None, min_length=1),
     ]
     belongsTo: list[MappingField[list[MergedVariableGroupIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
@@ -291,4 +322,4 @@ class VariableFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["VariableFilter"], Field(alias="$type", frozen=True)
     ] = "VariableFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

@@ -33,6 +33,7 @@ class _RequiredLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -40,6 +41,7 @@ class _RequiredLists(_Stem):
     label: Annotated[
         list[Text],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={
                 "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
@@ -52,13 +54,17 @@ class _SparseLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+            description=None,
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     label: Annotated[
         list[Text],
         Field(
-            json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
+            },
         ),
     ] = []
 
@@ -70,7 +76,6 @@ class BaseVariableGroup(
             "The grouping of variables according to a certain aspect, e.g. how the "
             "information is modelled in the primary source."
         ),
-        "title": "Variable Group",
     },
 ):
     """All fields for a valid variable group except for provenance."""
@@ -90,20 +95,25 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     ) -> Annotated[
         ExtractedVariableGroupIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedVariableGroupIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedVariableGroupIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedVariableGroupIdentifier)
 
 
-class MergedVariableGroup(BaseVariableGroup, MergedItem):
+class MergedVariableGroup(
+    BaseVariableGroup, MergedItem, json_schema_extra={"title": "Merged Variable Group"}
+):
     """The result of merging all extracted items and rules for a variable group."""
 
     entityType: Annotated[
@@ -176,14 +186,13 @@ class VariableGroupMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["VariableGroupMapping"], Field(alias="$type", frozen=True)
     ] = "VariableGroupMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     containedBy: Annotated[
-        list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
+        list[MappingField[list[MergedResourceIdentifier]]],
+        Field(description=None, min_length=1),
     ]
-    label: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    label: Annotated[
+        list[MappingField[list[Text]]], Field(description=None, min_length=1)
+    ]
 
 
 class VariableGroupFilter(_Stem, BaseFilter):
@@ -192,4 +201,4 @@ class VariableGroupFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["VariableGroupFilter"], Field(alias="$type", frozen=True)
     ] = "VariableGroupFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

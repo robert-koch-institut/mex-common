@@ -30,6 +30,7 @@ GeprisIdStr = Annotated[
             "https://gepris.dfg.de/gepris/institution/10293",
             "https://gepris.dfg.de/gepris/institution/21091092",
         ],
+        description="Identifier from GEPRIS authority file.",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -42,6 +43,10 @@ GndIdStr = Annotated[
             "https://d-nb.info/gnd/4017909-6",
             "https://d-nb.info/gnd/4603236-8",
         ],
+        description=(
+            "An identifier from the German authority file named Gemeinsame "
+            "Normdatei (GND), curated by the German National Library (DNB)."
+        ),
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -54,6 +59,9 @@ IsniIdStr = Annotated[
             "https://isni.org/isni/0000000417918889",
             "https://isni.org/isni/0000000459040795",
         ],
+        description=(
+            "The ISNI (International Standard Name Identifier) of the organization."
+        ),
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -66,6 +74,7 @@ RorIdStr = Annotated[
             "https://ror.org/00s9v1h75",
             "https://ror.org/04t3en479",
         ],
+        description="An identifier of the Research Organization Registry (ROR).",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -78,6 +87,7 @@ ViafIdStr = Annotated[
             "https://viaf.org/viaf/137080884",
             "https://viaf.org/viaf/122203699",
         ],
+        description="Identifier from VIAF (Virtual Authority File).",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -90,6 +100,7 @@ WikidataIdStr = Annotated[
             "http://www.wikidata.org/entity/Q918501",
             "http://www.wikidata.org/entity/Q491566",
         ],
+        description="Identifier from Wikidata.",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -104,31 +115,52 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     geprisId: Annotated[
         list[GeprisIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]},
+        ),
     ] = []
     gndId: Annotated[
         list[GndIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]},
+        ),
     ] = []
     isniId: Annotated[
         list[IsniIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
+        ),
     ] = []
     rorId: Annotated[
         list[RorIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]},
+        ),
     ] = []
     shortName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+        ),
     ] = []
     viafId: Annotated[
         list[ViafIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]},
+        ),
     ] = []
     wikidataId: list[WikidataIdStr] = []
 
@@ -137,6 +169,7 @@ class _RequiredLists(_Stem):
     officialName: Annotated[
         list[Text],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
         ),
@@ -146,7 +179,10 @@ class _RequiredLists(_Stem):
 class _SparseLists(_Stem):
     officialName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
+        ),
     ] = []
 
 
@@ -168,7 +204,6 @@ class BaseOrganization(
             "http://www.w3.org/2006/vcard/ns#Organization",
             "http://www.wikidata.org/entity/Q43229",
         ],
-        "title": "Organization",
     },
 ):
     """All fields for a valid organization except for provenance."""
@@ -188,20 +223,25 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
     ) -> Annotated[
         ExtractedOrganizationIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedOrganizationIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedOrganizationIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedOrganizationIdentifier)
 
 
-class MergedOrganization(BaseOrganization, MergedItem):
+class MergedOrganization(
+    BaseOrganization, MergedItem, json_schema_extra={"title": "Merged Organization"}
+):
     """The result of merging all extracted items and rules for an organization."""
 
     entityType: Annotated[
@@ -281,11 +321,9 @@ class OrganizationMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    officialName: Annotated[
+        list[MappingField[list[Text]]], Field(description=None, min_length=1)
     ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
-    officialName: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
     geprisId: list[MappingField[list[GeprisIdStr]]] = []
     gndId: list[MappingField[list[GndIdStr]]] = []
@@ -302,4 +340,4 @@ class OrganizationFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["OrganizationFilter"], Field(alias="$type", frozen=True)
     ] = "OrganizationFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

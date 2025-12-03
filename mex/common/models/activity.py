@@ -52,95 +52,138 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     abstract: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]}),
+        Field(
+            description="A short text describing the activity.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]},
+        ),
     ] = []
     activityType: Annotated[
         list[ActivityType],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description="The type of the activity.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ] = []
     alternativeTitle: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description="Another name for the activity.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     documentation: Annotated[
         list[Link],
         Field(
+            description="A link to a document, that contains the documentation of the activity.",
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
-            }
+            },
         ),
     ] = []
     end: Annotated[
         list[YearMonthDay | YearMonth | Year],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P582"]}),
+        Field(
+            description="(Planned) end of the activity.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P582"]},
+        ),
     ] = []
     externalAssociate: Annotated[
         list[AnyExternalAssociateIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+        Field(
+            description="An external institution or person, that is associated with the activity.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
     ] = []
     funderOrCommissioner: Annotated[
         list[MergedOrganizationIdentifier],
-        Field(json_schema_extra={"sameAs": "http://www.wikidata.org/entity/P8324"}),
+        Field(
+            description="An agent, that has either funded or commissioned the activity.",
+            json_schema_extra={"sameAs": "http://www.wikidata.org/entity/P8324"},
+        ),
     ] = []
-    fundingProgram: list[str] = []
+    fundingProgram: Annotated[
+        list[str],
+        Field(
+            description="The program in which the activity is funded, e.g. Horizon2020."
+        ),
+    ] = []
     involvedPerson: Annotated[
         list[MergedPersonIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+        Field(
+            description="A person involved in the activity.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
     ] = []
     involvedUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+        Field(
+            description="An organizational unit that is involved in the activity.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
     ] = []
     isPartOfActivity: Annotated[
         list[MergedActivityIdentifier],
         Field(
+            description="Another activity, this activity is part of.",
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/isPartOf",
                     "http://www.cidoc-crm.org/cidoc-crm/P9i_forms_part_of",
                 ]
-            }
+            },
         ),
     ] = []
     publication: Annotated[
         list[MergedBibliographicResourceIdentifier],
         Field(
+            description="A publication related to the activity.",
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
-            }
+            },
         ),
     ] = []
     shortName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+        Field(
+            description="A short name for, or an abbreviated title of, the activity.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+        ),
     ] = []
     start: Annotated[
         list[YearMonthDay | YearMonth | Year],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P580"]}),
+        Field(
+            description="The start of the activity.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P580"]},
+        ),
     ] = []
     succeeds: Annotated[
         list[MergedActivityIdentifier],
         Field(
+            description="Another activity, that ended with the start of the described activity. A follow-up activity.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.cidoc-crm.org/cidoc-crm/P173_start_before_or_with_the_end_of"
                 ]
-            }
+            },
         ),
     ] = []
     theme: Annotated[
         list[Theme],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]}),
+        Field(
+            description="The main theme or subject of the activity.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]},
+        ),
     ] = []
     website: Annotated[
         list[Link],
         Field(
+            description="A web presentation of the activity, e.g. on the RKI homepage.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.wikidata.org/entity/P856",
                     "http://xmlns.com/foaf/0.1/homepage",
                 ]
-            }
+            },
         ),
     ] = []
 
@@ -149,6 +192,7 @@ class _RequiredLists(_Stem):
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
+            description="An agent serving as a contact for the activity.",
             min_length=1,
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
         ),
@@ -156,6 +200,7 @@ class _RequiredLists(_Stem):
     responsibleUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
+            description="A unit, that is responsible for the activity.",
             min_length=1,
             json_schema_extra={"sameAs": "http.//dcat-ap.de/def/dcatde/maintainer"},
         ),
@@ -163,6 +208,7 @@ class _RequiredLists(_Stem):
     title: Annotated[
         list[Text],
         Field(
+            description="The official title of the activity.",
             min_length=1,
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
         ),
@@ -189,7 +235,6 @@ class BaseActivity(
             "http://purl.org/dc/terms/Activity",
             "http://www.w3.org/ns/prov#Activity",
         ],
-        "title": "Activity",
     },
 ):
     """All fields for a valid activity except for provenance."""
@@ -209,20 +254,25 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     ) -> Annotated[
         ExtractedActivityIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedActivityIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedActivityIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedActivityIdentifier)
 
 
-class MergedActivity(BaseActivity, MergedItem):
+class MergedActivity(
+    BaseActivity, MergedItem, json_schema_extra={"title": "Merged Activity"}
+):
     """The result of merging all extracted items and rules for an activity."""
 
     entityType: Annotated[
@@ -313,18 +363,17 @@ class ActivityMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ActivityMapping"], Field(alias="$type", frozen=True)
     ] = "ActivityMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     contact: Annotated[
-        list[MappingField[list[AnyContactIdentifier]]], Field(min_length=1)
+        list[MappingField[list[AnyContactIdentifier]]],
+        Field(description=None, min_length=1),
     ]
     responsibleUnit: Annotated[
         list[MappingField[list[MergedOrganizationalUnitIdentifier]]],
-        Field(min_length=1),
+        Field(description=None, min_length=1),
     ]
-    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    title: Annotated[
+        list[MappingField[list[Text]]], Field(description=None, min_length=1)
+    ]
     abstract: list[MappingField[list[Text]]] = []
     activityType: list[MappingField[list[ActivityType]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
@@ -350,4 +399,4 @@ class ActivityFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ActivityFilter"], Field(alias="$type", frozen=True)
     ] = "ActivityFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

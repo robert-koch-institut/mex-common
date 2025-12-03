@@ -45,6 +45,7 @@ DoiStr = Annotated[
             "http://dx.doi.org/10.25646/5147",
             "https://doi.org/10.1016/j.vaccine.2022.11.065",
         ],
+        description="The Digital Object Identifier (DOI) of the publication.",
     ),
 ]
 EditionStr = Annotated[
@@ -56,6 +57,7 @@ EditionStr = Annotated[
             "Band 2,2",
             "3rd edition",
         ],
+        description="The edition of the publication.",
     ),
 ]
 IsbnIssnStr = Annotated[
@@ -73,6 +75,9 @@ IsbnIssnStr = Annotated[
             "1430-8551",
             "1467-9442",
         ],
+        description=(
+            "Either the ISBN (for books) or ISSN (for periodicals) of the publication."
+        ),
     ),
 ]
 PagesStr = Annotated[
@@ -85,7 +90,8 @@ PagesStr = Annotated[
             "II",
             "XI",
             "10i",
-        ]
+        ],
+        description="The range of pages or a single page.",
     ),
 ]
 PublicationPlaceStr = Annotated[
@@ -97,6 +103,7 @@ PublicationPlaceStr = Annotated[
             "NYC/NY",
             "Tampa, FL",
         ],
+        description="The place where the document was issued.",
     ),
 ]
 SectionStr = Annotated[
@@ -109,7 +116,10 @@ SectionStr = Annotated[
             "12",
             "A",
             "B.",
-        ]
+        ],
+        description=(
+            "The name of the chapter of the publication, the book section belongs to."
+        ),
     ),
 ]
 VolumeOrIssueStr = Annotated[
@@ -120,7 +130,8 @@ VolumeOrIssueStr = Annotated[
             "Q3",
             "11/12",
             "Winter '23",
-        ]
+        ],
+        description="The volume or issue of the periodical.",
     ),
 ]
 
@@ -134,74 +145,125 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     abstract: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]}),
+        Field(
+            description="An account of the publication.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]},
+        ),
     ] = []
     alternateIdentifier: Annotated[
         list[str],
         Field(
+            description="Another identifier used for the reference.",
             json_schema_extra={
                 "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
-            }
+            },
         ),
     ] = []
     alternativeTitle: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description="Another title for the publication.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     bibliographicResourceType: Annotated[
         list[BibliographicResourceType],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description="The type of bibliographic resource.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ] = []
     contributingUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
+            description="An organizational unit of RKI, that is contributing to the publication.",
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
-            }
+            },
         ),
     ] = []
-    distribution: list[MergedDistributionIdentifier] = []
+    distribution: Annotated[
+        list[MergedDistributionIdentifier],
+        Field(
+            description="An available distribution of the publication ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))",
+        ),
+    ] = []
     editor: Annotated[
         list[MergedPersonIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+        Field(
+            description="The editor of the publication.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
     ] = []
     editorOfSeries: Annotated[
         list[MergedPersonIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]}),
+        Field(
+            description="The editor of the series.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
     ] = []
     isbnIssn: Annotated[
         list[IsbnIssnStr],
         Field(
+            description="Either the ISBN (for books) or ISSN (for periodicals) of the publication.",
             json_schema_extra={
                 "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
-            }
+            },
         ),
     ] = []
-    journal: list[Text] = []
+    journal: Annotated[
+        list[Text],
+        Field(
+            description="A keyword or tag describing the resource ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+        ),
+    ] = []
     keyword: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]}),
+        Field(
+            description="A keyword or tag describing the resource ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]},
+        ),
     ] = []
     language: Annotated[
         list[Language],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/language"]}),
+        Field(
+            description="The language in which the publication was written.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/language"]},
+        ),
     ] = []
     publisher: Annotated[
         list[MergedOrganizationIdentifier],
-        Field(json_schema_extra={"sameAs": "http://purl.org/dc/terms/publisher"}),
+        Field(
+            description="An entity responsible for making the publication available ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            json_schema_extra={"sameAs": "http://purl.org/dc/terms/publisher"},
+        ),
     ] = []
-    repositoryURL: list[Link] = []
+    repositoryURL: Annotated[
+        list[Link],
+        Field(
+            description="The handle of the publication in the repository, where the publication is stored.",
+        ),
+    ] = []
     subtitle: Annotated[
         list[Text],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description="The subtitle of the publication.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
     titleOfBook: Annotated[
         list[Text],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description="The title of the book in which the book section is published.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
     titleOfSeries: Annotated[
         list[Text],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description="The title of the book series, the book belongs to.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 
@@ -209,6 +271,7 @@ class _RequiredLists(_Stem):
     creator: Annotated[
         list[MergedPersonIdentifier],
         Field(
+            description="The author of the publication.",
             min_length=1,
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/creator"]},
         ),
@@ -216,6 +279,7 @@ class _RequiredLists(_Stem):
     title: Annotated[
         list[Text],
         Field(
+            description="The full title of the publication.",
             min_length=1,
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
         ),
@@ -233,20 +297,27 @@ class _OptionalValues(_Stem):
     issue: VolumeOrIssueStr | None = None
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]},
+        ),
     ] = None
     license: Annotated[
         License | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+        ),
     ] = None
     pages: PagesStr | None = None
     publicationPlace: PublicationPlaceStr | None = None
     publicationYear: Annotated[
         Year | None,
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": "http://datacite.org/schema/kernel-4/publicationYear"
-            }
+            },
         ),
     ] = None
     section: SectionStr | None = None
@@ -257,7 +328,10 @@ class _OptionalValues(_Stem):
 class _RequiredValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ]
 
 
@@ -289,7 +363,6 @@ class BaseBibliographicResource(
     json_schema_extra={
         "description": "A book, article, or other documentary resource.",
         "sameAs": ["http://purl.org/dc/terms/BibliographicResource"],
-        "title": "Bibliographic Resource",
     },
 ):
     """All fields for a valid bibliographic resource except for provenance."""
@@ -309,20 +382,27 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
     ) -> Annotated[
         ExtractedBibliographicResourceIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedBibliographicResourceIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedBibliographicResourceIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedBibliographicResourceIdentifier)
 
 
-class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
+class MergedBibliographicResource(
+    BaseBibliographicResource,
+    MergedItem,
+    json_schema_extra={"title": "Merged Bibliographic Resource"},
+):
     """The result of merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
     entityType: Annotated[
@@ -432,12 +512,8 @@ class BibliographicResourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["BibliographicResourceMapping"], Field(alias="$type", frozen=True)
     ] = "BibliographicResourceMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     accessRestriction: Annotated[
-        list[MappingField[AccessRestriction]], Field(min_length=1)
+        list[MappingField[AccessRestriction]], Field(description=None, min_length=1)
     ]
     doi: list[MappingField[DoiStr | None]] = []
     edition: list[MappingField[EditionStr | None]] = []
@@ -454,9 +530,12 @@ class BibliographicResourceMapping(_Stem, BaseMapping):
     volume: list[MappingField[VolumeOrIssueStr | None]] = []
     volumeOfSeries: list[MappingField[VolumeOrIssueStr | None]] = []
     creator: Annotated[
-        list[MappingField[list[MergedPersonIdentifier]]], Field(min_length=1)
+        list[MappingField[list[MergedPersonIdentifier]]],
+        Field(description=None, min_length=1),
     ]
-    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    title: Annotated[
+        list[MappingField[list[Text]]], Field(description=None, min_length=1)
+    ]
     abstract: list[MappingField[list[Text]]] = []
     alternateIdentifier: list[MappingField[list[str]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
@@ -481,4 +560,4 @@ class BibliographicResourceFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["BibliographicResourceFilter"], Field(alias="$type", frozen=True)
     ] = "BibliographicResourceFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

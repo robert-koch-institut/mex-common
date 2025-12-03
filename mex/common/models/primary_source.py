@@ -29,6 +29,9 @@ VersionStr = Annotated[
     str,
     Field(
         examples=["v1", "2023-01-16", "Schema 9"],
+        description=(
+            "The version of the primary source, e.g. the date of the last modification."
+        ),
     ),
 ]
 AnyContactIdentifier = Annotated[
@@ -36,6 +39,7 @@ AnyContactIdentifier = Annotated[
     | MergedPersonIdentifier
     | MergedContactPointIdentifier,
     AfterValidator(Identifier),
+    Field(description="An agent that serves as a contact for the primary source."),
 ]
 
 
@@ -48,33 +52,47 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeTitle: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     contact: Annotated[
         list[AnyContactIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+        ),
     ] = []
     description: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+        ),
     ] = []
     documentation: Annotated[
         list[Link],
         Field(
+            description=None,
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
-            }
+            },
         ),
     ] = []
     locatedAt: list[Link] = []
     title: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+            description=None,
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
 
@@ -99,7 +117,6 @@ class BasePrimarySource(
             "http://www.w3.org/ns/dcat#Catalog",
             "http://www.w3.org/ns/prov#PrimarySource",
         ],
-        "title": "Primary Source",
     },
 ):
     """All fields for a valid primary source except for provenance."""
@@ -119,20 +136,25 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     ) -> Annotated[
         ExtractedPrimarySourceIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedPrimarySourceIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedPrimarySourceIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedPrimarySourceIdentifier)
 
 
-class MergedPrimarySource(BasePrimarySource, MergedItem):
+class MergedPrimarySource(
+    BasePrimarySource, MergedItem, json_schema_extra={"title": "Merged Primary Source"}
+):
     """The result of merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
@@ -211,10 +233,6 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PrimarySourceMapping"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     version: list[MappingField[VersionStr | None]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
@@ -231,4 +249,4 @@ class PrimarySourceFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["PrimarySourceFilter"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

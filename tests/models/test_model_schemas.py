@@ -8,9 +8,9 @@ from typing import Any
 import pytest
 
 from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
-from mex.common.transform import dromedary_to_kebab
+from mex.common.transform import dromedary_to_kebab, split_to_camel
 from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
-from mex.model import ENTITY_JSON_BY_NAME
+from mex.model import EXTRACTED_MODEL_JSON_BY_NAME
 
 
 def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
@@ -20,10 +20,10 @@ def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
     # more comparable to what mex-model specifies.
 
     validation_schema = model.model_json_schema(
-        ref_template="/schema/fields/{model}", mode="validation"
+        ref_template="/mex/model/fields/{model}", mode="validation"
     )
     serialization_schema = model.model_json_schema(
-        ref_template="/schema/fields/{model}", mode="serialization"
+        ref_template="/mex/model/fields/{model}", mode="serialization"
     )
     validation_schema["properties"] = {
         **serialization_schema["properties"],
@@ -44,7 +44,11 @@ GENERATED_SCHEMAS = dict(
     )
 )
 SPECIFIED_SCHEMAS = dict(
-    sorted({schema["title"]: schema for schema in ENTITY_JSON_BY_NAME.values()}.items())
+    sorted(
+        {
+            schema["title"]: schema for schema in EXTRACTED_MODEL_JSON_BY_NAME.values()
+        }.items()
+    )
 )
 ENTITY_TYPES_AND_FIELD_NAMES_BY_FQN = {
     f"{entity_type}.{field_name}": (entity_type, field_name)
@@ -113,7 +117,7 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
 
     # discard comments and descriptions
     obj.pop("$comment", None)  # only in spec
-    obj.pop("description", None)  # only in spec
+    # obj.pop("description", None)  # only in spec
 
     # discard title but save value for later
     title = obj.pop("title", field)  # only in generated
@@ -124,15 +128,15 @@ def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
     if obj.get("pattern") == IDENTIFIER_PATTERN:
         del obj["pattern"]
         del obj["type"]
-        if field in ("identifier", "stableTargetId"):
-            obj["$ref"] = "/schema/fields/identifier"
+        if field == "identifier":
+            obj["$ref"] = "/mex/model/fields/identifier"
         else:
-            obj["$ref"] = "/schema/entities/{}#/identifier".format(
-                title.removesuffix("Identifier").removeprefix("Merged")
+            obj["$ref"] = "/mex/model/entities/{}#/identifier".format(
+                title.removesuffix("Identifier")
             )
 
     # align concept/enum annotations
-    elif obj.get("$ref") == "/schema/entities/concept#/identifier":
+    elif obj.get("$ref") == "/mex/model/entities/concept#/identifier":
         obj["pattern"] = VOCABULARY_PATTERN
         obj["type"] = "string"
         del obj["$ref"]
@@ -168,7 +172,7 @@ def test_field_defs_match_spec(entity_type: str, field_name: str) -> None:
     prepare_field(field_name, generated)
 
     assert generated == specified, f"""
-{entity_type}.{field_name}
+{split_to_camel(entity_type)}.{field_name}
 
 specified:
 {json.dumps(specified_properties[field_name], indent=4, sort_keys=True)}

@@ -40,11 +40,17 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     accessURL: Annotated[
         list[Link],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessURL"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessURL"]},
+        ),
     ] = []
     downloadURL: Annotated[
         list[Link],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#downloadURL"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#downloadURL"]},
+        ),
     ] = []
 
 
@@ -52,6 +58,7 @@ class _RequiredLists(_Stem):
     title: Annotated[
         list[Text],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
         ),
@@ -61,7 +68,10 @@ class _RequiredLists(_Stem):
 class _SparseLists(_Stem):
     title: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 
@@ -69,85 +79,119 @@ class _OptionalValues(_Stem):
     accessService: Annotated[
         MergedAccessPlatformIdentifier | None,
         Field(
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
         ),
     ] = None
     license: Annotated[
         License | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+        ),
     ] = None
     mediaType: Annotated[
         MIMEType | None,
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/ns/dcat#mediaType",
                     "http://purl.org/dc/terms/format",
                 ]
-            }
+            },
         ),
     ] = None
     modified: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+        ),
     ] = None
 
 
 class _RequiredValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ]
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+        ),
     ]
 
 
 class _SparseValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ] = None
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+        ),
     ] = None
 
 
 class _VariadicValues(_Stem):
     accessRestriction: Annotated[
         list[AccessRestriction],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ] = []
     accessService: Annotated[
         list[MergedAccessPlatformIdentifier],
         Field(
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
         ),
     ] = []
     issued: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+        ),
     ] = []
     license: Annotated[
         list[License],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+        ),
     ] = []
     mediaType: Annotated[
         list[MIMEType],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/ns/dcat#mediaType",
                     "http://purl.org/dc/terms/format",
                 ]
-            }
+            },
         ),
     ] = []
     modified: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+        ),
     ] = []
 
 
@@ -166,7 +210,6 @@ class BaseDistribution(
             "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
         ),
         "sameAs": ["http://www.w3.org/ns/dcat#Distribution"],
-        "title": "Distribution",
     },
 ):
     """All fields for a valid distribution except for provenance."""
@@ -186,20 +229,25 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
     ) -> Annotated[
         ExtractedDistributionIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedDistributionIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedDistributionIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
-class MergedDistribution(BaseDistribution, MergedItem):
+class MergedDistribution(
+    BaseDistribution, MergedItem, json_schema_extra={"title": "Merged Distribution"}
+):
     """The result of merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[
@@ -285,16 +333,12 @@ class DistributionMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["DistributionMapping"], Field(alias="$type", frozen=True)
     ] = "DistributionMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     accessRestriction: Annotated[
-        list[MappingField[AccessRestriction]], Field(min_length=1)
+        list[MappingField[AccessRestriction]], Field(description=None, min_length=1)
     ]
     issued: Annotated[
         list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]],
-        Field(min_length=1),
+        Field(description=None, min_length=1),
     ]
     accessService: list[MappingField[MergedAccessPlatformIdentifier | None]] = []
     license: list[MappingField[License | None]] = []
@@ -302,7 +346,9 @@ class DistributionMapping(_Stem, BaseMapping):
     modified: list[
         MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
     ] = []
-    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
+    title: Annotated[
+        list[MappingField[list[Text]]], Field(description=None, min_length=1)
+    ]
     accessURL: list[MappingField[list[Link]]] = []
     downloadURL: list[MappingField[list[Link]]] = []
 
@@ -313,4 +359,4 @@ class DistributionFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["DistributionFilter"], Field(alias="$type", frozen=True)
     ] = "DistributionFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []

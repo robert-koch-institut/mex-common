@@ -28,7 +28,16 @@ EmailStr = Annotated[
     Field(
         examples=["info@rki.de"],
         pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
+        description=(
+            "The email address through which the organizational unit can be contacted."
+        ),
         json_schema_extra={"format": "email"},
+    ),
+]
+ParentUnitIdentifier = Annotated[
+    MergedOrganizationalUnitIdentifier,
+    Field(
+        description="The described unit is a subunit of another organizational unit."
     ),
 ]
 
@@ -42,37 +51,48 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     email: Annotated[
         list[EmailStr],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
-            }
+            },
         ),
     ] = []
     shortName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+        ),
     ] = []
     unitOf: Annotated[
         list[MergedOrganizationIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]},
+        ),
     ] = []
     website: Annotated[
         list[Link],
         Field(
+            description=None,
             json_schema_extra={
                 "sameAs": [
                     "http://www.wikidata.org/entity/P856",
                     "http://www.w3.org/2006/vcard/ns#hasUrl",
                     "http://xmlns.com/foaf/0.1/homepage",
                 ]
-            }
+            },
         ),
     ] = []
 
@@ -81,6 +101,7 @@ class _RequiredLists(_Stem):
     name: Annotated[
         list[Text],
         Field(
+            description=None,
             min_length=1,
             json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
         ),
@@ -90,16 +111,19 @@ class _RequiredLists(_Stem):
 class _SparseLists(_Stem):
     name: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"}),
+        Field(
+            description=None,
+            json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
+        ),
     ] = []
 
 
 class _OptionalValues(_Stem):
-    parentUnit: MergedOrganizationalUnitIdentifier | None = None
+    parentUnit: ParentUnitIdentifier | None = None
 
 
 class _VariadicValues(_Stem):
-    parentUnit: list[MergedOrganizationalUnitIdentifier] = []
+    parentUnit: list[ParentUnitIdentifier] = []
 
 
 class BaseOrganizationalUnit(
@@ -118,7 +142,6 @@ class BaseOrganizationalUnit(
             "http://www.w3.org/2006/vcard/ns#Group",
             "http://www.cidoc-crm.org/cidoc-crm/E_74_Group",
         ],
-        "title": "Organizational Unit",
     },
 ):
     """All fields for a valid organizational unit except for provenance."""
@@ -138,20 +161,27 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     ) -> Annotated[
         ExtractedOrganizationalUnitIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=None,
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
+        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def stableTargetId(self) -> MergedOrganizationalUnitIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+        """The identifier of the merged item that this extracted item belongs to."""
         return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
-class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
+class MergedOrganizationalUnit(
+    BaseOrganizationalUnit,
+    MergedItem,
+    json_schema_extra={"title": "Merged Organizational Unit"},
+):
     """The result of merging all extracted items and rules for an organizational unit."""  # noqa: E501
 
     entityType: Annotated[
@@ -235,12 +265,10 @@ class OrganizationalUnitMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationalUnitMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
+    parentUnit: list[MappingField[ParentUnitIdentifier | None]] = []
+    name: Annotated[
+        list[MappingField[list[Text]]], Field(description=None, min_length=1)
     ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
-    parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
-    name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
     email: list[MappingField[list[EmailStr]]] = []
     shortName: list[MappingField[list[Text]]] = []
@@ -254,4 +282,4 @@ class OrganizationalUnitFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["OrganizationalUnitFilter"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitFilter"
-    fields: Annotated[list[FilterField], Field(title="fields")] = []
+    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
