@@ -160,9 +160,7 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     ) -> Annotated[
         ExtractedPrimarySourceIdentifier,
         Field(
-            json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
-            },
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
         ),
     ]:
         """An unambiguous reference to the resource within a given context."""

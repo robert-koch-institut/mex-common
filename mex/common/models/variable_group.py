@@ -101,9 +101,7 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     ) -> Annotated[
         ExtractedVariableGroupIdentifier,
         Field(
-            json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
-            },
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
         ),
     ]:
         """An unambiguous reference to the resource within a given context."""

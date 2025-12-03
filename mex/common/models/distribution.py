@@ -128,7 +128,10 @@ class _OptionalValues(_Stem):
     modified: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
         Field(
-            description="Date on which the resource was changed ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date on which the resource was changed ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = None
@@ -145,7 +148,10 @@ class _RequiredValues(_Stem):
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year,
         Field(
-            description="Date of formal issuance of the resource ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date of formal issuance of the resource ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
         ),
     ]
@@ -162,7 +168,10 @@ class _SparseValues(_Stem):
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
         Field(
-            description="Date of formal issuance of the resource ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date of formal issuance of the resource ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
         ),
     ] = None
@@ -190,7 +199,10 @@ class _VariadicValues(_Stem):
     issued: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
-            description="Date of formal issuance of the resource ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date of formal issuance of the resource ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
         ),
     ] = []
@@ -225,7 +237,10 @@ class _VariadicValues(_Stem):
     modified: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
-            description="Date on which the resource was changed ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date on which the resource was changed ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = []
@@ -265,9 +280,7 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
     ) -> Annotated[
         ExtractedDistributionIdentifier,
         Field(
-            json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
-            },
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
         ),
     ]:
         """An unambiguous reference to the resource within a given context."""

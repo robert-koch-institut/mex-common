@@ -40,7 +40,7 @@ class _RequiredLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
-            description=("The email address associated to the contact point."),
+            description="The email address associated to the contact point.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -91,9 +91,7 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     ) -> Annotated[
         ExtractedContactPointIdentifier,
         Field(
-            json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
-            },
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
         ),
     ]:
         """An unambiguous reference to the resource within a given context."""

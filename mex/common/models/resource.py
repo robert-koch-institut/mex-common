@@ -492,7 +492,7 @@ class _OptionalValues(_Stem):
     accrualPeriodicity: Annotated[
         Frequency | None,
         Field(
-            description=("The frequency with which items are added to a collection."),
+            description="The frequency with which items are added to a collection.",
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
             },
@@ -737,9 +737,7 @@ class ExtractedResource(BaseResource, ExtractedData):
     ) -> Annotated[
         ExtractedResourceIdentifier,
         Field(
-            json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
-            },
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
         ),
     ]:
         """An unambiguous reference to the resource within a given context."""

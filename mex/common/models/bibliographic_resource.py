@@ -177,7 +177,10 @@ class _OptionalLists(_Stem):
     distribution: Annotated[
         list[MergedDistributionIdentifier],
         Field(
-            description="An available distribution of the publication ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))",
+            description=(
+                "An available distribution of the publication ([DCAT, 2020-02-04]"
+                "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))"
+            ),
         ),
     ] = []
     editor: Annotated[
@@ -215,7 +218,10 @@ class _OptionalLists(_Stem):
     keyword: Annotated[
         list[Text],
         Field(
-            description="A keyword or tag describing the resource ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "A keyword or tag describing the resource ([DCAT, 2020-02-04]"
+                "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
@@ -312,7 +318,10 @@ class _OptionalValues(_Stem):
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
         Field(
-            description="Date of formal issuance of the publication ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date of formal issuance of the publication ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]},
         ),
     ] = None
@@ -405,7 +414,10 @@ class _VariadicValues(_Stem):
     issued: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
-            description="Date of formal issuance of the publication ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "Date of formal issuance of the publication ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
         ),
     ] = []
     license: Annotated[
@@ -485,9 +497,7 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
     ) -> Annotated[
         ExtractedBibliographicResourceIdentifier,
         Field(
-            json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
-            },
+            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
         ),
     ]:
         """An unambiguous reference to the resource within a given context."""

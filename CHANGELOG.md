@@ -8,11 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - RestrictedTextLanguage allowing only EN or DE if confidence >=0.75
+- added field descriptions according to mex.model
+- added two new string helper functions `split_to_camel` and `camel_to_split`
+- added merged model verification to `test_model_schemas`
 
 ### Changes
+
 - detect_language does not support FR, RU or ES anymore.
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- update template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- use `model_title_generator` instead of hardcoding model titles
+- move `hadPrimarySource` and `identifierInPrimarySource` from concrete mapping models
+  to the base mapping class
+- update mex-model to version 4.6 where extracted and merged schemas are split
+- update `test_model_schemas` to be more readable and remove unnecessary special cases
 
 ### Deprecated
 
@@ -25,8 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.10.0] - 2025-11-20
 
 ### Changes
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
-- organigram lookup now returns lists of units to support organizational units sharing same details like email
+
+- update template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- organigram lookup now returns lists of units to support organizational units sharing
+  same details like email
 
 ## [1.9.0] - 2025-11-03
 
@@ -36,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- update template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 
 ## [1.8.2] - 2025-10-28
 
