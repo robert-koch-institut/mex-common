@@ -167,6 +167,10 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
         Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "MergedAccessPlatform"
     identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+    supersededBy: Annotated[
+        MergedAccessPlatformIdentifier | None,
+        Field(json_schema_extra={"sameAs": ["https://schema.org/supersededBy"]}),
+    ] = None
 
 
 class PreviewAccessPlatform(
@@ -178,6 +182,10 @@ class PreviewAccessPlatform(
         Literal["PreviewAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "PreviewAccessPlatform"
     identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+    supersededBy: Annotated[
+        MergedAccessPlatformIdentifier | None,
+        Field(json_schema_extra={"sameAs": ["https://schema.org/supersededBy"]}),
+    ] = None
 
 
 class AdditiveAccessPlatform(
@@ -188,6 +196,10 @@ class AdditiveAccessPlatform(
     entityType: Annotated[
         Literal["AdditiveAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "AdditiveAccessPlatform"
+    supersededBy: Annotated[
+        MergedAccessPlatformIdentifier | None,
+        Field(json_schema_extra={"sameAs": ["https://schema.org/supersededBy"]}),
+    ] = None
 
 
 class SubtractiveAccessPlatform(_OptionalLists, _VariadicValues, SubtractiveRule):
