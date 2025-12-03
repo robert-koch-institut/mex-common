@@ -165,7 +165,10 @@ class _OptionalLists(_Stem):
     contributingUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="An organizational unit of RKI, that is contributing to the publication.",
+            description=(
+                "An organizational unit of RKI, that is contributing to the "
+                "publication."
+            ),
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
             },
@@ -194,7 +197,10 @@ class _OptionalLists(_Stem):
     isbnIssn: Annotated[
         list[IsbnIssnStr],
         Field(
-            description="Either the ISBN (for books) or ISSN (for periodicals) of the publication.",
+            description=(
+                "Either the ISBN (for books) or ISSN (for periodicals) of the "
+                "publication."
+            ),
             json_schema_extra={
                 "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
             },
@@ -223,14 +229,21 @@ class _OptionalLists(_Stem):
     publisher: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
-            description="An entity responsible for making the publication available ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "An entity responsible for making the publication available "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/"
+                "dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": "http://purl.org/dc/terms/publisher"},
         ),
     ] = []
     repositoryURL: Annotated[
         list[Link],
         Field(
-            description="The handle of the publication in the repository, where the publication is stored.",
+            description=(
+                "The handle of the publication in the repository, where the "
+                "publication is stored."
+            ),
         ),
     ] = []
     subtitle: Annotated[
@@ -306,7 +319,11 @@ class _OptionalValues(_Stem):
     license: Annotated[
         License | None,
         Field(
-            description="A legal document giving official permission to do something with the publication ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "A legal document giving official permission to do something with "
+                "the publication ([DCT, 2020-01-20](http://dublincore.org/"
+                "specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
         ),
     ] = None
@@ -330,7 +347,10 @@ class _OptionalValues(_Stem):
     section: Annotated[
         SectionStr | None,
         Field(
-            description="The name of the chapter of the publication, the book section belongs to."
+            description=(
+                "The name of the chapter of the publication, the book section "
+                "belongs to."
+            )
         ),
     ] = None
     volume: Annotated[
@@ -391,7 +411,11 @@ class _VariadicValues(_Stem):
     license: Annotated[
         list[License],
         Field(
-            description="A legal document giving official permission to do something with the publication ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "A legal document giving official permission to do something with "
+                "the publication ([DCT, 2020-01-20](http://dublincore.org/"
+                "specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
         ),
     ] = []
     pages: Annotated[
@@ -409,13 +433,19 @@ class _VariadicValues(_Stem):
     repositoryURL: Annotated[
         list[Link],
         Field(
-            description="The handle of the publication in the repository, where the publication is stored."
+            description=(
+                "The handle of the publication in the repository, where the "
+                "publication is stored."
+            )
         ),
     ] = []
     section: Annotated[
         list[SectionStr],
         Field(
-            description="The name of the chapter of the publication, the book section belongs to."
+            description=(
+                "The name of the chapter of the publication, the book section "
+                "belongs to."
+            )
         ),
     ] = []
     volume: Annotated[
@@ -471,7 +501,7 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
 
 
 class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
-    """The result of merging all extracted items and rules for a bibliographic resource."""
+    """The result of merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
     entityType: Annotated[
         Literal["MergedBibliographicResource"], Field(alias="$type", frozen=True)
@@ -480,7 +510,9 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
         MergedBibliographicResourceIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -492,7 +524,7 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
 class PreviewBibliographicResource(
     _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
 ):
-    """Preview for merging all extracted items and rules for a bibliographic resource."""
+    """Preview for merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
     entityType: Annotated[
         Literal["PreviewBibliographicResource"], Field(alias="$type", frozen=True)
@@ -501,7 +533,9 @@ class PreviewBibliographicResource(
         MergedBibliographicResourceIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -531,7 +565,7 @@ class SubtractiveBibliographicResource(
 
 
 class PreventiveBibliographicResource(_Stem, PreventiveRule):
-    """Rule to prevent primary sources for fields of merged bibliographic resource items."""
+    """Rule to prevent primary sources for fields of merged bibliographic resource items."""  # noqa: E501
 
     entityType: Annotated[
         Literal["PreventiveBibliographicResource"], Field(alias="$type", frozen=True)

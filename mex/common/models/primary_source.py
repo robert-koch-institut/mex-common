@@ -79,7 +79,10 @@ class _OptionalLists(_Stem):
     locatedAt: Annotated[
         list[Link],
         Field(
-            description="A URL that leads to the primary source or a filepath, where the primary source is stored."
+            description=(
+                "A URL that leads to the primary source or a filepath, where the "
+                "primary source is stored."
+            )
         ),
     ] = []
     title: Annotated[
@@ -92,7 +95,11 @@ class _OptionalLists(_Stem):
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="This property refers to agents who assume responsibility and accountability for the primary source and its appropriate maintenance.",
+            description=(
+                "This property refers to agents who assume responsibility and "
+                "accountability for the primary source and its appropriate "
+                "maintenance."
+            ),
             json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
@@ -102,7 +109,10 @@ class _OptionalValues(_Stem):
     version: Annotated[
         VersionStr | None,
         Field(
-            description="The version of the primary source, e.g. the date of the last modification."
+            description=(
+                "The version of the primary source, e.g. the date of the last "
+                "modification."
+            )
         ),
     ] = None
 
@@ -111,7 +121,10 @@ class _VariadicValues(_Stem):
     version: Annotated[
         list[VersionStr],
         Field(
-            description="The version of the primary source, e.g. the date of the last modification."
+            description=(
+                "The version of the primary source, e.g. the date of the last "
+                "modification."
+            )
         ),
     ] = []
 
@@ -172,7 +185,9 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
         MergedPrimarySourceIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -191,7 +206,9 @@ class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
         MergedPrimarySourceIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

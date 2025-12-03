@@ -50,7 +50,10 @@ class _OptionalLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
-            description="The email address through which the organizational unit can be contacted.",
+            description=(
+                "The email address through which the organizational unit can be "
+                "contacted."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -69,14 +72,20 @@ class _OptionalLists(_Stem):
     unitOf: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
-            description="Indicates an organization of which this unit is a part, e.g. a department within a larger organization.",
+            description=(
+                "Indicates an organization of which this unit is a part, e.g. a "
+                "department within a larger organization."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]},
         ),
     ] = []
     website: Annotated[
         list[Link],
         Field(
-            description="A URL serving as the official web presentation of the organizational unit.",
+            description=(
+                "A URL serving as the official web presentation of the "
+                "organizational unit."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.wikidata.org/entity/P856",
@@ -113,7 +122,9 @@ class _OptionalValues(_Stem):
     parentUnit: Annotated[
         MergedOrganizationalUnitIdentifier | None,
         Field(
-            description="The described unit is a subunit of another organizational unit."
+            description=(
+                "The described unit is a subunit of another organizational unit."
+            )
         ),
     ] = None
 
@@ -122,7 +133,9 @@ class _VariadicValues(_Stem):
     parentUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="The described unit is a subunit of another organizational unit."
+            description=(
+                "The described unit is a subunit of another organizational unit."
+            )
         ),
     ] = []
 
@@ -178,7 +191,7 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
 
 
 class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
-    """The result of merging all extracted items and rules for an organizational unit."""
+    """The result of merging all extracted items and rules for an organizational unit."""  # noqa: E501
 
     entityType: Annotated[
         Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
@@ -187,7 +200,9 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
         MergedOrganizationalUnitIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -208,7 +223,9 @@ class PreviewOrganizationalUnit(
         MergedOrganizationalUnitIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

@@ -67,7 +67,11 @@ class _OptionalLists(_Stem):
     landingPage: Annotated[
         list[Link],
         Field(
-            description="A Web page that can be navigated to in a Web browser to gain access to the catalog, a dataset, its distributions and/or additional information.",
+            description=(
+                "A Web page that can be navigated to in a Web browser to gain "
+                "access to the catalog, a dataset, its distributions and/or "
+                "additional information."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#landingPage"]},
         ),
     ] = []
@@ -81,7 +85,10 @@ class _OptionalLists(_Stem):
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="This property refers to agents who assume responsibility and accountability for the resource and its appropriate maintenance.",
+            description=(
+                "This property refers to agents who assume responsibility and "
+                "accountability for the resource and its appropriate maintenance."
+            ),
             json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
@@ -91,7 +98,10 @@ class _OptionalValues(_Stem):
     endpointDescription: Annotated[
         Link | None,
         Field(
-            description="A description of the services available via the end-points, including their operations, parameters etc.",
+            description=(
+                "A description of the services available via the end-points, "
+                "including their operations, parameters etc."
+            ),
             json_schema_extra={
                 "sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]
             },
@@ -107,7 +117,10 @@ class _OptionalValues(_Stem):
     endpointURL: Annotated[
         Link | None,
         Field(
-            description="The root location or primary endpoint of the service (a Web-resolvable IRI)",
+            description=(
+                "The root location or primary endpoint of the service "
+                "(a Web-resolvable IRI)"
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]},
         ),
     ] = None
@@ -117,7 +130,11 @@ class _RequiredValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility,
         Field(
-            description="Indicates form if the platform can be accessed only within RKI network (internally) or if the platform is accessible publicly (externally).",
+            description=(
+                "Indicates form if the platform can be accessed only within RKI "
+                "network (internally) or if the platform is accessible publicly "
+                "(externally)."
+            ),
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ]
@@ -127,7 +144,11 @@ class _SparseValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility | None,
         Field(
-            description="Indicates form if the platform can be accessed only within RKI network (internally) or if the platform is accessible publicly (externally).",
+            description=(
+                "Indicates form if the platform can be accessed only within RKI "
+                "network (internally) or if the platform is accessible publicly "
+                "(externally)."
+            ),
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
@@ -137,7 +158,10 @@ class _VariadicValues(_Stem):
     endpointDescription: Annotated[
         list[Link],
         Field(
-            description="A description of the services available via the end-points, including their operations, parameters etc.",
+            description=(
+                "A description of the services available via the end-points, "
+                "including their operations, parameters etc."
+            ),
         ),
     ] = []
     endpointType: Annotated[
@@ -150,13 +174,20 @@ class _VariadicValues(_Stem):
     endpointURL: Annotated[
         list[Link],
         Field(
-            description="The root location or primary endpoint of the service (a Web-resolvable IRI)",
+            description=(
+                "The root location or primary endpoint of the service "
+                "(a Web-resolvable IRI)"
+            ),
         ),
     ] = []
     technicalAccessibility: Annotated[
         list[TechnicalAccessibility],
         Field(
-            description="Indicates form if the platform can be accessed only within RKI network (internally) or if the platform is accessible publicly (externally).",
+            description=(
+                "Indicates form if the platform can be accessed only within RKI "
+                "network (internally) or if the platform is accessible publicly "
+                "(externally)."
+            ),
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
@@ -216,7 +247,9 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
         MergedAccessPlatformIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -237,7 +270,9 @@ class PreviewAccessPlatform(
         MergedAccessPlatformIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

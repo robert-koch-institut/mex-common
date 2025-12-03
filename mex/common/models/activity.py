@@ -74,7 +74,9 @@ class _OptionalLists(_Stem):
     documentation: Annotated[
         list[Link],
         Field(
-            description="A link to a document, that contains the documentation of the activity.",
+            description=(
+                "A link to a document, that contains the documentation of the activity."
+            ),
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
             },
@@ -90,14 +92,19 @@ class _OptionalLists(_Stem):
     externalAssociate: Annotated[
         list[AnyExternalAssociateIdentifier],
         Field(
-            description="An external institution or person, that is associated with the activity.",
+            description=(
+                "An external institution or person, that is associated with the "
+                "activity."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     funderOrCommissioner: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
-            description="An agent, that has either funded or commissioned the activity.",
+            description=(
+                "An agent, that has either funded or commissioned the activity."
+            ),
             json_schema_extra={"sameAs": "http://www.wikidata.org/entity/P8324"},
         ),
     ] = []
@@ -159,7 +166,10 @@ class _OptionalLists(_Stem):
     succeeds: Annotated[
         list[MergedActivityIdentifier],
         Field(
-            description="Another activity, that ended with the start of the described activity. A follow-up activity.",
+            description=(
+                "Another activity, that ended with the start of the described "
+                "activity. A follow-up activity."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.cidoc-crm.org/cidoc-crm/P173_start_before_or_with_the_end_of"
@@ -288,7 +298,9 @@ class MergedActivity(BaseActivity, MergedItem):
         MergedActivityIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -307,7 +319,9 @@ class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
         MergedActivityIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

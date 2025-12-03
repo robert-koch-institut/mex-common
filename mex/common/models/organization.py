@@ -119,14 +119,19 @@ class _OptionalLists(_Stem):
     gndId: Annotated[
         list[GndIdStr],
         Field(
-            description="An identifier from the German authority file named Gemeinsame Normdatei (GND), curated by the German National Library (DNB).",
+            description=(
+                "An identifier from the German authority file named Gemeinsame "
+                "Normdatei (GND), curated by the German National Library (DNB)."
+            ),
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]},
         ),
     ] = []
     isniId: Annotated[
         list[IsniIdStr],
         Field(
-            description="The ISNI (International Standard Name Identifier) of the organization.",
+            description=(
+                "The ISNI (International Standard Name Identifier) of the organization."
+            ),
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
         ),
     ] = []
@@ -240,7 +245,9 @@ class MergedOrganization(BaseOrganization, MergedItem):
         MergedOrganizationIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -259,7 +266,9 @@ class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
         MergedOrganizationIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

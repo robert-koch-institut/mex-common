@@ -40,7 +40,7 @@ class _RequiredLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
-            description="The email address associated to the contact point.",
+            description=("The email address associated to the contact point."),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -116,7 +116,9 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
         MergedContactPointIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -135,7 +137,9 @@ class PreviewContactPoint(_SparseLists, PreviewItem):
         MergedContactPointIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

@@ -57,7 +57,10 @@ class _RequiredValues(_Stem):
     isIndicatedAtTime: Annotated[
         YearMonthDayTime,
         Field(
-            description="Specifies the temporal information for when the entity has indicated the specific context.",
+            description=(
+                "Specifies the temporal information for when the entity has "
+                "indicated the specific context."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
         ),
     ]
@@ -88,7 +91,10 @@ class _SparseValues(_Stem):
     isIndicatedAtTime: Annotated[
         YearMonthDayTime | None,
         Field(
-            description="Specifies the temporal information for when the entity has indicated the specific context.",
+            description=(
+                "Specifies the temporal information for when the entity has "
+                "indicated the specific context."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
         ),
     ] = None
@@ -105,7 +111,14 @@ class _VariadicValues(_Stem):
     hasConsentStatus: Annotated[
         list[ConsentStatus],
         Field(
-            description="In DPV there is no property for the type of consent. In DPV, the types are subclasses of dpv:Consent. In order to align with our modelling approach, we model types of consent as a concept (skos:Concept). Since dpv:Consent is also defined as a skos:Concept, this is no conflict, just another way of implementing it.",
+            description=(
+                "In DPV there is no property for the type of consent. In DPV, the "
+                "types are subclasses of dpv:Consent. In order to align with our "
+                "modelling approach, we model types of consent as a concept "
+                "(skos:Concept). Since dpv:Consent is also defined as a "
+                "skos:Concept, this is no conflict, just another way of "
+                "implementing it."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ] = []
@@ -119,7 +132,10 @@ class _VariadicValues(_Stem):
     isIndicatedAtTime: Annotated[
         list[YearMonthDayTime],
         Field(
-            description="Specifies the temporal information for when the entity has indicated the specific context.",
+            description=(
+                "Specifies the temporal information for when the entity has "
+                "indicated the specific context."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
         ),
     ] = []
@@ -175,7 +191,9 @@ class MergedConsent(BaseConsent, MergedItem):
         MergedConsentIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -194,7 +212,9 @@ class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
         MergedConsentIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

@@ -152,20 +152,27 @@ class _OptionalLists(_Stem):
     anonymizationPseudonymization: Annotated[
         list[AnonymizationPseudonymization],
         Field(
-            description="Indicates whether the data has been anonymized and/or pseudonymized."
+            description=(
+                "Indicates whether the data has been anonymized and/or pseudonymized."
+            )
         ),
     ] = []
     conformsTo: Annotated[
         list[ConformsToStr],
         Field(
-            description="Standards used in the creation, analysis or transmission of the resource.",
+            description=(
+                "Standards used in the creation, analysis or transmission of the "
+                "resource."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/conformsTo"]},
         ),
     ] = []
     contributingUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="An organizational unit of RKI, that is contributing to the resource.",
+            description=(
+                "An organizational unit of RKI, that is contributing to the resource."
+            ),
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
             },
@@ -210,21 +217,36 @@ class _OptionalLists(_Stem):
     externalPartner: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
-            description="An external organization that is somehow involved in the creation of the resource.",
+            description=(
+                "An external organization that is somehow involved in the "
+                "creation of the resource."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     hasLegalBasis: Annotated[
         list[Text],
         Field(
-            description="The legal basis used to justify processing of personal data. Legal basis (plural: legal bases) are defined by legislations and regulations, whose applicability is usually restricted to specific jurisdictions which can be represented using dpv:hasJurisdiction or dpv:hasLaw. Legal basis can be used without such declarations, e.g. 'Consent', however their interpretation will require association with a law, e.g. 'EU GDPR'.",
+            description=(
+                "The legal basis used to justify processing of personal data. "
+                "Legal basis (plural: legal bases) are defined by legislations "
+                "and regulations, whose applicability is usually restricted to "
+                "specific jurisdictions which can be represented using "
+                "dpv:hasJurisdiction or dpv:hasLaw. Legal basis can be used "
+                "without such declarations, e.g. 'Consent', however their "
+                "interpretation will require association with a law, e.g. "
+                "'EU GDPR'."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasLegalBasis"]},
         ),
     ] = []
     hasPurpose: Annotated[
         list[Text],
         Field(
-            description="A free text statement of the purpose of the processing of data or personal data.",
+            description=(
+                "A free text statement of the purpose of the processing of data "
+                "or personal data."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPurpose"]},
         ),
     ] = []
@@ -235,13 +257,20 @@ class _OptionalLists(_Stem):
     instrumentToolOrApparatus: Annotated[
         list[Text],
         Field(
-            description="Instrument, tool, or apparatus used in the research, analysis, observation, or processing of the object that is the subject of this resource.",
+            description=(
+                "Instrument, tool, or apparatus used in the research, analysis, "
+                "observation, or processing of the object that is the subject of "
+                "this resource."
+            ),
         ),
     ] = []
     isPartOf: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description="A related resource, in which the described resource is physically or logically included.",
+            description=(
+                "A related resource, in which the described resource is "
+                "physically or logically included."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
@@ -270,13 +299,20 @@ class _OptionalLists(_Stem):
     method: Annotated[
         list[Text],
         Field(
-            description="Method used in the research, analysis, observation or processing of the object that is subject to the resource.",
+            description=(
+                "Method used in the research, analysis, observation or "
+                "processing of the object that is subject to the resource."
+            ),
         ),
     ] = []
     methodDescription: Annotated[
         list[Text],
         Field(
-            description="The description of the method, that was used to research, analysis, observation or processing of the object that was subject to the resource.",
+            description=(
+                "The description of the method, that was used to research, "
+                "analysis, observation or processing of the object that was "
+                "subject to the resource."
+            ),
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/description"]
             },
@@ -285,20 +321,30 @@ class _OptionalLists(_Stem):
     populationCoverage: Annotated[
         list[Text],
         Field(
-            description="The type of population common to all subjects of the data collection.",
+            description=(
+                "The type of population common to all subjects of the data collection."
+            ),
         ),
     ] = []
     provenance: Annotated[
         list[Text],
         Field(
-            description="A statement about the lineage of a Dataset. Information about how the data was collected, including methodologies, tools, and protocols used.",
+            description=(
+                "A statement about the lineage of a Dataset. Information about "
+                "how the data was collected, including methodologies, tools, and "
+                "protocols used."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/provenance"]},
         ),
     ] = []
     publication: Annotated[
         list[MergedBibliographicResourceIdentifier],
         Field(
-            description="A publication that deals with the research, analysis, observation or processing of the object that was subject to the resource, e.g. a research paper.",
+            description=(
+                "A publication that deals with the research, analysis, "
+                "observation or processing of the object that was subject to the "
+                "resource, e.g. a research paper."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isReferencedBy"]},
         ),
     ] = []
@@ -334,14 +380,20 @@ class _OptionalLists(_Stem):
     resourceTypeSpecific: Annotated[
         list[Text],
         Field(
-            description="A term describing the specific nature of the resource. A more precise term than given by the property 'resourceTypeGeneral'.",
+            description=(
+                "A term describing the specific nature of the resource. A more "
+                "precise term than given by the property 'resourceTypeGeneral'."
+            ),
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     rights: Annotated[
         list[Text],
         Field(
-            description="Information about rights held in and over the resource as well as rights about the possibilities of the usage of the resource.",
+            description=(
+                "Information about rights held in and over the resource as well "
+                "as rights about the possibilities of the usage of the resource."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/rights"]},
         ),
     ] = []
@@ -372,7 +424,9 @@ class _RequiredLists(_Stem):
     theme: Annotated[
         list[Theme],
         Field(
-            description="A main category of the resource. A resource can have multiple themes.",
+            description=(
+                "A main category of the resource. A resource can have multiple themes."
+            ),
             min_length=1,
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]},
         ),
@@ -388,7 +442,10 @@ class _RequiredLists(_Stem):
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="This property refers to agents who assume responsibility and accountability for the resource and its appropriate maintenance.",
+            description=(
+                "This property refers to agents who assume responsibility and "
+                "accountability for the resource and its appropriate maintenance."
+            ),
             min_length=1,
             json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
@@ -406,7 +463,9 @@ class _SparseLists(_Stem):
     theme: Annotated[
         list[Theme],
         Field(
-            description="A main category of the resource. A resource can have multiple themes.",
+            description=(
+                "A main category of the resource. A resource can have multiple themes."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]},
         ),
     ] = []
@@ -420,7 +479,10 @@ class _SparseLists(_Stem):
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description="This property refers to agents who assume responsibility and accountability for the resource and its appropriate maintenance.",
+            description=(
+                "This property refers to agents who assume responsibility and "
+                "accountability for the resource and its appropriate maintenance."
+            ),
             json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
@@ -430,7 +492,7 @@ class _OptionalValues(_Stem):
     accrualPeriodicity: Annotated[
         Frequency | None,
         Field(
-            description="The frequency with which items are added to a collection.",
+            description=("The frequency with which items are added to a collection."),
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
             },
@@ -450,27 +512,39 @@ class _OptionalValues(_Stem):
     hasPersonalData: Annotated[
         PersonalData | None,
         Field(
-            description="Indicates, if a resource contains data directly or indirectly associated or related to an individual.",
+            description=(
+                "Indicates, if a resource contains data directly or indirectly "
+                "associated or related to an individual."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPersonalData"]},
         ),
     ] = None
     license: Annotated[
         License | None,
         Field(
-            description="A legal document giving official permission to do something with the resource.",
+            description=(
+                "A legal document giving official permission to do something with "
+                "the resource."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
         ),
     ] = None
     maxTypicalAge: Annotated[
         MaxTypicalAgeInt | None,
         Field(
-            description="Specifies the maximum age of the population within the data collection, expressed in years."
+            description=(
+                "Specifies the maximum age of the population within the data "
+                "collection, expressed in years."
+            )
         ),
     ] = None
     minTypicalAge: Annotated[
         MinTypicalAgeInt | None,
         Field(
-            description="Specifies the minimum age of the population within the data collection, expressed in years."
+            description=(
+                "Specifies the minimum age of the population within the data "
+                "collection, expressed in years."
+            )
         ),
     ] = None
     modified: Annotated[
@@ -483,7 +557,10 @@ class _OptionalValues(_Stem):
     sizeOfDataBasis: Annotated[
         str | None,
         Field(
-            description="The size of the underlying data basis, e.g. for studies: the size of the sample."
+            description=(
+                "The size of the underlying data basis, e.g. for studies: the "
+                "size of the sample."
+            )
         ),
     ] = None
     temporal: Annotated[
@@ -496,7 +573,11 @@ class _OptionalValues(_Stem):
     wasGeneratedBy: Annotated[
         MergedActivityIdentifier | None,
         Field(
-            description="Generation is the completion of production of a new entity by an activity. This entity did not exist before generation and becomes available for usage after this generation.",
+            description=(
+                "Generation is the completion of production of a new entity by an "
+                "activity. This entity did not exist before generation and "
+                "becomes available for usage after this generation."
+            ),
             json_schema_extra={"sameAs": "http://www.w3.org/ns/prov#wasGeneratedBy"},
         ),
     ] = None
@@ -553,27 +634,39 @@ class _VariadicValues(_Stem):
     hasPersonalData: Annotated[
         list[PersonalData],
         Field(
-            description="Indicates, if a resource contains data directly or indirectly associated or related to an individual.",
+            description=(
+                "Indicates, if a resource contains data directly or indirectly "
+                "associated or related to an individual."
+            ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPersonalData"]},
         ),
     ] = []
     license: Annotated[
         list[License],
         Field(
-            description="A legal document giving official permission to do something with the resource.",
+            description=(
+                "A legal document giving official permission to do something with "
+                "the resource."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
         ),
     ] = []
     maxTypicalAge: Annotated[
         list[MaxTypicalAgeInt],
         Field(
-            description="Specifies the maximum age of the population within the data collection, expressed in years."
+            description=(
+                "Specifies the maximum age of the population within the data "
+                "collection, expressed in years."
+            )
         ),
     ] = []
     minTypicalAge: Annotated[
         list[MinTypicalAgeInt],
         Field(
-            description="Specifies the minimum age of the population within the data collection, expressed in years."
+            description=(
+                "Specifies the minimum age of the population within the data "
+                "collection, expressed in years."
+            )
         ),
     ] = []
     modified: Annotated[
@@ -586,7 +679,10 @@ class _VariadicValues(_Stem):
     sizeOfDataBasis: Annotated[
         list[str],
         Field(
-            description="The size of the underlying data basis, e.g. for studies: the size of the sample."
+            description=(
+                "The size of the underlying data basis, e.g. for studies: the "
+                "size of the sample."
+            )
         ),
     ] = []
     temporal: Annotated[
@@ -599,7 +695,11 @@ class _VariadicValues(_Stem):
     wasGeneratedBy: Annotated[
         list[MergedActivityIdentifier],
         Field(
-            description="Generation is the completion of production of a new entity by an activity. This entity did not exist before generation and becomes available for usage after this generation.",
+            description=(
+                "Generation is the completion of production of a new entity by an "
+                "activity. This entity did not exist before generation and "
+                "becomes available for usage after this generation."
+            ),
             json_schema_extra={"sameAs": "http://www.w3.org/ns/prov#wasGeneratedBy"},
         ),
     ] = []
@@ -662,7 +762,9 @@ class MergedResource(BaseResource, MergedItem):
         MergedResourceIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -683,7 +785,9 @@ class PreviewResource(
         MergedResourceIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

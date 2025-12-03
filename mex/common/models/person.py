@@ -118,7 +118,10 @@ class _OptionalLists(_Stem):
     fullName: Annotated[
         list[FullNameStr],
         Field(
-            description="The full name of a person. Also used if the naming schema (given name and family name) does not apply to the name.",
+            description=(
+                "The full name of a person. Also used if the naming schema "
+                "(given name and family name) does not apply to the name."
+            ),
             json_schema_extra={"sameAs": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ] = []
@@ -137,7 +140,9 @@ class _OptionalLists(_Stem):
     isniId: Annotated[
         list[IsniIdStr],
         Field(
-            description="The ISNI (International Standard Name Identifier) of the person.",
+            description=(
+                "The ISNI (International Standard Name Identifier) of the person."
+            ),
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
         ),
     ] = []
@@ -218,7 +223,9 @@ class MergedPerson(BasePerson, MergedItem):
         MergedPersonIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -237,7 +244,9 @@ class PreviewPerson(_OptionalLists, PreviewItem):
         MergedPersonIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

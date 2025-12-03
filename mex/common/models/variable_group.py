@@ -33,7 +33,10 @@ class _RequiredLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description="The resource, the variable group is contained by. Used to connect a variable group to its resource.",
+            description=(
+                "The resource, the variable group is contained by. Used to "
+                "connect a variable group to its resource."
+            ),
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -54,7 +57,10 @@ class _SparseLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description="The resource, the variable group is contained by. Used to connect a variable group to its resource.",
+            description=(
+                "The resource, the variable group is contained by. Used to "
+                "connect a variable group to its resource."
+            ),
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
@@ -120,7 +126,9 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
         MergedVariableGroupIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -139,7 +147,9 @@ class PreviewVariableGroup(_SparseLists, PreviewItem):
         MergedVariableGroupIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

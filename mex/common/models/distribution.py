@@ -41,14 +41,24 @@ class _OptionalLists(_Stem):
     accessURL: Annotated[
         list[Link],
         Field(
-            description="A URL of the resource that gives access to a distribution of the dataset. E.g. landing page, feed, SPARQL endpoint ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "A URL of the resource that gives access to a distribution of the "
+                "dataset. E.g. landing page, feed, SPARQL endpoint "
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessURL"]},
         ),
     ] = []
     downloadURL: Annotated[
         list[Link],
         Field(
-            description="The URL of the downloadable file in a given format. E.g. CSV file or RDF file. The format is indicated by the distribution's `dcat:mediaType` ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "The URL of the downloadable file in a given format. E.g. CSV file "
+                "or RDF file. The format is indicated by the distribution's "
+                "`dcat:mediaType` ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#downloadURL"]},
         ),
     ] = []
@@ -79,21 +89,34 @@ class _OptionalValues(_Stem):
     accessService: Annotated[
         MergedAccessPlatformIdentifier | None,
         Field(
-            description="A data service that gives access to the distribution of the dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "A data service that gives access to the distribution of the "
+                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
         ),
     ] = None
     license: Annotated[
         License | None,
         Field(
-            description="A legal document giving official permission to do something with the resource ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "A legal document giving official permission to do something with "
+                "the resource ([DCT, 2020-01-20](http://dublincore.org/"
+                "specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
         ),
     ] = None
     mediaType: Annotated[
         MIMEType | None,
         Field(
-            description="The media type of the distribution as defined by [IANA media types](https://www.iana.org/assignments/media-types/) ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "The media type of the distribution as defined by "
+                "[IANA media types](https://www.iana.org/assignments/media-types/) "
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/ns/dcat#mediaType",
@@ -156,7 +179,11 @@ class _VariadicValues(_Stem):
     accessService: Annotated[
         list[MergedAccessPlatformIdentifier],
         Field(
-            description="A data service that gives access to the distribution of the dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "A data service that gives access to the distribution of the "
+                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
         ),
     ] = []
@@ -170,14 +197,23 @@ class _VariadicValues(_Stem):
     license: Annotated[
         list[License],
         Field(
-            description="A legal document giving official permission to do something with the resource ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "A legal document giving official permission to do something with "
+                "the resource ([DCT, 2020-01-20](http://dublincore.org/"
+                "specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
         ),
     ] = []
     mediaType: Annotated[
         list[MIMEType],
         Field(
-            description="The media type of the distribution as defined by [IANA media types](https://www.iana.org/assignments/media-types/) ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/)).",
+            description=(
+                "The media type of the distribution as defined by "
+                "[IANA media types](https://www.iana.org/assignments/media-types/) "
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/ns/dcat#mediaType",
@@ -254,7 +290,9 @@ class MergedDistribution(BaseDistribution, MergedItem):
         MergedDistributionIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -275,7 +313,9 @@ class PreviewDistribution(
         MergedDistributionIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },

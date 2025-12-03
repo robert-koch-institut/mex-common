@@ -61,14 +61,21 @@ class _OptionalLists(_Stem):
     belongsTo: Annotated[
         list[MergedVariableGroupIdentifier],
         Field(
-            description="The variable group, the described variable is part of. Used to group variables together, depending on how they are structured in the primary source.",
+            description=(
+                "The variable group, the described variable is part of. Used to "
+                "group variables together, depending on how they are structured in "
+                "the primary source."
+            ),
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
         Field(
-            description="A description of the variable. How the variable is defined in the primary source.",
+            description=(
+                "A description of the variable. How the variable is defined in "
+                "the primary source."
+            ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
@@ -128,7 +135,11 @@ class _OptionalValues(_Stem):
     codingSystem: Annotated[
         CodingSystemStr | None,
         Field(
-            description="An established standard to which the described resource conforms ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "An established standard to which the described resource conforms "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/"
+                "dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
@@ -150,7 +161,11 @@ class _VariadicValues(_Stem):
     codingSystem: Annotated[
         list[CodingSystemStr],
         Field(
-            description="An established standard to which the described resource conforms ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
+            description=(
+                "An established standard to which the described resource conforms "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/"
+                "dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
@@ -224,7 +239,9 @@ class MergedVariable(BaseVariable, MergedItem):
         MergedVariableIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
@@ -243,7 +260,9 @@ class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem
         MergedVariableIdentifier,
         Field(
             json_schema_extra={
-                "description": "An unambiguous reference to the resource within a given context.",
+                "description": (
+                    "An unambiguous reference to the resource within a given context."
+                ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
             },
