@@ -25,7 +25,6 @@ from mex.common.types import (
 EmailStr = Annotated[
     str,
     Field(
-        description=None,
         examples=["info@rki.de"],
         pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
         json_schema_extra={"format": "email"},
@@ -35,24 +34,18 @@ FamilyNameStr = Annotated[
     str,
     Field(
         examples=["Patapoutian", "Skłodowska-Curie", "Muta Maathai"],
-        description="The name inherited from the family.",
     ),
 ]
 FullNameStr = Annotated[
     str,
     Field(
         examples=["Juturna Felicitás", "M. Berhanu", "Keone Seong-Hyeon"],
-        description=(
-            "The full name of a person. Also used if the naming schema (given "
-            "name and family name) does not apply to the name."
-        ),
     ),
 ]
 GivenNameStr = Annotated[
     str,
     Field(
         examples=["Romāns", "Marie Salomea", "May-Britt"],
-        description="The name given to the person e.g. by their parents.",
     ),
 ]
 IsniIdStr = Annotated[
@@ -64,7 +57,6 @@ IsniIdStr = Annotated[
             "https://isni.org/isni/0000000453907343",
             "https://isni.org/isni/0000000038086111",
         ],
-        description="The ISNI (International Standard Name Identifier) of the person.",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -77,7 +69,6 @@ OrcidIdStr = Annotated[
             "https://orcid.org/0000-0003-2300-3928",
             "https://orcid.org/0000-0002-1335-4022",
         ],
-        description="Identifier of a person from the ORCID authority file.",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -91,7 +82,7 @@ class _OptionalLists(_Stem):
     affiliation: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
-            description=None,
+            description="An organization that the described person is affiliated with.",
             json_schema_extra={
                 "sameAs": [
                     "https://schema.org/affiliation",
@@ -115,7 +106,7 @@ class _OptionalLists(_Stem):
     familyName: Annotated[
         list[FamilyNameStr],
         Field(
-            description=None,
+            description="The name inherited from the family.",
             json_schema_extra={
                 "sameAs": [
                     "http://xmlns.com/foaf/0.1/familyName",
@@ -127,14 +118,14 @@ class _OptionalLists(_Stem):
     fullName: Annotated[
         list[FullNameStr],
         Field(
-            description=None,
+            description="The full name of a person. Also used if the naming schema (given name and family name) does not apply to the name.",
             json_schema_extra={"sameAs": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ] = []
     givenName: Annotated[
         list[GivenNameStr],
         Field(
-            description=None,
+            description="The name given to the person e.g. by their parents.",
             json_schema_extra={
                 "sameAs": [
                     "http://xmlns.com/foaf/0.1/givenName",
@@ -146,14 +137,14 @@ class _OptionalLists(_Stem):
     isniId: Annotated[
         list[IsniIdStr],
         Field(
-            description=None,
+            description="The ISNI (International Standard Name Identifier) of the person.",
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
         ),
     ] = []
     memberOf: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description=None,
+            description="Organizational unit at RKI the person is associated with.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of"
@@ -164,7 +155,7 @@ class _OptionalLists(_Stem):
     orcidId: Annotated[
         list[OrcidIdStr],
         Field(
-            description=None,
+            description="Identifier of a person from the ORCID authority file.",
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P496"]},
         ),
     ] = []
@@ -202,7 +193,6 @@ class ExtractedPerson(BasePerson, ExtractedData):
     ) -> Annotated[
         ExtractedPersonIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -218,15 +208,23 @@ class ExtractedPerson(BasePerson, ExtractedData):
         return self._get_stable_target_id(MergedPersonIdentifier)
 
 
-class MergedPerson(
-    BasePerson, MergedItem, json_schema_extra={"title": "Merged Person"}
-):
+class MergedPerson(BasePerson, MergedItem):
     """The result of merging all extracted items and rules for a person."""
 
     entityType: Annotated[
         Literal["MergedPerson"], Field(alias="$type", frozen=True)
     ] = "MergedPerson"
-    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPersonIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewPerson(_OptionalLists, PreviewItem):
@@ -235,7 +233,17 @@ class PreviewPerson(_OptionalLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewPerson"], Field(alias="$type", frozen=True)
     ] = "PreviewPerson"
-    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPersonIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditivePerson(_OptionalLists, AdditiveRule):
@@ -271,6 +279,8 @@ class PreventivePerson(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a person item."""
+
     additive: AdditivePerson = AdditivePerson()
     subtractive: SubtractivePerson = SubtractivePerson()
     preventive: PreventivePerson = PreventivePerson()
@@ -315,4 +325,4 @@ class PersonFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["PersonFilter"], Field(alias="$type", frozen=True)
     ] = "PersonFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

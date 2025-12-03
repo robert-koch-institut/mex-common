@@ -216,9 +216,18 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
-    contact: list[AnyContactIdentifier] = []
-    responsibleUnit: list[MergedOrganizationalUnitIdentifier] = []
-    title: list[Text] = []
+    contact: Annotated[
+        list[AnyContactIdentifier],
+        Field(description="An agent serving as a contact for the activity."),
+    ] = []
+    responsibleUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(description="A unit, that is responsible for the activity."),
+    ] = []
+    title: Annotated[
+        list[Text],
+        Field(description="The official title of the activity."),
+    ] = []
 
 
 class BaseActivity(
@@ -227,7 +236,7 @@ class BaseActivity(
     json_schema_extra={
         "description": (
             "An activity carried out by RKI. This may be a research activity, such as "
-            "a funded project, or a task that RKI performs under federal law.  "
+            "a funded project, or a task that RKI performs under federal law. "
             "Activities provide useful context information for resources."
         ),
         "sameAs": [
@@ -254,7 +263,6 @@ class ExtractedActivity(BaseActivity, ExtractedData):
     ) -> Annotated[
         ExtractedActivityIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -270,15 +278,23 @@ class ExtractedActivity(BaseActivity, ExtractedData):
         return self._get_stable_target_id(MergedActivityIdentifier)
 
 
-class MergedActivity(
-    BaseActivity, MergedItem, json_schema_extra={"title": "Merged Activity"}
-):
+class MergedActivity(BaseActivity, MergedItem):
     """The result of merging all extracted items and rules for an activity."""
 
     entityType: Annotated[
         Literal["MergedActivity"], Field(alias="$type", frozen=True)
     ] = "MergedActivity"
-    identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedActivityIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
@@ -287,7 +303,17 @@ class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewActivity"], Field(alias="$type", frozen=True)
     ] = "PreviewActivity"
-    identifier: Annotated[MergedActivityIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedActivityIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveActivity(_OptionalLists, _SparseLists, AdditiveRule):
@@ -335,6 +361,8 @@ class PreventiveActivity(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for an activity item."""
+
     additive: AdditiveActivity = AdditiveActivity()
     subtractive: SubtractiveActivity = SubtractiveActivity()
     preventive: PreventiveActivity = PreventiveActivity()
@@ -364,16 +392,13 @@ class ActivityMapping(_Stem, BaseMapping):
         Literal["ActivityMapping"], Field(alias="$type", frozen=True)
     ] = "ActivityMapping"
     contact: Annotated[
-        list[MappingField[list[AnyContactIdentifier]]],
-        Field(description=None, min_length=1),
+        list[MappingField[list[AnyContactIdentifier]]], Field(min_length=1)
     ]
     responsibleUnit: Annotated[
         list[MappingField[list[MergedOrganizationalUnitIdentifier]]],
-        Field(description=None, min_length=1),
+        Field(min_length=1),
     ]
-    title: Annotated[
-        list[MappingField[list[Text]]], Field(description=None, min_length=1)
-    ]
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     abstract: list[MappingField[list[Text]]] = []
     activityType: list[MappingField[list[ActivityType]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
@@ -399,4 +424,4 @@ class ActivityFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ActivityFilter"], Field(alias="$type", frozen=True)
     ] = "ActivityFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

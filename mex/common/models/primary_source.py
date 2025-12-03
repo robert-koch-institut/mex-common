@@ -29,9 +29,6 @@ VersionStr = Annotated[
     str,
     Field(
         examples=["v1", "2023-01-16", "Schema 9"],
-        description=(
-            "The version of the primary source, e.g. the date of the last modification."
-        ),
     ),
 ]
 AnyContactIdentifier = Annotated[
@@ -39,7 +36,6 @@ AnyContactIdentifier = Annotated[
     | MergedPersonIdentifier
     | MergedContactPointIdentifier,
     AfterValidator(Identifier),
-    Field(description="An agent that serves as a contact for the primary source."),
 ]
 
 
@@ -53,56 +49,71 @@ class _OptionalLists(_Stem):
     alternativeTitle: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="An alternative name for the primary source",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
-            description=None,
+            description="An agent that serves as a contact for the primary source.",
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="A short description of the primary source.",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     documentation: Annotated[
         list[Link],
         Field(
-            description=None,
+            description="A link to a document documenting the primary source.",
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
             },
         ),
     ] = []
-    locatedAt: list[Link] = []
+    locatedAt: Annotated[
+        list[Link],
+        Field(
+            description="A URL that leads to the primary source or a filepath, where the primary source is stored."
+        ),
+    ] = []
     title: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="The name of the primary source.",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            description=None,
+            description="This property refers to agents who assume responsibility and accountability for the primary source and its appropriate maintenance.",
             json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
 
 
 class _OptionalValues(_Stem):
-    version: VersionStr | None = None
+    version: Annotated[
+        VersionStr | None,
+        Field(
+            description="The version of the primary source, e.g. the date of the last modification."
+        ),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    version: list[VersionStr] = []
+    version: Annotated[
+        list[VersionStr],
+        Field(
+            description="The version of the primary source, e.g. the date of the last modification."
+        ),
+    ] = []
 
 
 class BasePrimarySource(
@@ -136,7 +147,6 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
     ) -> Annotated[
         ExtractedPrimarySourceIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -152,15 +162,23 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
         return self._get_stable_target_id(MergedPrimarySourceIdentifier)
 
 
-class MergedPrimarySource(
-    BasePrimarySource, MergedItem, json_schema_extra={"title": "Merged Primary Source"}
-):
+class MergedPrimarySource(BasePrimarySource, MergedItem):
     """The result of merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
         Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "MergedPrimarySource"
-    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPrimarySourceIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
@@ -169,7 +187,17 @@ class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
     entityType: Annotated[
         Literal["PreviewPrimarySource"], Field(alias="$type", frozen=True)
     ] = "PreviewPrimarySource"
-    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPrimarySourceIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
@@ -205,6 +233,8 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a primary source item."""
+
     additive: AdditivePrimarySource = AdditivePrimarySource()
     subtractive: SubtractivePrimarySource = SubtractivePrimarySource()
     preventive: PreventivePrimarySource = PreventivePrimarySource()
@@ -249,4 +279,4 @@ class PrimarySourceFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["PrimarySourceFilter"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

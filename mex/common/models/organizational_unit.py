@@ -28,16 +28,7 @@ EmailStr = Annotated[
     Field(
         examples=["info@rki.de"],
         pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
-        description=(
-            "The email address through which the organizational unit can be contacted."
-        ),
         json_schema_extra={"format": "email"},
-    ),
-]
-ParentUnitIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier,
-    Field(
-        description="The described unit is a subunit of another organizational unit."
     ),
 ]
 
@@ -52,14 +43,14 @@ class _OptionalLists(_Stem):
     alternativeName: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="An alternative name for the organizational unit.",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     email: Annotated[
         list[EmailStr],
         Field(
-            description=None,
+            description="The email address through which the organizational unit can be contacted.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -71,21 +62,21 @@ class _OptionalLists(_Stem):
     shortName: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="A short name or abbreviation of the organization unit.",
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
         ),
     ] = []
     unitOf: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
-            description=None,
+            description="Indicates an organization of which this unit is a part, e.g. a department within a larger organization.",
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]},
         ),
     ] = []
     website: Annotated[
         list[Link],
         Field(
-            description=None,
+            description="A URL serving as the official web presentation of the organizational unit.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.wikidata.org/entity/P856",
@@ -101,7 +92,7 @@ class _RequiredLists(_Stem):
     name: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="The official name of the organizational unit.",
             min_length=1,
             json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
         ),
@@ -112,18 +103,28 @@ class _SparseLists(_Stem):
     name: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="The official name of the organizational unit.",
             json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
         ),
     ] = []
 
 
 class _OptionalValues(_Stem):
-    parentUnit: ParentUnitIdentifier | None = None
+    parentUnit: Annotated[
+        MergedOrganizationalUnitIdentifier | None,
+        Field(
+            description="The described unit is a subunit of another organizational unit."
+        ),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    parentUnit: list[ParentUnitIdentifier] = []
+    parentUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            description="The described unit is a subunit of another organizational unit."
+        ),
+    ] = []
 
 
 class BaseOrganizationalUnit(
@@ -161,7 +162,6 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
     ) -> Annotated[
         ExtractedOrganizationalUnitIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -177,17 +177,23 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
         return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
-class MergedOrganizationalUnit(
-    BaseOrganizationalUnit,
-    MergedItem,
-    json_schema_extra={"title": "Merged Organizational Unit"},
-):
-    """The result of merging all extracted items and rules for an organizational unit."""  # noqa: E501
+class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
+    """The result of merging all extracted items and rules for an organizational unit."""
 
     entityType: Annotated[
         Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "MergedOrganizationalUnit"
-    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedOrganizationalUnitIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewOrganizationalUnit(
@@ -198,7 +204,17 @@ class PreviewOrganizationalUnit(
     entityType: Annotated[
         Literal["PreviewOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "PreviewOrganizationalUnit"
-    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedOrganizationalUnitIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveOrganizationalUnit(
@@ -237,6 +253,8 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for an organizational unit item."""
+
     additive: AdditiveOrganizationalUnit = AdditiveOrganizationalUnit()
     subtractive: SubtractiveOrganizationalUnit = SubtractiveOrganizationalUnit()
     preventive: PreventiveOrganizationalUnit = PreventiveOrganizationalUnit()
@@ -265,10 +283,8 @@ class OrganizationalUnitMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationalUnitMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitMapping"
-    parentUnit: list[MappingField[ParentUnitIdentifier | None]] = []
-    name: Annotated[
-        list[MappingField[list[Text]]], Field(description=None, min_length=1)
-    ]
+    parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
+    name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
     email: list[MappingField[list[EmailStr]]] = []
     shortName: list[MappingField[list[Text]]] = []
@@ -282,4 +298,4 @@ class OrganizationalUnitFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["OrganizationalUnitFilter"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

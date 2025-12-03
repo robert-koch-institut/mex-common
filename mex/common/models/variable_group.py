@@ -33,7 +33,7 @@ class _RequiredLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description=None,
+            description="The resource, the variable group is contained by. Used to connect a variable group to its resource.",
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -41,7 +41,7 @@ class _RequiredLists(_Stem):
     label: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="The name of the variable group.",
             min_length=1,
             json_schema_extra={
                 "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
@@ -54,14 +54,14 @@ class _SparseLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description=None,
+            description="The resource, the variable group is contained by. Used to connect a variable group to its resource.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     label: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="The name of the variable group.",
             json_schema_extra={
                 "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
             },
@@ -95,7 +95,6 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
     ) -> Annotated[
         ExtractedVariableGroupIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -111,15 +110,23 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
         return self._get_stable_target_id(MergedVariableGroupIdentifier)
 
 
-class MergedVariableGroup(
-    BaseVariableGroup, MergedItem, json_schema_extra={"title": "Merged Variable Group"}
-):
+class MergedVariableGroup(BaseVariableGroup, MergedItem):
     """The result of merging all extracted items and rules for a variable group."""
 
     entityType: Annotated[
         Literal["MergedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "MergedVariableGroup"
-    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableGroupIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewVariableGroup(_SparseLists, PreviewItem):
@@ -128,7 +135,17 @@ class PreviewVariableGroup(_SparseLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewVariableGroup"], Field(alias="$type", frozen=True)
     ] = "PreviewVariableGroup"
-    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableGroupIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveVariableGroup(_SparseLists, AdditiveRule):
@@ -158,6 +175,8 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a variable group item."""
+
     additive: AdditiveVariableGroup = AdditiveVariableGroup()
     subtractive: SubtractiveVariableGroup = SubtractiveVariableGroup()
     preventive: PreventiveVariableGroup = PreventiveVariableGroup()
@@ -187,12 +206,9 @@ class VariableGroupMapping(_Stem, BaseMapping):
         Literal["VariableGroupMapping"], Field(alias="$type", frozen=True)
     ] = "VariableGroupMapping"
     containedBy: Annotated[
-        list[MappingField[list[MergedResourceIdentifier]]],
-        Field(description=None, min_length=1),
+        list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
     ]
-    label: Annotated[
-        list[MappingField[list[Text]]], Field(description=None, min_length=1)
-    ]
+    label: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
 
 
 class VariableGroupFilter(_Stem, BaseFilter):
@@ -201,4 +217,4 @@ class VariableGroupFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["VariableGroupFilter"], Field(alias="$type", frozen=True)
     ] = "VariableGroupFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

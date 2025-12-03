@@ -25,7 +25,6 @@ EmailStr = Annotated[
     Field(
         examples=["info@rki.de"],
         pattern="^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$",
-        description="The email address associated to the contact point.",
         json_schema_extra={"format": "email"},
     ),
 ]
@@ -41,7 +40,7 @@ class _RequiredLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
-            description=None,
+            description="The email address associated to the contact point.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -57,7 +56,7 @@ class _SparseLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
-            description=None,
+            description="The email address associated to the contact point.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -92,7 +91,6 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
     ) -> Annotated[
         ExtractedContactPointIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -108,15 +106,23 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
         return self._get_stable_target_id(MergedContactPointIdentifier)
 
 
-class MergedContactPoint(
-    BaseContactPoint, MergedItem, json_schema_extra={"title": "Merged Contact Point"}
-):
+class MergedContactPoint(BaseContactPoint, MergedItem):
     """The result of merging all extracted items and rules for a contact point."""
 
     entityType: Annotated[
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
-    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedContactPointIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewContactPoint(_SparseLists, PreviewItem):
@@ -125,7 +131,17 @@ class PreviewContactPoint(_SparseLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewContactPoint"], Field(alias="$type", frozen=True)
     ] = "PreviewContactPoint"
-    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedContactPointIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveContactPoint(_SparseLists, AdditiveRule):
@@ -154,6 +170,8 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a contact point item."""
+
     additive: AdditiveContactPoint = AdditiveContactPoint()
     subtractive: SubtractiveContactPoint = SubtractiveContactPoint()
     preventive: PreventiveContactPoint = PreventiveContactPoint()
@@ -182,9 +200,7 @@ class ContactPointMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ContactPointMapping"], Field(alias="$type", frozen=True)
     ] = "ContactPointMapping"
-    email: Annotated[
-        list[MappingField[list[EmailStr]]], Field(description=None, min_length=1)
-    ]
+    email: Annotated[list[MappingField[list[EmailStr]]], Field(min_length=1)]
 
 
 class ContactPointFilter(_Stem, BaseFilter):
@@ -193,4 +209,4 @@ class ContactPointFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ContactPointFilter"], Field(alias="$type", frozen=True)
     ] = "ContactPointFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

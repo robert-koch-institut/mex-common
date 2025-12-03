@@ -27,18 +27,12 @@ CodingSystemStr = Annotated[
     str,
     Field(
         examples=["SF-36 Version 1"],
-        description=(
-            "An established standard to which the described resource conforms "
-            "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/"
-            "dcmi-terms/2020-01-20/))."
-        ),
     ),
 ]
 DataTypeStr = Annotated[
     str,
     Field(
         examples=["integer", "string", "image", "int55", "number"],
-        description="The defined data type of the variable.",
     ),
 ]
 ValueSetStr = Annotated[
@@ -49,13 +43,11 @@ ValueSetStr = Annotated[
             "Ja, etwas eingeschränkt",
             "Nein, überhaupt nicht eingeschränkt",
         ],
-        description="A set of predefined values as given in the primary source.",
     ),
 ]
 LabelText = Annotated[
     Text,
     Field(
-        description=None,
         examples=[{"language": "de", "value": "Mehrere Treppenabsätze steigen"}],
     ),
 ]
@@ -69,25 +61,28 @@ class _OptionalLists(_Stem):
     belongsTo: Annotated[
         list[MergedVariableGroupIdentifier],
         Field(
-            description=None,
+            description="The variable group, the described variable is part of. Used to group variables together, depending on how they are structured in the primary source.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
         Field(
-            description=None,
+            description="A description of the variable. How the variable is defined in the primary source.",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
-    valueSet: list[ValueSetStr] = []
+    valueSet: Annotated[
+        list[ValueSetStr],
+        Field(description="A set of predefined values as given in the primary source."),
+    ] = []
 
 
 class _RequiredLists(_Stem):
     label: Annotated[
         list[LabelText],
         Field(
-            description=None,
+            description="The name of the variable.",
             min_length=1,
             json_schema_extra={
                 "sameAs": [
@@ -100,7 +95,7 @@ class _RequiredLists(_Stem):
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description=None,
+            description="The resource, the variable is used in.",
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -111,7 +106,7 @@ class _SparseLists(_Stem):
     label: Annotated[
         list[LabelText],
         Field(
-            description=None,
+            description="The name of the variable.",
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/title",
@@ -123,7 +118,7 @@ class _SparseLists(_Stem):
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description=None,
+            description="The resource, the variable is used in.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
@@ -133,7 +128,7 @@ class _OptionalValues(_Stem):
     codingSystem: Annotated[
         CodingSystemStr | None,
         Field(
-            description=None,
+            description="An established standard to which the described resource conforms ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
@@ -145,7 +140,7 @@ class _OptionalValues(_Stem):
     dataType: Annotated[
         DataTypeStr | None,
         Field(
-            description=None,
+            description="The defined data type of the variable.",
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
         ),
     ] = None
@@ -155,7 +150,7 @@ class _VariadicValues(_Stem):
     codingSystem: Annotated[
         list[CodingSystemStr],
         Field(
-            description=None,
+            description="An established standard to which the described resource conforms ([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).",
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
@@ -167,7 +162,7 @@ class _VariadicValues(_Stem):
     dataType: Annotated[
         list[DataTypeStr],
         Field(
-            description=None,
+            description="The defined data type of the variable.",
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
         ),
     ] = []
@@ -204,7 +199,6 @@ class ExtractedVariable(BaseVariable, ExtractedData):
     ) -> Annotated[
         ExtractedVariableIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -220,15 +214,23 @@ class ExtractedVariable(BaseVariable, ExtractedData):
         return self._get_stable_target_id(MergedVariableIdentifier)
 
 
-class MergedVariable(
-    BaseVariable, MergedItem, json_schema_extra={"title": "Merged Variable"}
-):
+class MergedVariable(BaseVariable, MergedItem):
     """The result of merging all extracted items and rules for a variable."""
 
     entityType: Annotated[
         Literal["MergedVariable"], Field(alias="$type", frozen=True)
     ] = "MergedVariable"
-    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
@@ -237,7 +239,17 @@ class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem
     entityType: Annotated[
         Literal["PreviewVariable"], Field(alias="$type", frozen=True)
     ] = "PreviewVariable"
-    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveVariable(_OptionalLists, _SparseLists, _OptionalValues, AdditiveRule):
@@ -274,6 +286,8 @@ class PreventiveVariable(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a variable item."""
+
     additive: AdditiveVariable = AdditiveVariable()
     subtractive: SubtractiveVariable = SubtractiveVariable()
     preventive: PreventiveVariable = PreventiveVariable()
@@ -304,12 +318,9 @@ class VariableMapping(_Stem, BaseMapping):
     ] = "VariableMapping"
     codingSystem: list[MappingField[CodingSystemStr | None]] = []
     dataType: list[MappingField[DataTypeStr | None]] = []
-    label: Annotated[
-        list[MappingField[list[LabelText]]], Field(description=None, min_length=1)
-    ]
+    label: Annotated[list[MappingField[list[LabelText]]], Field(min_length=1)]
     usedIn: Annotated[
-        list[MappingField[list[MergedResourceIdentifier]]],
-        Field(description=None, min_length=1),
+        list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
     ]
     belongsTo: list[MappingField[list[MergedVariableGroupIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
@@ -322,4 +333,4 @@ class VariableFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["VariableFilter"], Field(alias="$type", frozen=True)
     ] = "VariableFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

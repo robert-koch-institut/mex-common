@@ -33,7 +33,7 @@ class _OptionalValues(_Stem):
     hasConsentType: Annotated[
         ConsentType | None,
         Field(
-            description=None,
+            description="The type of consent.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
@@ -43,50 +43,86 @@ class _RequiredValues(_Stem):
     hasConsentStatus: Annotated[
         ConsentStatus,
         Field(
-            description=None,
+            description="Specifies the state or status of consent.",
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ]
     hasDataSubject: Annotated[
         MergedPersonIdentifier,
         Field(
-            description=None,
+            description="Indicates association with Data Subject.",
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]},
         ),
     ]
     isIndicatedAtTime: Annotated[
         YearMonthDayTime,
         Field(
-            description=None,
+            description="Specifies the temporal information for when the entity has indicated the specific context.",
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
         ),
     ]
 
 
 class _SparseValues(_Stem):
-    hasConsentStatus: ConsentStatus | None = None
-    hasDataSubject: MergedPersonIdentifier | None = None
+    hasConsentStatus: Annotated[
+        ConsentStatus | None,
+        Field(
+            description="Specifies the state or status of consent.",
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
+        ),
+    ] = None
+    hasDataSubject: Annotated[
+        MergedPersonIdentifier | None,
+        Field(
+            description="Indicates association with Data Subject.",
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]},
+        ),
+    ] = None
     hasConsentType: Annotated[
         ConsentType | None,
         Field(
-            description=None,
+            description="The type of consent.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
-    isIndicatedAtTime: YearMonthDayTime | None = None
+    isIndicatedAtTime: Annotated[
+        YearMonthDayTime | None,
+        Field(
+            description="Specifies the temporal information for when the entity has indicated the specific context.",
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
+        ),
+    ] = None
 
 
 class _VariadicValues(_Stem):
     hasConsentType: Annotated[
         list[ConsentType],
         Field(
-            description=None,
+            description="The type of consent.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
-    hasConsentStatus: list[ConsentStatus] = []
-    hasDataSubject: list[MergedPersonIdentifier] = []
-    isIndicatedAtTime: list[YearMonthDayTime] = []
+    hasConsentStatus: Annotated[
+        list[ConsentStatus],
+        Field(
+            description="In DPV there is no property for the type of consent. In DPV, the types are subclasses of dpv:Consent. In order to align with our modelling approach, we model types of consent as a concept (skos:Concept). Since dpv:Consent is also defined as a skos:Concept, this is no conflict, just another way of implementing it.",
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
+        ),
+    ] = []
+    hasDataSubject: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            description="Indicates association with Data Subject.",
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]},
+        ),
+    ] = []
+    isIndicatedAtTime: Annotated[
+        list[YearMonthDayTime],
+        Field(
+            description="Specifies the temporal information for when the entity has indicated the specific context.",
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
+        ),
+    ] = []
 
 
 class BaseConsent(
@@ -114,7 +150,6 @@ class ExtractedConsent(BaseConsent, ExtractedData):
     ) -> Annotated[
         ExtractedConsentIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -130,15 +165,23 @@ class ExtractedConsent(BaseConsent, ExtractedData):
         return self._get_stable_target_id(MergedConsentIdentifier)
 
 
-class MergedConsent(
-    BaseConsent, MergedItem, json_schema_extra={"title": "Merged Consent"}
-):
+class MergedConsent(BaseConsent, MergedItem):
     """The result of merging all extracted items and rules for a consent."""
 
     entityType: Annotated[
         Literal["MergedConsent"], Field(alias="$type", frozen=True)
     ] = "MergedConsent"
-    identifier: Annotated[MergedConsentIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedConsentIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
@@ -147,7 +190,17 @@ class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
     entityType: Annotated[
         Literal["PreviewConsent"], Field(alias="$type", frozen=True)
     ] = "PreviewConsent"
-    identifier: Annotated[MergedConsentIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedConsentIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveConsent(_OptionalValues, _SparseValues, AdditiveRule):
@@ -179,6 +232,8 @@ class PreventiveConsent(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a consent item."""
+
     additive: AdditiveConsent = AdditiveConsent()
     subtractive: SubtractiveConsent = SubtractiveConsent()
     preventive: PreventiveConsent = PreventiveConsent()
@@ -207,15 +262,12 @@ class ConsentMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ConsentMapping"], Field(alias="$type", frozen=True)
     ] = "ConsentMapping"
-    hasConsentStatus: Annotated[
-        list[MappingField[ConsentStatus]], Field(description=None, min_length=1)
-    ]
+    hasConsentStatus: Annotated[list[MappingField[ConsentStatus]], Field(min_length=1)]
     hasDataSubject: Annotated[
-        list[MappingField[MergedPersonIdentifier]],
-        Field(description=None, min_length=1),
+        list[MappingField[MergedPersonIdentifier]], Field(min_length=1)
     ]
     isIndicatedAtTime: Annotated[
-        list[MappingField[YearMonthDayTime]], Field(description=None, min_length=1)
+        list[MappingField[YearMonthDayTime]], Field(min_length=1)
     ]
     hasConsentType: list[MappingField[ConsentType | None]] = []
 
@@ -226,4 +278,4 @@ class ConsentFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["ConsentFilter"], Field(alias="$type", frozen=True)
     ] = "ConsentFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []

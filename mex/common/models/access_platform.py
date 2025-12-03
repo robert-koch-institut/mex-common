@@ -134,19 +134,29 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
-    endpointDescription: list[Link] = []
+    endpointDescription: Annotated[
+        list[Link],
+        Field(
+            description="A description of the services available via the end-points, including their operations, parameters etc.",
+        ),
+    ] = []
     endpointType: Annotated[
         list[APIType],
         Field(
-            description=None,
+            description="The type of endpoint, e.g. REST.",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
-    endpointURL: list[Link] = []
+    endpointURL: Annotated[
+        list[Link],
+        Field(
+            description="The root location or primary endpoint of the service (a Web-resolvable IRI)",
+        ),
+    ] = []
     technicalAccessibility: Annotated[
         list[TechnicalAccessibility],
         Field(
-            description=None,
+            description="Indicates form if the platform can be accessed only within RKI network (internally) or if the platform is accessible publicly (externally).",
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
@@ -181,7 +191,6 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
     ) -> Annotated[
         ExtractedAccessPlatformIdentifier,
         Field(
-            description=None,
             json_schema_extra={
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
             },
@@ -197,17 +206,23 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
         return self._get_stable_target_id(MergedAccessPlatformIdentifier)
 
 
-class MergedAccessPlatform(
-    BaseAccessPlatform,
-    MergedItem,
-    json_schema_extra={"title": "Merged Access Platform"},
-):
+class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     """The result of merging all extracted items and rules for an access platform."""
 
     entityType: Annotated[
         Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "MergedAccessPlatform"
-    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedAccessPlatformIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewAccessPlatform(
@@ -218,7 +233,17 @@ class PreviewAccessPlatform(
     entityType: Annotated[
         Literal["PreviewAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "PreviewAccessPlatform"
-    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedAccessPlatformIdentifier,
+        Field(
+            json_schema_extra={
+                "description": "An unambiguous reference to the resource within a given context.",
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveAccessPlatform(
@@ -258,6 +283,8 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for an access platform item."""
+
     additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
     subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
     preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
@@ -287,8 +314,7 @@ class AccessPlatformMapping(_Stem, BaseMapping):
         Literal["AccessPlatformMapping"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformMapping"
     technicalAccessibility: Annotated[
-        list[MappingField[TechnicalAccessibility]],
-        Field(description=None, min_length=1),
+        list[MappingField[TechnicalAccessibility]], Field(min_length=1)
     ]
     endpointDescription: list[MappingField[Link | None]] = []
     endpointType: list[MappingField[APIType | None]] = []
@@ -307,4 +333,4 @@ class AccessPlatformFilter(_Stem, BaseFilter):
     entityType: Annotated[
         Literal["AccessPlatformFilter"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformFilter"
-    fields: Annotated[list[FilterField], Field(description=None, title="fields")] = []
+    fields: Annotated[list[FilterField], Field(title="fields")] = []
