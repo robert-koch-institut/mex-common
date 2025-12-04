@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - add `merged_person_from_login` method to BackendApiConnector
 - RestrictedTextLanguage allowing only EN or DE if confidence >=0.75
 
 ### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - detect_language does not support FR, RU or ES anymore.
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
 
 ### Deprecated
 
@@ -26,8 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.10.0] - 2025-11-20
 
 ### Changes
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
-- organigram lookup now returns lists of units to support organizational units sharing same details like email
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- organigram lookup now returns lists of units to support organizational units sharing
+  same details like email
 
 ## [1.9.0] - 2025-11-03
 
@@ -37,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 
 ## [1.8.2] - 2025-10-28
 
