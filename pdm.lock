@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:4a0901c2f09b33ee405bbd02a7115959b02aba635102cf94b3bb75c229d8bf80"
+content_hash = "sha256:9c4d5faaf6b9195aad90011e577c55bd168ca20f2dff1e53b594c648959d727a"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -452,7 +452,7 @@ files = [
 
 [[package]]
 name = "mex-model"
-version = "4.6.0"
+version = "4.6.1"
 requires_python = "<3.12,>=3.11"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
@@ -460,8 +460,8 @@ dependencies = [
     "importlib-resources>=1.3; python_version < \"3.10\"",
 ]
 files = [
-    {file = "mex_model-4.6.0-py3-none-any.whl", hash = "sha256:0847bbc53369dba327a7cb4f6f370a530c9e37604d3198410e45765501877f83"},
-    {file = "mex_model-4.6.0.tar.gz", hash = "sha256:19a05b9687f4e707990174c861679cfa016de3824b955d5a5039168ce86fdc1d"},
+    {file = "mex_model-4.6.1-py3-none-any.whl", hash = "sha256:54739501781dddbe40c17ce87954c6d106e3ee5cb03334fd39e6964e6c613579"},
+    {file = "mex_model-4.6.1.tar.gz", hash = "sha256:d92661b98e71c88b154ba6a82f473640d757af498fcfb4689b7f9f6d87bb3e8d"},
 ]
 
 [[package]]
@@ -961,7 +961,7 @@ files = [
 
 [[package]]
 name = "sphinx"
-version = "9.0.1"
+version = "9.0.4"
 requires_python = ">=3.11"
 summary = "Python documentation generator"
 groups = ["dev"]
@@ -985,8 +985,8 @@ dependencies = [
     "sphinxcontrib-serializinghtml>=1.1.9",
 ]
 files = [
-    {file = "sphinx-9.0.1-py3-none-any.whl", hash = "sha256:5a9506b709d6bd3d4c3f142b5b58801c202837b54875727e3adcba98d4839735"},
-    {file = "sphinx-9.0.1.tar.gz", hash = "sha256:c820d856657ce7cd41ce2c097f478ac3d7ddad9779ad83de4f0136a81ff388fd"},
+    {file = "sphinx-9.0.4-py3-none-any.whl", hash = "sha256:5bebc595a5e943ea248b99c13814c1c5e10b3ece718976824ffa7959ff95fffb"},
+    {file = "sphinx-9.0.4.tar.gz", hash = "sha256:594ef59d042972abbc581d8baa577404abe4e6c3b04ef61bd7fc2acbd51f3fa3"},
 ]
 
 [[package]]

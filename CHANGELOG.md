@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use `model_title_generator` instead of hardcoding model titles
 - move `hadPrimarySource` and `identifierInPrimarySource` from concrete mapping models
   to the base mapping class
-- update mex-model to version 4.6 where extracted and merged schemas are split
+- update mex-model to version 4.6.1 where extracted and merged schemas are split
 - update `test_model_schemas` to be more readable and remove unnecessary special cases
 
 ### Deprecated
