@@ -53,8 +53,8 @@ SPECIFIED_SCHEMAS = dict(
     )
 )
 ENTITY_TYPES_AND_FIELD_NAMES_BY_FQN = {
-    f"{entity_type}.{field_name}": (entity_type, field_name)
-    for entity_type, schema in SPECIFIED_SCHEMAS.items()
+    f"{title}.{field_name}": (title, field_name)
+    for title, schema in SPECIFIED_SCHEMAS.items()
     for field_name in schema["properties"]
 }
 
@@ -64,7 +64,7 @@ def _sub_only_text(repl: Callable[[str], str], string: str) -> str:
     return re.sub(r"([a-zA-Z_-]+)", lambda m: repl(m.group(0)), string)
 
 
-def prepare_generated_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
+def prepare_generated_field(field: str, obj: dict[str, Any]) -> None:
     # discard title but save value for later
     title = obj.pop("title", field)  # field title is only in generated
 
@@ -99,7 +99,7 @@ def prepare_generated_field(field: str, obj: list[Any] | dict[str, Any]) -> None
             prepare_generated_field(field, item)
 
 
-def prepare_specified_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
+def prepare_specified_field(field: str, obj: dict[str, Any]) -> None:
     # discard comments and descriptions
     obj.pop("$comment", None)  # only in spec
 

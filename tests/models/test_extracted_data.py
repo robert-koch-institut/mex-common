@@ -44,13 +44,24 @@ class ExtractedThing(BaseThing, ExtractedData):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def identifier(self) -> ExtractedThingIdentifier:
-        """An unambiguous reference to the resource within a given context."""
+        """An unambiguous reference to the resource within a given context. \
+Persistent identifiers should be provided as HTTP URIs ([DCT, 2020-01-20]\
+(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/)).
+        """  # noqa: D205
         return self._get_identifier(ExtractedThingIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedThingIdentifier:  # noqa: N802
-        """The identifier of the merged item that this extracted item belongs to."""
+    def stableTargetId(  # noqa: N802
+        self,
+    ) -> Annotated[
+        MergedThingIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedThingIdentifier)
 
 

@@ -86,21 +86,35 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedContactPointIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """An unambiguous reference to the resource within a given context."""
         return self._get_identifier(ExtractedContactPointIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedContactPointIdentifier:  # noqa: N802
-        """The identifier of the merged item that this extracted item belongs to."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedContactPointIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedContactPointIdentifier)
 
 
@@ -115,7 +129,9 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
         Field(
             json_schema_extra={
                 "description": (
-                    "An unambiguous reference to the resource within a given context."
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
@@ -136,7 +152,9 @@ class PreviewContactPoint(_SparseLists, PreviewItem):
         Field(
             json_schema_extra={
                 "description": (
-                    "An unambiguous reference to the resource within a given context."
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
                 "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
