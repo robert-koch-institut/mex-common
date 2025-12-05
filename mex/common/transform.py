@@ -92,7 +92,7 @@ def split_to_camel(string: str) -> str:
     """Convert the given string from `Split Case` into `CamelCase`."""
     if len(tokens := re.split(r"\s+", string)) > 1:
         return "".join(word.title() for word in tokens if word)
-    return string[:1].upper() + string[1:] if string else string
+    return string[:1].upper() + string[1:]
 
 
 @lru_cache(maxsize=1024)
