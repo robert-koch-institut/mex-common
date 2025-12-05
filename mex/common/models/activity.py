@@ -321,6 +321,18 @@ class MergedActivity(BaseActivity, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedActivityIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
@@ -344,6 +356,18 @@ class PreviewActivity(_OptionalLists, _SparseLists, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedActivityIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveActivity(_OptionalLists, _SparseLists, AdditiveRule):
@@ -352,6 +376,18 @@ class AdditiveActivity(_OptionalLists, _SparseLists, AdditiveRule):
     entityType: Annotated[
         Literal["AdditiveActivity"], Field(alias="$type", frozen=True)
     ] = "AdditiveActivity"
+    supersededBy: Annotated[
+        MergedActivityIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveActivity(_OptionalLists, _SparseLists, SubtractiveRule):

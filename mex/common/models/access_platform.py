@@ -270,6 +270,18 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedAccessPlatformIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewAccessPlatform(
@@ -295,6 +307,18 @@ class PreviewAccessPlatform(
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedAccessPlatformIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveAccessPlatform(
@@ -305,6 +329,18 @@ class AdditiveAccessPlatform(
     entityType: Annotated[
         Literal["AdditiveAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "AdditiveAccessPlatform"
+    supersededBy: Annotated[
+        MergedAccessPlatformIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveAccessPlatform(_OptionalLists, _VariadicValues, SubtractiveRule):

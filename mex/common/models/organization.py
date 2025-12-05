@@ -268,6 +268,18 @@ class MergedOrganization(BaseOrganization, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedOrganizationIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
@@ -291,6 +303,18 @@ class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedOrganizationIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveOrganization(_OptionalLists, _SparseLists, AdditiveRule):
@@ -299,6 +323,18 @@ class AdditiveOrganization(_OptionalLists, _SparseLists, AdditiveRule):
     entityType: Annotated[
         Literal["AdditiveOrganization"], Field(alias="$type", frozen=True)
     ] = "AdditiveOrganization"
+    supersededBy: Annotated[
+        MergedOrganizationIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveOrganization(_OptionalLists, _SparseLists, SubtractiveRule):

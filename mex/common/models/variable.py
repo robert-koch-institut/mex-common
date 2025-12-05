@@ -262,6 +262,18 @@ class MergedVariable(BaseVariable, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedVariableIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
@@ -285,6 +297,18 @@ class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedVariableIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveVariable(_OptionalLists, _SparseLists, _OptionalValues, AdditiveRule):
@@ -293,6 +317,18 @@ class AdditiveVariable(_OptionalLists, _SparseLists, _OptionalValues, AdditiveRu
     entityType: Annotated[
         Literal["AdditiveVariable"], Field(alias="$type", frozen=True)
     ] = "AdditiveVariable"
+    supersededBy: Annotated[
+        MergedVariableIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveVariable(

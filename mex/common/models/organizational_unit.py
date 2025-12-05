@@ -223,6 +223,18 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedOrganizationalUnitIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewOrganizationalUnit(
@@ -248,6 +260,18 @@ class PreviewOrganizationalUnit(
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedOrganizationalUnitIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveOrganizationalUnit(
@@ -258,6 +282,18 @@ class AdditiveOrganizationalUnit(
     entityType: Annotated[
         Literal["AdditiveOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "AdditiveOrganizationalUnit"
+    supersededBy: Annotated[
+        MergedOrganizationalUnitIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveOrganizationalUnit(

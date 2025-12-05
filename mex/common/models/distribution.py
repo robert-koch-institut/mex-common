@@ -328,6 +328,18 @@ class MergedDistribution(BaseDistribution, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedDistributionIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewDistribution(
@@ -353,6 +365,18 @@ class PreviewDistribution(
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedDistributionIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveDistribution(
@@ -363,6 +387,18 @@ class AdditiveDistribution(
     entityType: Annotated[
         Literal["AdditiveDistribution"], Field(alias="$type", frozen=True)
     ] = "AdditiveDistribution"
+    supersededBy: Annotated[
+        MergedDistributionIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveDistribution(

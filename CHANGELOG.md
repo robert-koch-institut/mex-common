@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added field descriptions according to mex.model
 - added two new string helper functions `split_to_camel` and `camel_to_split`
 - added merged model verification to `test_model_schemas`
+- add 'supersededBy' to merged and preventive items, and to additive rules
+
 
 ### Changes
 
