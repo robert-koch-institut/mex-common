@@ -48,43 +48,85 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeTitle: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description="An alternative name for the primary source",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     contact: Annotated[
         list[AnyContactIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+        Field(
+            description="An agent that serves as a contact for the primary source.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+        ),
     ] = []
     description: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+        Field(
+            description="A short description of the primary source.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+        ),
     ] = []
     documentation: Annotated[
         list[Link],
         Field(
+            description="A link to a document documenting the primary source.",
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
-            }
+            },
         ),
     ] = []
-    locatedAt: list[Link] = []
+    locatedAt: Annotated[
+        list[Link],
+        Field(
+            description=(
+                "A URL that leads to the primary source or a filepath, where the "
+                "primary source is stored."
+            )
+        ),
+    ] = []
     title: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description="The name of the primary source.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+            description=(
+                "This property refers to agents who assume responsibility and "
+                "accountability for the primary source and its appropriate "
+                "maintenance."
+            ),
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
 
 
 class _OptionalValues(_Stem):
-    version: VersionStr | None = None
+    version: Annotated[
+        VersionStr | None,
+        Field(
+            description=(
+                "The version of the primary source, e.g. the date of the last "
+                "modification."
+            )
+        ),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    version: list[VersionStr] = []
+    version: Annotated[
+        list[VersionStr],
+        Field(
+            description=(
+                "The version of the primary source, e.g. the date of the last "
+                "modification."
+            )
+        ),
+    ] = []
 
 
 class BasePrimarySource(
@@ -99,7 +141,6 @@ class BasePrimarySource(
             "http://www.w3.org/ns/dcat#Catalog",
             "http://www.w3.org/ns/prov#PrimarySource",
         ],
-        "title": "Primary Source",
     },
 ):
     """All fields for a valid primary source except for provenance."""
@@ -114,21 +155,35 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedPrimarySourceIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedPrimarySourceIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedPrimarySourceIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedPrimarySourceIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedPrimarySourceIdentifier)
 
 
@@ -138,7 +193,21 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     entityType: Annotated[
         Literal["MergedPrimarySource"], Field(alias="$type", frozen=True)
     ] = "MergedPrimarySource"
-    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPrimarySourceIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
@@ -147,7 +216,21 @@ class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
     entityType: Annotated[
         Literal["PreviewPrimarySource"], Field(alias="$type", frozen=True)
     ] = "PreviewPrimarySource"
-    identifier: Annotated[MergedPrimarySourceIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPrimarySourceIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
@@ -183,6 +266,8 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a primary source item."""
+
     additive: AdditivePrimarySource = AdditivePrimarySource()
     subtractive: SubtractivePrimarySource = SubtractivePrimarySource()
     preventive: PreventivePrimarySource = PreventivePrimarySource()
@@ -211,10 +296,6 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PrimarySourceMapping"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     version: list[MappingField[VersionStr | None]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []

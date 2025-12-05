@@ -1,56 +1,18 @@
 import json
-import re
-from collections.abc import Callable
 from copy import deepcopy
 from itertools import zip_longest
 from typing import Any
 
 import pytest
 
-from mex.common.models import EXTRACTED_MODEL_CLASSES, BaseModel
-from mex.common.transform import dromedary_to_kebab
-from mex.common.types import IDENTIFIER_PATTERN, VOCABULARY_PATTERN
-from mex.model import ENTITY_JSON_BY_NAME
-
-
-def model_to_schema(model: type[BaseModel]) -> dict[str, Any]:
-    # pydantic does not include computed fields in the validation schema
-    # and does not include validation rules in the serialization schema.
-    # so we need to mangle those two together here, to get a schema that is
-    # more comparable to what mex-model specifies.
-
-    validation_schema = model.model_json_schema(
-        ref_template="/schema/fields/{model}", mode="validation"
-    )
-    serialization_schema = model.model_json_schema(
-        ref_template="/schema/fields/{model}", mode="serialization"
-    )
-    validation_schema["properties"] = {
-        **serialization_schema["properties"],
-        **validation_schema["properties"],
-    }
-    validation_schema["required"] = sorted(
-        {*serialization_schema["required"], *validation_schema["required"]}
-    )
-    return validation_schema
-
-
-GENERATED_SCHEMAS = dict(
-    sorted(
-        {
-            schema["title"]: schema
-            for schema in [model_to_schema(model) for model in EXTRACTED_MODEL_CLASSES]
-        }.items()
-    )
+from mex.common.transform import split_to_camel
+from tests.models.conftest import (
+    ENTITY_TYPES_AND_FIELD_NAMES_BY_FQN,
+    GENERATED_SCHEMAS,
+    SPECIFIED_SCHEMAS,
+    prepare_generated_field,
+    prepare_specified_field,
 )
-SPECIFIED_SCHEMAS = dict(
-    sorted({schema["title"]: schema for schema in ENTITY_JSON_BY_NAME.values()}.items())
-)
-ENTITY_TYPES_AND_FIELD_NAMES_BY_FQN = {
-    f"{entity_type}.{field_name}": (entity_type, field_name)
-    for entity_type, schema in SPECIFIED_SCHEMAS.items()
-    for field_name in schema["properties"]
-}
 
 
 def test_entity_types_match_spec() -> None:
@@ -59,8 +21,15 @@ def test_entity_types_match_spec() -> None:
 
 @pytest.mark.parametrize(
     ("generated", "specified"),
-    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values(), fillvalue={}),
-    ids=map(str, zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A")),
+    zip_longest(
+        GENERATED_SCHEMAS.values(),
+        SPECIFIED_SCHEMAS.values(),
+        fillvalue={},
+    ),
+    ids=map(
+        str,
+        zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A"),
+    ),
 )
 def test_field_names_match_spec(
     generated: dict[str, Any], specified: dict[str, Any]
@@ -77,8 +46,15 @@ def test_field_names_match_spec(
 
 @pytest.mark.parametrize(
     ("generated", "specified"),
-    zip_longest(GENERATED_SCHEMAS.values(), SPECIFIED_SCHEMAS.values(), fillvalue={}),
-    ids=map(str, zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A")),
+    zip_longest(
+        GENERATED_SCHEMAS.values(),
+        SPECIFIED_SCHEMAS.values(),
+        fillvalue={},
+    ),
+    ids=map(
+        str,
+        zip_longest(GENERATED_SCHEMAS, SPECIFIED_SCHEMAS, fillvalue="N/A"),
+    ),
 )
 def test_entity_type_matches_metadata(
     generated: dict[str, Any], specified: dict[str, Any]
@@ -92,67 +68,6 @@ def test_entity_type_matches_metadata(
     assert generated_meta == specified_meta
 
 
-def dissolve_single_item_lists(dct: dict[str, Any], key: str) -> None:
-    # if a list in a dict value has just one item, dissolve it into the parent dict
-    if len(dct[key]) == 1 and isinstance(dct[key][0], dict):
-        dct.update(dct.pop(key)[0])
-
-
-def sub_only_text(repl: Callable[[str], str], string: str) -> str:
-    # substitute only the textual parts of a string, e.g. leave slashes alone
-    return re.sub(r"([a-zA-Z_-]+)", lambda m: repl(m.group(0)), string)
-
-
-def prepare_field(field: str, obj: list[Any] | dict[str, Any]) -> None:
-    # prepare each item in a list (in-place)
-    if isinstance(obj, list):
-        for item in obj:
-            prepare_field(field, item)
-        obj[:] = [item for item in obj if item]
-        return
-
-    # discard comments and descriptions
-    obj.pop("$comment", None)  # only in spec
-    obj.pop("description", None)  # only in spec
-
-    # discard title but save value for later
-    title = obj.pop("title", field)  # only in generated
-
-    # align reference paths
-    # (the paths to referenced vocabularies and types differ between the models
-    # and the specification, so we need to make sure they match before comparing)
-    if obj.get("pattern") == IDENTIFIER_PATTERN:
-        del obj["pattern"]
-        del obj["type"]
-        if field in ("identifier", "stableTargetId"):
-            obj["$ref"] = "/schema/fields/identifier"
-        else:
-            obj["$ref"] = "/schema/entities/{}#/identifier".format(
-                title.removesuffix("Identifier").removeprefix("Merged")
-            )
-
-    # align concept/enum annotations
-    elif obj.get("$ref") == "/schema/entities/concept#/identifier":
-        obj["pattern"] = VOCABULARY_PATTERN
-        obj["type"] = "string"
-        del obj["$ref"]
-
-    # make sure all refs have paths in kebab-case
-    # (the models use the class names, whereas the spec uses kebab-case URLs)
-    if "$ref" in obj:
-        obj["$ref"] = sub_only_text(dromedary_to_kebab, obj["$ref"])
-
-    # recurse into the field definitions for array items
-    if obj.get("type") == "array":
-        prepare_field(field, obj["items"])
-
-    for quantifier in {"anyOf", "allOf"} & set(obj):
-        # prepare choices
-        prepare_field(field, obj[quantifier])
-        # collapse non-choices
-        dissolve_single_item_lists(obj, quantifier)
-
-
 @pytest.mark.parametrize(
     ("entity_type", "field_name"),
     ENTITY_TYPES_AND_FIELD_NAMES_BY_FQN.values(),
@@ -164,11 +79,11 @@ def test_field_defs_match_spec(entity_type: str, field_name: str) -> None:
     specified = deepcopy(specified_properties[field_name])
     generated = deepcopy(generated_properties[field_name])
 
-    prepare_field(field_name, specified)
-    prepare_field(field_name, generated)
+    prepare_specified_field(field_name, specified)
+    prepare_generated_field(field_name, generated)
 
     assert generated == specified, f"""
-{entity_type}.{field_name}
+{split_to_camel(entity_type)}.{field_name}
 
 specified:
 {json.dumps(specified_properties[field_name], indent=4, sort_keys=True)}

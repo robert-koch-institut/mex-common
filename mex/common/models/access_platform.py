@@ -45,28 +45,51 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeTitle: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description="An alternative name for the access platform.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     contact: Annotated[
         list[AnyContactIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]}),
+        Field(
+            description="An agent that serves as a contact for the access platform.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+        ),
     ] = []
     description: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+        Field(
+            description="A short description of the access platform.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+        ),
     ] = []
     landingPage: Annotated[
         list[Link],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#landingPage"]}),
+        Field(
+            description=(
+                "A Web page that can be navigated to in a Web browser to gain "
+                "access to the catalog, a dataset, its distributions and/or "
+                "additional information."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#landingPage"]},
+        ),
     ] = []
     title: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description="The name of the access platform.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]}
+            description=(
+                "This property refers to agents who assume responsibility and "
+                "accountability for the resource and its appropriate maintenance."
+            ),
+            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
         ),
     ] = []
 
@@ -75,45 +98,98 @@ class _OptionalValues(_Stem):
     endpointDescription: Annotated[
         Link | None,
         Field(
+            description=(
+                "A description of the services available via the end-points, "
+                "including their operations, parameters etc."
+            ),
             json_schema_extra={
                 "sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]
-            }
+            },
         ),
     ] = None
     endpointType: Annotated[
         APIType | None,
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description="The type of endpoint, e.g. REST.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ] = None
     endpointURL: Annotated[
         Link | None,
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]}),
+        Field(
+            description=(
+                "The root location or primary endpoint of the service "
+                "(a Web-resolvable IRI)"
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]},
+        ),
     ] = None
 
 
 class _RequiredValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility,
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description=(
+                "Indicates form if the platform can be accessed only within RKI "
+                "network (internally) or if the platform is accessible publicly "
+                "(externally)."
+            ),
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ]
 
 
 class _SparseValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility | None,
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description=(
+                "Indicates form if the platform can be accessed only within RKI "
+                "network (internally) or if the platform is accessible publicly "
+                "(externally)."
+            ),
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ] = None
 
 
 class _VariadicValues(_Stem):
-    endpointDescription: list[Link] = []
+    endpointDescription: Annotated[
+        list[Link],
+        Field(
+            description=(
+                "A description of the services available via the end-points, "
+                "including their operations, parameters etc."
+            ),
+        ),
+    ] = []
     endpointType: Annotated[
         list[APIType],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description="The type of endpoint, e.g. REST.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ] = []
-    endpointURL: list[Link] = []
+    endpointURL: Annotated[
+        list[Link],
+        Field(
+            description=(
+                "The root location or primary endpoint of the service "
+                "(a Web-resolvable IRI)"
+            ),
+        ),
+    ] = []
     technicalAccessibility: Annotated[
         list[TechnicalAccessibility],
-        Field(json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]}),
+        Field(
+            description=(
+                "Indicates form if the platform can be accessed only within RKI "
+                "network (internally) or if the platform is accessible publicly "
+                "(externally)."
+            ),
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+        ),
     ] = []
 
 
@@ -127,7 +203,6 @@ class BaseAccessPlatform(
             "resources."
         ),
         "sameAs": ["http://www.w3.org/ns/dcat#DataService"],
-        "title": "Access Platform",
     },
 ):
     """All fields for a valid access platform except for provenance."""
@@ -142,21 +217,35 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedAccessPlatformIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedAccessPlatformIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedAccessPlatformIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedAccessPlatformIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedAccessPlatformIdentifier)
 
 
@@ -166,7 +255,21 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     entityType: Annotated[
         Literal["MergedAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "MergedAccessPlatform"
-    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedAccessPlatformIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewAccessPlatform(
@@ -177,7 +280,21 @@ class PreviewAccessPlatform(
     entityType: Annotated[
         Literal["PreviewAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "PreviewAccessPlatform"
-    identifier: Annotated[MergedAccessPlatformIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedAccessPlatformIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveAccessPlatform(
@@ -217,6 +334,8 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for an access platform item."""
+
     additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
     subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
     preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
@@ -245,10 +364,6 @@ class AccessPlatformMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["AccessPlatformMapping"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     technicalAccessibility: Annotated[
         list[MappingField[TechnicalAccessibility]], Field(min_length=1)
     ]

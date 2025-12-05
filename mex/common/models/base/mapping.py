@@ -2,6 +2,8 @@ from typing import Annotated, Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
+from mex.common.types import MergedPrimarySourceIdentifier
+
 _ValueT = TypeVar("_ValueT")
 _MappingRuleT = TypeVar("_MappingRuleT")
 
@@ -17,9 +19,10 @@ class MappingRule(BaseModel, Generic[_ValueT], extra="forbid"):
 class MappingField(BaseModel, Generic[_MappingRuleT], extra="forbid"):
     """Generic mapping field model."""
 
-    fieldInPrimarySource: Annotated[str | None, Field(title="fieldInPrimarySource")] = (
-        None
-    )
+    fieldInPrimarySource: Annotated[
+        str | None,
+        Field(title="fieldInPrimarySource"),
+    ] = None
     locationInPrimarySource: Annotated[
         str | None, Field(title="locationInPrimarySource")
     ] = None
@@ -34,3 +37,12 @@ class MappingField(BaseModel, Generic[_MappingRuleT], extra="forbid"):
 
 class BaseMapping(BaseModel, extra="forbid"):
     """Base class for mapping implementations."""
+
+    hadPrimarySource: Annotated[
+        list[MappingField[MergedPrimarySourceIdentifier]],
+        Field(min_length=1),
+    ]
+    identifierInPrimarySource: Annotated[
+        list[MappingField[str]],
+        Field(min_length=1),
+    ]

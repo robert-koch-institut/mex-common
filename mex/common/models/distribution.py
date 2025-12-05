@@ -40,11 +40,27 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     accessURL: Annotated[
         list[Link],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessURL"]}),
+        Field(
+            description=(
+                "A URL of the resource that gives access to a distribution of the "
+                "dataset. E.g. landing page, feed, SPARQL endpoint "
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessURL"]},
+        ),
     ] = []
     downloadURL: Annotated[
         list[Link],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#downloadURL"]}),
+        Field(
+            description=(
+                "The URL of the downloadable file in a given format. E.g. CSV file "
+                "or RDF file. The format is indicated by the distribution's "
+                "`dcat:mediaType` ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#downloadURL"]},
+        ),
     ] = []
 
 
@@ -52,6 +68,7 @@ class _RequiredLists(_Stem):
     title: Annotated[
         list[Text],
         Field(
+            description="The name of the distribution.",
             min_length=1,
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
         ),
@@ -61,7 +78,10 @@ class _RequiredLists(_Stem):
 class _SparseLists(_Stem):
     title: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]}),
+        Field(
+            description="The name of the distribution.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 
@@ -69,85 +89,160 @@ class _OptionalValues(_Stem):
     accessService: Annotated[
         MergedAccessPlatformIdentifier | None,
         Field(
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+            description=(
+                "A data service that gives access to the distribution of the "
+                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
         ),
     ] = None
     license: Annotated[
         License | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+        Field(
+            description=(
+                "A legal document giving official permission to do something with "
+                "the resource ([DCT, 2020-01-20](http://dublincore.org/"
+                "specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+        ),
     ] = None
     mediaType: Annotated[
         MIMEType | None,
         Field(
+            description=(
+                "The media type of the distribution as defined by "
+                "[IANA media types](https://www.iana.org/assignments/media-types/) "
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/ns/dcat#mediaType",
                     "http://purl.org/dc/terms/format",
                 ]
-            }
+            },
         ),
     ] = None
     modified: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]}),
+        Field(
+            description=(
+                "Date on which the resource was changed ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+        ),
     ] = None
 
 
 class _RequiredValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description="Indicates how access to the distribution is restricted.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ]
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]}),
+        Field(
+            description=(
+                "Date of formal issuance of the resource ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+        ),
     ]
 
 
 class _SparseValues(_Stem):
     accessRestriction: Annotated[
         AccessRestriction | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description="Indicates how access to the distribution is restricted.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ] = None
     issued: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]}),
+        Field(
+            description=(
+                "Date of formal issuance of the resource ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+        ),
     ] = None
 
 
 class _VariadicValues(_Stem):
     accessRestriction: Annotated[
         list[AccessRestriction],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]}),
+        Field(
+            description="Indicates how access to the distribution is restricted.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+        ),
     ] = []
     accessService: Annotated[
         list[MergedAccessPlatformIdentifier],
         Field(
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]}
+            description=(
+                "A data service that gives access to the distribution of the "
+                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
         ),
     ] = []
     issued: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]}),
+        Field(
+            description=(
+                "Date of formal issuance of the resource ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+        ),
     ] = []
     license: Annotated[
         list[License],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]}),
+        Field(
+            description=(
+                "A legal document giving official permission to do something with "
+                "the resource ([DCT, 2020-01-20](http://dublincore.org/"
+                "specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+        ),
     ] = []
     mediaType: Annotated[
         list[MIMEType],
         Field(
+            description=(
+                "The media type of the distribution as defined by "
+                "[IANA media types](https://www.iana.org/assignments/media-types/) "
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "REC-vocab-dcat-2-20200204/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/ns/dcat#mediaType",
                     "http://purl.org/dc/terms/format",
                 ]
-            }
+            },
         ),
     ] = []
     modified: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]}),
+        Field(
+            description=(
+                "Date on which the resource was changed ([DCT, 2020-01-20]"
+                "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+        ),
     ] = []
 
 
@@ -166,7 +261,6 @@ class BaseDistribution(
             "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
         ),
         "sameAs": ["http://www.w3.org/ns/dcat#Distribution"],
-        "title": "Distribution",
     },
 ):
     """All fields for a valid distribution except for provenance."""
@@ -181,21 +275,35 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedDistributionIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedDistributionIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedDistributionIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedDistributionIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
@@ -205,7 +313,21 @@ class MergedDistribution(BaseDistribution, MergedItem):
     entityType: Annotated[
         Literal["MergedDistribution"], Field(alias="$type", frozen=True)
     ] = "MergedDistribution"
-    identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedDistributionIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewDistribution(
@@ -216,7 +338,21 @@ class PreviewDistribution(
     entityType: Annotated[
         Literal["PreviewDistribution"], Field(alias="$type", frozen=True)
     ] = "PreviewDistribution"
-    identifier: Annotated[MergedDistributionIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedDistributionIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveDistribution(
@@ -257,6 +393,8 @@ class PreventiveDistribution(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a distribution item."""
+
     additive: AdditiveDistribution = AdditiveDistribution()
     subtractive: SubtractiveDistribution = SubtractiveDistribution()
     preventive: PreventiveDistribution = PreventiveDistribution()
@@ -285,10 +423,6 @@ class DistributionMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["DistributionMapping"], Field(alias="$type", frozen=True)
     ] = "DistributionMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     accessRestriction: Annotated[
         list[MappingField[AccessRestriction]], Field(min_length=1)
     ]

@@ -42,37 +42,57 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description="An alternative name for the organizational unit.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     email: Annotated[
         list[EmailStr],
         Field(
+            description=(
+                "The email address through which the organizational unit can be "
+                "contacted."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
-            }
+            },
         ),
     ] = []
     shortName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+        Field(
+            description="A short name or abbreviation of the organization unit.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+        ),
     ] = []
     unitOf: Annotated[
         list[MergedOrganizationIdentifier],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]}),
+        Field(
+            description=(
+                "Indicates an organization of which this unit is a part, e.g. a "
+                "department within a larger organization."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]},
+        ),
     ] = []
     website: Annotated[
         list[Link],
         Field(
+            description=(
+                "A URL serving as the official web presentation of the "
+                "organizational unit."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://www.wikidata.org/entity/P856",
                     "http://www.w3.org/2006/vcard/ns#hasUrl",
                     "http://xmlns.com/foaf/0.1/homepage",
                 ]
-            }
+            },
         ),
     ] = []
 
@@ -81,6 +101,7 @@ class _RequiredLists(_Stem):
     name: Annotated[
         list[Text],
         Field(
+            description="The official name of the organizational unit.",
             min_length=1,
             json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
         ),
@@ -90,16 +111,33 @@ class _RequiredLists(_Stem):
 class _SparseLists(_Stem):
     name: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"}),
+        Field(
+            description="The official name of the organizational unit.",
+            json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
+        ),
     ] = []
 
 
 class _OptionalValues(_Stem):
-    parentUnit: MergedOrganizationalUnitIdentifier | None = None
+    parentUnit: Annotated[
+        MergedOrganizationalUnitIdentifier | None,
+        Field(
+            description=(
+                "The described unit is a subunit of another organizational unit."
+            )
+        ),
+    ] = None
 
 
 class _VariadicValues(_Stem):
-    parentUnit: list[MergedOrganizationalUnitIdentifier] = []
+    parentUnit: Annotated[
+        list[MergedOrganizationalUnitIdentifier],
+        Field(
+            description=(
+                "The described unit is a subunit of another organizational unit."
+            )
+        ),
+    ] = []
 
 
 class BaseOrganizationalUnit(
@@ -118,7 +156,6 @@ class BaseOrganizationalUnit(
             "http://www.w3.org/2006/vcard/ns#Group",
             "http://www.cidoc-crm.org/cidoc-crm/E_74_Group",
         ],
-        "title": "Organizational Unit",
     },
 ):
     """All fields for a valid organizational unit except for provenance."""
@@ -133,21 +170,35 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedOrganizationalUnitIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationalUnitIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedOrganizationalUnitIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedOrganizationalUnitIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
@@ -157,7 +208,21 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
     entityType: Annotated[
         Literal["MergedOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "MergedOrganizationalUnit"
-    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedOrganizationalUnitIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewOrganizationalUnit(
@@ -168,7 +233,21 @@ class PreviewOrganizationalUnit(
     entityType: Annotated[
         Literal["PreviewOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "PreviewOrganizationalUnit"
-    identifier: Annotated[MergedOrganizationalUnitIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedOrganizationalUnitIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveOrganizationalUnit(
@@ -207,6 +286,8 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for an organizational unit item."""
+
     additive: AdditiveOrganizationalUnit = AdditiveOrganizationalUnit()
     subtractive: SubtractiveOrganizationalUnit = SubtractiveOrganizationalUnit()
     preventive: PreventiveOrganizationalUnit = PreventiveOrganizationalUnit()
@@ -235,10 +316,6 @@ class OrganizationalUnitMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationalUnitMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
     name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []

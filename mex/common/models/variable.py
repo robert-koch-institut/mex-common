@@ -25,11 +25,15 @@ from mex.common.types import (
 
 CodingSystemStr = Annotated[
     str,
-    Field(examples=["SF-36 Version 1"]),
+    Field(
+        examples=["SF-36 Version 1"],
+    ),
 ]
 DataTypeStr = Annotated[
     str,
-    Field(examples=["integer", "string", "image", "int55", "number"]),
+    Field(
+        examples=["integer", "string", "image", "int55", "number"],
+    ),
 ]
 ValueSetStr = Annotated[
     str,
@@ -57,20 +61,35 @@ class _OptionalLists(_Stem):
     belongsTo: Annotated[
         list[MergedVariableGroupIdentifier],
         Field(
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+            description=(
+                "The variable group, the described variable is part of. Used to "
+                "group variables together, depending on how they are structured in "
+                "the primary source."
+            ),
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]}),
+        Field(
+            description=(
+                "A description of the variable. How the variable is defined in "
+                "the primary source."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+        ),
     ] = []
-    valueSet: list[ValueSetStr] = []
+    valueSet: Annotated[
+        list[ValueSetStr],
+        Field(description="A set of predefined values as given in the primary source."),
+    ] = []
 
 
 class _RequiredLists(_Stem):
     label: Annotated[
         list[LabelText],
         Field(
+            description="The name of the variable.",
             min_length=1,
             json_schema_extra={
                 "sameAs": [
@@ -83,6 +102,7 @@ class _RequiredLists(_Stem):
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
+            description="The resource, the variable is used in.",
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -93,18 +113,20 @@ class _SparseLists(_Stem):
     label: Annotated[
         list[LabelText],
         Field(
+            description="The name of the variable.",
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/title",
                     "http://www.w3.org/2000/01/rdf-schema#label",
                 ]
-            }
+            },
         ),
     ] = []
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+            description="The resource, the variable is used in.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
 
@@ -113,17 +135,25 @@ class _OptionalValues(_Stem):
     codingSystem: Annotated[
         CodingSystemStr | None,
         Field(
+            description=(
+                "An established standard to which the described resource conforms "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/"
+                "dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
                     "https://schema.org/codingSystem",
                 ]
-            }
+            },
         ),
     ] = None
     dataType: Annotated[
         DataTypeStr | None,
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+        Field(
+            description="The defined data type of the variable.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
+        ),
     ] = None
 
 
@@ -131,17 +161,25 @@ class _VariadicValues(_Stem):
     codingSystem: Annotated[
         list[CodingSystemStr],
         Field(
+            description=(
+                "An established standard to which the described resource conforms "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/"
+                "dublin-core/dcmi-terms/2020-01-20/))."
+            ),
             json_schema_extra={
                 "sameAs": [
                     "http://purl.org/dc/terms/conformsTo",
                     "https://schema.org/codingSystem",
                 ]
-            }
+            },
         ),
     ] = []
     dataType: Annotated[
         list[DataTypeStr],
-        Field(json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]}),
+        Field(
+            description="The defined data type of the variable.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
+        ),
     ] = []
 
 
@@ -151,13 +189,12 @@ class BaseVariable(
     _OptionalValues,
     json_schema_extra={
         "description": (
-            " Variables are defined for the data-based evaluation of investigations "
+            "Variables are defined for the data-based evaluation of investigations "
             "(e.g. studies). A variable is characterized by its data type (e.g. "
             "integer, string, date) and value range. The variable can be either "
             "quantitative or qualitative, i.e. the value range can take numerical or "
             "categorical values."
         ),
-        "title": "Variable",
     },
 ):
     """All fields for a valid variable except for provenance."""
@@ -172,21 +209,35 @@ class ExtractedVariable(BaseVariable, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedVariableIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedVariableIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedVariableIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedVariableIdentifier)
 
 
@@ -196,7 +247,21 @@ class MergedVariable(BaseVariable, MergedItem):
     entityType: Annotated[
         Literal["MergedVariable"], Field(alias="$type", frozen=True)
     ] = "MergedVariable"
-    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
@@ -205,7 +270,21 @@ class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem
     entityType: Annotated[
         Literal["PreviewVariable"], Field(alias="$type", frozen=True)
     ] = "PreviewVariable"
-    identifier: Annotated[MergedVariableIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveVariable(_OptionalLists, _SparseLists, _OptionalValues, AdditiveRule):
@@ -242,6 +321,8 @@ class PreventiveVariable(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a variable item."""
+
     additive: AdditiveVariable = AdditiveVariable()
     subtractive: SubtractiveVariable = SubtractiveVariable()
     preventive: PreventiveVariable = PreventiveVariable()
@@ -270,10 +351,6 @@ class VariableMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["VariableMapping"], Field(alias="$type", frozen=True)
     ] = "VariableMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     codingSystem: list[MappingField[CodingSystemStr | None]] = []
     dataType: list[MappingField[DataTypeStr | None]] = []
     label: Annotated[list[MappingField[list[LabelText]]], Field(min_length=1)]

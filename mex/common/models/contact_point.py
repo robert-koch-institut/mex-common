@@ -40,6 +40,7 @@ class _RequiredLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
+            description="The email address associated to the contact point.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
@@ -55,12 +56,13 @@ class _SparseLists(_Stem):
     email: Annotated[
         list[EmailStr],
         Field(
+            description="The email address associated to the contact point.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
-            }
+            },
         ),
     ] = []
 
@@ -70,7 +72,6 @@ class BaseContactPoint(
     json_schema_extra={
         "description": "A mail address, where a group of people has access to.",
         "sameAs": ["https://schema.org/ContactPoint"],
-        "title": "Contact Point",
     },
 ):
     """All fields for a valid contact point except for provenance."""
@@ -85,21 +86,35 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedContactPointIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedContactPointIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedContactPointIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedContactPointIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedContactPointIdentifier)
 
 
@@ -109,7 +124,21 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
     entityType: Annotated[
         Literal["MergedContactPoint"], Field(alias="$type", frozen=True)
     ] = "MergedContactPoint"
-    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedContactPointIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewContactPoint(_SparseLists, PreviewItem):
@@ -118,7 +147,21 @@ class PreviewContactPoint(_SparseLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewContactPoint"], Field(alias="$type", frozen=True)
     ] = "PreviewContactPoint"
-    identifier: Annotated[MergedContactPointIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedContactPointIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveContactPoint(_SparseLists, AdditiveRule):
@@ -147,6 +190,8 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a contact point item."""
+
     additive: AdditiveContactPoint = AdditiveContactPoint()
     subtractive: SubtractiveContactPoint = SubtractiveContactPoint()
     preventive: PreventiveContactPoint = PreventiveContactPoint()
@@ -175,10 +220,6 @@ class ContactPointMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ContactPointMapping"], Field(alias="$type", frozen=True)
     ] = "ContactPointMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     email: Annotated[list[MappingField[list[EmailStr]]], Field(min_length=1)]
 
 

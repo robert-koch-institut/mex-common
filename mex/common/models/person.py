@@ -82,68 +82,87 @@ class _OptionalLists(_Stem):
     affiliation: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
+            description="An organization that the described person is affiliated with.",
             json_schema_extra={
                 "sameAs": [
                     "https://schema.org/affiliation",
                     "http://www.wikidata.org/entity/P1416",
                 ]
-            }
+            },
         ),
     ] = []
     email: Annotated[
         list[EmailStr],
         Field(
+            description="The email address through which the person can be contacted.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
-            }
+            },
         ),
     ] = []
     familyName: Annotated[
         list[FamilyNameStr],
         Field(
+            description="The name inherited from the family.",
             json_schema_extra={
                 "sameAs": [
                     "http://xmlns.com/foaf/0.1/familyName",
                     "https://schema.org/familyName",
                 ]
-            }
+            },
         ),
     ] = []
     fullName: Annotated[
         list[FullNameStr],
-        Field(json_schema_extra={"sameAs": ["http://xmlns.com/foaf/0.1/name"]}),
+        Field(
+            description=(
+                "The full name of a person. Also used if the naming schema "
+                "(given name and family name) does not apply to the name."
+            ),
+            json_schema_extra={"sameAs": ["http://xmlns.com/foaf/0.1/name"]},
+        ),
     ] = []
     givenName: Annotated[
         list[GivenNameStr],
         Field(
+            description="The name given to the person e.g. by their parents.",
             json_schema_extra={
                 "sameAs": [
                     "http://xmlns.com/foaf/0.1/givenName",
                     "https://schema.org/givenName",
                 ]
-            }
+            },
         ),
     ] = []
     isniId: Annotated[
         list[IsniIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]}),
+        Field(
+            description=(
+                "The ISNI (International Standard Name Identifier) of the person."
+            ),
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
+        ),
     ] = []
     memberOf: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
+            description="Organizational unit at RKI the person is associated with.",
             json_schema_extra={
                 "sameAs": [
                     "http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of"
                 ]
-            }
+            },
         ),
     ] = []
     orcidId: Annotated[
         list[OrcidIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P496"]}),
+        Field(
+            description="Identifier of a person from the ORCID authority file.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P496"]},
+        ),
     ] = []
 
 
@@ -160,7 +179,6 @@ class BasePerson(
             "http://xmlns.com/foaf/0.1/Person",
             "http://www.w3.org/2006/vcard/ns#Individual",
         ],
-        "title": "Person",
     },
 ):
     """All fields for a valid person except for provenance."""
@@ -175,21 +193,35 @@ class ExtractedPerson(BasePerson, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedPersonIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedPersonIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedPersonIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedPersonIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedPersonIdentifier)
 
 
@@ -199,7 +231,21 @@ class MergedPerson(BasePerson, MergedItem):
     entityType: Annotated[
         Literal["MergedPerson"], Field(alias="$type", frozen=True)
     ] = "MergedPerson"
-    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPersonIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewPerson(_OptionalLists, PreviewItem):
@@ -208,7 +254,21 @@ class PreviewPerson(_OptionalLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewPerson"], Field(alias="$type", frozen=True)
     ] = "PreviewPerson"
-    identifier: Annotated[MergedPersonIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedPersonIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditivePerson(_OptionalLists, AdditiveRule):
@@ -244,6 +304,8 @@ class PreventivePerson(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a person item."""
+
     additive: AdditivePerson = AdditivePerson()
     subtractive: SubtractivePerson = SubtractivePerson()
     preventive: PreventivePerson = PreventivePerson()
@@ -272,10 +334,6 @@ class PersonMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PersonMapping"], Field(alias="$type", frozen=True)
     ] = "PersonMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     affiliation: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     email: list[MappingField[list[EmailStr]]] = []
     familyName: list[MappingField[list[FamilyNameStr]]] = []
