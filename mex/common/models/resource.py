@@ -785,6 +785,18 @@ class MergedResource(BaseResource, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedResourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewResource(
@@ -810,6 +822,18 @@ class PreviewResource(
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedResourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveResource(
@@ -820,6 +844,18 @@ class AdditiveResource(
     entityType: Annotated[
         Literal["AdditiveResource"], Field(alias="$type", frozen=True)
     ] = "AdditiveResource"
+    supersededBy: Annotated[
+        MergedResourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveResource(

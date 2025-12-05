@@ -149,6 +149,18 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedVariableGroupIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewVariableGroup(_SparseLists, PreviewItem):
@@ -172,6 +184,18 @@ class PreviewVariableGroup(_SparseLists, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedVariableGroupIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveVariableGroup(_SparseLists, AdditiveRule):
@@ -180,6 +204,18 @@ class AdditiveVariableGroup(_SparseLists, AdditiveRule):
     entityType: Annotated[
         Literal["AdditiveVariableGroup"], Field(alias="$type", frozen=True)
     ] = "AdditiveVariableGroup"
+    supersededBy: Annotated[
+        MergedVariableGroupIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveVariableGroup(_SparseLists, SubtractiveRule):

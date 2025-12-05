@@ -272,7 +272,15 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
     ]
     supersededBy: Annotated[
         MergedAccessPlatformIdentifier | None,
-        Field(json_schema_extra={"sameAs": ["https://schema.org/supersededBy"]}),
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
     ] = None
 
 
@@ -301,7 +309,15 @@ class PreviewAccessPlatform(
     ]
     supersededBy: Annotated[
         MergedAccessPlatformIdentifier | None,
-        Field(json_schema_extra={"sameAs": ["https://schema.org/supersededBy"]}),
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
     ] = None
 
 
@@ -315,7 +331,15 @@ class AdditiveAccessPlatform(
     ] = "AdditiveAccessPlatform"
     supersededBy: Annotated[
         MergedAccessPlatformIdentifier | None,
-        Field(json_schema_extra={"sameAs": ["https://schema.org/supersededBy"]}),
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
     ] = None
 
 

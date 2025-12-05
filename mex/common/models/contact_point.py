@@ -139,6 +139,18 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedContactPointIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewContactPoint(_SparseLists, PreviewItem):
@@ -162,6 +174,18 @@ class PreviewContactPoint(_SparseLists, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedContactPointIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveContactPoint(_SparseLists, AdditiveRule):
@@ -170,6 +194,18 @@ class AdditiveContactPoint(_SparseLists, AdditiveRule):
     entityType: Annotated[
         Literal["AdditiveContactPoint"], Field(alias="$type", frozen=True)
     ] = "AdditiveContactPoint"
+    supersededBy: Annotated[
+        MergedContactPointIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveContactPoint(_SparseLists, SubtractiveRule):

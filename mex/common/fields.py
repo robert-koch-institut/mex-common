@@ -168,6 +168,34 @@ MERGEABLE_FIELDS_BY_CLASS_NAME = {
     for name, cls in ALL_MODEL_CLASSES_BY_NAME.items()
 }
 
+# filtered MERGEABLE_FIELDS_BY_CLASS_NAME for fields that exist for extracted models
+MERGEABLE_FIELDS_IN_EXTRACTED_MODELS_BY_CLASS_NAME = {
+    k: v
+    for k, v in MERGEABLE_FIELDS_BY_CLASS_NAME.items()
+    if k in EXTRACTED_MODEL_CLASSES_BY_NAME
+}
+
+# filtered MERGEABLE_FIELDS_BY_CLASS_NAME for fields that exist for additive models
+MERGEABLE_FIELDS_IN_ADDITIVE_MODELS_BY_CLASS_NAME = {
+    k: v
+    for k, v in MERGEABLE_FIELDS_BY_CLASS_NAME.items()
+    if k in ADDITIVE_MODEL_CLASSES_BY_NAME
+}
+
+# filtered MERGEABLE_FIELDS_BY_CLASS_NAME for fields that exist for subtractive models
+MERGEABLE_FIELDS_IN_SUBTRACTIVE_MODELS_BY_CLASS_NAME = {
+    k: v
+    for k, v in MERGEABLE_FIELDS_BY_CLASS_NAME.items()
+    if k in SUBTRACTIVE_MODEL_CLASSES_BY_NAME
+}
+
+# filtered MERGEABLE_FIELDS_BY_CLASS_NAME for fields that exist for preventive models
+MERGEABLE_FIELDS_IN_PREVENTIVE_MODELS_BY_CLASS_NAME = {
+    k: v
+    for k, v in MERGEABLE_FIELDS_BY_CLASS_NAME.items()
+    if k in PREVENTIVE_MODEL_CLASSES_BY_NAME
+}
+
 # fields with values that should be set once but are neither literal nor references
 FINAL_FIELDS_BY_CLASS_NAME = {
     name: sorted(
