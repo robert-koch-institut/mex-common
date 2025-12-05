@@ -33,6 +33,10 @@ class _RequiredLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
+            description=(
+                "The resource, the variable group is contained by. Used to "
+                "connect a variable group to its resource."
+            ),
             min_length=1,
             json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
@@ -40,6 +44,7 @@ class _RequiredLists(_Stem):
     label: Annotated[
         list[Text],
         Field(
+            description="The name of the variable group.",
             min_length=1,
             json_schema_extra={
                 "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
@@ -52,13 +57,20 @@ class _SparseLists(_Stem):
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]}
+            description=(
+                "The resource, the variable group is contained by. Used to "
+                "connect a variable group to its resource."
+            ),
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     label: Annotated[
         list[Text],
         Field(
-            json_schema_extra={"sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]}
+            description="The name of the variable group.",
+            json_schema_extra={
+                "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
+            },
         ),
     ] = []
 
@@ -70,7 +82,6 @@ class BaseVariableGroup(
             "The grouping of variables according to a certain aspect, e.g. how the "
             "information is modelled in the primary source."
         ),
-        "title": "Variable Group",
     },
 ):
     """All fields for a valid variable group except for provenance."""
@@ -85,21 +96,35 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedVariableGroupIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedVariableGroupIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedVariableGroupIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedVariableGroupIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedVariableGroupIdentifier)
 
 
@@ -109,7 +134,21 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
     entityType: Annotated[
         Literal["MergedVariableGroup"], Field(alias="$type", frozen=True)
     ] = "MergedVariableGroup"
-    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableGroupIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewVariableGroup(_SparseLists, PreviewItem):
@@ -118,7 +157,21 @@ class PreviewVariableGroup(_SparseLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewVariableGroup"], Field(alias="$type", frozen=True)
     ] = "PreviewVariableGroup"
-    identifier: Annotated[MergedVariableGroupIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedVariableGroupIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveVariableGroup(_SparseLists, AdditiveRule):
@@ -148,6 +201,8 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for a variable group item."""
+
     additive: AdditiveVariableGroup = AdditiveVariableGroup()
     subtractive: SubtractiveVariableGroup = SubtractiveVariableGroup()
     preventive: PreventiveVariableGroup = PreventiveVariableGroup()
@@ -176,10 +231,6 @@ class VariableGroupMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["VariableGroupMapping"], Field(alias="$type", frozen=True)
     ] = "VariableGroupMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     containedBy: Annotated[
         list[MappingField[list[MergedResourceIdentifier]]], Field(min_length=1)
     ]

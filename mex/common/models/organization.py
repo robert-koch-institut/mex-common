@@ -104,39 +104,69 @@ class _Stem(BaseModel):
 class _OptionalLists(_Stem):
     alternativeName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]}),
+        Field(
+            description="An alternative name for the organization",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+        ),
     ] = []
     geprisId: Annotated[
         list[GeprisIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]}),
+        Field(
+            description="Identifier from GEPRIS authority file.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]},
+        ),
     ] = []
     gndId: Annotated[
         list[GndIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]}),
+        Field(
+            description=(
+                "An identifier from the German authority file named Gemeinsame "
+                "Normdatei (GND), curated by the German National Library (DNB)."
+            ),
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]},
+        ),
     ] = []
     isniId: Annotated[
         list[IsniIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]}),
+        Field(
+            description=(
+                "The ISNI (International Standard Name Identifier) of the organization."
+            ),
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
+        ),
     ] = []
     rorId: Annotated[
         list[RorIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]}),
+        Field(
+            description="An identifier of the Research Organization Registry (ROR).",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]},
+        ),
     ] = []
     shortName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]}),
+        Field(
+            description="A short name or abbreviation of the organization.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+        ),
     ] = []
     viafId: Annotated[
         list[ViafIdStr],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]}),
+        Field(
+            description="Identifier from VIAF (Virtual Authority File).",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]},
+        ),
     ] = []
-    wikidataId: list[WikidataIdStr] = []
+    wikidataId: Annotated[
+        list[WikidataIdStr],
+        Field(description="Identifier from Wikidata."),
+    ] = []
 
 
 class _RequiredLists(_Stem):
     officialName: Annotated[
         list[Text],
         Field(
+            description="The official name of the organization.",
             min_length=1,
             json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
         ),
@@ -146,7 +176,10 @@ class _RequiredLists(_Stem):
 class _SparseLists(_Stem):
     officialName: Annotated[
         list[Text],
-        Field(json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]}),
+        Field(
+            description="The official name of the organization.",
+            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
+        ),
     ] = []
 
 
@@ -168,7 +201,6 @@ class BaseOrganization(
             "http://www.w3.org/2006/vcard/ns#Organization",
             "http://www.wikidata.org/entity/Q43229",
         ],
-        "title": "Organization",
     },
 ):
     """All fields for a valid organization except for provenance."""
@@ -183,21 +215,35 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def identifier(
+    def identifier(  # noqa: D102
         self,
     ) -> Annotated[
         ExtractedOrganizationIdentifier,
         Field(
-            json_schema_extra={"sameAs": ["http://purl.org/dc/elements/1.1/identifier"]}
+            description=(
+                "An unambiguous reference to the resource within a given context. "
+                "Persistent identifiers should be provided as HTTP URIs "
+                "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+            },
         ),
     ]:
-        """Return the computed identifier for this extracted item."""
         return self._get_identifier(ExtractedOrganizationIdentifier)
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def stableTargetId(self) -> MergedOrganizationIdentifier:  # noqa: N802
-        """Return the computed stableTargetId for this extracted item."""
+    def stableTargetId(  # noqa: D102, N802
+        self,
+    ) -> Annotated[
+        MergedOrganizationIdentifier,
+        Field(
+            description=(
+                "The identifier of the merged item that this extracted item belongs to."
+            )
+        ),
+    ]:
         return self._get_stable_target_id(MergedOrganizationIdentifier)
 
 
@@ -207,7 +253,21 @@ class MergedOrganization(BaseOrganization, MergedItem):
     entityType: Annotated[
         Literal["MergedOrganization"], Field(alias="$type", frozen=True)
     ] = "MergedOrganization"
-    identifier: Annotated[MergedOrganizationIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedOrganizationIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
@@ -216,7 +276,21 @@ class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
     entityType: Annotated[
         Literal["PreviewOrganization"], Field(alias="$type", frozen=True)
     ] = "PreviewOrganization"
-    identifier: Annotated[MergedOrganizationIdentifier, Field(frozen=True)]
+    identifier: Annotated[
+        MergedOrganizationIdentifier,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "An unambiguous reference to the resource within a given context. "
+                    "Persistent identifiers should be provided as HTTP URIs "
+                    "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
+                ),
+                "readOnly": True,
+                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+            },
+            frozen=True,
+        ),
+    ]
 
 
 class AdditiveOrganization(_OptionalLists, _SparseLists, AdditiveRule):
@@ -253,6 +327,8 @@ class PreventiveOrganization(_Stem, PreventiveRule):
 
 
 class _BaseRuleSet(_Stem, RuleSet):
+    """Base class for sets of rules for an organization item."""
+
     additive: AdditiveOrganization = AdditiveOrganization()
     subtractive: SubtractiveOrganization = SubtractiveOrganization()
     preventive: PreventiveOrganization = PreventiveOrganization()
@@ -281,10 +357,6 @@ class OrganizationMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationMapping"
-    hadPrimarySource: Annotated[
-        list[MappingField[MergedPrimarySourceIdentifier]], Field(min_length=1)
-    ]
-    identifierInPrimarySource: Annotated[list[MappingField[str]], Field(min_length=1)]
     officialName: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
     geprisId: list[MappingField[list[GeprisIdStr]]] = []

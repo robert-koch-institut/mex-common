@@ -11,6 +11,7 @@ from pydantic import BaseModel as PydanticModel
 
 from mex.common.transform import (
     MExEncoder,
+    camel_to_split,
     dromedary_to_kebab,
     dromedary_to_snake,
     ensure_postfix,
@@ -18,6 +19,7 @@ from mex.common.transform import (
     kebab_to_camel,
     normalize,
     snake_to_dromedary,
+    split_to_camel,
     split_to_caps,
     to_key_and_values,
 )
@@ -161,10 +163,64 @@ def test_kebab_to_camel(string: str, expected: str) -> None:
 
 @pytest.mark.parametrize(
     ("string", "expected"),
+    [
+        ("", ""),
+        ("word", "word"),
+        ("CamelCase", "Camel Case"),
+        ("ABWordCDEWordFG", "AB Word CDE Word FG"),
+        ("multipleWordsInAString", "multiple Words In A String"),
+        ("XMLHttpRequest", "XML Http Request"),
+        ("IOError", "IO Error"),
+    ],
+    ids=[
+        "empty",
+        "single word",
+        "camel case",
+        "caps words",
+        "dromedary case",
+        "mixed caps",
+        "all caps acronym",
+    ],
+)
+def test_camel_to_split(string: str, expected: str) -> None:
+    result = camel_to_split(string)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
     [("", ""), ("__XYZ__", "xyz"), ("/foo/BAR$42", "foo bar 42")],
 )
 def test_normalize(string: str, expected: str) -> None:
     assert normalize(string) == expected
+
+
+@pytest.mark.parametrize(
+    ("string", "expected"),
+    [
+        ("", ""),
+        ("word", "Word"),
+        ("CamelCase", "CamelCase"),
+        ("Camel Case", "CamelCase"),
+        ("AB Word CDE Word FG", "AbWordCdeWordFg"),
+        ("multiple Words In A String", "MultipleWordsInAString"),
+        ("XML Http Request", "XmlHttpRequest"),
+        ("IO Error", "IoError"),
+    ],
+    ids=[
+        "empty",
+        "single word",
+        "already camel",
+        "camel case",
+        "caps words",
+        "dromedary case",
+        "mixed caps",
+        "all caps acronym",
+    ],
+)
+def test_split_to_camel(string: str, expected: str) -> None:
+    result = split_to_camel(string)
+    assert result == expected
 
 
 @pytest.mark.parametrize(
