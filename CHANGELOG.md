@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-model to version 4.7 where "supersededBy" is added to merged items
 - use `model_title_generator` instead of hardcoding model titles
 - move `hadPrimarySource` and `identifierInPrimarySource` from concrete mapping models
   to the base mapping class
