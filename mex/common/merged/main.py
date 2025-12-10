@@ -5,13 +5,7 @@ from typing import Literal, cast, overload
 from pydantic_core import ValidationError
 
 from mex.common.exceptions import MergingError
-from mex.common.fields import (
-    MERGEABLE_FIELDS_BY_CLASS_NAME,
-    MERGEABLE_FIELDS_IN_ADDITIVE_MODELS_BY_CLASS_NAME,
-    MERGEABLE_FIELDS_IN_EXTRACTED_MODELS_BY_CLASS_NAME,
-    MERGEABLE_FIELDS_IN_PREVENTIVE_MODELS_BY_CLASS_NAME,
-    MERGEABLE_FIELDS_IN_SUBTRACTIVE_MODELS_BY_CLASS_NAME,
-)
+from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.logging import logger
 from mex.common.merged.types import (
     SourceAndValueIter,
@@ -51,8 +45,7 @@ def _collect_extracted_values(
     return [
         (extracted_item.hadPrimarySource, value)
         for extracted_item in extracted_items
-        if field
-        in MERGEABLE_FIELDS_IN_EXTRACTED_MODELS_BY_CLASS_NAME[extracted_item.entityType]
+        if field in MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_item.entityType]
         for value in cast("ValueList", ensure_list(getattr(extracted_item, field)))
     ]
 
@@ -73,10 +66,7 @@ def _collect_additive_values(
     return [
         (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value)
         for value in cast("ValueList", ensure_list(getattr(rule_set.additive, field)))
-        if field
-        in MERGEABLE_FIELDS_IN_ADDITIVE_MODELS_BY_CLASS_NAME[
-            rule_set.additive.entityType
-        ]
+        if field in MERGEABLE_FIELDS_BY_CLASS_NAME[rule_set.additive.entityType]
     ]
 
 
@@ -93,12 +83,7 @@ def _collect_subtractive_values(
     Returns:
         List of values that should be subtracted/removed
     """
-    if (
-        field
-        in MERGEABLE_FIELDS_IN_SUBTRACTIVE_MODELS_BY_CLASS_NAME[
-            rule_set.subtractive.entityType
-        ]
-    ):
+    if field in MERGEABLE_FIELDS_BY_CLASS_NAME[rule_set.subtractive.entityType]:
         return cast("ValueList", ensure_list(getattr(rule_set.subtractive, field)))
     return cast("ValueList", [])
 
@@ -116,12 +101,7 @@ def _collect_preventive_sources(
     Returns:
         List of sources that should be prevented/blocked
     """
-    if (
-        field
-        in MERGEABLE_FIELDS_IN_PREVENTIVE_MODELS_BY_CLASS_NAME[
-            rule_set.preventive.entityType
-        ]
-    ):
+    if field in MERGEABLE_FIELDS_BY_CLASS_NAME[rule_set.preventive.entityType]:
         return cast("SourceList", ensure_list(getattr(rule_set.preventive, field)))
     return cast("SourceList", [])
 
