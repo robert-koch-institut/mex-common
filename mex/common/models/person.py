@@ -246,6 +246,18 @@ class MergedPerson(BasePerson, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedPersonIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewPerson(_OptionalLists, PreviewItem):
@@ -269,6 +281,18 @@ class PreviewPerson(_OptionalLists, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedPersonIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditivePerson(_OptionalLists, AdditiveRule):
@@ -277,6 +301,18 @@ class AdditivePerson(_OptionalLists, AdditiveRule):
     entityType: Annotated[
         Literal["AdditivePerson"], Field(alias="$type", frozen=True)
     ] = "AdditivePerson"
+    supersededBy: Annotated[
+        MergedPersonIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractivePerson(_OptionalLists, SubtractiveRule):

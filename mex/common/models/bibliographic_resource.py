@@ -545,6 +545,18 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedBibliographicResourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewBibliographicResource(
@@ -570,6 +582,18 @@ class PreviewBibliographicResource(
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedBibliographicResourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveBibliographicResource(
@@ -580,6 +604,18 @@ class AdditiveBibliographicResource(
     entityType: Annotated[
         Literal["AdditiveBibliographicResource"], Field(alias="$type", frozen=True)
     ] = "AdditiveBibliographicResource"
+    supersededBy: Annotated[
+        MergedBibliographicResourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveBibliographicResource(

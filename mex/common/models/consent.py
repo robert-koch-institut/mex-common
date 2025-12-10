@@ -214,6 +214,18 @@ class MergedConsent(BaseConsent, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedConsentIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
@@ -237,6 +249,18 @@ class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedConsentIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditiveConsent(_OptionalValues, _SparseValues, AdditiveRule):
@@ -245,6 +269,18 @@ class AdditiveConsent(_OptionalValues, _SparseValues, AdditiveRule):
     entityType: Annotated[
         Literal["AdditiveConsent"], Field(alias="$type", frozen=True)
     ] = "AdditiveConsent"
+    supersededBy: Annotated[
+        MergedConsentIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractiveConsent(_VariadicValues, SubtractiveRule):

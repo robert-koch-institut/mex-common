@@ -208,6 +208,18 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedPrimarySourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
@@ -231,6 +243,18 @@ class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
             frozen=True,
         ),
     ]
+    supersededBy: Annotated[
+        MergedPrimarySourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
@@ -239,6 +263,18 @@ class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
     entityType: Annotated[
         Literal["AdditivePrimarySource"], Field(alias="$type", frozen=True)
     ] = "AdditivePrimarySource"
+    supersededBy: Annotated[
+        MergedPrimarySourceIdentifier | None,
+        Field(
+            json_schema_extra={
+                "description": (
+                    "A merged item which is the preferred duplicate, because it "
+                    "replaces, consolidates or otherwise makes the current merged item "
+                    "obsolete."
+                ),
+            }
+        ),
+    ] = None
 
 
 class SubtractivePrimarySource(_OptionalLists, _VariadicValues, SubtractiveRule):

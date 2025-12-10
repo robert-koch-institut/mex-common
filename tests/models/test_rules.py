@@ -22,11 +22,11 @@ def test_all_rules_are_defined() -> None:
         assert sorted(c.stemType for c in lookup) == stem_types
 
 
-def test_additive_models_define_same_fields_as_base_model() -> None:
+def test_additive_models_define_same_fields_as_base_model_plus_supersededby() -> None:
     for additive_rule in ADDITIVE_MODEL_CLASSES:
         base_model_name = "Base" + additive_rule.stemType
         base_model = BASE_MODEL_CLASSES_BY_NAME[base_model_name]
-        expected_fields = {"entityType", *base_model.model_fields}
+        expected_fields = {"entityType", "supersededBy", *base_model.model_fields}
         assert set(additive_rule.model_fields) == expected_fields
 
 
