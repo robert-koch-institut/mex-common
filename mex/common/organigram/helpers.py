@@ -13,8 +13,8 @@ from mex.common.organigram.transform import (
     transform_organigram_unit_to_extracted_organizational_unit,
 )
 from mex.common.types import (
-    ExtractedOrganizationIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
 )
 
@@ -29,7 +29,7 @@ _TOrganizationalUnit = TypeVar(
 def get_extracted_organizational_unit_with_parents(
     name: str,
     primary_source_id: MergedPrimarySourceIdentifier,
-    rki_organization_id: ExtractedOrganizationIdentifier,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> list[ExtractedOrganizationalUnit]:
     """Pick the unit with the given name and transform it along with its parents.
 

@@ -8,9 +8,9 @@ from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import (
-    ExtractedOrganizationIdentifier,
     Link,
     LinkLanguage,
+    MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
 )
@@ -39,7 +39,7 @@ def child_unit() -> OrganigramUnit:
 def extracted_child_unit(
     child_unit: OrganigramUnit,
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization_id: ExtractedOrganizationIdentifier,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> ExtractedOrganizationalUnit:
     """Return the child unit transformed to an ExtractedOrganizationalUnit."""
     return transform_organigram_units_to_organizational_units(
@@ -71,7 +71,7 @@ def parent_unit() -> OrganigramUnit:
 def extracted_parent_unit(
     parent_unit: OrganigramUnit,
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization_id: ExtractedOrganizationIdentifier,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> ExtractedOrganizationalUnit:
     """Return the parent unit transformed to an ExtractedOrganizationalUnit."""
     return transform_organigram_units_to_organizational_units(
@@ -80,6 +80,6 @@ def extracted_parent_unit(
 
 
 @pytest.fixture
-def rki_organization_id() -> ExtractedOrganizationIdentifier:
+def rki_organization_id() -> MergedOrganizationIdentifier:
     """Return a mock RKI organization id for testing."""
-    return ExtractedOrganizationIdentifier.generate(seed=12345)
+    return MergedOrganizationIdentifier.generate(seed=12345)

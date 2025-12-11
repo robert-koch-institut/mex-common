@@ -4,8 +4,8 @@ from mex.common.organigram.transform import (
 )
 from mex.common.testing import Joker
 from mex.common.types import (
-    ExtractedOrganizationIdentifier,
     LinkLanguage,
+    MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
@@ -16,7 +16,7 @@ def test_transform_organigram_units_to_organizational_units(
     child_unit: OrganigramUnit,
     parent_unit: OrganigramUnit,
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization_id: ExtractedOrganizationIdentifier,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> None:
     extracted_units = transform_organigram_units_to_organizational_units(
         [child_unit, parent_unit],

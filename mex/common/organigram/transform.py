@@ -6,8 +6,8 @@ from mex.common.models import (
 )
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.types import (
-    ExtractedOrganizationIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
 )
 
@@ -15,7 +15,7 @@ from mex.common.types import (
 def transform_organigram_unit_to_extracted_organizational_unit(
     organigram_unit: OrganigramUnit,
     primary_source_id: MergedPrimarySourceIdentifier,
-    rki_organization_id: ExtractedOrganizationIdentifier,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> ExtractedOrganizationalUnit:
     """Transform an organigram unit into an ExtractedOrganizationalUnit.
 
@@ -42,7 +42,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
 def transform_organigram_units_to_organizational_units(
     organigram_units: Iterable[OrganigramUnit],
     primary_source_id: MergedPrimarySourceIdentifier,
-    rki_organization_id: ExtractedOrganizationIdentifier,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> list[ExtractedOrganizationalUnit]:
     """Transform organigram units into ExtractedOrganizationalUnits.
 
