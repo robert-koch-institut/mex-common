@@ -1,14 +1,19 @@
 import pytest
 
 from mex.common.models import (
-    ExtractedOrganization,
     ExtractedOrganizationalUnit,
 )
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
 )
-from mex.common.types import Link, LinkLanguage, MergedPrimarySourceIdentifier, Text
+from mex.common.types import (
+    ExtractedOrganizationIdentifier,
+    Link,
+    LinkLanguage,
+    MergedPrimarySourceIdentifier,
+    Text,
+)
 
 
 @pytest.fixture
@@ -34,11 +39,11 @@ def child_unit() -> OrganigramUnit:
 def extracted_child_unit(
     child_unit: OrganigramUnit,
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization: ExtractedOrganization,
+    rki_organization_id: ExtractedOrganizationIdentifier,
 ) -> ExtractedOrganizationalUnit:
     """Return the child unit transformed to an ExtractedOrganizationalUnit."""
     return transform_organigram_units_to_organizational_units(
-        [child_unit], extracted_primary_source_ids["organigram"], rki_organization
+        [child_unit], extracted_primary_source_ids["organigram"], rki_organization_id
     )[0]
 
 
@@ -66,19 +71,15 @@ def parent_unit() -> OrganigramUnit:
 def extracted_parent_unit(
     parent_unit: OrganigramUnit,
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization: ExtractedOrganization,
+    rki_organization_id: ExtractedOrganizationIdentifier,
 ) -> ExtractedOrganizationalUnit:
     """Return the parent unit transformed to an ExtractedOrganizationalUnit."""
     return transform_organigram_units_to_organizational_units(
-        [parent_unit], extracted_primary_source_ids["organigram"], rki_organization
+        [parent_unit], extracted_primary_source_ids["organigram"], rki_organization_id
     )[0]
 
 
 @pytest.fixture
-def rki_organization() -> ExtractedOrganization:
-    """Return a mock RKI organization for testing."""
-    return ExtractedOrganization(
-        officialName=[Text(value="Robert Koch-Institut")],
-        hadPrimarySource=MergedPrimarySourceIdentifier("RKIID1234567890"),
-        identifierInPrimarySource="RKIID9876543210",
-    )
+def rki_organization_id() -> ExtractedOrganizationIdentifier:
+    """Return a mock RKI organization id for testing."""
+    return ExtractedOrganizationIdentifier.generate(seed=12345)
