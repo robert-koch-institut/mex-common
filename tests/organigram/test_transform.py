@@ -1,4 +1,3 @@
-from mex.common.models import ExtractedOrganization
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
     transform_organigram_units_to_organizational_units,
@@ -6,6 +5,7 @@ from mex.common.organigram.transform import (
 from mex.common.testing import Joker
 from mex.common.types import (
     LinkLanguage,
+    MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
@@ -16,12 +16,12 @@ def test_transform_organigram_units_to_organizational_units(
     child_unit: OrganigramUnit,
     parent_unit: OrganigramUnit,
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization: ExtractedOrganization,
+    rki_organization_id: MergedOrganizationIdentifier,
 ) -> None:
     extracted_units = transform_organigram_units_to_organizational_units(
         [child_unit, parent_unit],
         extracted_primary_source_ids["organigram"],
-        rki_organization,
+        rki_organization_id,
     )
 
     # look up by ids, because order is not guaranteed
@@ -57,7 +57,7 @@ def test_transform_organigram_units_to_organizational_units(
             {"value": "Department", "language": TextLanguage.EN},
         ],
         "shortName": [{"value": "PRNT"}],
-        "unitOf": ["hDGPcPIlVrQZu9EbokVFmm"],
+        "unitOf": ["bFQoRhcVH5DK7x"],
         "website": [
             {
                 "language": LinkLanguage.EN,
