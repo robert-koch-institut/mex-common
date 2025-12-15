@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added merged model verification to `test_model_schemas`
 - add 'supersededBy' to merged and preventive items, and to additive rules
 
-
 ### Changes
 
 - update mex-model to version 4.7 where "supersededBy" is added to merged items
@@ -23,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to the base mapping class
 - update mex-model to version 4.6 where extracted and merged schemas are split
 - update `test_model_schemas` to be more readable and remove unnecessary special cases
+- move settings for ldap search base
 
 ### Deprecated
 

@@ -167,7 +167,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_PRIMARY_SOURCES_PATH",
     )
     ldap_url: SecretStr = Field(
-        SecretStr("ldap://user:pw@ldap:636"),
+        SecretStr("ldap://user:pw@host:port"),
         description="LDAP server for person queries with authentication credentials. "
         "Must follow format `ldap://user:pw@host:port`, where "
         "`user` is the username, and "
@@ -177,7 +177,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_LDAP_URL",
     )
     ldap_search_base: str = Field(
-        "DC=rki,DC=local",
+        "DC=first domain component,DC=second domain component",
         description="Search base for the ldap connector.",
         validation_alias="MEX_LDAP_SEARCH_BASE",
     )
