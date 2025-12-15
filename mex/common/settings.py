@@ -51,7 +51,7 @@ class BaseSettings(PydanticBaseSettings):
         """Construct a new settings instance.
 
         After building from regular settings sources, we look for a configured
-        `assets_dir` and then check that folder for a dotenv file as well.
+        assets_dir`and then check that folder for a dotenv file as well.
         Because of this dependency from one setting source to another, sadly
         we cannot use `Config.customise_sources`.
         """
