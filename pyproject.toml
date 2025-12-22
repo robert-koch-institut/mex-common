@@ -163,5 +163,11 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend==2.4.6"]
-build-backend = "pdm.backend"
+requires = ["hatchling>=1.28.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mex"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["mex"]
