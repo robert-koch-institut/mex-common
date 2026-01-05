@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: expects organization ID instead of organization in:
+  - transform_organigram_unit_to_extracted_organizational_unit
+  - transform_organigram_units_to_organizational_units
 - update mex-model to version 4.7 where "supersededBy" is added to merged items
 - use `model_title_generator` instead of hardcoding model titles
 - move `hadPrimarySource` and `identifierInPrimarySource` from concrete mapping models
