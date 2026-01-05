@@ -177,7 +177,7 @@ class BaseSettings(PydanticBaseSettings):
         validation_alias="MEX_LDAP_URL",
     )
     ldap_search_base: str = Field(
-        "DC=first domain component,DC=second domain component",
+        "dc=ldapmock,dc=local",
         description="Search base for the ldap connector.",
         validation_alias="MEX_LDAP_SEARCH_BASE",
     )
