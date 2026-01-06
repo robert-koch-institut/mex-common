@@ -68,12 +68,12 @@ jobs:
           SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
         run: |
           eval "$(ssh-agent -s)"
-          pdm setup-commit-signing
+          mex setup-commit-signing
 
       - name: Release new version
         id: release
         run: |
-          pdm release ${{ inputs.version }}
+          mex release ${{ inputs.version }}
           echo "tag=$(git describe --abbrev=0 --tags)" >> "$GITHUB_OUTPUT"
 
   distribute:
