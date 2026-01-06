@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - BREAKING: expects organization ID instead of organization in:
   - transform_organigram_unit_to_extracted_organizational_unit

@@ -56,7 +56,7 @@ jobs:
           SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
         run: |
           eval "$(ssh-agent -s)"
-          pdm setup-commit-signing
+          mex setup-commit-signing
 
       - name: Update template
         env:
