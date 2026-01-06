@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.12.0] - 2026-01-06
+
+### Added
+
 - added field descriptions according to mex.model
 - added two new string helper functions `split_to_camel` and `camel_to_split`
 - added merged model verification to `test_model_schemas`
@@ -29,14 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-model to version 4.6 where extracted and merged schemas are split
 - update `test_model_schemas` to be more readable and remove unnecessary special cases
 - move settings for ldap search base
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [1.11.0] - 2025-12-04
 
