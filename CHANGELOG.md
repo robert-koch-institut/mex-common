@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-model to version 4.8 featuring translated entity types and repo maintenance
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - BREAKING: expects organization ID instead of organization in:
