@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix cookiecutter workflow command
+
 ### Security
 
 ## [1.11.0] - 2025-12-04
