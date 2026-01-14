@@ -16,7 +16,11 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
 )
-from mex.common.types import MergedPrimarySourceIdentifier
+from mex.common.types import (
+    MergedOrganizationalUnitIdentifier,
+    MergedOrganizationIdentifier,
+    MergedPrimarySourceIdentifier,
+)
 from mex.common.utils import deprecated
 
 
@@ -121,20 +125,43 @@ def transform_ldap_person_to_extracted_person(
     Returns:
         Extracted person
     """
+    person_unit_ids = [
+        unit.stableTargetId
+        for d in (ldap_person.department, ldap_person.departmentNumber)
+        if d and (unit := units_by_identifier_in_primary_source.get(d.lower()))
+    ]
+    return transform_ldap_person_and_unit_ids_to_extracted_person(
+        ldap_person, primary_source_id, person_unit_ids, rki_organization.stableTargetId
+    )
+
+
+def transform_ldap_person_and_unit_ids_to_extracted_person(
+    ldap_person: LDAPPerson,
+    primary_source_id: MergedPrimarySourceIdentifier,
+    person_unit_ids: list[MergedOrganizationalUnitIdentifier],
+    rki_organization_id: MergedOrganizationIdentifier,
+) -> ExtractedPerson:
+    """Transform a single LDAP person and organizational unit ids to an ExtractedPerson.
+
+    Args:
+        ldap_person: LDAP person
+        primary_source_id: Primary source identifier for LDAP
+        person_unit_ids: ids of units affiliated with person
+        rki_organization_id: RKI Organization id
+
+    Returns:
+        Extracted person
+    """
     return ExtractedPerson(
         identifierInPrimarySource=str(ldap_person.objectGUID),
         hadPrimarySource=primary_source_id,
-        affiliation=[rki_organization.stableTargetId],
+        affiliation=[rki_organization_id],
         email=ldap_person.mail,
         familyName=[ldap_person.sn],
         fullName=[ldap_person.displayName] if ldap_person.displayName else [],
         givenName=ldap_person.givenName,
         isniId=[],
-        memberOf=[
-            unit.stableTargetId
-            for d in (ldap_person.department, ldap_person.departmentNumber)
-            if d and (unit := units_by_identifier_in_primary_source.get(d.lower()))
-        ],
+        memberOf=person_unit_ids,
         orcidId=[],
     )
 
