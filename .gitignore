@@ -9,8 +9,6 @@ __pycache__/
 # Distribution / packaging
 .eggs/
 .installed.cfg
-.pdm-build
-.pdm-python
 .Python
 .python-version
 .web/
