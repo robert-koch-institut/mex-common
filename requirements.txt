@@ -1,4 +1,4 @@
 cruft==2.16.0
 mex-release==1.0.0
-pdm<2.26.2
+pdm<2.26.5
 pre-commit==4.5.1
