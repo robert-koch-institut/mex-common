@@ -116,7 +116,7 @@ jobs:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           gh release create ${{ needs.release.outputs.tag }} --generate-notes --latest --verify-tag
-          pdm build --dest dist
+          uv build --out-dir dist
           for filename in dist/*; do
             gh release upload ${{ needs.release.outputs.tag }} ${filename};
           done
