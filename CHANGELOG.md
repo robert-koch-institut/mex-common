@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `transform_ldap_person_and_unit_ids_to_extracted_person` for extractors ldap
+  convencience function
+
 ### Changes
 
 ### Deprecated

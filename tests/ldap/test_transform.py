@@ -13,6 +13,7 @@ from mex.common.ldap.transform import (
     analyse_person_string,
     transform_any_ldap_actor_to_extracted_persons_or_contact_points,
     transform_ldap_functional_accounts_to_extracted_contact_points,
+    transform_ldap_person_and_unit_ids_to_extracted_person,
     transform_ldap_persons_to_extracted_persons,
     transform_ldap_persons_with_query_to_extracted_persons,
 )
@@ -272,3 +273,48 @@ def test_transform_ldap_persons_with_query_to_extracted_persons(
         "identifier": "cXTehc7a4YxNw6j7UpSq0b",
         "stableTargetId": "fWYZKuwfymRj0ItP1CfTO4",
     }
+
+
+def test_transform_ldap_person_and_unit_ids_to_extracted_person(
+    extracted_unit: ExtractedOrganizationalUnit,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
+    extracted_organization_rki: ExtractedOrganization,
+) -> None:
+    ldap_person = LDAPPerson(
+        company="RKI",
+        department="MF",
+        departmentNumber="MF4",
+        displayName="Sample, Sam, Dr.",
+        employeeID="SampleS",
+        givenName="Sam",
+        mail=["mail@example2.com"],
+        objectGUID=UUID(int=42, version=4),
+        ou="MF",
+        sAMAccountName="samples",
+        sn="Sample",
+    )
+
+    extracted_person = transform_ldap_person_and_unit_ids_to_extracted_person(
+        ldap_person,
+        extracted_primary_source_ids["ldap"],
+        [extracted_unit.stableTargetId],
+        extracted_organization_rki.stableTargetId,
+    )
+
+    expected = {
+        "hadPrimarySource": "ebs5siX85RkdrhBRlsYgRP",
+        "identifierInPrimarySource": "00000000-0000-4000-8000-00000000002a",
+        "affiliation": ["grUm6pxJ1mpL8G7dOXeqWh"],
+        "email": ["mail@example2.com"],
+        "familyName": ["Sample"],
+        "fullName": ["Sample, Sam, Dr."],
+        "givenName": ["Sam"],
+        "memberOf": ["hAG16Y4jxBPzqPBa2uxqcb"],
+        "identifier": Joker(),
+        "stableTargetId": Joker(),
+    }
+
+    assert (
+        extracted_person.model_dump(exclude_none=True, exclude_defaults=True)
+        == expected
+    )
