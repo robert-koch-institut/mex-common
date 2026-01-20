@@ -24,16 +24,17 @@ repos:
         name: whitespaces
       - id: fix-byte-order-marker
         name: byte-order
-  - repo: https://github.com/pdm-project/pdm
-    rev: 2.26.1
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.21
     hooks:
-      - id: pdm-lock-check
-        name: pdm
+      - id: uv-lock
+        name: uv
+        args: ["--check"]
   - repo: local
     hooks:
     - id: mypy
       name: mypy
-      entry: pdm run dmypy run --timeout 7200 -- mex tests
+      entry: uv run dmypy run --timeout 7200 -- mex tests
       files: ^(mex|tests)/
       language: system
       pass_filenames: false
