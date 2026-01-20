@@ -1,7 +1,9 @@
 from collections.abc import Generator
 from typing import TypeVar
 
-from mex.common.exceptions import MExError
+from mex.common.exceptions import (
+    MExError,
+)
 from mex.common.logging import logger
 from mex.common.models import (
     ExtractedOrganizationalUnit,
