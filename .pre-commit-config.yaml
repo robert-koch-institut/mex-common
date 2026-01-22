@@ -1,6 +1,4 @@
 fail_fast: false
-default_language_version:
-  python: python3.11
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.10
@@ -25,11 +23,11 @@ repos:
       - id: fix-byte-order-marker
         name: byte-order
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.21
+    rev: 0.9.24
     hooks:
       - id: uv-lock
         name: uv
-        args: ["--check"]
+        args: [--check]
   - repo: local
     hooks:
     - id: mypy

@@ -25,6 +25,9 @@ concurrency:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.11, 3.12, 3.13 ]
     timeout-minutes: 10
     steps:
       - name: Checkout repo
@@ -55,10 +58,12 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install requirements
-        run: make install
+        run: |
+          echo ${{ matrix.python-version }} > .python-version
+          make install
 
       - name: Run linters
         run: make lint
