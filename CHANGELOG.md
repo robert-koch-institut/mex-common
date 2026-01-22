@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- support for python 3.11 - 3.13
+
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
-
 - switch package manager from pdm to uv
 
 ### Deprecated
