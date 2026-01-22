@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- added helper function in ldap: get units by ids
+
 ### Changes
 
 - switch package manager from pdm to uv
