@@ -43,7 +43,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install requirements
         run: make setup
@@ -75,10 +75,10 @@ jobs:
           git checkout main
           git checkout -b cruft/cookiecutter-template-${template_ref}
           cruft update --skip-apply-ask
-          printf '# Changes\n\n- bumped cookiecutter template to %s/commit/%s\n' "$template_url" "$template_ref" > .cruft-pr-body
+          printf '### Changes\n\n- bumped cookiecutter template to %s/commit/%s\n' "$template_url" "$template_ref" > .cruft-pr-body
           sed -i "0,/^### Changes/s|^### Changes.*|&\n\n- updated template to ${template_url}/commit/${template_ref}|" CHANGELOG.md
           if [[ $(find . -type f -name "*.rej" | wc -l) -ne 0 ]]; then
-            printf '\n# Conflicts\n' >> .cruft-pr-body
+            printf '\n### Conflicts\n' >> .cruft-pr-body
           fi
           find . -type f -name "*.rej" | while read -r line ; do
             printf '\n```diff\n' >> .cruft-pr-body

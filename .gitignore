@@ -10,7 +10,6 @@ __pycache__/
 .eggs/
 .installed.cfg
 .Python
-.python-version
 .web/
 *.egg
 *.egg-info/
@@ -77,9 +76,6 @@ target/
 profile_default/
 ipython_config.py
 
-# pyenv
-.python-version
-
 # PEP 582
 __pypackages__/
 
@@ -127,6 +123,7 @@ dmypy.json
 .invenio.private
 .states
 .tmp_dagster_home_*
+.nux/
 .web
 *.ndjson
 assets/external/

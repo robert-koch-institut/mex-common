@@ -1,10 +1,13 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "enabledManagers": [
+        "docker-compose",
+        "dockerfile",
         "github-actions",
         "html",
         "pep621",
-        "pip_requirements"
+        "pip_requirements",
+        "pre-commit"
     ],
     "gitAuthor": "RKIMetadataExchange <mex@rki.de>",
     "lockFileMaintenance": {
