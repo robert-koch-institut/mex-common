@@ -10,7 +10,6 @@ __pycache__/
 .eggs/
 .installed.cfg
 .Python
-.python-version
 .web/
 *.egg
 *.egg-info/
@@ -127,6 +126,7 @@ dmypy.json
 .invenio.private
 .states
 .tmp_dagster_home_*
+.nux/
 .web
 *.ndjson
 assets/external/
