@@ -1,4 +1,4 @@
 cruft==2.16.0
 mex-release==1.2.0
-uv==0.9.25
+uv==0.9.26
 pre-commit==4.5.1
