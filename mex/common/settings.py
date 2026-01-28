@@ -14,7 +14,7 @@ from mex.common.logging import logger
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SETTINGS_STORE = SingleSingletonStore["BaseSettings"]()
-MEX_ASSETS_DIR_ENV_KEY = "MEX_ASSETS_DIR"
+MEX_ASSETS_DIR = "MEX_ASSETS_DIR"
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -53,7 +53,7 @@ class BaseSettings(PydanticBaseSettings):
         **values: Any,  # noqa: ANN401
     ) -> None:
         """Construct a new settings instance."""
-        if assets_dir := environ.get(MEX_ASSETS_DIR_ENV_KEY):
+        if assets_dir := environ.get(MEX_ASSETS_DIR):
             if not _env_file or _env_file is ENV_FILE_SENTINEL:
                 _env_file = [
                     Path(assets_dir, ".env"),  # bw-compat
@@ -68,17 +68,6 @@ class BaseSettings(PydanticBaseSettings):
             _secrets_dir=_secrets_dir,
             **values,
         )
-
-    @model_validator(mode="after")
-    def log_settings(self) -> Self:
-        """Validator that logs the settings in text form."""
-        logger.info(
-            click.style(
-                f"{type(self).__name__}\n{self.text()}",
-                fg="bright_cyan",
-            )
-        )
-        return self
 
     @classmethod
     def get(cls) -> Self:
@@ -114,7 +103,7 @@ class BaseSettings(PydanticBaseSettings):
             "Path to directory that contains input files treated as read-only, "
             "looks for a folder named `assets` in the current directory by default."
         ),
-        validation_alias=MEX_ASSETS_DIR_ENV_KEY,
+        validation_alias=MEX_ASSETS_DIR,
     )
     work_dir: Path = Field(
         Path.cwd(),
@@ -245,6 +234,17 @@ class BaseSettings(PydanticBaseSettings):
         )
         env_info = env_settings._extract_field_info(field, name)  # noqa: SLF001
         return env_info[0][1].upper()
+
+    @model_validator(mode="after")
+    def log_settings(self) -> Self:
+        """Validator that logs the settings in text form."""
+        logger.info(
+            click.style(
+                f"{type(self).__name__}\n{self.text()}",
+                fg="bright_cyan",
+            )
+        )
+        return self
 
     @model_validator(mode="after")
     def resolve_paths(self) -> Self:
