@@ -1,5 +1,6 @@
 from os import environ
 from pathlib import Path
+from textwrap import wrap
 from typing import Any, Self, cast
 
 import click
@@ -8,6 +9,7 @@ from pydantic import Field, HttpUrl, SecretStr, model_validator
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
+from tabulate import tabulate
 
 from mex.common.context import SingleSingletonStore
 from mex.common.logging import logger
@@ -200,17 +202,21 @@ class BaseSettings(PydanticBaseSettings):
         """Dump the current settings into a readable table.
 
         Returns:
-            Formatted string with all settings key-value pairs.
+            Formatted table with all settings.
         """
-        dict_ = self.model_dump()
-        indent = max(len(key) for key in dict_)
-        return "\n".join(
-            [
-                f"{key.ljust(indent)} "
-                f"{', '.join(str(v) for v in val) if isinstance(val, list) else val}"
-                for key, val in dict_.items()
-            ]
-        )
+
+        def format_value(v: object) -> str:
+            return "\n".join(
+                wrap(", ".join(map(str, v)) if isinstance(v, list) else str(v))
+            )
+
+        rows: list[tuple[str, str]] = []
+        for k, v in self.model_dump(mode="json", exclude_unset=not self.debug).items():
+            if isinstance(v, dict):
+                rows.extend((f"{k}__{sk}", format_value(sv)) for sk, sv in v.items())
+            else:
+                rows.append((k, format_value(v)))
+        return tabulate(rows, tablefmt="simple_grid")
 
     @classmethod
     def get_env_name(cls, name: str) -> str:
@@ -236,26 +242,15 @@ class BaseSettings(PydanticBaseSettings):
         return env_info[0][1].upper()
 
     @model_validator(mode="after")
-    def log_settings(self) -> Self:
-        """Validator that logs the settings in text form."""
-        logger.info(
-            click.style(
-                f"{type(self).__name__}\n{self.text()}",
-                fg="bright_cyan",
-            )
-        )
-        return self
-
-    @model_validator(mode="after")
     def resolve_paths(self) -> Self:
         """Resolve AssetPath and WorkPath."""
 
         def _resolve(model: PydanticBaseModel, _name: str) -> None:
             value = getattr(model, _name)
             if isinstance(value, AssetsPath) and value.is_relative():
-                setattr(model, _name, self.assets_dir.resolve() / value)
+                object.__setattr__(model, _name, self.assets_dir.resolve() / value)
             elif isinstance(value, WorkPath) and value.is_relative():
-                setattr(model, _name, self.work_dir.resolve() / value)
+                object.__setattr__(model, _name, self.work_dir.resolve() / value)
             elif isinstance(value, PydanticBaseModel):
                 for sub_model_field_name in type(value).model_fields:
                     _resolve(value, sub_model_field_name)
@@ -284,4 +279,15 @@ class BaseSettings(PydanticBaseSettings):
 
         for name in type(self).model_fields:
             _validate(self, name)
+        return self
+
+    @model_validator(mode="after")
+    def log_settings(self) -> Self:
+        """Validator that logs the settings in text form."""
+        logger.info(
+            click.style(
+                f"{type(self).__name__}\n{self.text()}",
+                fg="bright_cyan",
+            )
+        )
         return self

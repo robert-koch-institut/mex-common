@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- settings classes log text representation in model validation hook
+- settings classes log table representation in model validation hook
+- PathWrapper can be compared to regular pathlib Path objects
 
 ### Changes
 
@@ -51,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `transform_ldap_person_and_unit_ids_to_extracted_person` for extractors ldap
-  convencience function
+  convenience function
 
 ## [1.12.0] - 2026-01-06
 

@@ -57,7 +57,9 @@ class PathWrapper(PathLike[str]):
     def __eq__(self, other: object) -> bool:
         """Return true for two PathWrappers with equal paths."""
         if isinstance(other, PathWrapper):
-            return self._path.__eq__(other._path)
+            return self._path == other._path
+        if isinstance(other, Path):
+            return self._path == other
         msg = f"Can't compare {type(other)} with {type(self)}"
         raise TypeError(msg)
 

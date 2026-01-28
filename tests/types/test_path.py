@@ -31,6 +31,7 @@ def test_path_wrapper_representation() -> None:
 
 def test_path_wrapper_equality() -> None:
     assert PathWrapper(Path("foo", "bar")) == PathWrapper(Path("foo", "bar"))
+    assert PathWrapper(Path("foo", "bar")) == Path("foo", "bar")
     assert PathWrapper(Path("foo", "bar")) != PathWrapper(Path("bar", "batz"))
 
     with pytest.raises(TypeError):
