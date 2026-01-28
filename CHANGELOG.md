@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- settings classes log text representation in model validation hook
+
 ### Changes
 
 ### Deprecated
 
+- deprecated `settings_cls` keyword for `entrypoint` decorator
+
 ### Removed
+
+- removed all cli arguments for entrypoints, except `--pdb`
 
 ### Fixed
 

@@ -1,6 +1,8 @@
+from os import environ
 from pathlib import Path
 from typing import Any, Self, cast
 
+import click
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, HttpUrl, SecretStr, model_validator
 from pydantic_settings import BaseSettings as PydanticBaseSettings
@@ -8,9 +10,11 @@ from pydantic_settings import SettingsConfigDict
 from pydantic_settings.sources import ENV_FILE_SENTINEL, DotenvType, EnvSettingsSource
 
 from mex.common.context import SingleSingletonStore
+from mex.common.logging import logger
 from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
 
 SETTINGS_STORE = SingleSingletonStore["BaseSettings"]()
+MEX_ASSETS_DIR_ENV_KEY = "MEX_ASSETS_DIR"
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -48,22 +52,15 @@ class BaseSettings(PydanticBaseSettings):
         _secrets_dir: str | Path | None = None,
         **values: Any,  # noqa: ANN401
     ) -> None:
-        """Construct a new settings instance.
-
-        After building from regular settings sources, we look for a configured
-        `assets_dir` and then check that folder for a dotenv file as well.
-        Because of this dependency from one setting source to another, sadly
-        we cannot use `Config.customise_sources`.
-        """
-        settings_wo_assets_env_file = self._settings_build_values(
-            values,
-            _env_file=_env_file,
-            _env_file_encoding=_env_file_encoding,
-            _env_nested_delimiter=_env_nested_delimiter,
-            _secrets_dir=_secrets_dir,
-        )
-        if assets_dir := settings_wo_assets_env_file.get("MEX_ASSETS_DIR"):
-            _env_file = Path(assets_dir, ".env")
+        """Construct a new settings instance."""
+        if assets_dir := environ.get(MEX_ASSETS_DIR_ENV_KEY):
+            if not _env_file or _env_file is ENV_FILE_SENTINEL:
+                _env_file = [
+                    Path(assets_dir, ".env"),  # bw-compat
+                    Path(assets_dir, "config", ".env"),
+                ]
+            if not _secrets_dir:
+                _secrets_dir = Path(assets_dir, "config", "secrets")
         super().__init__(
             _env_file=_env_file,
             _env_file_encoding=_env_file_encoding,
@@ -71,6 +68,17 @@ class BaseSettings(PydanticBaseSettings):
             _secrets_dir=_secrets_dir,
             **values,
         )
+
+    @model_validator(mode="after")
+    def log_settings(self) -> Self:
+        """Validator that logs the settings in text form."""
+        logger.info(
+            click.style(
+                f"{type(self).__name__}\n{self.text()}",
+                fg="bright_cyan",
+            )
+        )
+        return self
 
     @classmethod
     def get(cls) -> Self:
@@ -86,8 +94,10 @@ class BaseSettings(PydanticBaseSettings):
 
     debug: bool = Field(
         False,  # noqa: FBT003
-        alias="pdb",
-        description="Jump into post-mortem debugging after any uncaught exception.",
+        description=(
+            "Enable application specific debugging behavior, like expanded logging or "
+            "testing-only functionality."
+        ),
         validation_alias="MEX_DEBUG",
     )
     sink: list[Sink] = Field(
@@ -104,7 +114,7 @@ class BaseSettings(PydanticBaseSettings):
             "Path to directory that contains input files treated as read-only, "
             "looks for a folder named `assets` in the current directory by default."
         ),
-        validation_alias="MEX_ASSETS_DIR",
+        validation_alias=MEX_ASSETS_DIR_ENV_KEY,
     )
     work_dir: Path = Field(
         Path.cwd(),
