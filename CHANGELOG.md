@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- settings classes log table representation in model validation hook
+- PathWrapper can be compared to regular pathlib Path objects
+
 ### Changes
 
 ### Deprecated
 
+- deprecated `settings_cls` keyword for `entrypoint` decorator
+
 ### Removed
+
+- removed all cli arguments for entrypoints, except `--pdb`
 
 ### Fixed
 
@@ -45,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `transform_ldap_person_and_unit_ids_to_extracted_person` for extractors ldap
-  convencience function
+  convenience function
 
 ## [1.12.0] - 2026-01-06
 

@@ -19,6 +19,7 @@ dependencies = [
     "pyarrow>=23,<24",
     "pydantic-settings",
     "pydantic>=2,<3",
+    "tabulate>=0.9",
     "pytz>=2025",
     "requests>=2,<3",
 ]
@@ -38,6 +39,7 @@ dev = [
     "types-networkx",
     "types-pytz",
     "types-requests",
+    "types-tabulate",
 ]
 
 [tool.cruft]

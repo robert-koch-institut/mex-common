@@ -20,11 +20,12 @@ def test_debug_setting() -> None:
 def test_settings_text() -> None:
     # Test settings can be converted to a legible multi-line paragraph
     settings = BaseSettings.get()
+    settings.debug = True
     text = settings.text()
 
-    assert len(text.splitlines()) == len(BaseSettings.model_fields)
-    assert re.search(r"debug\s+False", text)
-    assert re.search(r"backend_api_key\s+\*+", text)  # masked secret
+    assert all(field in text for field in BaseSettings.model_fields)
+    assert re.findall(r".*debug.*True.*", text)
+    assert re.search(r".*backend_api_key.*\*{10}", text)  # masked secret
 
 
 class FooSettings(BaseSettings):
