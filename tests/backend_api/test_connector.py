@@ -3,7 +3,10 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import (
+    BackendApiConnector,
+    LDAPBackendApiConnector,
+)
 from mex.common.models import (
     AnyExtractedModel,
     AnyPreviewModel,
@@ -299,17 +302,17 @@ def test_get_rule_set_mocked(
 
 
 def test_merged_person_from_login_mocked(
-    mocked_backend: MagicMock, merged_person: MergedPerson
+    mocked_ldap_backend: MagicMock, merged_person: MergedPerson
 ) -> None:
     mocked_return = merged_person.model_dump()
-    mocked_backend.return_value.json.return_value = mocked_return
+    mocked_ldap_backend.return_value.json.return_value = mocked_return
 
-    connector = BackendApiConnector.get()
-    response = connector.merged_person_from_login()
+    connector = LDAPBackendApiConnector.get()
+    response = connector.merged_person_from_login("mex_user", "password")
 
     assert response == merged_person
 
-    assert mocked_backend.call_args == call(
+    assert mocked_ldap_backend.call_args == call(
         "POST",
         "http://localhost:8080/v0/merged-person-from-login",
         None,
@@ -318,4 +321,5 @@ def test_merged_person_from_login_mocked(
             "User-Agent": "rki/mex",
         },
         timeout=10,
+        auth=("mex_user", "password"),
     )
