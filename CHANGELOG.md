@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- LDAPBackendAPIConnector
+- added LDAPBackendAPIConnector to use 'merged-person-from-login'
 
 ### Changes
 
