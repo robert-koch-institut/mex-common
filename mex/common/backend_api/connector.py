@@ -447,8 +447,7 @@ class BackendApiConnector(HTTPConnector):
         Either provide `stableTargetId` or `hadPrimarySource`
         and `identifierInPrimarySource` together to get a unique result.
         """
-        connector = BackendApiConnector.get()
-        response = connector.request(
+        response = self.request(
             "GET",
             "identity",
             params={
@@ -480,11 +479,23 @@ class BackendApiConnector(HTTPConnector):
             **kwargs,
         )
 
-    def merged_person_from_login(self) -> MergedPerson:
-        """Fetch a MergedPerson by their login username.
 
-        The username is automatically extracted from authentication headers
-        by the backend endpoint dependency.
+class LDAPBackendApiConnector(HTTPConnector):
+    """Connector class to handle interaction with the Backend API without an API key."""
+
+    API_VERSION = "v0"
+
+    def _check_availability(self) -> None:
+        """Send a GET request to verify the API is available."""
+        self.request("GET", "_system/check")
+
+    def _set_url(self) -> None:
+        """Set the backend api url with the version path."""
+        settings = BaseSettings.get()
+        self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
+
+    def merged_person_from_login(self, username: str, password: str) -> MergedPerson:
+        """Fetch a MergedPerson by their login username.
 
         Raises:
             HTTPError: If authentication fails or user is not authorized
@@ -495,5 +506,7 @@ class BackendApiConnector(HTTPConnector):
         response = self.request(
             method="POST",
             endpoint="merged-person-from-login",
+            auth=(username, password),
         )
+
         return MergedPerson.model_validate(response)
