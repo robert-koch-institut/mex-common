@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- added LDAPBackendAPIConnector to use 'merged-person-from-login'
-
 ### Changes
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.13.2] - 2026-01-30
+
+### Added
+
+- added LDAPBackendAPIConnector to use 'merged-person-from-login'
 
 ## [1.13.1] - 2026-01-23
 
