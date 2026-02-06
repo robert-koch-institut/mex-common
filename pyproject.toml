@@ -15,7 +15,7 @@ dependencies = [
     "mex-model>=4.9.1,<4.10",
     "networkx>=3",
     "numpy>=2,<3",
-    "pandas>=2,<3",
+    "pandas>=3,<4",
     "pyarrow>=23,<24",
     "pydantic-settings",
     "pydantic>=2,<3",
