@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+
 ### Deprecated
 
 - deprecated `settings_cls` keyword for `entrypoint` decorator
@@ -25,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.13.2] - 2026-01-30
+
+### Added
+
+- added LDAPBackendAPIConnector to use 'merged-person-from-login'
 
 ## [1.13.1] - 2026-01-23
 
