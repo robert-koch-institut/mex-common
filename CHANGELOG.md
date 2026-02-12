@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- support for python 3.14
 - settings classes log table representation in model validation hook
 - PathWrapper can be compared to regular pathlib Path objects
 
