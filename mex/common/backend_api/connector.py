@@ -19,6 +19,8 @@ from mex.common.models import (
     PaginatedItemsContainer,
     PreviewModelTypeAdapter,
     RuleSetResponseTypeAdapter,
+    Status,
+    VersionStatus,
 )
 from mex.common.models.person import MergedPerson
 from mex.common.settings import BaseSettings
@@ -478,6 +480,16 @@ class BackendApiConnector(HTTPConnector):
             payload=ItemsContainer[_IngestibleModelT](items=ingestible_models),
             **kwargs,
         )
+
+    def system_status(self) -> VersionStatus:
+        """Return the status and version of the backend."""
+        response = self.request(method="GET", endpoint="/_system/check")
+        return VersionStatus.model_validate(response)
+
+    def flush_graph(self) -> Status:
+        """Flush the graph database (only for testing-backend)."""
+        response = self.request(method="DELETE", endpoint="/_system/graph")
+        return Status.model_validate(response)
 
 
 class LDAPBackendApiConnector(HTTPConnector):
