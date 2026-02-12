@@ -6,7 +6,7 @@ authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.14,<3.15"
 dependencies = [
     "backoff>=2,<3",
     "click>=8,<9",
