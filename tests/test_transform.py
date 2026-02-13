@@ -12,6 +12,8 @@ from pydantic import BaseModel as PydanticModel
 from mex.common.transform import (
     MExEncoder,
     camel_to_split,
+    camelcase_to_title,
+    clean_dict,
     dromedary_to_kebab,
     dromedary_to_snake,
     ensure_postfix,
@@ -188,6 +190,23 @@ def test_camel_to_split(string: str, expected: str) -> None:
 
 
 @pytest.mark.parametrize(
+    ("input_camelcase", "expected"),
+    [
+        ("", ""),
+        ("simplestring", "Simplestring"),
+        ("inputCamelCase", "Input Camel Case"),
+        (
+            "a bit_weird string_that might be _work _for_some_reason_",
+            "A Bit_Weird String_That Might Be _Work _For_Some_Reason_",
+        ),
+    ],
+    ids=["empty string", "simple string", "simple camelcase", "weird camelcase"],
+)
+def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
+    assert camelcase_to_title(input_camelcase) == expected
+
+
+@pytest.mark.parametrize(
     ("string", "expected"),
     [("", ""), ("__XYZ__", "xyz"), ("/foo/BAR$42", "foo bar 42")],
 )
@@ -297,3 +316,30 @@ def test_to_key_and_values(dct: dict[str, Any], expected: dict[str, list[Any]]) 
     result = dict(to_key_and_values(dct))
 
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("obj", "unwanted", "expected"),
+    [
+        ({}, (None, []), {}),
+        ({"a": 1, "b": None, "c": []}, (None, []), {"a": 1}),
+        ({"a": {"b": None, "c": 2}}, (None, []), {"a": {"c": 2}}),
+        ({"a": [1, {"b": None, "c": 3}]}, (None, []), {"a": [1, {"c": 3}]}),
+        ("plain", (None, []), "plain"),
+        (42, (None, []), 42),
+        ({"a": 0, "b": "", "c": False}, (None, []), {"a": 0, "b": "", "c": False}),
+        ({"a": 1, "b": 0}, (None, [], 0), {"a": 1}),
+    ],
+    ids=[
+        "empty dict",
+        "removes None and empty list",
+        "nested dict",
+        "list with nested dict",
+        "non-dict passthrough string",
+        "non-dict passthrough int",
+        "keeps falsy non-unwanted values",
+        "custom unwanted",
+    ],
+)
+def test_clean_dict(obj: Any, unwanted: tuple[Any, ...], expected: Any) -> None:  # noqa: ANN401
+    assert clean_dict(obj, unwanted) == expected
