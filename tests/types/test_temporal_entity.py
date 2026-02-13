@@ -69,13 +69,17 @@ def test_temporal_entity_type_errors(
             YearMonthDay,
             ("2022-02-31",),
             {},
-            "day is out of range for month",
+            r"(day is out of range for month)|"
+            # python 3.14 gives us a better error message:
+            r"(day 31 must be in range 1\.\.28 for month 2 in year 2022: 2022-02-31)",
         ),
         (
             YearMonthDay,
             ("2023-02-29",),
             {},
-            "day is out of range for month",
+            r"(day is out of range for month)|"
+            # python 3.14 gives us a better error message:
+            r"(day 29 must be in range 1\.\.28 for month 2 in year 2023: 2023-02-29)",
         ),
         (
             YearMonth,

@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ALL_REFERENCE_FIELD_NAMES
 - added utils `camelcase_to_title` and `clean_dict`
 - added `system_status` and `flush_graph` methods to backend_api connector
+- support for python 3.14
 - settings classes log table representation in model validation hook
 - PathWrapper can be compared to regular pathlib Path objects
 
