@@ -30,6 +30,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - delete_rule_set
   - delete_merged_item
   - match_item
+
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.14.0] - 2026-02-13
+
+### Added
+
 - support for python 3.14
 - settings classes log table representation in model validation hook
 - PathWrapper can be compared to regular pathlib Path objects
@@ -45,10 +60,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - removed all cli arguments for entrypoints, except `--pdb`
-
-### Fixed
-
-### Security
 
 ## [1.13.2] - 2026-01-30
 
