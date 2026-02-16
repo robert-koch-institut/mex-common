@@ -24,7 +24,12 @@ from mex.common.models import (
 )
 from mex.common.models.person import MergedPerson
 from mex.common.settings import BaseSettings
-from mex.common.types import Identifier, MergedPrimarySourceIdentifier
+from mex.common.types import (
+    AnyExtractedIdentifier,
+    AnyMergedIdentifier,
+    Identifier,
+    MergedPrimarySourceIdentifier,
+)
 
 _IngestibleModelT = TypeVar(
     "_IngestibleModelT", bound=AnyExtractedModel | AnyRuleSetResponse
@@ -350,6 +355,58 @@ class BackendApiConnector(HTTPConnector):
             method="PUT", endpoint=f"rule-set/{stable_target_id}", payload=rule_set
         )
         return RuleSetResponseTypeAdapter.validate_python(response)
+
+    def delete_rule_set(self, stable_target_id: str) -> None:
+        """Delete a rule set.
+
+        Args:
+            stable_target_id: The merged item's identifier
+
+        Raises:
+            HTTPError: If no rule-set was found
+        """
+        self.request(method="DELETE", endpoint=f"rule-set/{stable_target_id}")
+
+    def delete_merged_item(
+        self, identifier: str, *, include_rule_set: bool = False
+    ) -> None:
+        """Delete a merged item.
+
+        Args:
+            identifier: The merged item's identifier
+            include_rule_set: Whether to also delete the associated rule set
+
+        Raises:
+            HTTPError: If no merged item was found
+        """
+        self.request(
+            method="DELETE",
+            endpoint=f"merged-item/{identifier}",
+            params={"includeRuleSet": str(include_rule_set).lower()},
+        )
+
+    def match_item(
+        self,
+        extracted_identifier: AnyExtractedIdentifier,
+        merged_identifier: AnyMergedIdentifier,
+    ) -> None:
+        """Match an extracted item to a merged item.
+
+        Args:
+            extracted_identifier: Identifier of the extracted item
+            merged_identifier: Identifier of the merged item
+
+        Raises:
+            HTTPError: If matching was not accepted
+        """
+        self.request(
+            method="POST",
+            endpoint="match",
+            payload={
+                "extractedIdentifier": str(extracted_identifier),
+                "mergedIdentifier": str(merged_identifier),
+            },
+        )
 
     def search_organization_in_wikidata(
         self,
