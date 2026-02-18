@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - delete_rule_set
   - delete_merged_item
   - match_item
+- add mex-editor identifiers: identifier, stableTargetId and identifierInPrimarySource
 
 ### Changes
 
