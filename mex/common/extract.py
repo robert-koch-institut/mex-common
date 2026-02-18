@@ -3,7 +3,6 @@ from collections.abc import Generator
 from os import PathLike
 from typing import TYPE_CHECKING, Any, TypeVar, Union
 
-import numpy as np
 import pandas as pd
 from pydantic import ValidationError
 
@@ -37,7 +36,7 @@ def get_dtypes_for_model(model: type["BaseModel"]) -> dict[str, "Dtype"]:
     }
 
 
-def parse_csv(
+def parse_csv(  # noqa: C901
     path_or_buffer: Union[str, PathLike[str], "ReadCsvBuffer[Any]"],
     into: type[_BaseModelT],
     chunksize: int = 10000,
@@ -73,12 +72,12 @@ def parse_csv(
                 i,
             )
             for _, row in chunk.iterrows():
+                row_dict = row.to_dict()
+                for k, v in row_dict.items():
+                    if pd.isna(v) or (isinstance(v, str) and not v.strip()):
+                        row_dict[k] = None
                 try:
-                    model = into.model_validate(
-                        row.replace(to_replace=np.nan, value=None)
-                        .replace(regex=r"^\s*$", value=None)
-                        .to_dict()
-                    )
+                    model = into.model_validate(row_dict)
                     total_rows_successfully_processed += 1
                     yield model
                 except ValidationError as error:

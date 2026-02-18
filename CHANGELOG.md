@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- replace pandas Series with stdlib csv in parse_csv
+
 ### Deprecated
 
 ### Removed
