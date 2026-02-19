@@ -81,7 +81,7 @@ lists of models, lookups by class name and typing for unions of models.
 """
 
 from collections.abc import Mapping
-from typing import Annotated, Final, get_args
+from typing import Annotated, Final, Literal, get_args
 
 from pydantic import Field, TypeAdapter
 
@@ -328,6 +328,7 @@ __all__ = (
     "AnyPreventiveModel",
     "AnyPreviewModel",
     "AnyRuleModel",
+    "AnyRuleModelName",
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
     "AnySubtractiveModel",
@@ -666,8 +667,9 @@ RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
+AnyRuleModelName = Literal["additive", "subtractive", "preventive"]
 RULE_MODEL_CLASSES_BY_TYPE_BY_NAME: Final[
-    dict[Literal["additive", "subtractive", "preventive"], Mapping[str, type[AnyRuleModel]]]
+    dict[AnyRuleModel, Mapping[str, type[AnyRuleModel]]]
 ] = {
     "additive": ADDITIVE_MODEL_CLASSES_BY_NAME,
     "subtractive": SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
