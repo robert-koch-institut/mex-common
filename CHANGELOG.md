@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- explicit export fo mex-editor identifiers
+
 ### Security
 
 ## [1.15.0] - 2026-02-18
