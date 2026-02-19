@@ -19,6 +19,10 @@ from mex.common.models import (
     PreviewPerson,
 )
 from mex.common.testing import Joker
+from mex.common.types import (
+    ExtractedPersonIdentifier,
+    MergedPersonIdentifier,
+)
 
 
 @pytest.mark.usefixtures("mocked_backend")
@@ -323,3 +327,59 @@ def test_merged_person_from_login_mocked(
         timeout=10,
         auth=("mex_user", "password"),
     )
+
+
+def test_delete_rule_set_mocked(mocked_backend: MagicMock) -> None:
+    connector = BackendApiConnector.get()
+    connector.delete_rule_set("NGwfzG8ROsrvIiQIVDVy")
+
+    assert mocked_backend.call_args == call(
+        "DELETE",
+        "http://localhost:8080/v0/rule-set/NGwfzG8ROsrvIiQIVDVy",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_delete_merged_item_mocked(mocked_backend: MagicMock) -> None:
+    connector = BackendApiConnector.get()
+    connector.delete_merged_item("NGwfzG8ROsrvIiQIVDVy", include_rule_set=True)
+
+    assert mocked_backend.call_args == call(
+        "DELETE",
+        "http://localhost:8080/v0/merged-item/NGwfzG8ROsrvIiQIVDVy",
+        {"includeRuleSet": "true"},
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_match_item_mocked(mocked_backend: MagicMock) -> None:
+    extracted_id = ExtractedPersonIdentifier("e3VhxMhEKyjqN5flzLpiEB")
+    merged_id = MergedPersonIdentifier("NGwfzG8ROsrvIiQIVDVy")
+
+    connector = BackendApiConnector.get()
+    connector.match_item(extracted_id, merged_id)
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/match",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=Joker(),
+    )
+    assert json.loads(mocked_backend.call_args.kwargs["data"]) == {
+        "extractedIdentifier": "e3VhxMhEKyjqN5flzLpiEB",
+        "mergedIdentifier": "NGwfzG8ROsrvIiQIVDVy",
+    }

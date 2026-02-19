@@ -1,6 +1,6 @@
 import json
 import re
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from enum import Enum
 from functools import lru_cache
 from pathlib import PurePath
@@ -88,6 +88,12 @@ def camel_to_split(string: str) -> str:
 
 
 @lru_cache(maxsize=1024)
+def camelcase_to_title(value: str) -> str:
+    """Convert the given string from `CamelCase` into `Title case`."""
+    return re.sub(r"(?<!^)(?=[A-Z])", " ", value).title()
+
+
+@lru_cache(maxsize=1024)
 def split_to_camel(string: str) -> str:
     """Convert the given string from `Split Case` into `CamelCase`."""
     if len(tokens := re.split(r"\s+", string)) > 1:
@@ -167,3 +173,17 @@ def to_key_and_values(dct: dict[str, Any]) -> Iterable[tuple[str, list[Any]]]:
         else:
             list_of_values = [value]
         yield key, list_of_values
+
+
+def clean_dict(obj: Any, unwanted: Sequence[Any] = (None, [])) -> Any:  # noqa: ANN401
+    """Clean `None` and `[]` from dicts."""
+    if isinstance(obj, dict):
+        cleaned = {}
+        for k, v in obj.items():
+            cleaned_value = clean_dict(v, unwanted)
+            if cleaned_value not in unwanted:
+                cleaned[k] = cleaned_value
+        return cleaned
+    if isinstance(obj, list):
+        return [clean_dict(item, unwanted) for item in obj]
+    return obj
