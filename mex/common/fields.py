@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import cast
+from typing import Literal, cast
 
 from mex.common.models import (
     ADDITIVE_MODEL_CLASSES_BY_NAME,
