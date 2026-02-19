@@ -40,7 +40,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- explicit export fo mex-editor identifiers
+
 ### Security
+
+## [1.15.0] - 2026-02-18
+
+### Added
+
+- add mex-editor identifiers: identifier, stableTargetId and identifierInPrimarySource
+
+### Changes
+
+- replace pandas Series with plain dict in parse_csv
 
 ## [1.14.0] - 2026-02-13
 
