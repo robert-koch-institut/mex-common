@@ -664,7 +664,7 @@ RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
 RULE_MODEL_CLASSES_BY_TYPE_BY_NAME: Final[
-    dict[str, Mapping[str, type[AnyRuleModel]]]
+    dict[Literal["additive", "subtractive", "preventive"], Mapping[str, type[AnyRuleModel]]]
 ] = {
     "additive": ADDITIVE_MODEL_CLASSES_BY_NAME,
     "subtractive": SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
