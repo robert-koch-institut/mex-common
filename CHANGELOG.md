@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.16.0] - 2026-02-19
+
+### Added
+
 - expose nested level implementations on the higher level module
 - added additional model lookups
   - RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
@@ -32,17 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - match_item
 - add mex-editor identifiers: identifier, stableTargetId and identifierInPrimarySource
 
-### Changes
-
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - explicit export fo mex-editor identifiers
-
-### Security
 
 ## [1.15.0] - 2026-02-18
 
