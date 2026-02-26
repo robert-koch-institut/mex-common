@@ -35,6 +35,9 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Start containers
+        run: docker compose up -d slapd
+
       - name: Cache requirements
         uses: actions/cache@v5
         env:
@@ -66,4 +69,11 @@ jobs:
           make install
 
       - name: Run test suite
-        run: make unit
+        env:
+          MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
+          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
+        run: make test
+
+      - name: Cleanup containers
+        if: always()
+        run: docker compose down slapd
