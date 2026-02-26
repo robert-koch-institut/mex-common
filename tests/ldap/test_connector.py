@@ -32,24 +32,21 @@ def test_sanitize_value(value: str, expected: str) -> None:
     assert LDAPConnector._sanitize(value) == expected
 
 
-def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_persons_mocked() -> None:
     connector = LDAPConnector.get()
-    persons = connector.get_persons(surname="Sample", given_name="Kim")
+    persons = connector.get_persons(surname="Fictitious", given_name="Frieda")
 
     assert len(persons) == 1
-    assert persons[0].model_dump(exclude_none=True) == {
-        "company": "RKI",
-        "department": "XY",
-        "departmentNumber": "XY2",
-        "displayName": "Sample, Sam",
-        "employeeID": "1024",
-        "givenName": ["Sam"],
-        "mail": ["SampleS@mail.tld"],
-        "objectGUID": UUID(int=0, version=4),
-        "ou": ["XY"],
-        "sAMAccountName": "SampleS",
-        "sn": "Sample",
+    assert persons[0].model_dump(exclude_defaults=True) == {
+        "department": "FG99",
+        "displayName": "Fictitious, Frieda, Dr.",
+        "employeeID": "71",
+        "givenName": ["Frieda"],
+        "mail": ["fictitiousf@rki.de"],
+        "objectGUID": UUID("00000000-0000-4000-8000-000000000003"),
+        "sAMAccountName": "FictitiousF",
+        "sn": "Fictitious",
     }
 
 

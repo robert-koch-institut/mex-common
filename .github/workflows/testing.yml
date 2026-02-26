@@ -66,4 +66,7 @@ jobs:
           make install
 
       - name: Run test suite
+        env:
+          MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
+          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
         run: make unit

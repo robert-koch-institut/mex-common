@@ -1,0 +1,8 @@
+
+services:
+  slapd:
+    image: thoteam/slapd-server-mock
+    ports:
+      - 636:636
+    volumes:
+      - ./assets/raw-data/ldap/:/bootstrap/
