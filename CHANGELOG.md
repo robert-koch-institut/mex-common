@@ -21,6 +21,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.16.0] - 2026-02-19
+
+### Added
+
+- expose nested level implementations on the higher level module
+- added additional model lookups
+  - RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
+  - EXTRACTED_AND_RULE_MODEL_CLASSES_BY_NAME
+  - SEARCHABLE_FIELDS
+  - SEARCHABLE_CLASSES
+  - NESTED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME
+  - NESTED_ENTITY_TYPES_BY_CLASS_NAME
+  - REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME
+  - STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME
+  - REFERENCED_ENTITY_TYPES_BY_CLASS_NAME
+  - REFERENCED_FIELD_REFERENCING_TUPLES
+  - INBOUND_REFERENCE_FIELDS_BY_CLASS_NAME
+  - ALL_REFERENCE_FIELD_NAMES
+- added utils `camelcase_to_title` and `clean_dict`
+- added missing methods to backend_api connector
+  - system_status
+  - flush_graph
+  - delete_rule_set
+  - delete_merged_item
+  - match_item
+- add mex-editor identifiers: identifier, stableTargetId and identifierInPrimarySource
+
+### Fixed
+
+- explicit export fo mex-editor identifiers
+
+## [1.15.0] - 2026-02-18
+
+### Added
+
+- add mex-editor identifiers: identifier, stableTargetId and identifierInPrimarySource
+
+### Changes
+
+- replace pandas Series with plain dict in parse_csv
+
 ## [1.14.0] - 2026-02-13
 
 ### Added

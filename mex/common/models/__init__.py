@@ -80,7 +80,8 @@ In addition to the classes themselves, `mex.common.models` also exposes various
 lists of models, lookups by class name and typing for unions of models.
 """
 
-from typing import Annotated, Final, get_args
+from collections.abc import Mapping
+from typing import Annotated, Final, Literal, get_args
 
 from pydantic import Field, TypeAdapter
 
@@ -274,12 +275,16 @@ __all__ = (
     "ADDITIVE_MODEL_CLASSES_BY_NAME",
     "BASE_MODEL_CLASSES",
     "BASE_MODEL_CLASSES_BY_NAME",
+    "EXTRACTED_AND_RULE_MODEL_CLASSES_BY_NAME",
     "EXTRACTED_MODEL_CLASSES",
     "EXTRACTED_MODEL_CLASSES_BY_NAME",
     "FILTER_MODEL_BY_EXTRACTED_CLASS_NAME",
     "MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME",
     "MERGED_MODEL_CLASSES",
     "MERGED_MODEL_CLASSES_BY_NAME",
+    "MEX_EDITOR_PRIMARY_SOURCE_IDENTIFIER",
+    "MEX_EDITOR_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE",
+    "MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID",
     "MEX_PRIMARY_SOURCE_IDENTIFIER",
     "MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE",
     "MEX_PRIMARY_SOURCE_STABLE_TARGET_ID",
@@ -323,6 +328,7 @@ __all__ = (
     "AnyPreventiveModel",
     "AnyPreviewModel",
     "AnyRuleModel",
+    "AnyRuleModelName",
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
     "AnySubtractiveModel",
@@ -476,6 +482,14 @@ __all__ = (
 MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")
 MEX_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex"
 MEX_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier("00000000000000")
+
+MEX_EDITOR_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier(
+    "00000000000003"
+)
+MEX_EDITOR_PRIMARY_SOURCE_IDENTIFIER_IN_PRIMARY_SOURCE = "mex-editor"
+MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID = MergedPrimarySourceIdentifier(
+    "00000000000002"
+)
 
 AnyBaseModel = (
     BaseAccessPlatform
@@ -653,6 +667,14 @@ RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
+AnyRuleModelName = Literal["additive", "subtractive", "preventive"]
+RULE_MODEL_CLASSES_BY_TYPE_BY_NAME: Final[
+    Mapping[AnyRuleModelName, Mapping[str, type[AnyRuleModel]]]
+] = {
+    "additive": ADDITIVE_MODEL_CLASSES_BY_NAME,
+    "subtractive": SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
+    "preventive": PREVENTIVE_MODEL_CLASSES_BY_NAME,
+}
 
 AnyRuleSetRequest = (
     AccessPlatformRuleSetRequest
@@ -758,4 +780,9 @@ FILTER_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyFilterModel]]] = {
 # FILTER_MODEL_BY_EXTRACTED_CLASS_NAME is deprecated, use FILTER_MODEL_CLASSES_BY_NAME
 FILTER_MODEL_BY_EXTRACTED_CLASS_NAME = {
     f"Extracted{cls.stemType}": cls for cls in FILTER_MODEL_CLASSES
+}
+
+EXTRACTED_AND_RULE_MODEL_CLASSES_BY_NAME = {
+    **EXTRACTED_MODEL_CLASSES_BY_NAME,
+    **RULE_MODEL_CLASSES_BY_NAME,
 }
