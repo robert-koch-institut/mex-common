@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- expand ALL_REFERENCE_FIELD_NAMES to include additive reference fields (supersededBy)
+
 ### Deprecated
 
 ### Removed
