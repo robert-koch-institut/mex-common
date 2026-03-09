@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.16.1] - 2026-03-02
+
+### Changes
+
+- expand ALL_REFERENCE_FIELD_NAMES to include additive reference fields (supersededBy)
+
 ## [1.16.0] - 2026-02-19
 
 ### Added

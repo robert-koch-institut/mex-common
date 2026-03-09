@@ -302,11 +302,14 @@ INBOUND_REFERENCE_FIELDS_BY_CLASS_NAME = {
     }
 }
 
-# fields from any extracted class that contain references
+# fields from any extracted or additive class that contain references
 ALL_REFERENCE_FIELD_NAMES = sorted(
     {
         field_name
-        for class_name in EXTRACTED_MODEL_CLASSES_BY_NAME
+        for class_name in chain(
+            EXTRACTED_MODEL_CLASSES_BY_NAME,
+            ADDITIVE_MODEL_CLASSES_BY_NAME,
+        )
         for field_name in REFERENCE_FIELDS_BY_CLASS_NAME[class_name]
     }
 )
