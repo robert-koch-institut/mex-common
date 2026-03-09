@@ -24,6 +24,7 @@ from mex.common.ldap.models import (
     LDAPPersonsTypeAdapter,
 )
 from mex.common.logging import logger
+from mex.common.models.base.container import PaginatedItemsContainer
 from mex.common.settings import BaseSettings
 
 LDAP_FETCH_CACHE_SIZE = 5000
@@ -134,7 +135,7 @@ class LDAPConnector(BaseConnector):
         query: str = "*",
         limit: int = 10,
         offset: int = 0,
-    ) -> list[AnyLDAPActor]:
+    ) -> PaginatedItemsContainer[AnyLDAPActor]:
         """Get LDAP persons or functional accounts.
 
         Args:
@@ -160,15 +161,19 @@ class LDAPConnector(BaseConnector):
             )
         )
         """
-        raw_items = self._fetch(search_filter, limit, offset)
-        return AnyLDAPActorsTypeAdapter.validate_python(raw_items)
+        result = self._fetch(search_filter, limit, offset)
+        return PaginatedItemsContainer[AnyLDAPActor](
+            items=AnyLDAPActorsTypeAdapter.validate_python(result.raw_items),
+            total=result.total,
+        )
 
     def get_functional_accounts(
         self,
         *,
         mail: str = "*",
         limit: int = 10,
-    ) -> list[LDAPFunctionalAccount]:
+        offset: int = 0,
+    ) -> PaginatedItemsContainer[LDAPFunctionalAccount]:
         """Get LDAP functional accounts that match provided filters.
 
         Some projects/resources declare functional mailboxes as their contact.
@@ -176,6 +181,7 @@ class LDAPConnector(BaseConnector):
         Args:
             mail: Email address of the functional account
             limit: How many items to return
+            offset: How many items to skip before return
 
         Returns:
             List of LDAP functional accounts
@@ -187,8 +193,11 @@ class LDAPConnector(BaseConnector):
             (mail={self._sanitize(mail)})
         )
         """
-        raw_items = self._fetch(search_filter, limit)
-        return LDAPFunctionalAccountsTypeAdapter.validate_python(raw_items)
+        result = self._fetch(search_filter, limit, offset)
+        return PaginatedItemsContainer[LDAPFunctionalAccount](
+            items=LDAPFunctionalAccountsTypeAdapter.validate_python(result.raw_items),
+            total=result.total,
+        )
 
     def get_persons(  # noqa: PLR0913
         self,
@@ -201,7 +210,8 @@ class LDAPConnector(BaseConnector):
         sam_account_name: str = "*",
         surname: str = "*",
         limit: int = 10,
-    ) -> list[LDAPPerson]:
+        offset: int = 0,
+    ) -> PaginatedItemsContainer[LDAPPerson]:
         """Get LDAP persons that match the provided filters.
 
         An LDAP person's objectGUIDs is stable across name changes, whereas name based
@@ -216,6 +226,7 @@ class LDAPConnector(BaseConnector):
             sam_account_name: Account name
             surname: Surname of a person, defaults to non-null
             limit: How many items to return
+            offset: How many items to skip before return
 
         Returns:
             List of LDAP persons
@@ -232,8 +243,11 @@ class LDAPConnector(BaseConnector):
             (sn={self._sanitize(surname)})
         )
         """
-        raw_items = self._fetch(search_filter, limit)
-        return LDAPPersonsTypeAdapter.validate_python(raw_items)
+        result = self._fetch(search_filter, limit, offset)
+        return PaginatedItemsContainer[LDAPPerson](
+            items=LDAPPersonsTypeAdapter.validate_python(result.raw_items),
+            total=result.total,
+        )
 
     def get_functional_account(
         self,
@@ -256,10 +270,10 @@ class LDAPConnector(BaseConnector):
         if not functional_accounts:
             msg = f"Cannot find AD functional account for filters mail: {mail}"
             raise EmptySearchResultError(msg)
-        if len(functional_accounts) > 1:
+        if functional_accounts.total > 1:
             msg = f"Found multiple AD functional accounts for mail: {mail}"
             raise FoundMoreThanOneError(msg)
-        return functional_accounts[0]
+        return functional_accounts.items[0]
 
     def get_person(  # noqa: PLR0913
         self,
@@ -303,7 +317,7 @@ class LDAPConnector(BaseConnector):
         if not persons:
             msg = "Cannot find AD person for filters"
             raise EmptySearchResultError(msg)
-        if len(persons) > 1:
+        if persons.total > 1:
             msg = "Found multiple AD persons for filters"
             raise FoundMoreThanOneError(msg)
-        return persons[0]
+        return persons.items[0]

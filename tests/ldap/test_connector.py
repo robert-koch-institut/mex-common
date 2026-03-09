@@ -37,8 +37,8 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     connector = LDAPConnector.get()
     persons = connector.get_persons(surname="Sample", given_name="Kim")
 
-    assert len(persons) == 1
-    assert persons[0].model_dump(exclude_none=True) == {
+    assert persons.total == 1
+    assert persons.items[0].model_dump(exclude_none=True) == {
         "company": "RKI",
         "department": "XY",
         "departmentNumber": "XY2",
@@ -69,15 +69,15 @@ def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
     connector = LDAPConnector.get()
     persons = connector.get_persons(**kwargs)
 
-    flat_result = ",".join(str(p.objectGUID) for p in persons)
+    flat_result = ",".join(str(p.objectGUID) for p in persons.items)
     assert re.match(pattern, flat_result)
 
 
 @pytest.mark.integration
 def test_get_persons_or_functional_accounts_ldap() -> None:
     connector = LDAPConnector.get()
-    assert len(connector.get_persons_or_functional_accounts(query="mex@rki.de")) == 1
-    assert len(connector.get_persons_or_functional_accounts(query="*a*", limit=7)) == 7
+    assert connector.get_persons_or_functional_accounts(query="mex@rki.de").total == 1
+    assert connector.get_persons_or_functional_accounts(query="*a*", limit=7).total == 7
     assert not connector.get_persons_or_functional_accounts(query="non-existent-bla")
 
 
@@ -85,7 +85,7 @@ def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> N
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS, SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
     functional_accounts = connector.get_persons_or_functional_accounts(query="XY")
-    assert functional_accounts == [
+    assert functional_accounts.items == [
         LDAPFunctionalAccount(
             displayName=None,
             mail=["XY@mail.tld"],
@@ -125,7 +125,7 @@ def test_get_functional_accounts_ldap(mail: str, pattern: str) -> None:
     connector = LDAPConnector.get()
     functional_accounts = connector.get_functional_accounts(mail=mail)
 
-    flat_result = ",".join(str(p.objectGUID) for p in functional_accounts)
+    flat_result = ",".join(str(p.objectGUID) for p in functional_accounts.items)
     assert re.match(pattern, flat_result)
 
 
@@ -134,8 +134,8 @@ def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     connector = LDAPConnector.get()
     functional_accounts = connector.get_functional_accounts(mail="XY@mail.tld")
 
-    assert len(functional_accounts) == 1
-    assert functional_accounts[0].model_dump(exclude_none=True) == {
+    assert functional_accounts.total == 1
+    assert functional_accounts.items[0].model_dump(exclude_none=True) == {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
