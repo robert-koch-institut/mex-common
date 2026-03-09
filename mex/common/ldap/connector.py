@@ -107,7 +107,7 @@ class LDAPConnector(BaseConnector):
             List of raw ldap items
         """
         if offset < 0 or limit < 0:
-            msg = f"offset (value: {offset}) and limit (value:{limit}) must be >= 0."
+            msg = f"offset (value: {offset}) and limit (value:{limit}) must be >= 0"
             raise ValueError(msg)
 
         # iterate twice to ensure valid item total
@@ -116,8 +116,11 @@ class LDAPConnector(BaseConnector):
             attributes for item in response if (attributes := item.get("attributes"))
         ]
         total = len(valid_items)
-        if offset > total or offset + limit > total:
-            msg = "offset or offset + limit exceed the total number of elements."
+        if total == 0:
+            return LDAPFetchResult(total=0, raw_items=[])
+
+        if offset >= total:
+            msg = "offset exceed the total number of elements"
             raise ValueError(msg)
 
         return LDAPFetchResult(
@@ -267,7 +270,7 @@ class LDAPConnector(BaseConnector):
             Single LDAP functional account
         """
         functional_accounts = self.get_functional_accounts(mail=mail, limit=2)
-        if not functional_accounts:
+        if not functional_accounts.items:
             msg = f"Cannot find AD functional account for filters mail: {mail}"
             raise EmptySearchResultError(msg)
         if functional_accounts.total > 1:
@@ -314,7 +317,7 @@ class LDAPConnector(BaseConnector):
             display_name=display_name,
             limit=2,
         )
-        if not persons:
+        if not persons.items:
             msg = "Cannot find AD person for filters"
             raise EmptySearchResultError(msg)
         if persons.total > 1:

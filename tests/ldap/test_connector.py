@@ -76,9 +76,16 @@ def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
 @pytest.mark.integration
 def test_get_persons_or_functional_accounts_ldap() -> None:
     connector = LDAPConnector.get()
-    assert connector.get_persons_or_functional_accounts(query="mex@rki.de").total == 1
-    assert connector.get_persons_or_functional_accounts(query="*a*", limit=7).total == 7
-    assert not connector.get_persons_or_functional_accounts(query="non-existent-bla")
+    assert (
+        len(connector.get_persons_or_functional_accounts(query="mex@rki.de").items) == 1
+    )
+    assert (
+        len(connector.get_persons_or_functional_accounts(query="*a*", limit=7).items)
+        == 7
+    )
+    assert not connector.get_persons_or_functional_accounts(
+        query="non-existent-bla"
+    ).items
 
 
 def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
@@ -264,8 +271,8 @@ def test_pagination(monkeypatch: MonkeyPatch) -> None:
     with pytest.raises(ValueError, match=re.compile(r">= 0")):
         connector._fetch("(objectCategory=Person)", -1, 100)
 
-    with pytest.raises(ValueError, match=re.compile(r"exceed")):
-        connector._fetch("(objectCategory=Person)", 1000, 100)
+    with pytest.raises(ValueError, match="offset exceed the total number of elements"):
+        connector._fetch("(objectCategory=Person)", 100, 1100)
 
     response = connector._fetch("(objectCategory=Person)", 33, 100)
     assert response.total == 1022
@@ -273,3 +280,10 @@ def test_pagination(monkeypatch: MonkeyPatch) -> None:
     assert len(response.raw_items) == 33
     assert response.raw_items[0]["employeeID"] == 101
     assert response.raw_items[-1]["employeeID"] == 133
+
+    response = connector._fetch("(objectCategory=Person)", 33, 1000)
+    assert response.total == 1022
+    assert response.raw_items
+    assert len(response.raw_items) == 22
+    assert response.raw_items[0]["employeeID"] == 1001
+    assert response.raw_items[-1]["employeeID"] == 1022
