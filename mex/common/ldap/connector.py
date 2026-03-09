@@ -1,4 +1,5 @@
 import re
+from functools import lru_cache
 from typing import Any, cast
 from urllib.parse import urlsplit
 
@@ -16,6 +17,7 @@ from mex.common.ldap.models import (
     LDAP_MODEL_CLASSES,
     AnyLDAPActor,
     AnyLDAPActorsTypeAdapter,
+    LDAPFetchResult,
     LDAPFunctionalAccount,
     LDAPFunctionalAccountsTypeAdapter,
     LDAPPerson,
@@ -23,6 +25,8 @@ from mex.common.ldap.models import (
 )
 from mex.common.logging import logger
 from mex.common.settings import BaseSettings
+
+LDAP_FETCH_CACHE_SIZE = 5000
 
 
 class LDAPConnector(BaseConnector):
@@ -33,6 +37,7 @@ class LDAPConnector(BaseConnector):
         settings = BaseSettings.get()
         self._search_base = settings.ldap_search_base
         self._connection = self._setup_connection()
+        self._cached_fetch_all = lru_cache(LDAP_FETCH_CACHE_SIZE)(self._fetch_all)
 
     def _setup_connection(self) -> Connection:
         """Set up a new LDAP connection."""
@@ -75,27 +80,48 @@ class LDAPConnector(BaseConnector):
             "LDAPConnector", details["args"][0]
         ).reconnect(),
     )
-    def _fetch(self, search_filter: str, limit: int) -> list[dict[str, Any]]:
+    def _fetch_all(self, search_filter: str) -> list[dict[str, Any]]:
+        """DON'T USE THIS METHOD DIRECTLY! Call _cached_fetch_all instead."""
+        return list(
+            self._connection.extend.standard.paged_search(
+                search_base=self._search_base,
+                search_filter=search_filter.strip(),
+                attributes=tuple(
+                    sorted({f for m in LDAP_MODEL_CLASSES for f in m.model_fields})
+                ),
+            )
+        )
+
+    def _fetch(
+        self, search_filter: str, limit: int, offset: int = 0
+    ) -> LDAPFetchResult:
         """Fetch all items that match the given filters.
 
         Args:
             search_filter: LDAP search query
             limit: How many items to return
+            offset: How many items to skip before return
 
         Returns:
             List of raw ldap items
         """
-        response = self._connection.extend.standard.paged_search(
-            search_base=self._search_base,
-            search_filter=search_filter.strip(),
-            attributes=tuple(
-                sorted({f for m in LDAP_MODEL_CLASSES for f in m.model_fields})
-            ),
-            size_limit=limit,
-        )
-        return [
+        if offset < 0 or limit < 0:
+            msg = f"offset (value: {offset}) and limit (value:{limit}) must be >= 0."
+            raise ValueError(msg)
+
+        # iterate twice to ensure valid item total
+        response = self._cached_fetch_all(search_filter)
+        valid_items = [
             attributes for item in response if (attributes := item.get("attributes"))
         ]
+        total = len(valid_items)
+        if offset > total or offset + limit > total:
+            msg = "offset or offset + limit exceed the total number of elements."
+            raise ValueError(msg)
+
+        return LDAPFetchResult(
+            total=total, raw_items=valid_items[offset : offset + limit]
+        )
 
     @staticmethod
     def _sanitize(value: str) -> str:
@@ -107,12 +133,14 @@ class LDAPConnector(BaseConnector):
         *,
         query: str = "*",
         limit: int = 10,
+        offset: int = 0,
     ) -> list[AnyLDAPActor]:
         """Get LDAP persons or functional accounts.
 
         Args:
             query: Display name of person or email of functional account
             limit: How many items to return
+            offset: How many items to skip before return
 
         Returns:
             List of LDAP persons and/or functional accounts
@@ -132,7 +160,7 @@ class LDAPConnector(BaseConnector):
             )
         )
         """
-        raw_items = self._fetch(search_filter, limit)
+        raw_items = self._fetch(search_filter, limit, offset)
         return AnyLDAPActorsTypeAdapter.validate_python(raw_items)
 
     def get_functional_accounts(

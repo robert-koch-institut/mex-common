@@ -243,9 +243,33 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     connector = LDAPConnector.get()
     assert connector._connection is first_connection
     result = connector._fetch("(objectCategory=Person)", 1)
-    assert result[0] == {
+    assert result.raw_items[0] == {
         "sAMAccountName": "foo",
         "objectGUID": "00000000-0000-4000-8000-000000000000",
         "ou": ["Funktion"],
     }
     assert connector._connection is second_connection
+
+
+def test_pagination(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(LDAPConnector, "_setup_connection", lambda _: None)
+    monkeypatch.setattr(
+        LDAPConnector,
+        "_fetch_all",
+        lambda _, __: [{"attributes": {"employeeID": x + 1}} for x in range(1022)],
+    )
+
+    connector = LDAPConnector.get()
+
+    with pytest.raises(ValueError, match=re.compile(r">= 0")):
+        connector._fetch("(objectCategory=Person)", -1, 100)
+
+    with pytest.raises(ValueError, match=re.compile(r"exceed")):
+        connector._fetch("(objectCategory=Person)", 1000, 100)
+
+    response = connector._fetch("(objectCategory=Person)", 33, 100)
+    assert response.total == 1022
+    assert response.raw_items
+    assert len(response.raw_items) == 33
+    assert response.raw_items[0]["employeeID"] == 101
+    assert response.raw_items[-1]["employeeID"] == 133
