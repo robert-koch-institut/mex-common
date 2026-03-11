@@ -1,8 +1,10 @@
+from mex.common.exceptions import MExError
 from mex.common.models import ExtractedPrimarySource
 from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     transform_seed_primary_source_to_extracted_primary_source,
 )
+from mex.common.types import MergedPrimarySourceIdentifier
 
 
 def get_extracted_primary_source_by_name(name: str) -> ExtractedPrimarySource | None:
@@ -20,3 +22,13 @@ def get_extracted_primary_source_by_name(name: str) -> ExtractedPrimarySource | 
                 seed_primary_source
             )
     return None
+
+
+def get_extracted_primary_source_id_by_name(
+    name: str,
+) -> MergedPrimarySourceIdentifier:
+    """Get Identifier of PrimarySource by name."""
+    if primary_source := get_extracted_primary_source_by_name(name):
+        return primary_source.stableTargetId
+    msg = f"Primary Source '{name}' not found."
+    raise MExError(msg)

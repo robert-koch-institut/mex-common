@@ -1,0 +1,72 @@
+version: 1
+
+# Configure TLS
+dn: cn=config
+changetype: modify
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ldap/ssl/ldap.crt
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ldap/ssl/ldap.key
+-
+replace: olcTLSVerifyClient
+olcTLSVerifyClient: never
+
+# Configure loging
+dn: cn=config
+changetype: modify
+replace: olcLogLevel
+olcLogLevel: stats
+
+# Configure attributes
+dn: cn={0}core,cn=schema,cn=config
+changetype: modify
+add: olcAttributetypes
+olcAttributetypes: ( 1.3.6.1.4.1.42.2.27.2.1.10
+  NAME 'employeeID'
+  DESC 'Employee ID'
+  EQUALITY caseIgnoreMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+-
+add: olcAttributetypes
+olcAttributetypes: ( 1.2.840.113556.1.4.862
+  NAME 'objectGUID'
+  SYNTAX '1.3.6.1.4.1.1466.115.121.1.40'
+  SINGLE-VALUE )
+-
+add: olcAttributetypes
+olcAttributetypes: ( 1.2.840.113556.1.4.221
+  NAME 'sAMAccountName'
+  SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'
+  SINGLE-VALUE )
+-
+add: olcAttributetypes
+olcAttributetypes: ( 1.2.840.113556.1.4.782
+  NAME 'objectCategory'
+  DESC 'Object Category'
+  EQUALITY caseIgnoreMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+-
+add: olcAttributetypes
+olcAttributetypes: ( 1.3.6.1.4.1.42.2.27.2.1.11
+  NAME 'department'
+  DESC 'Department'
+  EQUALITY caseIgnoreMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+-
+add: olcAttributetypes
+olcAttributetypes: ( 1.3.6.1.4.1.42.2.27.2.1.12
+  NAME 'company'
+  DESC 'Company'
+  EQUALITY caseIgnoreMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+-
+add: olcObjectClasses
+olcObjectClasses: ( 1.3.6.1.4.1.42.2.27.2.2.1
+  NAME 'customPerson'
+  DESC 'Custom person with MS AD attributes'
+  SUP top
+  AUXILIARY
+  MAY ( employeeID $ objectGUID $ sAMAccountName $ objectCategory $ department $ company ) )

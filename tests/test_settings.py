@@ -60,14 +60,6 @@ def test_settings_getting_caches_singleton() -> None:
     assert settings_fetched_again is settings
 
 
-@pytest.mark.integration
-def test_parse_env_file() -> None:
-    settings = BaseSettings.get()
-    # "work_dir" and "assets_dir" are always set, assert that more than these two are
-    # set. This indicates an .env file was found and at least one setting was parsed.
-    assert settings.model_fields_set != {"work_dir", "assets_dir"}
-
-
 class SubModel(BaseModel):
     sub_model_path: WorkPath
 

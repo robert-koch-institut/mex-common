@@ -1,0 +1,74 @@
+# Roland Resolved
+dn: uid=ResolvedR,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+cn: Roland Resolved
+sn: Resolved
+givenName: Roland
+displayName: Resolved, Roland
+employeeID: 42
+objectGUID: 00000000-0000-4000-8000-000000000001
+sAMAccountName: ResolvedR
+department: PARENT-UNIT
+departmentNumber: FG99
+mail: resolvedr@rki.de
+uid: ResolvedR
+
+# Juturna Felicitás
+dn: uid=FelicitasJ,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+cn: Juturna Felicitás
+sn: Felicitás
+givenName: Juturna
+displayName: Felicitás, Juturna
+employeeID: 70
+objectGUID: 00000000-0000-4000-8000-000000000002
+sAMAccountName: FelicitasJ
+department: FG99
+mail: felicitasj@rki.de
+uid: FelicitasJ
+
+# Frieda Fictitious
+dn: uid=frieda,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+cn: Frieda Fictitious
+sn: Fictitious
+givenName: Frieda
+displayName: Fictitious, Frieda, Dr.
+employeeID: 71
+objectGUID: 00000000-0000-4000-8000-000000000003
+sAMAccountName: FictitiousF
+department: FG99
+mail: fictitiousf@rki.de
+uid: FictitiousF
+
+# Funktion Organizational Unit
+dn: OU=Funktion,${LDAP_BASEDN}
+objectClass: top
+objectClass: organizationalUnit
+ou: Funktion
+
+# Functional Account
+dn: uid=ContactC,OU=Funktion,${LDAP_BASEDN}
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: customPerson
+objectCategory: Person
+sAMAccountName: ContactC
+sn: Contact
+cn: Contact
+ou: Funktion
+objectGUID: 00000000-0000-4000-8000-000000000004
+mail: contactc@rki.de
