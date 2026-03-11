@@ -271,7 +271,7 @@ def test_pagination(monkeypatch: MonkeyPatch) -> None:
     with pytest.raises(ValueError, match=re.compile(r">= 0")):
         connector._fetch("(objectCategory=Person)", -1, 100)
 
-    with pytest.raises(ValueError, match="offset exceed the total number of elements"):
+    with pytest.raises(ValueError, match="offset exceeds the total number of elements"):
         connector._fetch("(objectCategory=Person)", 100, 1100)
 
     response = connector._fetch("(objectCategory=Person)", 33, 100)
