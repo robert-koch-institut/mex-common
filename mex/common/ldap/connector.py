@@ -120,7 +120,7 @@ class LDAPConnector(BaseConnector):
             return LDAPFetchResult(total=0, raw_items=[])
 
         if offset >= total:
-            msg = "offset exceed the total number of elements"
+            msg = "offset exceeds the total number of elements"
             raise ValueError(msg)
 
         return LDAPFetchResult(
