@@ -37,8 +37,8 @@ def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
     connector = LDAPConnector.get()
     persons = connector.get_persons(surname="Sample", given_name="Kim")
 
-    assert len(persons) == 1
-    assert persons[0].model_dump(exclude_none=True) == {
+    assert persons.total == 1
+    assert persons.items[0].model_dump(exclude_none=True) == {
         "company": "RKI",
         "department": "XY",
         "departmentNumber": "XY2",
@@ -69,23 +69,30 @@ def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
     connector = LDAPConnector.get()
     persons = connector.get_persons(**kwargs)
 
-    flat_result = ",".join(str(p.objectGUID) for p in persons)
+    flat_result = ",".join(str(p.objectGUID) for p in persons.items)
     assert re.match(pattern, flat_result)
 
 
 @pytest.mark.integration
 def test_get_persons_or_functional_accounts_ldap() -> None:
     connector = LDAPConnector.get()
-    assert len(connector.get_persons_or_functional_accounts(query="mex@rki.de")) == 1
-    assert len(connector.get_persons_or_functional_accounts(query="*a*", limit=7)) == 7
-    assert not connector.get_persons_or_functional_accounts(query="non-existent-bla")
+    assert (
+        len(connector.get_persons_or_functional_accounts(query="mex@rki.de").items) == 1
+    )
+    assert (
+        len(connector.get_persons_or_functional_accounts(query="*a*", limit=7).items)
+        == 7
+    )
+    assert not connector.get_persons_or_functional_accounts(
+        query="non-existent-bla"
+    ).items
 
 
 def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS, SAMPLE_PERSON_ATTRS]])
     connector = LDAPConnector.get()
     functional_accounts = connector.get_persons_or_functional_accounts(query="XY")
-    assert functional_accounts == [
+    assert functional_accounts.items == [
         LDAPFunctionalAccount(
             displayName=None,
             mail=["XY@mail.tld"],
@@ -125,7 +132,7 @@ def test_get_functional_accounts_ldap(mail: str, pattern: str) -> None:
     connector = LDAPConnector.get()
     functional_accounts = connector.get_functional_accounts(mail=mail)
 
-    flat_result = ",".join(str(p.objectGUID) for p in functional_accounts)
+    flat_result = ",".join(str(p.objectGUID) for p in functional_accounts.items)
     assert re.match(pattern, flat_result)
 
 
@@ -134,8 +141,8 @@ def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
     connector = LDAPConnector.get()
     functional_accounts = connector.get_functional_accounts(mail="XY@mail.tld")
 
-    assert len(functional_accounts) == 1
-    assert functional_accounts[0].model_dump(exclude_none=True) == {
+    assert functional_accounts.total == 1
+    assert functional_accounts.items[0].model_dump(exclude_none=True) == {
         "mail": ["XY@mail.tld"],
         "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
         "sAMAccountName": "XY",
@@ -243,9 +250,40 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     connector = LDAPConnector.get()
     assert connector._connection is first_connection
     result = connector._fetch("(objectCategory=Person)", 1)
-    assert result[0] == {
+    assert result.raw_items[0] == {
         "sAMAccountName": "foo",
         "objectGUID": "00000000-0000-4000-8000-000000000000",
         "ou": ["Funktion"],
     }
     assert connector._connection is second_connection
+
+
+def test_pagination(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(LDAPConnector, "_setup_connection", lambda _: None)
+    monkeypatch.setattr(
+        LDAPConnector,
+        "_fetch_all",
+        lambda _, __: [{"attributes": {"employeeID": x + 1}} for x in range(1022)],
+    )
+
+    connector = LDAPConnector.get()
+
+    with pytest.raises(ValueError, match=re.compile(r">= 0")):
+        connector._fetch("(objectCategory=Person)", -1, 100)
+
+    with pytest.raises(ValueError, match="offset exceeds the total number of elements"):
+        connector._fetch("(objectCategory=Person)", 100, 1100)
+
+    response = connector._fetch("(objectCategory=Person)", 33, 100)
+    assert response.total == 1022
+    assert response.raw_items
+    assert len(response.raw_items) == 33
+    assert response.raw_items[0]["employeeID"] == 101
+    assert response.raw_items[-1]["employeeID"] == 133
+
+    response = connector._fetch("(objectCategory=Person)", 33, 1000)
+    assert response.total == 1022
+    assert response.raw_items
+    assert len(response.raw_items) == 22
+    assert response.raw_items[0]["employeeID"] == 1001
+    assert response.raw_items[-1]["employeeID"] == 1022
