@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
-- LDAPConnector._fetch is now paginated and cached
+
+- LDAPConnector is now fully paginated
+  - fetching ldap items is cached
 
 ### Deprecated
 
