@@ -419,30 +419,6 @@ def test_ensure_rule_set_returns_existing() -> None:
             id="only extracted items",
         ),
         pytest.param(
-            [],
-            None,
-            Validation.STRICT,
-            "One of rule_set or extracted_items is required.",
-            id="error if neither is supplied",
-        ),
-        pytest.param(
-            [
-                ExtractedContactPoint(
-                    identifierInPrimarySource="krusty",
-                    hadPrimarySource=Identifier.generate(seed=99),
-                    email=["manager@krusty.ocean"],
-                )
-            ],
-            ContactPointRuleSetRequest(
-                subtractive=SubtractiveContactPoint(
-                    email=["flipper@krusty.ocean", "manager@krusty.ocean"]
-                )
-            ),
-            Validation.STRICT,
-            "List should have at least 1 item after validation, not 0",
-            id="merging raises cardinality error",
-        ),
-        pytest.param(
             [
                 ExtractedActivity(
                     title=Text(value="Burger flipping"),
@@ -547,26 +523,96 @@ def test_ensure_rule_set_returns_existing() -> None:
             },
             id="stable order by identifier",
         ),
+        pytest.param(
+            [
+                ExtractedResource(
+                    identifierInPrimarySource="resource_1",
+                    hadPrimarySource=Identifier.generate(seed=42),
+                    sizeOfDataBasis="enormous",
+                    accessRestriction=AccessRestriction["OPEN"],
+                    contact=[Identifier.generate(seed=999)],
+                    unitInCharge=[Identifier.generate(seed=999)],
+                    theme=[Theme["PUBLIC_HEALTH"]],
+                    title=[Text(value="Dummy resource")],
+                )
+            ],
+            ResourceRuleSetRequest(
+                additive=AdditiveResource(sizeOfDataBasis="gigantic"),
+                subtractive=SubtractiveResource(),
+                preventive=PreventiveResource(),
+            ),
+            Validation.LENIENT,
+            {
+                "accessRestriction": ["https://mex.rki.de/item/access-restriction-1"],
+                "contact": ["bFQoRhcVH5DIax"],
+                "entityType": "PreviewResource",
+                "identifier": "bFQoRhcVH5DHU6",
+                "sizeOfDataBasis": ["enormous", "gigantic"],
+                "theme": ["https://mex.rki.de/item/theme-1"],
+                "title": [{"language": TextLanguage.EN, "value": "Dummy resource"}],
+                "unitInCharge": ["bFQoRhcVH5DIax"],
+            },
+            id="lenient validation allows multiple optional values",
+        ),
     ],
 )
 def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     validation: AnyValidation,
-    expected: dict[str, Any] | str | None,
+    expected: dict[str, Any] | None,
 ) -> None:
-    try:
-        merged_item = create_merged_item(
+    merged_item = create_merged_item(
+        Identifier.generate(seed=42),
+        extracted_items,
+        rule_set,
+        validation,
+    )
+    if merged_item is None:
+        assert expected is None
+    else:
+        clean_dict = {k: v for k, v in merged_item.model_dump().items() if v}
+        assert clean_dict == expected
+
+
+@pytest.mark.parametrize(
+    ("extracted_items", "rule_set", "expected"),
+    [
+        pytest.param(
+            [],
+            None,
+            "One of rule_set or extracted_items is required.",
+            id="error if neither is supplied",
+        ),
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="krusty",
+                    hadPrimarySource=Identifier.generate(seed=99),
+                    email=["manager@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                subtractive=SubtractiveContactPoint(
+                    email=["flipper@krusty.ocean", "manager@krusty.ocean"]
+                )
+            ),
+            "List should have at least 1 item after validation, not 0",
+            id="merging raises cardinality error",
+        ),
+    ],
+)
+def test_create_merged_item_errors(
+    extracted_items: list[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | None,
+    expected: str,
+) -> None:
+    with pytest.raises(MExError) as exc_info:
+        create_merged_item(
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,
-            validation,
+            Validation.STRICT,
         )
-    except MExError as error:
-        assert str(expected) in f"{error}: {error.__cause__}"  # noqa: PT017
-    else:
-        if merged_item is None:
-            assert expected is None
-        else:
-            clean_dict = {k: v for k, v in merged_item.model_dump().items() if v}
-            assert clean_dict == expected
+    error = exc_info.value
+    assert expected in f"{error}: {error.__cause__}"

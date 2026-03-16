@@ -238,7 +238,7 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
 
 
 class PreviewOrganizationalUnit(
-    _OptionalLists, _SparseLists, _OptionalValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for an organizational unit."""
 

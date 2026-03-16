@@ -560,7 +560,7 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
 
 
 class PreviewBibliographicResource(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
