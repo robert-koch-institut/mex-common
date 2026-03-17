@@ -21,6 +21,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
 )
 
 EmailStr = Annotated[
@@ -344,7 +345,7 @@ class PublishingPerson(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

@@ -24,6 +24,7 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
+    PublishingStatus,
     Text,
     Year,
     YearMonth,
@@ -344,7 +345,7 @@ class MergedDistribution(BaseDistribution, MergedItem):
 
 
 class PreviewDistribution(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a distribution."""
 
@@ -433,7 +434,7 @@ class PublishingDistribution(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

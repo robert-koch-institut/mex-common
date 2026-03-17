@@ -22,6 +22,7 @@ from mex.common.types import (
     MergedConsentIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     YearMonthDayTime,
 )
 
@@ -229,7 +230,7 @@ class MergedConsent(BaseConsent, MergedItem):
     ] = None
 
 
-class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
+class PreviewConsent(_VariadicValues, _SparseValues, PreviewItem):
     """Preview for merging all extracted items and rules for a consent."""
 
     entityType: Annotated[
@@ -308,7 +309,7 @@ class PublishingConsent(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

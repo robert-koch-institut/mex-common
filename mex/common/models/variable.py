@@ -21,6 +21,7 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -277,7 +278,7 @@ class MergedVariable(BaseVariable, MergedItem):
     ] = None
 
 
-class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
+class PreviewVariable(_OptionalLists, _SparseLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a variable."""
 
     entityType: Annotated[
@@ -361,7 +362,7 @@ class PublishingVariable(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

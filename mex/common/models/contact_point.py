@@ -19,6 +19,7 @@ from mex.common.types import (
     ExtractedContactPointIdentifier,
     MergedContactPointIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
 )
 
 EmailStr = Annotated[
@@ -230,7 +231,7 @@ class PublishingContactPoint(PublishingRule):
     """Rule to prevent publishing of merged contact point items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

@@ -25,6 +25,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     TechnicalAccessibility,
     Text,
 )
@@ -286,7 +287,7 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
 
 
 class PreviewAccessPlatform(
-    _OptionalLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for an access platform."""
 
@@ -374,7 +375,7 @@ class PublishingAccessPlatform(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

@@ -19,6 +19,7 @@ from mex.common.types import (
     ExtractedOrganizationIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -367,7 +368,7 @@ class PublishingOrganization(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

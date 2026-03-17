@@ -28,6 +28,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
     Year,
     YearMonth,
@@ -561,7 +562,7 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
 
 
 class PreviewBibliographicResource(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
@@ -672,7 +673,7 @@ class PublishingBibliographicResource(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

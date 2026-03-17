@@ -36,6 +36,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     PersonalData,
+    PublishingStatus,
     ResourceCreationMethod,
     ResourceTypeGeneral,
     Text,
@@ -801,7 +802,7 @@ class MergedResource(BaseResource, MergedItem):
 
 
 class PreviewResource(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a resource."""
 
@@ -930,7 +931,7 @@ class PublishingResource(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

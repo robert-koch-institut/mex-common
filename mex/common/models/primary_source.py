@@ -23,6 +23,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -223,7 +224,7 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     ] = None
 
 
-class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
+class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
@@ -306,7 +307,7 @@ class PublishingPrimarySource(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),

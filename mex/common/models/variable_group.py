@@ -20,6 +20,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -241,7 +242,7 @@ class PublishingVariableGroup(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     status: Annotated[
-        str | None,
+        PublishingStatus | None,
         Field(
             description="Indicates if the merged item should NOT be published.",
         ),
