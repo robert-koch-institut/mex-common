@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -362,12 +363,24 @@ class PreventiveOrganization(_Stem, PreventiveRule):
     wikidataId: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingOrganization(PublishingRule):
+    """Rule to prevent publishing of merged access platform items."""
+
+    status: Annotated[
+        str | None,
+        Field(
+            description="Indicates if the merged item should NOT be published.",
+        ),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an organization item."""
 
     additive: AdditiveOrganization = AdditiveOrganization()
     subtractive: SubtractiveOrganization = SubtractiveOrganization()
     preventive: PreventiveOrganization = PreventiveOrganization()
+    publishing: PublishingOrganization = PublishingOrganization()
 
 
 class OrganizationRuleSetRequest(_BaseRuleSet):

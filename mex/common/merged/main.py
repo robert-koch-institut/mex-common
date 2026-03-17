@@ -344,6 +344,10 @@ def create_merged_item(
     Returns:
         Instance of a merged or preview item
     """
+    # skip item, if PublishingRule prevents publishing
+    if rule_set and rule_set.publishing.status:
+        return None
+
     # Convert extracted items from any iterable into sorted list
     extracted_items = sorted(extracted_items, key=lambda e: e.identifier)
 

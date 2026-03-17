@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -369,12 +370,24 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingAccessPlatform(PublishingRule):
+    """Rule to prevent publishing of merged access platform items."""
+
+    status: Annotated[
+        str | None,
+        Field(
+            description="Indicates if the merged item should NOT be published.",
+        ),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an access platform item."""
 
     additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
     subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
     preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
+    publishing: PublishingAccessPlatform = PublishingAccessPlatform()
 
 
 class AccessPlatformRuleSetRequest(_BaseRuleSet):

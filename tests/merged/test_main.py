@@ -42,6 +42,7 @@ from mex.common.models import (
     SubtractivePerson,
     SubtractiveResource,
 )
+from mex.common.models.contact_point import PublishingContactPoint
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
@@ -546,6 +547,26 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "identifier": Joker(),
             },
             id="stable order by identifier",
+        ),
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                subtractive=SubtractiveContactPoint(
+                    email=["orders@krusty.ocean"],
+                ),
+                publishing=PublishingContactPoint(
+                    status="invalid_for_publishing",
+                ),
+            ),
+            Validation.STRICT,
+            None,
+            id="publishing rule prevents creation of merged item",
         ),
     ],
 )

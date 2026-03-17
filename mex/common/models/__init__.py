@@ -28,7 +28,8 @@ Each entity type `T` is modelled for the following use cases:
   fields from contributing to a merged item
 - `PreventiveT` defines a rule to prevent (or block) specific primary sources from
   contributing to specific fields of a merged item
-- `TRuleSet` classes are used for CRUD operations on a set of three rules
+- `PublishingT` defines a rule to prevent a merged item from being published
+- `TRuleSet` classes are used for CRUD operations on a set of four rules
 
 - `TFilter` defines how an entity filter specification should look like
 - `TMapping` defines how a raw-data to extracted item mapping should look like
@@ -48,7 +49,8 @@ we use a number of intermediate private classes to compose the public classes:
 - `_VariadicValues` re-defines all fields from `_OptionalValues` and `_RequiredValues`
   as list fields with an arity of 0-n
 
-- `_BaseRuleSet` bundles the additive, subtractive and preventive rules for one type
+- `_BaseRuleSet` bundles the additive, subtractive, preventive and publishing rules for
+   one type
 
 These private classes are used to compose the public classes like so:
 
@@ -60,8 +62,9 @@ These private classes are used to compose the public classes like so:
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
 - PreventiveT: all fields from BaseT re-typed as MergedPrimarySourceIdentifier
-- TRuleSetRequest: bundle of all three rules for one type used to create new rules
-- TRuleSetResponse: bundle of all three rules for one type including a `stableTargetId`
+- PublishingT: own field 'status'
+- TRuleSetRequest: bundle of all four rules for one type used to create new rules
+- TRuleSetResponse: bundle of all four rules for one type including a `stableTargetId`
 
 - TFilter: a single field containing a list of filter rule definitions
 - TMapping: all BaseT fields re-typed as lists of mapping fields with `setValues` type
@@ -96,6 +99,7 @@ from mex.common.models.access_platform import (
     MergedAccessPlatform,
     PreventiveAccessPlatform,
     PreviewAccessPlatform,
+    PublishingAccessPlatform,
     SubtractiveAccessPlatform,
 )
 from mex.common.models.activity import (
@@ -109,6 +113,7 @@ from mex.common.models.activity import (
     MergedActivity,
     PreventiveActivity,
     PreviewActivity,
+    PublishingActivity,
     SubtractiveActivity,
 )
 from mex.common.models.base.container import (
@@ -120,7 +125,12 @@ from mex.common.models.base.filter import BaseFilter, FilterField, FilterRule
 from mex.common.models.base.mapping import BaseMapping, MappingField, MappingRule
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
-from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.base.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    PublishingRule,
+    SubtractiveRule,
+)
 from mex.common.models.base.status import Status, VersionStatus
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
@@ -133,6 +143,7 @@ from mex.common.models.bibliographic_resource import (
     MergedBibliographicResource,
     PreventiveBibliographicResource,
     PreviewBibliographicResource,
+    PublishingBibliographicResource,
     SubtractiveBibliographicResource,
 )
 from mex.common.models.consent import (
@@ -146,6 +157,7 @@ from mex.common.models.consent import (
     MergedConsent,
     PreventiveConsent,
     PreviewConsent,
+    PublishingConsent,
     SubtractiveConsent,
 )
 from mex.common.models.contact_point import (
@@ -159,6 +171,7 @@ from mex.common.models.contact_point import (
     MergedContactPoint,
     PreventiveContactPoint,
     PreviewContactPoint,
+    PublishingContactPoint,
     SubtractiveContactPoint,
 )
 from mex.common.models.distribution import (
@@ -172,6 +185,7 @@ from mex.common.models.distribution import (
     MergedDistribution,
     PreventiveDistribution,
     PreviewDistribution,
+    PublishingDistribution,
     SubtractiveDistribution,
 )
 from mex.common.models.organization import (
@@ -185,6 +199,7 @@ from mex.common.models.organization import (
     OrganizationRuleSetResponse,
     PreventiveOrganization,
     PreviewOrganization,
+    PublishingOrganization,
     SubtractiveOrganization,
 )
 from mex.common.models.organizational_unit import (
@@ -198,6 +213,7 @@ from mex.common.models.organizational_unit import (
     OrganizationalUnitRuleSetResponse,
     PreventiveOrganizationalUnit,
     PreviewOrganizationalUnit,
+    PublishingOrganizationalUnit,
     SubtractiveOrganizationalUnit,
 )
 from mex.common.models.person import (
@@ -211,6 +227,7 @@ from mex.common.models.person import (
     PersonRuleSetResponse,
     PreventivePerson,
     PreviewPerson,
+    PublishingPerson,
     SubtractivePerson,
 )
 from mex.common.models.primary_source import (
@@ -224,6 +241,7 @@ from mex.common.models.primary_source import (
     PrimarySourceMapping,
     PrimarySourceRuleSetRequest,
     PrimarySourceRuleSetResponse,
+    PublishingPrimarySource,
     SubtractivePrimarySource,
 )
 from mex.common.models.resource import (
@@ -233,6 +251,7 @@ from mex.common.models.resource import (
     MergedResource,
     PreventiveResource,
     PreviewResource,
+    PublishingResource,
     ResourceFilter,
     ResourceMapping,
     ResourceRuleSetRequest,
@@ -246,6 +265,7 @@ from mex.common.models.variable import (
     MergedVariable,
     PreventiveVariable,
     PreviewVariable,
+    PublishingVariable,
     SubtractiveVariable,
     VariableFilter,
     VariableMapping,
@@ -259,6 +279,7 @@ from mex.common.models.variable_group import (
     MergedVariableGroup,
     PreventiveVariableGroup,
     PreviewVariableGroup,
+    PublishingVariableGroup,
     SubtractiveVariableGroup,
     VariableGroupFilter,
     VariableGroupMapping,
@@ -290,6 +311,8 @@ __all__ = (
     "MEX_PRIMARY_SOURCE_STABLE_TARGET_ID",
     "PREVENTIVE_MODEL_CLASSES",
     "PREVENTIVE_MODEL_CLASSES_BY_NAME",
+    "PUBLISHING_MODEL_CLASSES",
+    "PUBLISHING_MODEL_CLASSES_BY_NAME",
     "RULE_MODEL_CLASSES",
     "RULE_MODEL_CLASSES_BY_NAME",
     "RULE_SET_REQUEST_CLASSES",
@@ -327,6 +350,7 @@ __all__ = (
     "AnyMergedModel",
     "AnyPreventiveModel",
     "AnyPreviewModel",
+    "AnyPublishingModel",
     "AnyRuleModel",
     "AnyRuleModelName",
     "AnyRuleSetRequest",
@@ -445,6 +469,21 @@ __all__ = (
     "PrimarySourceMapping",
     "PrimarySourceRuleSetRequest",
     "PrimarySourceRuleSetResponse",
+    "PublishingAccessPlatform",
+    "PublishingActivity",
+    "PublishingBibliographicResource",
+    "PublishingConsent",
+    "PublishingContactPoint",
+    "PublishingDistribution",
+    "PublishingModelTypeAdapter",
+    "PublishingOrganization",
+    "PublishingOrganizationalUnit",
+    "PublishingPerson",
+    "PublishingPrimarySource",
+    "PublishingResource",
+    "PublishingRule",
+    "PublishingVariable",
+    "PublishingVariableGroup",
     "ResourceFilter",
     "ResourceMapping",
     "ResourceRuleSetRequest",
@@ -659,7 +698,34 @@ PREVENTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPreventiveModel]]] = {
     cls.__name__: cls for cls in PREVENTIVE_MODEL_CLASSES
 }
 
-AnyRuleModel = AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel
+AnyPublishingModel = (
+    PublishingAccessPlatform
+    | PublishingActivity
+    | PublishingBibliographicResource
+    | PublishingConsent
+    | PublishingContactPoint
+    | PublishingDistribution
+    | PublishingOrganization
+    | PublishingOrganizationalUnit
+    | PublishingPerson
+    | PublishingPrimarySource
+    | PublishingResource
+    | PublishingVariable
+    | PublishingVariableGroup
+)
+PublishingModelTypeAdapter: TypeAdapter[AnyPublishingModel] = TypeAdapter(
+    Annotated[AnyPublishingModel, Field(discriminator="entityType")]
+)
+PUBLISHING_MODEL_CLASSES: Final[list[type[AnyPublishingModel]]] = list(
+    get_args(AnyPublishingModel)
+)
+PUBLISHING_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPublishingModel]]] = {
+    cls.__name__: cls for cls in PUBLISHING_MODEL_CLASSES
+}
+
+AnyRuleModel = (
+    AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel | AnyPublishingModel
+)
 RuleModelTypeAdapter: TypeAdapter[AnyRuleModel] = TypeAdapter(
     Annotated[AnyRuleModel, Field(discriminator="entityType")]
 )
@@ -667,13 +733,14 @@ RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
-AnyRuleModelName = Literal["additive", "subtractive", "preventive"]
+AnyRuleModelName = Literal["additive", "subtractive", "preventive", "publishing"]
 RULE_MODEL_CLASSES_BY_TYPE_BY_NAME: Final[
     Mapping[AnyRuleModelName, Mapping[str, type[AnyRuleModel]]]
 ] = {
     "additive": ADDITIVE_MODEL_CLASSES_BY_NAME,
     "subtractive": SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
     "preventive": PREVENTIVE_MODEL_CLASSES_BY_NAME,
+    "publishing": PUBLISHING_MODEL_CLASSES_BY_NAME,
 }
 
 AnyRuleSetRequest = (

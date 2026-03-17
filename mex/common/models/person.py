@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -339,12 +340,24 @@ class PreventivePerson(_Stem, PreventiveRule):
     orcidId: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingPerson(PublishingRule):
+    """Rule to prevent publishing of merged access platform items."""
+
+    status: Annotated[
+        str | None,
+        Field(
+            description="Indicates if the merged item should NOT be published.",
+        ),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a person item."""
 
     additive: AdditivePerson = AdditivePerson()
     subtractive: SubtractivePerson = SubtractivePerson()
     preventive: PreventivePerson = PreventivePerson()
+    publishing: PublishingPerson = PublishingPerson()
 
 
 class PersonRuleSetRequest(_BaseRuleSet):
