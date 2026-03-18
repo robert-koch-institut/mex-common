@@ -365,7 +365,7 @@ class PreventiveOrganization(_Stem, PreventiveRule):
 
 
 class PublishingOrganization(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged organization items."""
 
     entityType: Annotated[
         Literal["PublishingOrganization"], Field(alias="$type", frozen=True)

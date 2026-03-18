@@ -342,7 +342,7 @@ class PreventivePerson(_Stem, PreventiveRule):
 
 
 class PublishingPerson(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged person items."""
 
     entityType: Annotated[
         Literal["PublishingPerson"], Field(alias="$type", frozen=True)

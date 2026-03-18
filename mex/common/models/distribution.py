@@ -431,7 +431,7 @@ class PreventiveDistribution(_Stem, PreventiveRule):
 
 
 class PublishingDistribution(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged distribution items."""
 
     entityType: Annotated[
         Literal["PublishingDistribution"], Field(alias="$type", frozen=True)

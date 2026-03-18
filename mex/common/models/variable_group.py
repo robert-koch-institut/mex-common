@@ -239,7 +239,7 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
 
 
 class PublishingVariableGroup(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged variable group items."""
 
     entityType: Annotated[
         Literal["PublishingVariableGroup"], Field(alias="$type", frozen=True)

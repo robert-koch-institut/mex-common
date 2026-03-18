@@ -928,7 +928,7 @@ class PreventiveResource(_Stem, PreventiveRule):
 
 
 class PublishingResource(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged resource items."""
 
     entityType: Annotated[
         Literal["PublishingResource"], Field(alias="$type", frozen=True)

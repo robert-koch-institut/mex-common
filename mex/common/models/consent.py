@@ -306,7 +306,7 @@ class PreventiveConsent(_Stem, PreventiveRule):
 
 
 class PublishingConsent(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged consent items."""
 
     entityType: Annotated[
         Literal["PublishingConsent"], Field(alias="$type", frozen=True)

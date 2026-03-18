@@ -429,7 +429,7 @@ class PreventiveActivity(_Stem, PreventiveRule):
 
 
 class PublishingActivity(PublishingRule):
-    """Rule to prevent publishing of merged access platform items."""
+    """Rule to prevent publishing of merged activity items."""
 
     entityType: Annotated[
         Literal["PublishingActivity"], Field(alias="$type", frozen=True)
