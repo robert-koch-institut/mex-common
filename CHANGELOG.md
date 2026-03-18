@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- fuzzing test for PreviewItem generation using mex-artificial
+
 ### Changes
 
 - LDAPConnector is now fully paginated
@@ -20,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- adding multiple OptionalValues via an AdditiveRule no longer breaks creation of PreviewItem
 
 ### Security
 
