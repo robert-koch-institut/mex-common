@@ -42,7 +42,7 @@ from mex.common.models import (
     SubtractivePerson,
     SubtractiveResource,
 )
-from mex.common.models.contact_point import PublishingContactPoint
+from mex.common.models.contact_point import AdditiveContactPoint, PublishingContactPoint
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
@@ -575,13 +575,16 @@ def test_ensure_rule_set_returns_existing() -> None:
                 )
             ],
             ContactPointRuleSetRequest(
+                additive=AdditiveContactPoint(
+                    email=["info@krusty.ocean"],
+                ),
                 publishing=PublishingContactPoint(
                     status=PublishingStatus.INVALID_FOR_PUBLISHING,
                 ),
             ),
             Validation.LENIENT,
             {
-                "email": ["orders@krusty.ocean"],
+                "email": ["orders@krusty.ocean", "info@krusty.ocean"],
                 "entityType": "PreviewContactPoint",
                 "identifier": Joker(),
             },
