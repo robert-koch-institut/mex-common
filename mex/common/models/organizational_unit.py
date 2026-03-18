@@ -326,11 +326,12 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
 class PublishingOrganizationalUnit(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
+    entityType: Annotated[
+        Literal["PublishingOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "PublishingOrganizationalUnit"
     status: Annotated[
         PublishingStatus | None,
-        Field(
-            description="Indicates if the merged item should NOT be published.",
-        ),
+        Field(description="Indicates if the merged item should NOT be published."),
     ] = None
 
 

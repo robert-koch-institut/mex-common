@@ -345,10 +345,10 @@ def create_merged_item(
         Instance of a merged or preview item
     """
     # skip item, if PublishingRule prevents publishing
-    if rule_set and rule_set.publishing.status and validation.IGNORE:
+    if rule_set and rule_set.publishing.status and validation == validation.IGNORE:
         return None
-    if rule_set and rule_set.publishing.status and validation.STRICT:
-        msg = "merged item prohibited to be published by publishing rule."
+    if rule_set and rule_set.publishing.status and validation == validation.STRICT:
+        msg = "Merged item prohibited to be published by publishing rule."
         raise MergingError(msg)
 
     # Convert extracted items from any iterable into sorted list

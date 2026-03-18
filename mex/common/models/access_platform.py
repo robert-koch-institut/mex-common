@@ -374,11 +374,12 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
 class PublishingAccessPlatform(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
+    entityType: Annotated[
+        Literal["PublishingAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "PublishingAccessPlatform"
     status: Annotated[
         PublishingStatus | None,
-        Field(
-            description="Indicates if the merged item should NOT be published.",
-        ),
+        Field(description="Indicates if the merged item should NOT be published."),
     ] = None
 
 

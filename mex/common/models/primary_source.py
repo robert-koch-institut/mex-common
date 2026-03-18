@@ -306,11 +306,12 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
 class PublishingPrimarySource(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
+    entityType: Annotated[
+        Literal["PublishingPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "PublishingPrimarySource"
     status: Annotated[
         PublishingStatus | None,
-        Field(
-            description="Indicates if the merged item should NOT be published.",
-        ),
+        Field(description="Indicates if the merged item should NOT be published."),
     ] = None
 
 

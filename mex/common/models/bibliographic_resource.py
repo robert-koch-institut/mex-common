@@ -672,11 +672,12 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
 class PublishingBibliographicResource(PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
+    entityType: Annotated[
+        Literal["PublishingBibliographicResource"], Field(alias="$type", frozen=True)
+    ] = "PublishingBibliographicResource"
     status: Annotated[
         PublishingStatus | None,
-        Field(
-            description="Indicates if the merged item should NOT be published.",
-        ),
+        Field(description="Indicates if the merged item should NOT be published."),
     ] = None
 
 

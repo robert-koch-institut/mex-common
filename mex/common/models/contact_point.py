@@ -230,11 +230,12 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
 class PublishingContactPoint(PublishingRule):
     """Rule to prevent publishing of merged contact point items."""
 
+    entityType: Annotated[
+        Literal["PublishingContactPoint"], Field(alias="$type", frozen=True)
+    ] = "PublishingContactPoint"
     status: Annotated[
         PublishingStatus | None,
-        Field(
-            description="Indicates if the merged item should NOT be published.",
-        ),
+        Field(description="Indicates if the merged item should NOT be published."),
     ] = None
 
 

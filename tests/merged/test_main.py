@@ -49,6 +49,7 @@ from mex.common.types import (
     AnyValidation,
     Identifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
     TextLanguage,
     Theme,
@@ -557,16 +558,34 @@ def test_ensure_rule_set_returns_existing() -> None:
                 )
             ],
             ContactPointRuleSetRequest(
-                subtractive=SubtractiveContactPoint(
-                    email=["orders@krusty.ocean"],
-                ),
                 publishing=PublishingContactPoint(
-                    status="invalid_for_publishing",
+                    status=PublishingStatus.INVALID_FOR_PUBLISHING,
                 ),
             ),
             Validation.STRICT,
-            None,
-            id="publishing rule prevents creation of merged item",
+            "Merged item prohibited to be published by publishing rule.",
+            id="publishing rule prevents creation of merged item for strict validation",
+        ),
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                publishing=PublishingContactPoint(
+                    status=PublishingStatus.INVALID_FOR_PUBLISHING,
+                ),
+            ),
+            Validation.LENIENT,
+            {
+                "email": ["orders@krusty.ocean"],
+                "entityType": "PreviewContactPoint",
+                "identifier": Joker(),
+            },
+            id="preview allows creation of merged item with invalid publishing status.",
         ),
     ],
 )
