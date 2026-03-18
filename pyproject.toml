@@ -41,6 +41,9 @@ dev = [
     "types-requests",
     "types-tabulate",
 ]
+fuzzing = [
+    "mex-artificial",
+]
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
@@ -72,7 +75,10 @@ addopts = [
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]
-markers = "integration: mark a test as integration test"
+markers = [
+    "integration: mark a test as integration test",
+    "fuzzing: mark a test as fuzzing test, requiring fuzzing dependencies"
+]
 
 [tool.ruff]
 fix = true

@@ -616,3 +616,40 @@ def test_create_merged_item_errors(
         )
     error = exc_info.value
     assert expected in f"{error}: {error.__cause__}"
+
+
+@pytest.mark.fuzzing
+def test_create_merged_item_with_artificial_data() -> None:
+    """Return artificial dummy data."""
+    try:
+        from mex.artificial.helpers import (  # type: ignore[import-not-found]  # noqa: PLC0415
+            create_artificial_items_and_rule_sets,
+        )
+    except ModuleNotFoundError:
+        pytest.skip("Module 'mex.artificial' not found.")
+
+    for i, container in enumerate(
+        create_artificial_items_and_rule_sets(
+            locale="de_DE",
+            seed=1,
+            count=500,
+            chattiness=8,
+        )
+    ):
+        extracted_items = (
+            [] if container.extracted_item is None else [container.extracted_item]
+        )
+        rule_set = container.rule_set
+        returned = create_merged_item(
+            Identifier.generate(seed=42),
+            extracted_items,
+            rule_set,
+            Validation.LENIENT,
+        )
+
+        if extracted_items == [] and rule_set is None:
+            assert returned is None, f"Expected `None` for artificial item number {i}"
+        else:
+            assert returned is not None, (
+                f"Expected Preview Item for artificial item number {i}"
+            )
