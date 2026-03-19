@@ -1,4 +1,4 @@
-.PHONY: all setup hooks install lint test wheel docs
+.PHONY: all setup hooks install lint test fuzzing wheel docs
 all: install lint test
 
 LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
