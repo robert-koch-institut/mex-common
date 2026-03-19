@@ -35,6 +35,12 @@ test:
 	@ echo running all tests; \
 	uv run pytest --numprocesses=auto --dist=worksteal; \
 
+fuzzing:
+	# run the unit and integration test suites
+	@ echo running all tests; \
+	uv sync --group fuzzing; \
+	uv run pytest -m fuzzing --no-cov; \
+
 wheel:
 	# build the python package
 	@ echo building wheel; \
