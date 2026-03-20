@@ -430,7 +430,7 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     title: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingDistribution(PublishingRule):
+class PublishingDistribution(_Stem, PublishingRule):
     """Rule to prevent publishing of merged distribution items."""
 
     entityType: Annotated[

@@ -927,7 +927,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     wasGeneratedBy: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingResource(PublishingRule):
+class PublishingResource(_Stem, PublishingRule):
     """Rule to prevent publishing of merged resource items."""
 
     entityType: Annotated[

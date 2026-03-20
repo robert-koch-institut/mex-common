@@ -669,7 +669,7 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingBibliographicResource(PublishingRule):
+class PublishingBibliographicResource(_Stem, PublishingRule):
     """Rule to prevent publishing of merged bibliographic resource items."""
 
     entityType: Annotated[

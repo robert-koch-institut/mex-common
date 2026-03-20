@@ -305,7 +305,7 @@ class PreventiveConsent(_Stem, PreventiveRule):
     isIndicatedAtTime: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingConsent(PublishingRule):
+class PublishingConsent(_Stem, PublishingRule):
     """Rule to prevent publishing of merged consent items."""
 
     entityType: Annotated[

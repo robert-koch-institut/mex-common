@@ -303,7 +303,7 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     version: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingPrimarySource(PublishingRule):
+class PublishingPrimarySource(_Stem, PublishingRule):
     """Rule to prevent publishing of merged primary source items."""
 
     entityType: Annotated[

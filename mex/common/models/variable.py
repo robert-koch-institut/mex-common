@@ -358,7 +358,7 @@ class PreventiveVariable(_Stem, PreventiveRule):
     valueSet: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingVariable(PublishingRule):
+class PublishingVariable(_Stem, PublishingRule):
     """Rule to prevent publishing of merged variable items."""
 
     entityType: Annotated[

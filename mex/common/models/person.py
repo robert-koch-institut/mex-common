@@ -341,7 +341,7 @@ class PreventivePerson(_Stem, PreventiveRule):
     orcidId: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingPerson(PublishingRule):
+class PublishingPerson(_Stem, PublishingRule):
     """Rule to prevent publishing of merged person items."""
 
     entityType: Annotated[

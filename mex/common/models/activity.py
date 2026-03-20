@@ -428,7 +428,7 @@ class PreventiveActivity(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingActivity(PublishingRule):
+class PublishingActivity(_Stem, PublishingRule):
     """Rule to prevent publishing of merged activity items."""
 
     entityType: Annotated[

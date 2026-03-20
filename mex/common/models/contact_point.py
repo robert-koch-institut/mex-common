@@ -227,7 +227,7 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
     email: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingContactPoint(PublishingRule):
+class PublishingContactPoint(_Stem, PublishingRule):
     """Rule to prevent publishing of merged contact point items."""
 
     entityType: Annotated[

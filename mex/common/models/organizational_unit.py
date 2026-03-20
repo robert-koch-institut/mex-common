@@ -323,7 +323,7 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingOrganizationalUnit(PublishingRule):
+class PublishingOrganizationalUnit(_Stem, PublishingRule):
     """Rule to prevent publishing of merged organizational unit items."""
 
     entityType: Annotated[

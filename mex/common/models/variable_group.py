@@ -238,7 +238,7 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
     label: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingVariableGroup(PublishingRule):
+class PublishingVariableGroup(_Stem, PublishingRule):
     """Rule to prevent publishing of merged variable group items."""
 
     entityType: Annotated[

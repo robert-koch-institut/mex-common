@@ -364,7 +364,7 @@ class PreventiveOrganization(_Stem, PreventiveRule):
     wikidataId: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingOrganization(PublishingRule):
+class PublishingOrganization(_Stem, PublishingRule):
     """Rule to prevent publishing of merged organization items."""
 
     entityType: Annotated[

@@ -371,7 +371,7 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingAccessPlatform(PublishingRule):
+class PublishingAccessPlatform(_Stem, PublishingRule):
     """Rule to prevent publishing of merged access platform items."""
 
     entityType: Annotated[
