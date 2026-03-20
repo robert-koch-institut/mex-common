@@ -621,7 +621,13 @@ def test_create_merged_item_errors(
 
 @pytest.fixture(autouse=True)
 def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
-    """Skips fuzzing test if fuzzing is not explicitly requested and mex.artificial is not installed."""
+    """Skips fuzzing test if fuzzing is not explicitly requested and mex.artificial is not installed.
+
+    Rationale: fuzzing depends on mex-artificial, which in turn depends on mex-common. This is a dependency loop.
+    If we introduce breaking changes in mex-common, mex-artificial must be updated to accomodate these breaking changes.
+    We do not want to break our entire test pipeline if this happens and therefore isolate fuzzing tests.
+    """
+    # RATIONALE
     config = request.config
     is_test_marked_as_fuzzing = request.node.get_closest_marker("fuzzing") is not None
     if not is_test_marked_as_fuzzing:
