@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- BREAKING: preview model accepts several values for single optional values (-> list)
+
 ### Security
 
 ## [1.17.0] - 2026-03-17
