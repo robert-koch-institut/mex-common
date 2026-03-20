@@ -1,6 +1,7 @@
 from typing import Any
 
 import pytest
+from pytest import FixtureRequest
 
 from mex.common.exceptions import MExError
 from mex.common.merged.main import (
@@ -618,15 +619,28 @@ def test_create_merged_item_errors(
     assert expected in f"{error}: {error.__cause__}"
 
 
+@pytest.fixture(autouse=True)
+def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
+    """Skips fuzzing test if fuzzing is not explicitly requested and mex.artificial is not installed."""
+    config = request.config
+    is_test_marked_as_fuzzing = request.node.get_closest_marker("fuzzing") is not None
+    if not is_test_marked_as_fuzzing:
+        return
+    is_fuzzing_explicitly_requested = config.option.markexpr and "fuzzing" in str(
+        config.option.markexpr
+    )
+    if not is_fuzzing_explicitly_requested:
+        pytest.skip(
+            "Skipping fuzzing tests as they were not explicitly requested using pytest -m fuzzing"
+        )
+
+
 @pytest.mark.fuzzing
 def test_create_merged_item_with_artificial_data() -> None:
     """Return artificial dummy data."""
-    try:
-        from mex.artificial.helpers import (  # type: ignore[import-not-found]  # noqa: PLC0415
-            create_artificial_items_and_rule_sets,
-        )
-    except ModuleNotFoundError:
-        pytest.skip("Module 'mex.artificial' not found.")
+    from mex.artificial.helpers import (  # type: ignore[import-not-found]  # noqa: PLC0415
+        create_artificial_items_and_rule_sets,
+    )
 
     for i, container in enumerate(
         create_artificial_items_and_rule_sets(
