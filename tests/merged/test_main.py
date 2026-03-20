@@ -42,12 +42,14 @@ from mex.common.models import (
     SubtractivePerson,
     SubtractiveResource,
 )
+from mex.common.models.contact_point import AdditiveContactPoint, PublishingContactPoint
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
     AnyValidation,
     Identifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
     TextLanguage,
     Theme,
@@ -546,6 +548,47 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "identifier": Joker(),
             },
             id="stable order by identifier",
+        ),
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                publishing=PublishingContactPoint(
+                    status=PublishingStatus.INVALID_FOR_PUBLISHING,
+                ),
+            ),
+            Validation.STRICT,
+            "Merged item prohibited to be published by publishing rule.",
+            id="publishing rule prevents creation of merged item for strict validation",
+        ),
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                additive=AdditiveContactPoint(
+                    email=["info@krusty.ocean"],
+                ),
+                publishing=PublishingContactPoint(
+                    status=PublishingStatus.INVALID_FOR_PUBLISHING,
+                ),
+            ),
+            Validation.LENIENT,
+            {
+                "email": ["orders@krusty.ocean", "info@krusty.ocean"],
+                "entityType": "PreviewContactPoint",
+                "identifier": Joker(),
+            },
+            id="preview allows creation of merged item with invalid publishing status.",
         ),
     ],
 )

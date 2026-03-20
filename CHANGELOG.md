@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New publishing rule to 'switch off' merged items
+
 ### Changes
 
 ### Deprecated
@@ -16,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- BREAKING: preview model accepts several values for single optional values (-> list)
 
 ### Security
 

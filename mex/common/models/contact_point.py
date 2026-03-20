@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -18,6 +19,7 @@ from mex.common.types import (
     ExtractedContactPointIdentifier,
     MergedContactPointIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
 )
 
 EmailStr = Annotated[
@@ -225,12 +227,25 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
     email: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingContactPoint(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged contact point items."""
+
+    entityType: Annotated[
+        Literal["PublishingContactPoint"], Field(alias="$type", frozen=True)
+    ] = "PublishingContactPoint"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a contact point item."""
 
     additive: AdditiveContactPoint = AdditiveContactPoint()
     subtractive: SubtractiveContactPoint = SubtractiveContactPoint()
     preventive: PreventiveContactPoint = PreventiveContactPoint()
+    publishing: PublishingContactPoint = PublishingContactPoint()
 
 
 class ContactPointRuleSetRequest(_BaseRuleSet):

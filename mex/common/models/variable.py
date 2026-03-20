@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -20,6 +21,7 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -276,7 +278,7 @@ class MergedVariable(BaseVariable, MergedItem):
     ] = None
 
 
-class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
+class PreviewVariable(_OptionalLists, _SparseLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a variable."""
 
     entityType: Annotated[
@@ -356,12 +358,25 @@ class PreventiveVariable(_Stem, PreventiveRule):
     valueSet: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingVariable(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged variable items."""
+
+    entityType: Annotated[
+        Literal["PublishingVariable"], Field(alias="$type", frozen=True)
+    ] = "PublishingVariable"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a variable item."""
 
     additive: AdditiveVariable = AdditiveVariable()
     subtractive: SubtractiveVariable = SubtractiveVariable()
     preventive: PreventiveVariable = PreventiveVariable()
+    publishing: PublishingVariable = PublishingVariable()
 
 
 class VariableRuleSetRequest(_BaseRuleSet):

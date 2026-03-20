@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -24,6 +25,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     TechnicalAccessibility,
     Text,
 )
@@ -285,7 +287,7 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
 
 
 class PreviewAccessPlatform(
-    _OptionalLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for an access platform."""
 
@@ -369,12 +371,25 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingAccessPlatform(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged access platform items."""
+
+    entityType: Annotated[
+        Literal["PublishingAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "PublishingAccessPlatform"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an access platform item."""
 
     additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
     subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
     preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
+    publishing: PublishingAccessPlatform = PublishingAccessPlatform()
 
 
 class AccessPlatformRuleSetRequest(_BaseRuleSet):

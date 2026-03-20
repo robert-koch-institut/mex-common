@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -23,6 +24,7 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
+    PublishingStatus,
     Text,
     Year,
     YearMonth,
@@ -343,7 +345,7 @@ class MergedDistribution(BaseDistribution, MergedItem):
 
 
 class PreviewDistribution(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a distribution."""
 
@@ -428,12 +430,25 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     title: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingDistribution(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged distribution items."""
+
+    entityType: Annotated[
+        Literal["PublishingDistribution"], Field(alias="$type", frozen=True)
+    ] = "PublishingDistribution"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a distribution item."""
 
     additive: AdditiveDistribution = AdditiveDistribution()
     subtractive: SubtractiveDistribution = SubtractiveDistribution()
     preventive: PreventiveDistribution = PreventiveDistribution()
+    publishing: PublishingDistribution = PublishingDistribution()
 
 
 class DistributionRuleSetRequest(_BaseRuleSet):

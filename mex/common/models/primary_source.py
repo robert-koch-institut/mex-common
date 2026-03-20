@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -22,6 +23,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -222,7 +224,7 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     ] = None
 
 
-class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
+class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
@@ -301,12 +303,25 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     version: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingPrimarySource(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged primary source items."""
+
+    entityType: Annotated[
+        Literal["PublishingPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "PublishingPrimarySource"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a primary source item."""
 
     additive: AdditivePrimarySource = AdditivePrimarySource()
     subtractive: SubtractivePrimarySource = SubtractivePrimarySource()
     preventive: PreventivePrimarySource = PreventivePrimarySource()
+    publishing: PublishingPrimarySource = PublishingPrimarySource()
 
 
 class PrimarySourceRuleSetRequest(_BaseRuleSet):

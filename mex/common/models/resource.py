@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -35,6 +36,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     PersonalData,
+    PublishingStatus,
     ResourceCreationMethod,
     ResourceTypeGeneral,
     Text,
@@ -800,7 +802,7 @@ class MergedResource(BaseResource, MergedItem):
 
 
 class PreviewResource(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a resource."""
 
@@ -925,12 +927,25 @@ class PreventiveResource(_Stem, PreventiveRule):
     wasGeneratedBy: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingResource(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged resource items."""
+
+    entityType: Annotated[
+        Literal["PublishingResource"], Field(alias="$type", frozen=True)
+    ] = "PublishingResource"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a resource item."""
 
     additive: AdditiveResource = AdditiveResource()
     subtractive: SubtractiveResource = SubtractiveResource()
     preventive: PreventiveResource = PreventiveResource()
+    publishing: PublishingResource = PublishingResource()
 
 
 class ResourceRuleSetRequest(_BaseRuleSet):

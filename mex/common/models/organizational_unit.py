@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -20,6 +21,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
 )
 
@@ -238,7 +240,7 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
 
 
 class PreviewOrganizationalUnit(
-    _OptionalLists, _SparseLists, _OptionalValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for an organizational unit."""
 
@@ -321,12 +323,25 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingOrganizationalUnit(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged organizational unit items."""
+
+    entityType: Annotated[
+        Literal["PublishingOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "PublishingOrganizationalUnit"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an organizational unit item."""
 
     additive: AdditiveOrganizationalUnit = AdditiveOrganizationalUnit()
     subtractive: SubtractiveOrganizationalUnit = SubtractiveOrganizationalUnit()
     preventive: PreventiveOrganizationalUnit = PreventiveOrganizationalUnit()
+    publishing: PublishingOrganizationalUnit = PublishingOrganizationalUnit()
 
 
 class OrganizationalUnitRuleSetRequest(_BaseRuleSet):

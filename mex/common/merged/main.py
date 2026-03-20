@@ -25,7 +25,13 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import AnyPrimitiveType, AnyValidation, Identifier, Validation
+from mex.common.types import (
+    AnyPrimitiveType,
+    AnyValidation,
+    Identifier,
+    PublishingStatus,
+    Validation,
+)
 from mex.common.utils import ensure_list
 
 
@@ -344,6 +350,21 @@ def create_merged_item(
     Returns:
         Instance of a merged or preview item
     """
+    # skip item, if PublishingRule prevents publishing
+    if (
+        rule_set
+        and rule_set.publishing.status == PublishingStatus.INVALID_FOR_PUBLISHING
+        and validation == validation.IGNORE
+    ):
+        return None
+    if (
+        rule_set
+        and rule_set.publishing.status == PublishingStatus.INVALID_FOR_PUBLISHING
+        and validation == validation.STRICT
+    ):
+        msg = "Merged item prohibited to be published by publishing rule."
+        raise MergingError(msg)
+
     # Convert extracted items from any iterable into sorted list
     extracted_items = sorted(extracted_items, key=lambda e: e.identifier)
 

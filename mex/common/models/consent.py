@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -21,6 +22,7 @@ from mex.common.types import (
     MergedConsentIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     YearMonthDayTime,
 )
 
@@ -228,7 +230,7 @@ class MergedConsent(BaseConsent, MergedItem):
     ] = None
 
 
-class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
+class PreviewConsent(_VariadicValues, _SparseValues, PreviewItem):
     """Preview for merging all extracted items and rules for a consent."""
 
     entityType: Annotated[
@@ -303,12 +305,25 @@ class PreventiveConsent(_Stem, PreventiveRule):
     isIndicatedAtTime: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingConsent(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged consent items."""
+
+    entityType: Annotated[
+        Literal["PublishingConsent"], Field(alias="$type", frozen=True)
+    ] = "PublishingConsent"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a consent item."""
 
     additive: AdditiveConsent = AdditiveConsent()
     subtractive: SubtractiveConsent = SubtractiveConsent()
     preventive: PreventiveConsent = PreventiveConsent()
+    publishing: PublishingConsent = PublishingConsent()
 
 
 class ConsentRuleSetRequest(_BaseRuleSet):

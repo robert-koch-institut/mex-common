@@ -11,6 +11,7 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
+    PublishingRule,
     RuleSet,
     SubtractiveRule,
 )
@@ -27,6 +28,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingStatus,
     Text,
     Year,
     YearMonth,
@@ -560,7 +562,7 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
 
 
 class PreviewBibliographicResource(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
@@ -667,12 +669,25 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
 
 
+class PublishingBibliographicResource(_Stem, PublishingRule):
+    """Rule to prevent publishing of merged bibliographic resource items."""
+
+    entityType: Annotated[
+        Literal["PublishingBibliographicResource"], Field(alias="$type", frozen=True)
+    ] = "PublishingBibliographicResource"
+    status: Annotated[
+        PublishingStatus | None,
+        Field(description="Indicates if the merged item should NOT be published."),
+    ] = None
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a bibliographic resource item."""
 
     additive: AdditiveBibliographicResource = AdditiveBibliographicResource()
     subtractive: SubtractiveBibliographicResource = SubtractiveBibliographicResource()
     preventive: PreventiveBibliographicResource = PreventiveBibliographicResource()
+    publishing: PublishingBibliographicResource = PublishingBibliographicResource()
 
 
 class BibliographicResourceRuleSetRequest(_BaseRuleSet):
