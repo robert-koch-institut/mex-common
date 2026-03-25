@@ -276,7 +276,7 @@ class MergedVariable(BaseVariable, MergedItem):
     ] = None
 
 
-class PreviewVariable(_OptionalLists, _SparseLists, _OptionalValues, PreviewItem):
+class PreviewVariable(_OptionalLists, _SparseLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a variable."""
 
     entityType: Annotated[

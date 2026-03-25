@@ -285,7 +285,7 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
 
 
 class PreviewAccessPlatform(
-    _OptionalLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for an access platform."""
 

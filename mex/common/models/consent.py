@@ -228,7 +228,7 @@ class MergedConsent(BaseConsent, MergedItem):
     ] = None
 
 
-class PreviewConsent(_OptionalValues, _SparseValues, PreviewItem):
+class PreviewConsent(_VariadicValues, _SparseValues, PreviewItem):
     """Preview for merging all extracted items and rules for a consent."""
 
     entityType: Annotated[

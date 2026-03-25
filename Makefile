@@ -1,4 +1,4 @@
-.PHONY: all setup hooks install lint test wheel docs
+.PHONY: all setup hooks install lint test fuzzing wheel docs
 all: install lint test
 
 LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
@@ -34,6 +34,12 @@ test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
 	uv run pytest --numprocesses=auto --dist=worksteal; \
+
+fuzzing:
+	# run the unit and integration test suites
+	@ echo running all tests; \
+	uv sync --group fuzzing; \
+	uv run pytest -m fuzzing --no-cov; \
 
 wheel:
 	# build the python package

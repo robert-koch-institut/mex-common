@@ -222,7 +222,7 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     ] = None
 
 
-class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
+class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
