@@ -1,3 +1,4 @@
+import random
 from typing import Any
 
 import pytest
@@ -648,10 +649,11 @@ def test_create_merged_item_with_artificial_data() -> None:
         create_artificial_items_and_rule_sets,
     )
 
+    seed = random.randint(-(2**31), 2**31 - 1)  # noqa: S311
     for i, container in enumerate(
         create_artificial_items_and_rule_sets(
             locale="de_DE",
-            seed=1,
+            seed=seed,
             count=500,
             chattiness=8,
         )
@@ -668,8 +670,10 @@ def test_create_merged_item_with_artificial_data() -> None:
         )
 
         if extracted_items == [] and rule_set is None:
-            assert returned is None, f"Expected `None` for artificial item number {i}"
+            assert returned is None, (
+                f"Expected `None` for artificial item number {i} with seed {seed}"
+            )
         else:
             assert returned is not None, (
-                f"Expected Preview Item for artificial item number {i}"
+                f"Expected Preview Item for artificial item number {i} with seed {seed}"
             )
