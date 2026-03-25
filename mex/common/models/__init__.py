@@ -57,7 +57,7 @@ These private classes are used to compose the public classes like so:
 - BaseT: _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
 - ExtractedT: BaseT, ExtractedData
 - MergedT: BaseT, MergedItem
-- PreviewT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+- PreviewT: _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule

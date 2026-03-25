@@ -1,0 +1,69 @@
+name: Fuzzing
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["**"]
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_dispatch:
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: on
+  PIP_NO_CLEAN: on
+  PIP_NO_INPUT: on
+  PIP_PREFER_BINARY: on
+  PY_COLORS: "1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.11, 3.12, 3.13, 3.14 ]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Cache requirements
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-requirements
+        with:
+          path: ~/.cache/pip
+          key: ${{ env.cache-name }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
+      - name: Cache environment
+        uses: actions/cache@v5
+        env:
+          cache-name: cache-environment
+        with:
+          path: ~/.cache/pip
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
+      - name: Setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+
+      - name: Install requirements
+        run: |
+          echo ${{ matrix.python-version }} > .python-version
+          make install
+
+      - name: Run fuzzing tests
+        run: make fuzzing
