@@ -1,10 +1,11 @@
 import re
+import ssl
 from functools import lru_cache
 from typing import Any, cast
 from urllib.parse import urlsplit
 
 import backoff
-from ldap3 import AUTO_BIND_NO_TLS, Connection, Server
+from ldap3 import Connection, Server, Tls
 from ldap3.core.exceptions import LDAPExceptionError, LDAPSocketSendError
 
 from mex.common.connector import BaseConnector
@@ -26,6 +27,7 @@ from mex.common.ldap.models import (
 from mex.common.logging import logger
 from mex.common.models.base.container import PaginatedItemsContainer
 from mex.common.settings import BaseSettings
+from mex.common.types import AssetsPath
 
 LDAP_FETCH_CACHE_SIZE = 5000
 
@@ -46,12 +48,27 @@ class LDAPConnector(BaseConnector):
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
         port = int(url.port) if url.port else None
-        server = Server(host, port, use_ssl=True)
+        ca_certs_file = (
+            settings.verify_session
+            if isinstance(settings.verify_session, AssetsPath)
+            else None
+        )
+        tls_configuration = Tls(
+            validate=ssl.CERT_REQUIRED,
+            version=ssl.PROTOCOL_SSLv23,
+            ca_certs_file=ca_certs_file,
+        )
+        server = Server(
+            host,
+            port,
+            use_ssl=True,
+            tls=tls_configuration,
+        )
         connection = Connection(
             server,
             user=url.username,
             password=url.password,
-            auto_bind=AUTO_BIND_NO_TLS,
+            auto_bind=True,
             read_only=True,
         )
         connection.__enter__()
