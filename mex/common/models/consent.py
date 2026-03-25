@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ConsentStatus,
@@ -22,7 +22,7 @@ from mex.common.types import (
     MergedConsentIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     YearMonthDayTime,
 )
 
@@ -305,16 +305,16 @@ class PreventiveConsent(_Stem, PreventiveRule):
     isIndicatedAtTime: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingConsent(_Stem, PublishingRule):
+class WorkflowConsent(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged consent items."""
 
     entityType: Annotated[
-        Literal["PublishingConsent"], Field(alias="$type", frozen=True)
-    ] = "PublishingConsent"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowConsent"], Field(alias="$type", frozen=True)
+    ] = "WorkflowConsent"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -323,7 +323,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveConsent = AdditiveConsent()
     subtractive: SubtractiveConsent = SubtractiveConsent()
     preventive: PreventiveConsent = PreventiveConsent()
-    publishing: PublishingConsent = PublishingConsent()
+    workflow: WorkflowConsent = WorkflowConsent()
 
 
 class ConsentRuleSetRequest(_BaseRuleSet):

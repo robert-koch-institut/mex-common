@@ -11,16 +11,16 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedVariableGroupIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
 )
 
@@ -238,16 +238,16 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
     label: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingVariableGroup(_Stem, PublishingRule):
+class WorkflowVariableGroup(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged variable group items."""
 
     entityType: Annotated[
-        Literal["PublishingVariableGroup"], Field(alias="$type", frozen=True)
-    ] = "PublishingVariableGroup"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowVariableGroup"], Field(alias="$type", frozen=True)
+    ] = "WorkflowVariableGroup"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -256,7 +256,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveVariableGroup = AdditiveVariableGroup()
     subtractive: SubtractiveVariableGroup = SubtractiveVariableGroup()
     preventive: PreventiveVariableGroup = PreventiveVariableGroup()
-    publishing: PublishingVariableGroup = PublishingVariableGroup()
+    workflow: WorkflowVariableGroup = WorkflowVariableGroup()
 
 
 class VariableGroupRuleSetRequest(_BaseRuleSet):

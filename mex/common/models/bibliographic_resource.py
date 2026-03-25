@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -28,7 +28,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
     Year,
     YearMonth,
@@ -669,16 +669,16 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingBibliographicResource(_Stem, PublishingRule):
+class WorkflowBibliographicResource(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged bibliographic resource items."""
 
     entityType: Annotated[
-        Literal["PublishingBibliographicResource"], Field(alias="$type", frozen=True)
-    ] = "PublishingBibliographicResource"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowBibliographicResource"], Field(alias="$type", frozen=True)
+    ] = "WorkflowBibliographicResource"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -687,7 +687,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveBibliographicResource = AdditiveBibliographicResource()
     subtractive: SubtractiveBibliographicResource = SubtractiveBibliographicResource()
     preventive: PreventiveBibliographicResource = PreventiveBibliographicResource()
-    publishing: PublishingBibliographicResource = PublishingBibliographicResource()
+    workflow: WorkflowBibliographicResource = WorkflowBibliographicResource()
 
 
 class BibliographicResourceRuleSetRequest(_BaseRuleSet):

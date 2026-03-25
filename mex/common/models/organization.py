@@ -11,15 +11,15 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedOrganizationIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
 )
 
@@ -364,16 +364,16 @@ class PreventiveOrganization(_Stem, PreventiveRule):
     wikidataId: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingOrganization(_Stem, PublishingRule):
+class WorkflowOrganization(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged organization items."""
 
     entityType: Annotated[
-        Literal["PublishingOrganization"], Field(alias="$type", frozen=True)
-    ] = "PublishingOrganization"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowOrganization"], Field(alias="$type", frozen=True)
+    ] = "WorkflowOrganization"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -382,7 +382,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveOrganization = AdditiveOrganization()
     subtractive: SubtractiveOrganization = SubtractiveOrganization()
     preventive: PreventiveOrganization = PreventiveOrganization()
-    publishing: PublishingOrganization = PublishingOrganization()
+    workflow: WorkflowOrganization = WorkflowOrganization()
 
 
 class OrganizationRuleSetRequest(_BaseRuleSet):

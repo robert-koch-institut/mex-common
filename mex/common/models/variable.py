@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedVariableIdentifier,
@@ -21,7 +21,7 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
 )
 
@@ -358,16 +358,16 @@ class PreventiveVariable(_Stem, PreventiveRule):
     valueSet: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingVariable(_Stem, PublishingRule):
+class WorkflowVariable(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged variable items."""
 
     entityType: Annotated[
-        Literal["PublishingVariable"], Field(alias="$type", frozen=True)
-    ] = "PublishingVariable"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowVariable"], Field(alias="$type", frozen=True)
+    ] = "WorkflowVariable"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -376,7 +376,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveVariable = AdditiveVariable()
     subtractive: SubtractiveVariable = SubtractiveVariable()
     preventive: PreventiveVariable = PreventiveVariable()
-    publishing: PublishingVariable = PublishingVariable()
+    workflow: WorkflowVariable = WorkflowVariable()
 
 
 class VariableRuleSetRequest(_BaseRuleSet):

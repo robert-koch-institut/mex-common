@@ -28,7 +28,7 @@ Each entity type `T` is modelled for the following use cases:
   fields from contributing to a merged item
 - `PreventiveT` defines a rule to prevent (or block) specific primary sources from
   contributing to specific fields of a merged item
-- `PublishingT` defines a rule to prevent a merged item from being published
+- `WorkflowT` defines a rule to prevent a merged item from being published
 - `TRuleSet` classes are used for CRUD operations on a set of four rules
 
 - `TFilter` defines how an entity filter specification should look like
@@ -49,7 +49,7 @@ we use a number of intermediate private classes to compose the public classes:
 - `_VariadicValues` re-defines all fields from `_OptionalValues` and `_RequiredValues`
   as list fields with an arity of 0-n
 
-- `_BaseRuleSet` bundles the additive, subtractive, preventive and publishing rules for
+- `_BaseRuleSet` bundles the additive, subtractive, preventive and workflow rules for
    one type
 
 These private classes are used to compose the public classes like so:
@@ -62,7 +62,7 @@ These private classes are used to compose the public classes like so:
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
 - PreventiveT: all fields from BaseT re-typed as MergedPrimarySourceIdentifier
-- PublishingT: own field 'status'
+- WorkflowT: own field forbiddenPublishingTarget
 - TRuleSetRequest: bundle of all four rules for one type used to create new rules
 - TRuleSetResponse: bundle of all four rules for one type including a `stableTargetId`
 
@@ -99,8 +99,8 @@ from mex.common.models.access_platform import (
     MergedAccessPlatform,
     PreventiveAccessPlatform,
     PreviewAccessPlatform,
-    PublishingAccessPlatform,
     SubtractiveAccessPlatform,
+    WorkflowAccessPlatform,
 )
 from mex.common.models.activity import (
     ActivityFilter,
@@ -113,8 +113,8 @@ from mex.common.models.activity import (
     MergedActivity,
     PreventiveActivity,
     PreviewActivity,
-    PublishingActivity,
     SubtractiveActivity,
+    WorkflowActivity,
 )
 from mex.common.models.base.container import (
     ItemsContainer,
@@ -128,8 +128,8 @@ from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.models.base.status import Status, VersionStatus
 from mex.common.models.bibliographic_resource import (
@@ -143,8 +143,8 @@ from mex.common.models.bibliographic_resource import (
     MergedBibliographicResource,
     PreventiveBibliographicResource,
     PreviewBibliographicResource,
-    PublishingBibliographicResource,
     SubtractiveBibliographicResource,
+    WorkflowBibliographicResource,
 )
 from mex.common.models.consent import (
     AdditiveConsent,
@@ -157,8 +157,8 @@ from mex.common.models.consent import (
     MergedConsent,
     PreventiveConsent,
     PreviewConsent,
-    PublishingConsent,
     SubtractiveConsent,
+    WorkflowConsent,
 )
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
@@ -171,8 +171,8 @@ from mex.common.models.contact_point import (
     MergedContactPoint,
     PreventiveContactPoint,
     PreviewContactPoint,
-    PublishingContactPoint,
     SubtractiveContactPoint,
+    WorkflowContactPoint,
 )
 from mex.common.models.distribution import (
     AdditiveDistribution,
@@ -185,8 +185,8 @@ from mex.common.models.distribution import (
     MergedDistribution,
     PreventiveDistribution,
     PreviewDistribution,
-    PublishingDistribution,
     SubtractiveDistribution,
+    WorkflowDistribution,
 )
 from mex.common.models.organization import (
     AdditiveOrganization,
@@ -199,8 +199,8 @@ from mex.common.models.organization import (
     OrganizationRuleSetResponse,
     PreventiveOrganization,
     PreviewOrganization,
-    PublishingOrganization,
     SubtractiveOrganization,
+    WorkflowOrganization,
 )
 from mex.common.models.organizational_unit import (
     AdditiveOrganizationalUnit,
@@ -213,8 +213,8 @@ from mex.common.models.organizational_unit import (
     OrganizationalUnitRuleSetResponse,
     PreventiveOrganizationalUnit,
     PreviewOrganizationalUnit,
-    PublishingOrganizationalUnit,
     SubtractiveOrganizationalUnit,
+    WorkflowOrganizationalUnit,
 )
 from mex.common.models.person import (
     AdditivePerson,
@@ -227,8 +227,8 @@ from mex.common.models.person import (
     PersonRuleSetResponse,
     PreventivePerson,
     PreviewPerson,
-    PublishingPerson,
     SubtractivePerson,
+    WorkflowPerson,
 )
 from mex.common.models.primary_source import (
     AdditivePrimarySource,
@@ -241,8 +241,8 @@ from mex.common.models.primary_source import (
     PrimarySourceMapping,
     PrimarySourceRuleSetRequest,
     PrimarySourceRuleSetResponse,
-    PublishingPrimarySource,
     SubtractivePrimarySource,
+    WorkflowPrimarySource,
 )
 from mex.common.models.resource import (
     AdditiveResource,
@@ -251,12 +251,12 @@ from mex.common.models.resource import (
     MergedResource,
     PreventiveResource,
     PreviewResource,
-    PublishingResource,
     ResourceFilter,
     ResourceMapping,
     ResourceRuleSetRequest,
     ResourceRuleSetResponse,
     SubtractiveResource,
+    WorkflowResource,
 )
 from mex.common.models.variable import (
     AdditiveVariable,
@@ -265,12 +265,12 @@ from mex.common.models.variable import (
     MergedVariable,
     PreventiveVariable,
     PreviewVariable,
-    PublishingVariable,
     SubtractiveVariable,
     VariableFilter,
     VariableMapping,
     VariableRuleSetRequest,
     VariableRuleSetResponse,
+    WorkflowVariable,
 )
 from mex.common.models.variable_group import (
     AdditiveVariableGroup,
@@ -279,12 +279,12 @@ from mex.common.models.variable_group import (
     MergedVariableGroup,
     PreventiveVariableGroup,
     PreviewVariableGroup,
-    PublishingVariableGroup,
     SubtractiveVariableGroup,
     VariableGroupFilter,
     VariableGroupMapping,
     VariableGroupRuleSetRequest,
     VariableGroupRuleSetResponse,
+    WorkflowVariableGroup,
 )
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
@@ -311,8 +311,6 @@ __all__ = (
     "MEX_PRIMARY_SOURCE_STABLE_TARGET_ID",
     "PREVENTIVE_MODEL_CLASSES",
     "PREVENTIVE_MODEL_CLASSES_BY_NAME",
-    "PUBLISHING_MODEL_CLASSES",
-    "PUBLISHING_MODEL_CLASSES_BY_NAME",
     "RULE_MODEL_CLASSES",
     "RULE_MODEL_CLASSES_BY_NAME",
     "RULE_SET_REQUEST_CLASSES",
@@ -321,6 +319,8 @@ __all__ = (
     "RULE_SET_RESPONSE_CLASSES_BY_NAME",
     "SUBTRACTIVE_MODEL_CLASSES",
     "SUBTRACTIVE_MODEL_CLASSES_BY_NAME",
+    "WORKFLOW_MODEL_CLASSES",
+    "WORKFLOW_MODEL_CLASSES_BY_NAME",
     "AccessPlatformFilter",
     "AccessPlatformMapping",
     "AccessPlatformRuleSetRequest",
@@ -350,12 +350,12 @@ __all__ = (
     "AnyMergedModel",
     "AnyPreventiveModel",
     "AnyPreviewModel",
-    "AnyPublishingModel",
     "AnyRuleModel",
     "AnyRuleModelName",
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
     "AnySubtractiveModel",
+    "AnyWorkflowModel",
     "BaseAccessPlatform",
     "BaseActivity",
     "BaseBibliographicResource",
@@ -469,21 +469,6 @@ __all__ = (
     "PrimarySourceMapping",
     "PrimarySourceRuleSetRequest",
     "PrimarySourceRuleSetResponse",
-    "PublishingAccessPlatform",
-    "PublishingActivity",
-    "PublishingBibliographicResource",
-    "PublishingConsent",
-    "PublishingContactPoint",
-    "PublishingDistribution",
-    "PublishingModelTypeAdapter",
-    "PublishingOrganization",
-    "PublishingOrganizationalUnit",
-    "PublishingPerson",
-    "PublishingPrimarySource",
-    "PublishingResource",
-    "PublishingRule",
-    "PublishingVariable",
-    "PublishingVariableGroup",
     "ResourceFilter",
     "ResourceMapping",
     "ResourceRuleSetRequest",
@@ -516,6 +501,21 @@ __all__ = (
     "VariableRuleSetRequest",
     "VariableRuleSetResponse",
     "VersionStatus",
+    "WorkflowAccessPlatform",
+    "WorkflowActivity",
+    "WorkflowBibliographicResource",
+    "WorkflowConsent",
+    "WorkflowContactPoint",
+    "WorkflowDistribution",
+    "WorkflowModelTypeAdapter",
+    "WorkflowOrganization",
+    "WorkflowOrganizationalUnit",
+    "WorkflowPerson",
+    "WorkflowPrimarySource",
+    "WorkflowResource",
+    "WorkflowRule",
+    "WorkflowVariable",
+    "WorkflowVariableGroup",
 )
 
 MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")
@@ -698,33 +698,33 @@ PREVENTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPreventiveModel]]] = {
     cls.__name__: cls for cls in PREVENTIVE_MODEL_CLASSES
 }
 
-AnyPublishingModel = (
-    PublishingAccessPlatform
-    | PublishingActivity
-    | PublishingBibliographicResource
-    | PublishingConsent
-    | PublishingContactPoint
-    | PublishingDistribution
-    | PublishingOrganization
-    | PublishingOrganizationalUnit
-    | PublishingPerson
-    | PublishingPrimarySource
-    | PublishingResource
-    | PublishingVariable
-    | PublishingVariableGroup
+AnyWorkflowModel = (
+    WorkflowAccessPlatform
+    | WorkflowActivity
+    | WorkflowBibliographicResource
+    | WorkflowConsent
+    | WorkflowContactPoint
+    | WorkflowDistribution
+    | WorkflowOrganization
+    | WorkflowOrganizationalUnit
+    | WorkflowPerson
+    | WorkflowPrimarySource
+    | WorkflowResource
+    | WorkflowVariable
+    | WorkflowVariableGroup
 )
-PublishingModelTypeAdapter: TypeAdapter[AnyPublishingModel] = TypeAdapter(
-    Annotated[AnyPublishingModel, Field(discriminator="entityType")]
+WorkflowModelTypeAdapter: TypeAdapter[AnyWorkflowModel] = TypeAdapter(
+    Annotated[AnyWorkflowModel, Field(discriminator="entityType")]
 )
-PUBLISHING_MODEL_CLASSES: Final[list[type[AnyPublishingModel]]] = list(
-    get_args(AnyPublishingModel)
+WORKFLOW_MODEL_CLASSES: Final[list[type[AnyWorkflowModel]]] = list(
+    get_args(AnyWorkflowModel)
 )
-PUBLISHING_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPublishingModel]]] = {
-    cls.__name__: cls for cls in PUBLISHING_MODEL_CLASSES
+WORKFLOW_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyWorkflowModel]]] = {
+    cls.__name__: cls for cls in WORKFLOW_MODEL_CLASSES
 }
 
 AnyRuleModel = (
-    AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel | AnyPublishingModel
+    AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel | AnyWorkflowModel
 )
 RuleModelTypeAdapter: TypeAdapter[AnyRuleModel] = TypeAdapter(
     Annotated[AnyRuleModel, Field(discriminator="entityType")]
@@ -733,14 +733,14 @@ RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
-AnyRuleModelName = Literal["additive", "subtractive", "preventive", "publishing"]
+AnyRuleModelName = Literal["additive", "subtractive", "preventive", "workflow"]
 RULE_MODEL_CLASSES_BY_TYPE_BY_NAME: Final[
     Mapping[AnyRuleModelName, Mapping[str, type[AnyRuleModel]]]
 ] = {
     "additive": ADDITIVE_MODEL_CLASSES_BY_NAME,
     "subtractive": SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
     "preventive": PREVENTIVE_MODEL_CLASSES_BY_NAME,
-    "publishing": PUBLISHING_MODEL_CLASSES_BY_NAME,
+    "workflow": WORKFLOW_MODEL_CLASSES_BY_NAME,
 }
 
 AnyRuleSetRequest = (

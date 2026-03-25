@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New publishing rule to 'switch off' merged items
+- BREAKING: New workflow rule defining forbidden targets for publishing of merged items
+- BREAKING: creation of merged items now needs publishing target parameter
 
 ### Changes
 
@@ -18,8 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
-
-- BREAKING: preview model accepts several values for single optional values (-> list)
 
 ### Security
 

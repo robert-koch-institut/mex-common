@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedOrganizationalUnitIdentifier,
@@ -21,7 +21,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
 )
 
@@ -323,16 +323,16 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingOrganizationalUnit(_Stem, PublishingRule):
+class WorkflowOrganizationalUnit(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged organizational unit items."""
 
     entityType: Annotated[
-        Literal["PublishingOrganizationalUnit"], Field(alias="$type", frozen=True)
-    ] = "PublishingOrganizationalUnit"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "WorkflowOrganizationalUnit"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -341,7 +341,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveOrganizationalUnit = AdditiveOrganizationalUnit()
     subtractive: SubtractiveOrganizationalUnit = SubtractiveOrganizationalUnit()
     preventive: PreventiveOrganizationalUnit = PreventiveOrganizationalUnit()
-    publishing: PublishingOrganizationalUnit = PublishingOrganizationalUnit()
+    workflow: WorkflowOrganizationalUnit = WorkflowOrganizationalUnit()
 
 
 class OrganizationalUnitRuleSetRequest(_BaseRuleSet):

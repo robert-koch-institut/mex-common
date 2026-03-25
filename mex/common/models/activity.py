@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ActivityType,
@@ -27,7 +27,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
     Theme,
     Year,
@@ -428,16 +428,16 @@ class PreventiveActivity(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingActivity(_Stem, PublishingRule):
+class WorkflowActivity(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged activity items."""
 
     entityType: Annotated[
-        Literal["PublishingActivity"], Field(alias="$type", frozen=True)
-    ] = "PublishingActivity"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowActivity"], Field(alias="$type", frozen=True)
+    ] = "WorkflowActivity"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -446,7 +446,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveActivity = AdditiveActivity()
     subtractive: SubtractiveActivity = SubtractiveActivity()
     preventive: PreventiveActivity = PreventiveActivity()
-    publishing: PublishingActivity = PublishingActivity()
+    workflow: WorkflowActivity = WorkflowActivity()
 
 
 class ActivityRuleSetRequest(_BaseRuleSet):

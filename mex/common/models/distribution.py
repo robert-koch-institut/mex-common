@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -24,7 +24,7 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
-    PublishingStatus,
+    PublishingTarget,
     Text,
     Year,
     YearMonth,
@@ -430,16 +430,16 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     title: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingDistribution(_Stem, PublishingRule):
+class WorkflowDistribution(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged distribution items."""
 
     entityType: Annotated[
-        Literal["PublishingDistribution"], Field(alias="$type", frozen=True)
-    ] = "PublishingDistribution"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowDistribution"], Field(alias="$type", frozen=True)
+    ] = "WorkflowDistribution"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -448,7 +448,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditiveDistribution = AdditiveDistribution()
     subtractive: SubtractiveDistribution = SubtractiveDistribution()
     preventive: PreventiveDistribution = PreventiveDistribution()
-    publishing: PublishingDistribution = PublishingDistribution()
+    workflow: WorkflowDistribution = WorkflowDistribution()
 
 
 class DistributionRuleSetRequest(_BaseRuleSet):

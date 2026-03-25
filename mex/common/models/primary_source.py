@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
@@ -23,7 +23,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
 )
 
@@ -303,16 +303,16 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     version: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingPrimarySource(_Stem, PublishingRule):
+class WorkflowPrimarySource(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged primary source items."""
 
     entityType: Annotated[
-        Literal["PublishingPrimarySource"], Field(alias="$type", frozen=True)
-    ] = "PublishingPrimarySource"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "WorkflowPrimarySource"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -321,7 +321,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditivePrimarySource = AdditivePrimarySource()
     subtractive: SubtractivePrimarySource = SubtractivePrimarySource()
     preventive: PreventivePrimarySource = PreventivePrimarySource()
-    publishing: PublishingPrimarySource = PublishingPrimarySource()
+    workflow: WorkflowPrimarySource = WorkflowPrimarySource()
 
 
 class PrimarySourceRuleSetRequest(_BaseRuleSet):

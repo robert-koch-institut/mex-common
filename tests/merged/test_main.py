@@ -14,7 +14,7 @@ from mex.common.merged.main import (
     _filter_usable_values,
     _get_merged_class,
     _pick_usable_values,
-    create_merged_item,
+    build_merged_item,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
@@ -42,14 +42,14 @@ from mex.common.models import (
     SubtractivePerson,
     SubtractiveResource,
 )
-from mex.common.models.contact_point import AdditiveContactPoint, PublishingContactPoint
+from mex.common.models.contact_point import AdditiveContactPoint, WorkflowContactPoint
 from mex.common.testing import Joker
 from mex.common.types import (
     AccessRestriction,
     AnyValidation,
     Identifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
     Text,
     TextLanguage,
     Theme,
@@ -558,8 +558,8 @@ def test_ensure_rule_set_returns_existing() -> None:
                 )
             ],
             ContactPointRuleSetRequest(
-                publishing=PublishingContactPoint(
-                    status=PublishingStatus.INVALID_FOR_PUBLISHING,
+                workflow=WorkflowContactPoint(
+                    status=PublishingTarget.INVALID_FOR_PUBLISHING,
                 ),
             ),
             Validation.STRICT,
@@ -578,8 +578,8 @@ def test_ensure_rule_set_returns_existing() -> None:
                 additive=AdditiveContactPoint(
                     email=["info@krusty.ocean"],
                 ),
-                publishing=PublishingContactPoint(
-                    status=PublishingStatus.INVALID_FOR_PUBLISHING,
+                workflow=WorkflowContactPoint(
+                    status=PublishingTarget.INVALID_FOR_PUBLISHING,
                 ),
             ),
             Validation.LENIENT,
@@ -592,14 +592,14 @@ def test_ensure_rule_set_returns_existing() -> None:
         ),
     ],
 )
-def test_create_merged_item(
+def test_build_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     validation: AnyValidation,
     expected: dict[str, Any] | str | None,
 ) -> None:
     try:
-        merged_item = create_merged_item(
+        merged_item = build_merged_item(
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,

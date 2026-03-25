@@ -11,9 +11,9 @@ from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
     PreventiveRule,
-    PublishingRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedPersonIdentifier,
@@ -21,7 +21,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingStatus,
+    PublishingTarget,
 )
 
 EmailStr = Annotated[
@@ -341,16 +341,16 @@ class PreventivePerson(_Stem, PreventiveRule):
     orcidId: list[MergedPrimarySourceIdentifier] = []
 
 
-class PublishingPerson(_Stem, PublishingRule):
+class WorkflowPerson(_Stem, WorkflowRule):
     """Rule to prevent publishing of merged person items."""
 
     entityType: Annotated[
-        Literal["PublishingPerson"], Field(alias="$type", frozen=True)
-    ] = "PublishingPerson"
-    status: Annotated[
-        PublishingStatus | None,
-        Field(description="Indicates if the merged item should NOT be published."),
-    ] = None
+        Literal["WorkflowPerson"], Field(alias="$type", frozen=True)
+    ] = "WorkflowPerson"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
@@ -359,7 +359,7 @@ class _BaseRuleSet(_Stem, RuleSet):
     additive: AdditivePerson = AdditivePerson()
     subtractive: SubtractivePerson = SubtractivePerson()
     preventive: PreventivePerson = PreventivePerson()
-    publishing: PublishingPerson = PublishingPerson()
+    workflow: WorkflowPerson = WorkflowPerson()
 
 
 class PersonRuleSetRequest(_BaseRuleSet):
