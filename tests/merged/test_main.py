@@ -17,11 +17,13 @@ from mex.common.merged.main import (
     _get_merged_class,
     _pick_usable_values,
     build_merged_item,
+    create_merged_item,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
+    AdditiveContactPoint,
     AdditivePerson,
     AdditiveResource,
     AnyExtractedModel,
@@ -43,6 +45,7 @@ from mex.common.models import (
     SubtractiveContactPoint,
     SubtractivePerson,
     SubtractiveResource,
+    WorkflowContactPoint,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -50,6 +53,7 @@ from mex.common.types import (
     AnyValidation,
     Identifier,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
     Text,
     TextLanguage,
     Theme,
@@ -615,6 +619,92 @@ def test_build_merged_item_errors(
             extracted_items,
             rule_set,
             Validation.STRICT,
+        )
+    error = exc_info.value
+    assert expected in f"{error}: {error.__cause__}"
+
+
+@pytest.mark.parametrize(
+    ("extracted_items", "rule_set", "publishing_target", "expected"),
+    [
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                additive=AdditiveContactPoint(
+                    email=["info@krusty.ocean"],
+                ),
+                workflow=WorkflowContactPoint(
+                    forbiddenPublishingTarget=["datenkompass"],
+                ),
+            ),
+            "invenio",
+            {
+                "email": ["orders@krusty.ocean", "info@krusty.ocean"],
+                "entityType": "MergedContactPoint",
+                "identifier": Joker(),
+            },
+            id="publishing target is valid.",
+        ),
+    ],
+)
+def test_create_merged_item(
+    extracted_items: list[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | None,
+    publishing_target: PublishingTarget,
+    expected: dict[str, Any] | None,
+) -> None:
+    merged_item = create_merged_item(
+        Identifier.generate(seed=42),
+        extracted_items,
+        rule_set,
+        Validation.STRICT,
+        publishing_target,
+    )
+    clean_dict = {k: v for k, v in merged_item.model_dump().items() if v}
+    assert clean_dict == expected
+
+
+@pytest.mark.parametrize(
+    ("extracted_items", "rule_set", "publishing_target", "expected"),
+    [
+        pytest.param(
+            [
+                ExtractedContactPoint(
+                    identifierInPrimarySource="orders",
+                    hadPrimarySource=Identifier.generate(seed=98),
+                    email=["orders@krusty.ocean"],
+                )
+            ],
+            ContactPointRuleSetRequest(
+                workflow=WorkflowContactPoint(
+                    forbiddenPublishingTarget=["datenkompass"],
+                ),
+            ),
+            "datenkompass",
+            "Merged item forbidden to be published to datenkompass.",
+            id="publishing rule prevents creation of merged item",
+        ),
+    ],
+)
+def test_create_merged_item_errors(
+    extracted_items: list[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | None,
+    publishing_target: PublishingTarget,
+    expected: str,
+) -> None:
+    with pytest.raises(MExError) as exc_info:
+        create_merged_item(
+            Identifier.generate(seed=42),
+            extracted_items,
+            rule_set,
+            Validation.STRICT,
+            publishing_target,
         )
     error = exc_info.value
     assert expected in f"{error}: {error.__cause__}"
