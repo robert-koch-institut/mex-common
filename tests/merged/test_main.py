@@ -735,7 +735,7 @@ def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
 @pytest.mark.fuzzing
 def test_create_merged_item_with_artificial_data() -> None:
     """Return artificial dummy data."""
-    from mex.artificial.helpers import (  # noqa: PLC0415
+    from mex.artificial.helpers import (  # type: ignore[import-not-found] # noqa: PLC0415
         create_artificial_items_and_rule_sets,
     )
 
