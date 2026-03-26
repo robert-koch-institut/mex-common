@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          token: ${{ secrets.MEX_WORKFLOW_TOKEN }}
 
       - name: Cache requirements
         uses: actions/cache@v5
@@ -113,7 +113,7 @@ jobs:
 
       - name: Build wheel and sdist distros and create a github release
         env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          GH_TOKEN: ${{ secrets.MEX_WORKFLOW_TOKEN }}
         run: |
           gh release create ${{ needs.release.outputs.tag }} --generate-notes --latest --verify-tag
           uv build --out-dir dist

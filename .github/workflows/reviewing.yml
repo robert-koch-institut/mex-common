@@ -22,7 +22,7 @@ jobs:
 
       - name: Add assignee
         env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          GH_TOKEN: ${{ secrets.MEX_WORKFLOW_TOKEN }}
         run: |
           user_name="${{ github.event.pull_request.user.login }}"
           user_type=$(gh api "users/${user_name}" --jq ".type")
