@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     APIType,
@@ -24,6 +25,7 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
     TechnicalAccessibility,
     Text,
 )
@@ -369,12 +371,25 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowAccessPlatform(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged access platform items to certain targets."""
+
+    entityType: Annotated[
+        Literal["WorkflowAccessPlatform"], Field(alias="$type", frozen=True)
+    ] = "WorkflowAccessPlatform"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an access platform item."""
 
     additive: AdditiveAccessPlatform = AdditiveAccessPlatform()
     subtractive: SubtractiveAccessPlatform = SubtractiveAccessPlatform()
     preventive: PreventiveAccessPlatform = PreventiveAccessPlatform()
+    workflow: WorkflowAccessPlatform = WorkflowAccessPlatform()
 
 
 class AccessPlatformRuleSetRequest(_BaseRuleSet):

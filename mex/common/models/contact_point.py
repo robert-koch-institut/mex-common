@@ -13,11 +13,13 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedContactPointIdentifier,
     MergedContactPointIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
 )
 
 EmailStr = Annotated[
@@ -225,12 +227,25 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
     email: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowContactPoint(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged contact point items."""
+
+    entityType: Annotated[
+        Literal["WorkflowContactPoint"], Field(alias="$type", frozen=True)
+    ] = "WorkflowContactPoint"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a contact point item."""
 
     additive: AdditiveContactPoint = AdditiveContactPoint()
     subtractive: SubtractiveContactPoint = SubtractiveContactPoint()
     preventive: PreventiveContactPoint = PreventiveContactPoint()
+    workflow: WorkflowContactPoint = WorkflowContactPoint()
 
 
 class ContactPointRuleSetRequest(_BaseRuleSet):

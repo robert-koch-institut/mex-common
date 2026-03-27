@@ -15,10 +15,15 @@ class PreventiveRule(BaseModel, extra="forbid"):
     """Base rule to prevent primary sources for fields of merged items."""
 
 
+class WorkflowRule(BaseModel, extra="forbid"):
+    """Base rule to define workflow rules like forbidden publishing targets."""
+
+
 class RuleSet(BaseModel, extra="forbid"):
-    """Base class for a set of an additive, subtractive and preventive rule."""
+    """Base class for a set of additive, subtractive, preventive & workflow rule."""
 
     if TYPE_CHECKING:  # pragma: no cover
         additive: AdditiveRule
         subtractive: SubtractiveRule
         preventive: PreventiveRule
+        workflow: WorkflowRule

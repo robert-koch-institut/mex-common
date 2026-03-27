@@ -25,7 +25,13 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import AnyPrimitiveType, AnyValidation, Identifier, Validation
+from mex.common.types import (
+    AnyPrimitiveType,
+    AnyValidation,
+    Identifier,
+    PublishingTarget,
+    Validation,
+)
 from mex.common.utils import ensure_list
 
 
@@ -297,6 +303,7 @@ def create_merged_item(
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.LENIENT],
+    publishing_target: PublishingTarget,
 ) -> AnyPreviewModel: ...
 
 
@@ -306,6 +313,7 @@ def create_merged_item(
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.STRICT],
+    publishing_target: PublishingTarget,
 ) -> AnyMergedModel: ...
 
 
@@ -315,10 +323,82 @@ def create_merged_item(
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.IGNORE],
+    publishing_target: PublishingTarget,
 ) -> AnyMergedModel | None: ...
 
 
 def create_merged_item(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: AnyValidation,
+    publishing_target: PublishingTarget,
+) -> AnyPreviewModel | AnyMergedModel | None:
+    """Validates if item is allowed to be published to target before building it.
+
+    Args:
+    identifier: Identifier the finished merged item should have
+    extracted_items: List of extracted items, can be empty
+    rule_set: Rule set, with potentially empty rules
+    validation: Controls how strictly the merged item needs to validate:
+        - STRICT: Validates all required fields and list lengths. Returns a
+            fully validated merged item or raises MergingError on validation failure
+        - LENIENT: Skips validation checks and returns a "preview" merged item
+            that may be missing required fields and even may be using blocked values
+        - IGNORE: In case of validation errors, this mode will safely return None
+    publishing_target: specification of target to which the merged item is published
+
+    Raises:
+        MergingError: When the publishing target is forbidden for the item
+
+    Returns:
+        Instance of a merged or preview item
+
+    """
+    if (
+        rule_set
+        and publishing_target in rule_set.workflow.forbiddenPublishingTarget
+        and validation == validation.IGNORE
+    ):
+        return None
+    if (
+        rule_set
+        and publishing_target in rule_set.workflow.forbiddenPublishingTarget
+        and validation == validation.STRICT
+    ):
+        msg = f"Merged item forbidden to be published to {publishing_target}."
+        raise MergingError(msg)
+    return build_merged_item(identifier, extracted_items, rule_set, validation)
+
+
+@overload
+def build_merged_item(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.LENIENT],
+) -> AnyPreviewModel: ...
+
+
+@overload
+def build_merged_item(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.STRICT],
+) -> AnyMergedModel: ...
+
+
+@overload
+def build_merged_item(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.IGNORE],
+) -> AnyMergedModel | None: ...
+
+
+def build_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,

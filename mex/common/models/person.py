@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedPersonIdentifier,
@@ -20,6 +21,7 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
 )
 
 EmailStr = Annotated[
@@ -339,12 +341,25 @@ class PreventivePerson(_Stem, PreventiveRule):
     orcidId: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowPerson(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged person items."""
+
+    entityType: Annotated[
+        Literal["WorkflowPerson"], Field(alias="$type", frozen=True)
+    ] = "WorkflowPerson"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a person item."""
 
     additive: AdditivePerson = AdditivePerson()
     subtractive: SubtractivePerson = SubtractivePerson()
     preventive: PreventivePerson = PreventivePerson()
+    workflow: WorkflowPerson = WorkflowPerson()
 
 
 class PersonRuleSetRequest(_BaseRuleSet):

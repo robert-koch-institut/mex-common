@@ -328,7 +328,7 @@ class BackendApiConnector(HTTPConnector):
             HTTPError: If no rule-set was found
 
         Returns:
-            A set of three rules
+            A set of four rules
         """
         response = self.request(
             method="GET",
@@ -349,7 +349,7 @@ class BackendApiConnector(HTTPConnector):
             HTTPError: If no rule-set was found
 
         Returns:
-            A set of three rules
+            A set of four rules
         """
         response = self.request(
             method="PUT", endpoint=f"rule-set/{stable_target_id}", payload=rule_set

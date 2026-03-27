@@ -13,12 +13,14 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedVariableGroupIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
+    PublishingTarget,
     Text,
 )
 
@@ -236,12 +238,25 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
     label: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowVariableGroup(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged variable group items."""
+
+    entityType: Annotated[
+        Literal["WorkflowVariableGroup"], Field(alias="$type", frozen=True)
+    ] = "WorkflowVariableGroup"
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a variable group item."""
 
     additive: AdditiveVariableGroup = AdditiveVariableGroup()
     subtractive: SubtractiveVariableGroup = SubtractiveVariableGroup()
     preventive: PreventiveVariableGroup = PreventiveVariableGroup()
+    workflow: WorkflowVariableGroup = WorkflowVariableGroup()
 
 
 class VariableGroupRuleSetRequest(_BaseRuleSet):
