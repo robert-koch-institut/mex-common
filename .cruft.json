@@ -1,13 +1,13 @@
 {
   "checkout": null,
-  "commit": "172aac4cddf8ce8f9c90d2490af8284d5b994d01",
+  "commit": "808f4937884fc1c1d3efda9f09e81bc585d4ef96",
   "context": {
     "cookiecutter": {
       "project_name": "common",
       "short_summary": "Common library for MEx python projects.",
       "long_summary": "The `mex-common` library is a software development toolkit that is used by multiple components within the MEx project. It contains utilities for building pipelines like a common commandline interface, logging and configuration setup. It also provides common auxiliary connectors that can be used to fetch data from external services and a re-usable implementation of the MEx metadata schema as pydantic models.",
       "_template": "https://github.com/robert-koch-institut/mex-template",
-      "_commit": "172aac4cddf8ce8f9c90d2490af8284d5b994d01"
+      "_commit": "808f4937884fc1c1d3efda9f09e81bc585d4ef96"
     }
   },
   "directory": null,
