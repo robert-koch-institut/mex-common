@@ -1,4 +1,4 @@
-name: OpenCoDE
+name: Opencode
 
 on:
   push:
@@ -12,16 +12,20 @@ concurrency:
 
 jobs:
   sync:
+    if: github.repository_owner == 'robert-koch-institut'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: 'main'
           fetch-depth: 0
       - name: Push main branch
         run: |
-          git remote add opencode https://${{ secrets.OPENCODE_USER }}:${{ secrets.OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
+          git remote add opencode https://RKIMetadataExchange:${{ secrets.MEX_OPENCODE_TOKEN }}@gitlab.opencode.de/robert-koch-institut/mex/mex-common.git
           git push opencode -f
           git push opencode -f --tags
