@@ -31,6 +31,13 @@
             "minimumReleaseAgeBehaviour": "timestamp-optional"
         },
         {
+            "description": "Pin GitHub Actions to SHA digests for supply chain security",
+            "matchManagers": [
+                "github-actions"
+            ],
+            "pinDigests": true
+        },
+        {
             "description": "Immediately apply updates of mex packages",
             "matchPackageNames": [
                 "mex-*"
