@@ -18,20 +18,26 @@ env:
   PIP_NO_INPUT: on
   PIP_PREFER_BINARY: on
   PY_COLORS: "1"
+  MEX_BOT_EMAIL: mex@rki.de
+  MEX_BOT_USER: RKIMetadataExchange
 
 jobs:
   cruft:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          persist-credentials: false
 
       - name: Cache requirements
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         env:
           cache-name: cache-requirements
         with:
@@ -41,7 +47,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: 3.14
 
@@ -50,17 +56,14 @@ jobs:
 
       - name: Configure git
         env:
-          MEX_BOT_EMAIL: ${{ vars.MEX_BOT_EMAIL }}
-          MEX_BOT_USER: ${{ vars.MEX_BOT_USER }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
+          SIGNING_KEY: ${{ secrets.MEX_SIGNING_KEY }}
+          SIGNING_PUB: ${{ vars.MEX_SIGNING_PUB }}
         run: |
           eval "$(ssh-agent -s)"
           mex setup-commit-signing
 
-      - name: Update template
-        env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+      - name: Update template and commit
+        id: update
         run: |
           if cruft check; then
             echo template is up to date
@@ -72,6 +75,7 @@ jobs:
           fi
           template_url=$(python -c "print(__import__('json').load(open('.cruft.json'))['template'])")
           template_ref=$(git ls-remote ${template_url} --heads main --exit-code | cut -c -6)
+          echo "template_ref=${template_ref}" >> "$GITHUB_OUTPUT"
           git checkout main
           git checkout -b cruft/cookiecutter-template-${template_ref}
           cruft update --skip-apply-ask
@@ -87,5 +91,24 @@ jobs:
           done
           git add --all --verbose
           git commit --message "Bump cookiecutter template to $template_ref" --verbose
+
+      - name: Push branch
+        if: steps.update.outputs.template_ref
+        env:
+          GH_TOKEN: ${{ secrets.MEX_CONTENT_WRITE_TOKEN }}
+          template_ref: ${{ steps.update.outputs.template_ref }}
+        run: |
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --set-upstream origin cruft/cookiecutter-template-${template_ref} --force --verbose
-          gh pr create --title "Bump cookiecutter template to $template_ref" --body-file .cruft-pr-body --label cruft --assignee ${{ vars.MEX_BOT_USER }}
+
+      - name: Create pull request
+        if: steps.update.outputs.template_ref
+        env:
+          GH_TOKEN: ${{ secrets.MEX_COOKIECUTTER_TOKEN }}
+          template_ref: ${{ steps.update.outputs.template_ref }}
+        run: |
+          gh pr create \
+          --title "Bump cookiecutter template to ${template_ref}" \
+          --body-file .cruft-pr-body \
+          --label cruft \
+          --assignee ${MEX_BOT_USER}

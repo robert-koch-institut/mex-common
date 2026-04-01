@@ -20,10 +20,8 @@ env:
   PIP_NO_INPUT: on
   PIP_PREFER_BINARY: on
   PY_COLORS: "1"
-
-permissions:
-  contents: write
-  packages: write
+  MEX_BOT_EMAIL: mex@rki.de
+  MEX_BOT_USER: RKIMetadataExchange
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,17 +31,20 @@ jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
     outputs:
       tag: ${{ steps.release.outputs.tag }}
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          persist-credentials: false
 
       - name: Cache requirements
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         env:
           cache-name: cache-requirements
         with:
@@ -53,7 +54,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: 3.14
 
@@ -62,17 +63,18 @@ jobs:
 
       - name: Configure git
         env:
-          MEX_BOT_EMAIL: ${{ vars.MEX_BOT_EMAIL }}
-          MEX_BOT_USER: ${{ vars.MEX_BOT_USER }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PUB: ${{ secrets.SIGNING_PUB }}
+          SIGNING_KEY: ${{ secrets.MEX_SIGNING_KEY }}
+          SIGNING_PUB: ${{ vars.MEX_SIGNING_PUB }}
         run: |
           eval "$(ssh-agent -s)"
           mex setup-commit-signing
 
       - name: Release new version
         id: release
+        env:
+          GH_TOKEN: ${{ secrets.MEX_CONTENT_WRITE_TOKEN }}
         run: |
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           mex release ${{ inputs.version }}
           echo "tag=$(git describe --abbrev=0 --tags)" >> "$GITHUB_OUTPUT"
 
@@ -104,7 +106,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: 3.14
 
