@@ -17,7 +17,6 @@ from mex.common.models import (
     ItemsContainer,
     MergedModelTypeAdapter,
     PaginatedItemsContainer,
-    PreviewModelTypeAdapter,
     RuleSetResponseTypeAdapter,
     Status,
     VersionStatus,
@@ -229,30 +228,6 @@ class BackendApiConnector(HTTPConnector):
             endpoint=f"merged-item/{identifier}",
         )
         return MergedModelTypeAdapter.validate_python(response)
-
-    def preview_merged_item(
-        self,
-        stable_target_id: str,
-        rule_set: AnyRuleSetRequest,
-    ) -> AnyPreviewModel:
-        """Return a preview for merging the given rule-set with stored extracted items.
-
-        Args:
-            stable_target_id: The extracted items' `stableTargetId`
-            rule_set: A rule-set to use for previewing
-
-        Raises:
-            HTTPError: If preview produces errors, crashes or times out
-
-        Returns:
-            A single merged item
-        """
-        response = self.request(
-            method="POST",
-            endpoint=f"preview-item/{stable_target_id}",
-            payload=rule_set,
-        )
-        return PreviewModelTypeAdapter.validate_python(response)
 
     def fetch_preview_items(  # noqa: PLR0913
         self,
