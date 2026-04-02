@@ -6,4 +6,3 @@ class PublishingTarget(Enum):
 
     INVENIO = "invenio"
     DATENKOMPASS = "datenkompass"
-    TESTING = "testing"

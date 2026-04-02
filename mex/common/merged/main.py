@@ -298,17 +298,17 @@ def _ensure_rule_set(
 
 
 @overload
-def create_merged_item(
+def create_merged_item_for_publishing_target(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: Literal[Validation.LENIENT],
-    publishing_target: PublishingTarget,
+    publishing_target: PublishingTarget | None,
 ) -> AnyPreviewModel: ...
 
 
 @overload
-def create_merged_item(
+def create_merged_item_for_publishing_target(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -318,7 +318,7 @@ def create_merged_item(
 
 
 @overload
-def create_merged_item(
+def create_merged_item_for_publishing_target(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -327,12 +327,12 @@ def create_merged_item(
 ) -> AnyMergedModel | None: ...
 
 
-def create_merged_item(
+def create_merged_item_for_publishing_target(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     validation: AnyValidation,
-    publishing_target: PublishingTarget,
+    publishing_target: PublishingTarget | None,
 ) -> AnyPreviewModel | AnyMergedModel | None:
     """Validates if item is allowed to be published to target before building it.
 
@@ -346,7 +346,8 @@ def create_merged_item(
         - LENIENT: Skips validation checks and returns a "preview" merged item
             that may be missing required fields and even may be using blocked values
         - IGNORE: In case of validation errors, this mode will safely return None
-    publishing_target: specification of target to which the merged item is published
+    publishing_target: specification of target to which the merged item is published.
+            Can be of type None if validation is LENIENT
 
     Raises:
         MergingError: When the publishing target is forbidden for the item
@@ -356,23 +357,23 @@ def create_merged_item(
 
     """
     if (
-        rule_set
+        validation == validation.IGNORE
+        and rule_set
         and publishing_target in rule_set.workflow.forbiddenPublishingTarget
-        and validation == validation.IGNORE
     ):
         return None
     if (
-        rule_set
+        validation == validation.STRICT
+        and rule_set
         and publishing_target in rule_set.workflow.forbiddenPublishingTarget
-        and validation == validation.STRICT
     ):
         msg = f"Merged item forbidden to be published to {publishing_target}."
         raise MergingError(msg)
-    return build_merged_item(identifier, extracted_items, rule_set, validation)
+    return create_merged_item(identifier, extracted_items, rule_set, validation)
 
 
 @overload
-def build_merged_item(
+def create_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -381,7 +382,7 @@ def build_merged_item(
 
 
 @overload
-def build_merged_item(
+def create_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -390,7 +391,7 @@ def build_merged_item(
 
 
 @overload
-def build_merged_item(
+def create_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -398,7 +399,7 @@ def build_merged_item(
 ) -> AnyMergedModel | None: ...
 
 
-def build_merged_item(
+def create_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,

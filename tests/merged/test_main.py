@@ -16,8 +16,8 @@ from mex.common.merged.main import (
     _filter_usable_values,
     _get_merged_class,
     _pick_usable_values,
-    build_merged_item,
     create_merged_item,
+    create_merged_item_for_publishing_target,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
@@ -568,7 +568,7 @@ def test_build_merged_item(
     validation: AnyValidation,
     expected: dict[str, Any] | None,
 ) -> None:
-    merged_item = build_merged_item(
+    merged_item = create_merged_item(
         Identifier.generate(seed=42),
         extracted_items,
         rule_set,
@@ -614,7 +614,7 @@ def test_build_merged_item_errors(
     expected: str,
 ) -> None:
     with pytest.raises(MExError) as exc_info:
-        build_merged_item(
+        create_merged_item(
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,
@@ -659,7 +659,7 @@ def test_create_merged_item(
     publishing_target: PublishingTarget,
     expected: dict[str, Any] | None,
 ) -> None:
-    merged_item = create_merged_item(
+    merged_item = create_merged_item_for_publishing_target(
         Identifier.generate(seed=42),
         extracted_items,
         rule_set,
@@ -699,7 +699,7 @@ def test_create_merged_item_errors(
     expected: str,
 ) -> None:
     with pytest.raises(MExError) as exc_info:
-        create_merged_item(
+        create_merged_item_for_publishing_target(
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,
@@ -735,7 +735,7 @@ def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
 @pytest.mark.fuzzing
 def test_build_merged_item_with_artificial_data() -> None:
     """Return artificial dummy data."""
-    from mex.artificial.helpers import (  # type: ignore[import-not-found]  # noqa: PLC0415
+    from mex.artificial.helpers import (  # noqa: PLC0415
         create_artificial_items_and_rule_sets,
     )
 
@@ -752,7 +752,7 @@ def test_build_merged_item_with_artificial_data() -> None:
             [] if container.extracted_item is None else [container.extracted_item]
         )
         rule_set = container.rule_set
-        returned = build_merged_item(
+        returned = create_merged_item(
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,
