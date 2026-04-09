@@ -13,10 +13,19 @@ from tabulate import tabulate
 
 from mex.common.context import SingleSingletonStore
 from mex.common.logging import logger
-from mex.common.types import AssetsPath, IdentityProvider, Sink, WorkPath
+from mex.common.types import (
+    AssetsPath,
+    IdentityProvider,
+    OpsPath,
+    PathWrapper,
+    Sink,
+    WorkPath,
+)
 
 SETTINGS_STORE = SingleSingletonStore["BaseSettings"]()
 MEX_ASSETS_DIR = "MEX_ASSETS_DIR"
+MEX_OPS_DIR = "MEX_OPS_DIR"
+MEX_WORK_DIR = "MEX_WORK_DIR"
 
 
 class BaseSettings(PydanticBaseSettings):
@@ -55,14 +64,14 @@ class BaseSettings(PydanticBaseSettings):
         **values: Any,  # noqa: ANN401
     ) -> None:
         """Construct a new settings instance."""
-        if assets_dir := environ.get(MEX_ASSETS_DIR):
-            if not _env_file or _env_file is ENV_FILE_SENTINEL:
-                _env_file = [
-                    Path(assets_dir, ".env"),  # bw-compat
-                    Path(assets_dir, "config", ".env"),
-                ]
+        if ops_dir := environ.get(MEX_OPS_DIR):
+            env_file_argument_is_not_set = (
+                _env_file is None or _env_file is ENV_FILE_SENTINEL
+            )
+            if env_file_argument_is_not_set:
+                _env_file = [Path(ops_dir, "config", ".env")]
             if not _secrets_dir:
-                _secrets_dir = Path(assets_dir, "config", "secrets")
+                _secrets_dir = Path(ops_dir, "config", "secrets")
         super().__init__(
             _env_file=_env_file,
             _env_file_encoding=_env_file_encoding,
@@ -107,13 +116,21 @@ class BaseSettings(PydanticBaseSettings):
         ),
         validation_alias=MEX_ASSETS_DIR,
     )
+    ops_dir: Path = Field(
+        Path.cwd() / "ops",
+        description=(
+            "Path to directory that contains configuration files, "
+            "looks for a folder named `ops` in the current directory by default."
+        ),
+        validation_alias=MEX_OPS_DIR,
+    )
     work_dir: Path = Field(
         Path.cwd(),
         description=(
             "Path to directory that stores generated and temporary files. "
             "Defaults to the current working directory."
         ),
-        validation_alias="MEX_WORK_DIR",
+        validation_alias=MEX_WORK_DIR,
     )
     identity_provider: IdentityProvider = Field(
         IdentityProvider.MEMORY,
@@ -142,12 +159,12 @@ class BaseSettings(PydanticBaseSettings):
         description="How many items to load into the backend in one chunk.",
         validation_alias="MEX_BACKEND_API_CHUNK_SIZE",
     )
-    verify_session: bool | AssetsPath = Field(
+    verify_session: bool | OpsPath = Field(
         True,  # noqa: FBT003
         description=(
             "Either a boolean that controls whether we verify the server's TLS "
             "certificate, or a path to a CA bundle to use. If a path is given, it can "
-            "be either absolute or relative to the `assets_dir`. Defaults to True."
+            "be either absolute or relative to the `ops_dir`. Defaults to True."
         ),
         validation_alias="MEX_VERIFY_SESSION",
     )
@@ -243,14 +260,21 @@ class BaseSettings(PydanticBaseSettings):
 
     @model_validator(mode="after")
     def resolve_paths(self) -> Self:
-        """Resolve AssetPath and WorkPath."""
+        """Resolve AssetPath, OpsPath, and WorkPath."""
 
         def _resolve(model: PydanticBaseModel, _name: str) -> None:
             value = getattr(model, _name)
-            if isinstance(value, AssetsPath) and value.is_relative():
-                object.__setattr__(model, _name, self.assets_dir.resolve() / value)
-            elif isinstance(value, WorkPath) and value.is_relative():
-                object.__setattr__(model, _name, self.work_dir.resolve() / value)
+            if isinstance(value, PathWrapper) and value.is_relative():
+                if isinstance(value, AssetsPath):
+                    resolved_path = self.assets_dir.resolve() / value
+                elif isinstance(value, OpsPath):
+                    resolved_path = self.ops_dir.resolve() / value
+                elif isinstance(value, WorkPath):
+                    resolved_path = self.work_dir.resolve() / value
+                else:
+                    msg = f"Unexpected path type: {type(value)}"
+                    raise ValueError(msg)
+                object.__setattr__(model, _name, resolved_path)
             elif isinstance(value, PydanticBaseModel):
                 for sub_model_field_name in type(value).model_fields:
                     _resolve(value, sub_model_field_name)
