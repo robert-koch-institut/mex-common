@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add get_preview_item by stableTargetId to BackendAPIConnector
 - **BREAKING** add configuration parameter `ops_dir`. Settings are now read from
   `ops_dir/config/.env` and `ops_dir/config/secrets/*`. Make sure your environment
   variable `MEX_OPS_DIR` points to your local mex-ops directory.
