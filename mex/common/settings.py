@@ -273,7 +273,7 @@ class BaseSettings(PydanticBaseSettings):
                     resolved_path = self.work_dir.resolve() / value
                 else:
                     msg = f"Unexpected path type: {type(value)}"
-                    raise ValueError(msg)
+                    raise RuntimeError(msg)
                 object.__setattr__(model, _name, resolved_path)
             elif isinstance(value, PydanticBaseModel):
                 for sub_model_field_name in type(value).model_fields:
