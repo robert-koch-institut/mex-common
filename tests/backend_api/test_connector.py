@@ -283,6 +283,29 @@ def test_fetch_preview_items_mocked(
     )
 
 
+def test_get_preview_item_mocked(
+    mocked_backend: MagicMock, preview_person: PreviewPerson
+) -> None:
+    mocked_return = preview_person.model_dump()
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_preview_item("NGwfzG8ROsrvIiQIVDVy")
+
+    assert response == preview_person
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/preview-item/NGwfzG8ROsrvIiQIVDVy",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
 def test_get_rule_set_mocked(
     mocked_backend: MagicMock, rule_set_response: PersonRuleSetResponse
 ) -> None:
