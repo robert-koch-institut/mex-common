@@ -27,7 +27,6 @@ from mex.common.ldap.models import (
 from mex.common.logging import logger
 from mex.common.models.base.container import PaginatedItemsContainer
 from mex.common.settings import BaseSettings
-from mex.common.types import AssetsPath
 
 LDAP_FETCH_CACHE_SIZE = 5000
 
@@ -49,9 +48,9 @@ class LDAPConnector(BaseConnector):
         host = str(url.hostname)
         port = int(url.port) if url.port else None
         ca_certs_file = (
-            settings.verify_session
-            if isinstance(settings.verify_session, AssetsPath)
-            else None
+            None
+            if isinstance(settings.verify_session, bool)
+            else settings.verify_session
         )
         tls_configuration = Tls(
             validate=ssl.CERT_REQUIRED,

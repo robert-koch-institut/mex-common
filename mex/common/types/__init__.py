@@ -34,7 +34,7 @@ from mex.common.types.identifier import (
 )
 from mex.common.types.identity import IdentityProvider
 from mex.common.types.link import Link, LinkLanguage
-from mex.common.types.path import AssetsPath, PathWrapper, WorkPath
+from mex.common.types.path import AssetsPath, OpsPath, PathWrapper, WorkPath
 from mex.common.types.sink import Sink
 from mex.common.types.temporal_entity import (
     CET,
@@ -140,6 +140,7 @@ __all__ = (
     "MergedResourceIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
+    "OpsPath",
     "PathWrapper",
     "PersonalData",
     "ResourceCreationMethod",
