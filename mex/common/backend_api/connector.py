@@ -17,6 +17,7 @@ from mex.common.models import (
     ItemsContainer,
     MergedModelTypeAdapter,
     PaginatedItemsContainer,
+    PreviewModelTypeAdapter,
     RuleSetResponseTypeAdapter,
     Status,
     VersionStatus,
