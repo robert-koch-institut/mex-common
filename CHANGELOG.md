@@ -22,6 +22,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.19.0] - 2026-04-17
+
+### Added
+
+- add get_preview_item by stableTargetId to BackendAPIConnector
+- **BREAKING** add configuration parameter `ops_dir`. Settings are now read from
+  `ops_dir/config/.env` and `ops_dir/config/secrets/*`. Make sure your environment
+  variable `MEX_OPS_DIR` points to your local mex-ops directory.
+  For dependent repositories: change the type of your Settings parameters that point to
+  migrated files (e.g. certificates) to `OpsPath`.
+
 ## [1.18.1] - 2026-04-01
 
 ### Changes

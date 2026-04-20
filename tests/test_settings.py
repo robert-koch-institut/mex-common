@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from mex.common.models import BaseModel
 from mex.common.settings import SETTINGS_STORE, BaseSettings
 from mex.common.types import AssetsPath, WorkPath
+from mex.common.types.path import OpsPath
 
 
 def test_debug_setting() -> None:
@@ -63,9 +64,15 @@ def test_settings_getting_caches_singleton() -> None:
 @pytest.mark.integration
 def test_parse_env_file() -> None:
     settings = BaseSettings.get()
-    # "work_dir" and "assets_dir" are always set, assert that more than these two are
-    # set. This indicates an .env file was found and at least one setting was parsed.
-    assert settings.model_fields_set != {"work_dir", "assets_dir"}
+    # "assets_dir", "ops_dir", and "work_dir" are always set, assert that more than
+    # these two are set. This indicates an .env file was found and at least one
+    # setting was parsed.
+    model_fields_set_from_env_file = settings.model_fields_set - {
+        "assets_dir",
+        "ops_dir",
+        "work_dir",
+    }
+    assert model_fields_set_from_env_file
 
 
 class SubModel(BaseModel):
@@ -76,6 +83,7 @@ class DummySettings(BaseSettings):
     non_path: str
     abs_work_path: WorkPath
     rel_work_path: WorkPath
+    rel_ops_path: OpsPath
     assets_path: AssetsPath
     sub_model: SubModel
 
@@ -92,8 +100,10 @@ def test_resolve_paths() -> None:
         non_path="blablabla",
         abs_work_path=absolute,
         rel_work_path=relative,
+        rel_ops_path=relative,
         assets_path=AssetsPath(relative),
         assets_dir=Path(absolute / "assets_dir"),
+        ops_dir=Path(absolute / "ops_dir"),
         work_dir=Path(absolute / "work_dir"),
         sub_model=SubModel(sub_model_path=relative),
     )
@@ -101,6 +111,7 @@ def test_resolve_paths() -> None:
     assert settings.non_path == "blablabla"
     assert settings.abs_work_path == absolute
     assert settings.rel_work_path == WorkPath(settings.work_dir / relative)
+    assert settings.rel_ops_path == OpsPath(settings.ops_dir / relative)
     assert settings.assets_path == AssetsPath(absolute / "assets_dir" / relative)
     assert settings.sub_model.sub_model_path == WorkPath(settings.work_dir / relative)
 

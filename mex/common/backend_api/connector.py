@@ -272,6 +272,27 @@ class BackendApiConnector(HTTPConnector):
         )
         return PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
 
+    def get_preview_item(
+        self,
+        identifier: str,
+    ) -> AnyPreviewModel:
+        """Return one preview item for the given `identifier`.
+
+        Args:
+            identifier: The preview item's identifier
+
+        Raises:
+            HTTPError: If no preview item was found
+
+        Returns:
+            A single preview item
+        """
+        response = self.request(
+            method="GET",
+            endpoint=f"preview-item/{identifier}",
+        )
+        return PreviewModelTypeAdapter.validate_python(response)
+
     def create_rule_set(
         self,
         rule_set: AnyRuleSetRequest,
