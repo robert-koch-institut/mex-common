@@ -341,13 +341,15 @@ def create_merged_item_for_publishing_target(
     extracted_items: List of extracted items, can be empty
     rule_set: Rule set, with potentially empty rules
     validation: Controls how strictly the merged item needs to validate:
-        - STRICT: Validates all required fields and list lengths. Returns a
-            fully validated merged item or raises MergingError on validation failure
+        - STRICT: Validates all required fields, list lengths, and publishing targets.
+            Returns a fully validated merged item or raises a MergingError on
+            validation failure.
         - LENIENT: Skips validation checks and returns a "preview" merged item
-            that may be missing required fields and even may be using blocked values
+            that may be missing required fields, using blocked values,
+            or publish to forbidden publishing targets.
         - IGNORE: In case of validation errors, this mode will safely return None
     publishing_target: specification of target to which the merged item is published.
-            Can be of type None if validation is LENIENT
+            Can be of type None if validation is LENIENT (i.e. a "preview" merged item)
 
     Raises:
         MergingError: When the publishing target is forbidden for the item
