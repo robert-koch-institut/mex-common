@@ -562,7 +562,7 @@ def test_ensure_rule_set_returns_existing() -> None:
         ),
     ],
 )
-def test_build_merged_item(
+def test_create_merged_item(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     validation: AnyValidation,
@@ -608,7 +608,7 @@ def test_build_merged_item(
         ),
     ],
 )
-def test_build_merged_item_errors(
+def test_create_merged_item_errors(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     expected: str,
@@ -653,7 +653,7 @@ def test_build_merged_item_errors(
         ),
     ],
 )
-def test_create_merged_item(
+def test_create_merged_item_for_publishing_target(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     publishing_target: PublishingTarget,
@@ -692,7 +692,7 @@ def test_create_merged_item(
         ),
     ],
 )
-def test_create_merged_item_errors(
+def test_create_merged_item_for_publishing_target_errors(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     publishing_target: PublishingTarget,
@@ -733,7 +733,7 @@ def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
 
 
 @pytest.mark.fuzzing
-def test_build_merged_item_with_artificial_data() -> None:
+def test_create_merged_item_with_artificial_data() -> None:
     """Return artificial dummy data."""
     from mex.artificial.helpers import (  # noqa: PLC0415
         create_artificial_items_and_rule_sets,
