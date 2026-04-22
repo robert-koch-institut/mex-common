@@ -357,6 +357,12 @@ def create_merged_item_for_publishing_target(
 
     """
     if (
+        validation in (validation.IGNORE, validation.STRICT)
+        and publishing_target is None
+    ):
+        msg = f"A publishing target must be provided for MergedItem {identifier}."
+        raise MergingError(msg)
+    if (
         validation == validation.IGNORE
         and rule_set
         and publishing_target in rule_set.workflow.forbiddenPublishingTarget
