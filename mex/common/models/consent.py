@@ -22,7 +22,6 @@ from mex.common.types import (
     MergedConsentIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingTarget,
     YearMonthDayTime,
 )
 
@@ -311,10 +310,6 @@ class WorkflowConsent(_Stem, WorkflowRule):
     entityType: Annotated[
         Literal["WorkflowConsent"], Field(alias="$type", frozen=True)
     ] = "WorkflowConsent"
-    forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
-        Field(description="Targets to which the merged item should NOT be published."),
-    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):

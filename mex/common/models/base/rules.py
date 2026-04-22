@@ -1,6 +1,9 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
+
+from pydantic import Field
 
 from mex.common.models.base.model import BaseModel
+from mex.common.types import PublishingTarget
 
 
 class AdditiveRule(BaseModel, extra="forbid"):
@@ -17,6 +20,11 @@ class PreventiveRule(BaseModel, extra="forbid"):
 
 class WorkflowRule(BaseModel, extra="forbid"):
     """Base rule to define workflow rules like forbidden publishing targets."""
+
+    forbiddenPublishingTarget: Annotated[
+        list[PublishingTarget],
+        Field(description="Targets to which the merged item should NOT be published."),
+    ] = []
 
 
 class RuleSet(BaseModel, extra="forbid"):

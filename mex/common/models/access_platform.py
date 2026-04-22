@@ -25,7 +25,6 @@ from mex.common.types import (
     MergedOrganizationalUnitIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingTarget,
     TechnicalAccessibility,
     Text,
 )
@@ -377,10 +376,6 @@ class WorkflowAccessPlatform(_Stem, WorkflowRule):
     entityType: Annotated[
         Literal["WorkflowAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "WorkflowAccessPlatform"
-    forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
-        Field(description="Targets to which the merged item should NOT be published."),
-    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):

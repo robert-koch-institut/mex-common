@@ -24,7 +24,6 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
-    PublishingTarget,
     Text,
     Year,
     YearMonth,
@@ -436,10 +435,6 @@ class WorkflowDistribution(_Stem, WorkflowRule):
     entityType: Annotated[
         Literal["WorkflowDistribution"], Field(alias="$type", frozen=True)
     ] = "WorkflowDistribution"
-    forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
-        Field(description="Targets to which the merged item should NOT be published."),
-    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):

@@ -21,7 +21,6 @@ from mex.common.types import (
     MergedResourceIdentifier,
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
-    PublishingTarget,
     Text,
 )
 
@@ -364,10 +363,6 @@ class WorkflowVariable(_Stem, WorkflowRule):
     entityType: Annotated[
         Literal["WorkflowVariable"], Field(alias="$type", frozen=True)
     ] = "WorkflowVariable"
-    forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
-        Field(description="Targets to which the merged item should NOT be published."),
-    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):

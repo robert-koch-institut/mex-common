@@ -21,7 +21,6 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
-    PublishingTarget,
 )
 
 EmailStr = Annotated[
@@ -347,10 +346,6 @@ class WorkflowPerson(_Stem, WorkflowRule):
     entityType: Annotated[
         Literal["WorkflowPerson"], Field(alias="$type", frozen=True)
     ] = "WorkflowPerson"
-    forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
-        Field(description="Targets to which the merged item should NOT be published."),
-    ] = []
 
 
 class _BaseRuleSet(_Stem, RuleSet):
