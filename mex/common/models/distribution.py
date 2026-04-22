@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -428,12 +429,21 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     title: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowDistribution(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged distribution items."""
+
+    entityType: Annotated[
+        Literal["WorkflowDistribution"], Field(alias="$type", frozen=True)
+    ] = "WorkflowDistribution"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a distribution item."""
 
     additive: AdditiveDistribution = AdditiveDistribution()
     subtractive: SubtractiveDistribution = SubtractiveDistribution()
     preventive: PreventiveDistribution = PreventiveDistribution()
+    workflow: WorkflowDistribution = WorkflowDistribution()
 
 
 class DistributionRuleSetRequest(_BaseRuleSet):

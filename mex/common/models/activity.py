@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ActivityType,
@@ -426,12 +427,21 @@ class PreventiveActivity(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowActivity(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged activity items."""
+
+    entityType: Annotated[
+        Literal["WorkflowActivity"], Field(alias="$type", frozen=True)
+    ] = "WorkflowActivity"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an activity item."""
 
     additive: AdditiveActivity = AdditiveActivity()
     subtractive: SubtractiveActivity = SubtractiveActivity()
     preventive: PreventiveActivity = PreventiveActivity()
+    workflow: WorkflowActivity = WorkflowActivity()
 
 
 class ActivityRuleSetRequest(_BaseRuleSet):

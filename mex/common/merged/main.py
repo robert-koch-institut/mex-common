@@ -25,7 +25,13 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import AnyPrimitiveType, AnyValidation, Identifier, Validation
+from mex.common.types import (
+    AnyPrimitiveType,
+    AnyValidation,
+    Identifier,
+    PublishingTarget,
+    Validation,
+)
 from mex.common.utils import ensure_list
 
 
@@ -289,6 +295,89 @@ def _ensure_rule_set(
         rule_set_class_name = f"{stem_type}RuleSetRequest"
         rule_set = RULE_SET_REQUEST_CLASSES_BY_NAME[rule_set_class_name]()
     return rule_set
+
+
+@overload
+def create_merged_item_for_publishing_target(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.LENIENT],
+    publishing_target: PublishingTarget | None,
+) -> AnyPreviewModel: ...
+
+
+@overload
+def create_merged_item_for_publishing_target(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.STRICT],
+    publishing_target: PublishingTarget,
+) -> AnyMergedModel: ...
+
+
+@overload
+def create_merged_item_for_publishing_target(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: Literal[Validation.IGNORE],
+    publishing_target: PublishingTarget,
+) -> AnyMergedModel | None: ...
+
+
+def create_merged_item_for_publishing_target(
+    identifier: Identifier,
+    extracted_items: Iterable[AnyExtractedModel],
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    validation: AnyValidation,
+    publishing_target: PublishingTarget | None,
+) -> AnyPreviewModel | AnyMergedModel | None:
+    """Validates if item is allowed to be published to target before building it.
+
+    Args:
+    identifier: Identifier the finished merged item should have
+    extracted_items: List of extracted items, can be empty
+    rule_set: Rule set, with potentially empty rules
+    validation: Controls how strictly the merged item needs to validate:
+        - STRICT: Validates all required fields, list lengths, and publishing targets.
+            Returns a fully validated merged item or raises a MergingError on
+            validation failure.
+        - LENIENT: Skips validation checks and returns a "preview" merged item
+            that may be missing required fields, using blocked values,
+            or publish to forbidden publishing targets.
+        - IGNORE: In case of validation errors, this mode will safely return None
+    publishing_target: specification of target to which the merged item is published.
+            Can be of type None if validation is LENIENT (i.e. a "preview" merged item)
+
+    Raises:
+        MergingError: When the publishing target is forbidden for the item
+
+    Returns:
+        Instance of a merged or preview item
+
+    """
+    if (
+        validation in (validation.IGNORE, validation.STRICT)
+        and publishing_target is None
+    ):
+        msg = f"A publishing target must be provided for MergedItem {identifier}."
+        raise MergingError(msg)
+    if (
+        validation == validation.IGNORE
+        and rule_set
+        and publishing_target in rule_set.workflow.forbiddenPublishingTarget
+    ):
+        return None
+    if (
+        validation == validation.STRICT
+        and rule_set
+        and publishing_target in rule_set.workflow.forbiddenPublishingTarget
+    ):
+        msg = f"Merged item forbidden to be published to {publishing_target}."
+        raise MergingError(msg)
+    return create_merged_item(identifier, extracted_items, rule_set, validation)
 
 
 @overload

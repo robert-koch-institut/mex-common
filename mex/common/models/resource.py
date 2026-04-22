@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -925,12 +926,21 @@ class PreventiveResource(_Stem, PreventiveRule):
     wasGeneratedBy: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowResource(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged resource items."""
+
+    entityType: Annotated[
+        Literal["WorkflowResource"], Field(alias="$type", frozen=True)
+    ] = "WorkflowResource"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a resource item."""
 
     additive: AdditiveResource = AdditiveResource()
     subtractive: SubtractiveResource = SubtractiveResource()
     preventive: PreventiveResource = PreventiveResource()
+    workflow: WorkflowResource = WorkflowResource()
 
 
 class ResourceRuleSetRequest(_BaseRuleSet):

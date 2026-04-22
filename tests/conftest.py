@@ -12,6 +12,7 @@ from mex.common.models import (
     PreventivePerson,
     PreviewPerson,
     SubtractivePerson,
+    WorkflowPerson,
 )
 from mex.common.types import (
     ExtractedPersonIdentifier,
@@ -97,6 +98,7 @@ def rule_set_request() -> PersonRuleSetRequest:
         additive=AdditivePerson(),
         subtractive=SubtractivePerson(fullName="That's not my name!"),
         preventive=PreventivePerson(),
+        workflow=WorkflowPerson(),
     )
 
 
@@ -108,4 +110,5 @@ def rule_set_response() -> PersonRuleSetResponse:
         additive=AdditivePerson(),
         subtractive=SubtractivePerson(fullName="That's not my name!"),
         preventive=PreventivePerson(),
+        workflow=WorkflowPerson(),
     )

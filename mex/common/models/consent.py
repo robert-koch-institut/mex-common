@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ConsentStatus,
@@ -303,12 +304,21 @@ class PreventiveConsent(_Stem, PreventiveRule):
     isIndicatedAtTime: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowConsent(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged consent items."""
+
+    entityType: Annotated[
+        Literal["WorkflowConsent"], Field(alias="$type", frozen=True)
+    ] = "WorkflowConsent"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a consent item."""
 
     additive: AdditiveConsent = AdditiveConsent()
     subtractive: SubtractiveConsent = SubtractiveConsent()
     preventive: PreventiveConsent = PreventiveConsent()
+    workflow: WorkflowConsent = WorkflowConsent()
 
 
 class ConsentRuleSetRequest(_BaseRuleSet):

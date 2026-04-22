@@ -230,30 +230,6 @@ class BackendApiConnector(HTTPConnector):
         )
         return MergedModelTypeAdapter.validate_python(response)
 
-    def preview_merged_item(
-        self,
-        stable_target_id: str,
-        rule_set: AnyRuleSetRequest,
-    ) -> AnyPreviewModel:
-        """Return a preview for merging the given rule-set with stored extracted items.
-
-        Args:
-            stable_target_id: The extracted items' `stableTargetId`
-            rule_set: A rule-set to use for previewing
-
-        Raises:
-            HTTPError: If preview produces errors, crashes or times out
-
-        Returns:
-            A single merged item
-        """
-        response = self.request(
-            method="POST",
-            endpoint=f"preview-item/{stable_target_id}",
-            payload=rule_set,
-        )
-        return PreviewModelTypeAdapter.validate_python(response)
-
     def fetch_preview_items(  # noqa: PLR0913
         self,
         *,
@@ -349,7 +325,7 @@ class BackendApiConnector(HTTPConnector):
             HTTPError: If no rule-set was found
 
         Returns:
-            A set of three rules
+            A set of four rules
         """
         response = self.request(
             method="GET",
@@ -370,7 +346,7 @@ class BackendApiConnector(HTTPConnector):
             HTTPError: If no rule-set was found
 
         Returns:
-            A set of three rules
+            A set of four rules
         """
         response = self.request(
             method="PUT", endpoint=f"rule-set/{stable_target_id}", payload=rule_set
