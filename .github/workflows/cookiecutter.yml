@@ -95,7 +95,7 @@ jobs:
       - name: Push branch
         if: steps.update.outputs.template_ref
         env:
-          GH_TOKEN: ${{ secrets.MEX_CONTENT_WRITE_TOKEN }}
+          GH_TOKEN: ${{ secrets.MEX_COOKIECUTTER_TOKEN }}
           template_ref: ${{ steps.update.outputs.template_ref }}
         run: |
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
