@@ -316,7 +316,7 @@ class BackendApiConnector(HTTPConnector):
         self,
         stable_target_id: str,
     ) -> AnyRuleSetResponse:
-        """Return a triple of rules for the given `stableTargetId`.
+        """Return the rules for the given `stableTargetId`.
 
         Args:
             stable_target_id: The merged item's identifier
