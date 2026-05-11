@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class PublishingTarget(Enum):
+class PublishingTarget(StrEnum):
     """Possible targets to which a merged item could be published."""
 
     INVENIO = "invenio"

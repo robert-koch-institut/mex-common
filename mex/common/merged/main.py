@@ -298,7 +298,7 @@ def _ensure_rule_set(
 
 
 @overload
-def create_merged_item_for_publishing_target(
+def create_publishable_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -308,7 +308,7 @@ def create_merged_item_for_publishing_target(
 
 
 @overload
-def create_merged_item_for_publishing_target(
+def create_publishable_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -318,7 +318,7 @@ def create_merged_item_for_publishing_target(
 
 
 @overload
-def create_merged_item_for_publishing_target(
+def create_publishable_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
@@ -327,7 +327,7 @@ def create_merged_item_for_publishing_target(
 ) -> AnyMergedModel | None: ...
 
 
-def create_merged_item_for_publishing_target(
+def create_publishable_merged_item(
     identifier: Identifier,
     extracted_items: Iterable[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,

@@ -17,7 +17,7 @@ from mex.common.merged.main import (
     _get_merged_class,
     _pick_usable_values,
     create_merged_item,
-    create_merged_item_for_publishing_target,
+    create_publishable_merged_item,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
@@ -679,14 +679,14 @@ def test_create_merged_item_errors(
         ),
     ],
 )
-def test_create_merged_item_for_publishing_target_success_with_publishing_target(
+def test_create_publishable_merged_item_success_with_publishing_target(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     validation: AnyValidation,
     publishing_target: PublishingTarget,
     expected: dict[str, Any],
 ) -> None:
-    merged_item = create_merged_item_for_publishing_target(
+    merged_item = create_publishable_merged_item(
         Identifier.generate(seed=42),
         extracted_items,
         rule_set,
@@ -729,13 +729,13 @@ def test_create_merged_item_for_publishing_target_success_with_publishing_target
         ),
     ],
 )
-def test_create_merged_item_for_publishing_target_success_without_publishing_target(
+def test_create_publishable_merged_item_success_without_publishing_target(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     publishing_target: None,
     expected: dict[str, Any],
 ) -> None:
-    merged_item = create_merged_item_for_publishing_target(
+    merged_item = create_publishable_merged_item(
         Identifier.generate(seed=42),
         extracted_items,
         rule_set,
@@ -788,14 +788,14 @@ def test_create_merged_item_for_publishing_target_success_without_publishing_tar
         ),
     ],
 )
-def test_create_merged_item_for_publishing_target_errors(
+def test_create_publishable_merged_item_errors(
     extracted_items: list[AnyExtractedModel],
     rule_set: AnyRuleSetRequest | None,
     publishing_target: PublishingTarget | None,
     expected: str,
 ) -> None:
     with pytest.raises(MExError) as exc_info:
-        create_merged_item_for_publishing_target(  # type: ignore[call-overload]
+        create_publishable_merged_item(  # type: ignore[call-overload]
             Identifier.generate(seed=42),
             extracted_items,
             rule_set,
