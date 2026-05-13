@@ -640,11 +640,11 @@ def test_create_merged_item_errors(
                     email=["info@krusty.ocean"],
                 ),
                 workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=["datenkompass"],
+                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
                 ),
             ),
             Validation.STRICT,
-            "invenio",
+            PublishingTarget.INVENIO,
             {
                 "email": ["orders@krusty.ocean", "info@krusty.ocean"],
                 "entityType": "MergedContactPoint",
@@ -665,11 +665,11 @@ def test_create_merged_item_errors(
                     email=["info@krusty.ocean"],
                 ),
                 workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=["datenkompass"],
+                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
                 ),
             ),
             Validation.LENIENT,
-            "datenkompass",
+            PublishingTarget.DATENKOMPASS,
             {
                 "email": ["orders@krusty.ocean", "info@krusty.ocean"],
                 "entityType": "PreviewContactPoint",
@@ -716,7 +716,7 @@ def test_create_publishable_merged_item_success_with_publishing_target(
                     email=["info@krusty.ocean"],
                 ),
                 workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=["datenkompass"],
+                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
                 ),
             ),
             None,
@@ -762,10 +762,10 @@ def test_create_publishable_merged_item_success_without_publishing_target(
             ],
             ContactPointRuleSetRequest(
                 workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=["datenkompass"],
+                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
                 ),
             ),
-            "datenkompass",
+            PublishingTarget.DATENKOMPASS,
             "Merged item forbidden to be published to datenkompass.",
             id="publishing_target_prevents_creation_of_merged_item",
         ),
@@ -779,7 +779,7 @@ def test_create_publishable_merged_item_success_without_publishing_target(
             ],
             ContactPointRuleSetRequest(
                 workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=["datenkompass"],
+                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
                 ),
             ),
             None,
