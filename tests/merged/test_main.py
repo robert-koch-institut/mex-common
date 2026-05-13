@@ -17,13 +17,12 @@ from mex.common.merged.main import (
     _get_merged_class,
     _pick_usable_values,
     create_merged_item,
-    create_publishable_merged_item,
+    is_item_publishable,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
-    AdditiveContactPoint,
     AdditivePerson,
     AdditiveResource,
     AnyExtractedModel,
@@ -625,185 +624,46 @@ def test_create_merged_item_errors(
 
 
 @pytest.mark.parametrize(
-    ("extracted_items", "rule_set", "validation", "publishing_target", "expected"),
+    ("rule_set", "publishing_target", "expected"),
     [
         pytest.param(
-            [
-                ExtractedContactPoint(
-                    identifierInPrimarySource="orders",
-                    hadPrimarySource=Identifier.generate(seed=98),
-                    email=["orders@krusty.ocean"],
-                )
-            ],
             ContactPointRuleSetRequest(
-                additive=AdditiveContactPoint(
-                    email=["info@krusty.ocean"],
-                ),
                 workflow=WorkflowContactPoint(
                     forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
                 ),
             ),
-            Validation.STRICT,
-            PublishingTarget.INVENIO,
-            {
-                "email": ["orders@krusty.ocean", "info@krusty.ocean"],
-                "entityType": "MergedContactPoint",
-                "identifier": Joker(),
-            },
-            id="publishing_target_is_valid_for_strict_validation",
+            PublishingTarget.DATENKOMPASS,
+            False,
+            id="False_because_publishing_target_is_forbidden",
         ),
         pytest.param(
-            [
-                ExtractedContactPoint(
-                    identifierInPrimarySource="orders",
-                    hadPrimarySource=Identifier.generate(seed=98),
-                    email=["orders@krusty.ocean"],
-                )
-            ],
             ContactPointRuleSetRequest(
-                additive=AdditiveContactPoint(
-                    email=["info@krusty.ocean"],
-                ),
                 workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
+                    forbiddenPublishingTarget=[],
                 ),
             ),
-            Validation.LENIENT,
             PublishingTarget.DATENKOMPASS,
-            {
-                "email": ["orders@krusty.ocean", "info@krusty.ocean"],
-                "entityType": "PreviewContactPoint",
-                "identifier": Joker(),
-            },
-            id="forbidden_publishing_target_ignored_for_lenient_validation",
+            True,
+            id="True_because_no_forbidden_publishing_targets",
+        ),
+        pytest.param(
+            None,
+            PublishingTarget.DATENKOMPASS,
+            True,
+            id="True_because_no_workflow_rule_which_forbids_publishing_targets",
         ),
     ],
 )
-def test_create_publishable_merged_item_success_with_publishing_target(
-    extracted_items: list[AnyExtractedModel],
+def test_is_item_publishable(
     rule_set: AnyRuleSetRequest | None,
-    validation: AnyValidation,
     publishing_target: PublishingTarget,
-    expected: dict[str, Any],
+    expected: bool,  # noqa: FBT001
 ) -> None:
-    merged_item = create_publishable_merged_item(
-        Identifier.generate(seed=42),
-        extracted_items,
+    result = is_item_publishable(
         rule_set,
-        validation,
         publishing_target,
     )
-    if merged_item is None:
-        assert expected is None
-    else:
-        clean_dict = {k: v for k, v in merged_item.model_dump().items() if v}
-        assert clean_dict == expected
-
-
-@pytest.mark.parametrize(
-    ("extracted_items", "rule_set", "publishing_target", "expected"),
-    [
-        pytest.param(
-            [
-                ExtractedContactPoint(
-                    identifierInPrimarySource="orders",
-                    hadPrimarySource=Identifier.generate(seed=98),
-                    email=["orders@krusty.ocean"],
-                )
-            ],
-            ContactPointRuleSetRequest(
-                additive=AdditiveContactPoint(
-                    email=["info@krusty.ocean"],
-                ),
-                workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
-                ),
-            ),
-            None,
-            {
-                "email": ["orders@krusty.ocean", "info@krusty.ocean"],
-                "entityType": "PreviewContactPoint",
-                "identifier": Joker(),
-            },
-            id="no_publishing_target_needed_for_lenient_validation",
-        ),
-    ],
-)
-def test_create_publishable_merged_item_success_without_publishing_target(
-    extracted_items: list[AnyExtractedModel],
-    rule_set: AnyRuleSetRequest | None,
-    publishing_target: None,
-    expected: dict[str, Any],
-) -> None:
-    merged_item = create_publishable_merged_item(
-        Identifier.generate(seed=42),
-        extracted_items,
-        rule_set,
-        Validation.LENIENT,
-        publishing_target,
-    )
-    if merged_item is None:
-        assert expected is None
-    else:
-        clean_dict = {k: v for k, v in merged_item.model_dump().items() if v}
-        assert clean_dict == expected
-
-
-@pytest.mark.parametrize(
-    ("extracted_items", "rule_set", "publishing_target", "expected"),
-    [
-        pytest.param(
-            [
-                ExtractedContactPoint(
-                    identifierInPrimarySource="orders",
-                    hadPrimarySource=Identifier.generate(seed=98),
-                    email=["orders@krusty.ocean"],
-                )
-            ],
-            ContactPointRuleSetRequest(
-                workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
-                ),
-            ),
-            PublishingTarget.DATENKOMPASS,
-            "Merged item forbidden to be published to datenkompass.",
-            id="publishing_target_prevents_creation_of_merged_item",
-        ),
-        pytest.param(
-            [
-                ExtractedContactPoint(
-                    identifierInPrimarySource="orders",
-                    hadPrimarySource=Identifier.generate(seed=98),
-                    email=["orders@krusty.ocean"],
-                )
-            ],
-            ContactPointRuleSetRequest(
-                workflow=WorkflowContactPoint(
-                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
-                ),
-            ),
-            None,
-            "A publishing target must be provided for MergedItem bFQoRhcVH5DHU6.",
-            id="no_publishing_target_given_for_strict_validation",
-        ),
-    ],
-)
-def test_create_publishable_merged_item_errors(
-    extracted_items: list[AnyExtractedModel],
-    rule_set: AnyRuleSetRequest | None,
-    publishing_target: PublishingTarget | None,
-    expected: str,
-) -> None:
-    with pytest.raises(MExError) as exc_info:
-        create_publishable_merged_item(  # type: ignore[call-overload]
-            Identifier.generate(seed=42),
-            extracted_items,
-            rule_set,
-            Validation.STRICT,
-            publishing_target,
-        )
-    error = exc_info.value
-    assert expected in f"{error}: {error.__cause__}"
+    assert result == expected
 
 
 @pytest.fixture(autouse=True)
