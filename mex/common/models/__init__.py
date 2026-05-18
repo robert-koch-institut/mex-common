@@ -28,7 +28,8 @@ Each entity type `T` is modelled for the following use cases:
   fields from contributing to a merged item
 - `PreventiveT` defines a rule to prevent (or block) specific primary sources from
   contributing to specific fields of a merged item
-- `TRuleSet` classes are used for CRUD operations on a set of three rules
+- `WorkflowT` defines a rule to prevent a merged item from being published
+- `TRuleSet` classes are used for CRUD operations on a set of four rules
 
 - `TFilter` defines how an entity filter specification should look like
 - `TMapping` defines how a raw-data to extracted item mapping should look like
@@ -48,7 +49,8 @@ we use a number of intermediate private classes to compose the public classes:
 - `_VariadicValues` re-defines all fields from `_OptionalValues` and `_RequiredValues`
   as list fields with an arity of 0-n
 
-- `_BaseRuleSet` bundles the additive, subtractive and preventive rules for one type
+- `_BaseRuleSet` bundles the additive, subtractive, preventive and workflow rules for
+   one type
 
 These private classes are used to compose the public classes like so:
 
@@ -60,8 +62,9 @@ These private classes are used to compose the public classes like so:
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
 - PreventiveT: all fields from BaseT re-typed as MergedPrimarySourceIdentifier
-- TRuleSetRequest: bundle of all three rules for one type used to create new rules
-- TRuleSetResponse: bundle of all three rules for one type including a `stableTargetId`
+- WorkflowT: own field forbiddenPublishingTarget
+- TRuleSetRequest: bundle of all four rules for one type used to create new rules
+- TRuleSetResponse: bundle of all four rules for one type including a `stableTargetId`
 
 - TFilter: a single field containing a list of filter rule definitions
 - TMapping: all BaseT fields re-typed as lists of mapping fields with `setValues` type
@@ -97,6 +100,7 @@ from mex.common.models.access_platform import (
     PreventiveAccessPlatform,
     PreviewAccessPlatform,
     SubtractiveAccessPlatform,
+    WorkflowAccessPlatform,
 )
 from mex.common.models.activity import (
     ActivityFilter,
@@ -110,6 +114,7 @@ from mex.common.models.activity import (
     PreventiveActivity,
     PreviewActivity,
     SubtractiveActivity,
+    WorkflowActivity,
 )
 from mex.common.models.base.container import (
     ItemsContainer,
@@ -120,7 +125,12 @@ from mex.common.models.base.filter import BaseFilter, FilterField, FilterRule
 from mex.common.models.base.mapping import BaseMapping, MappingField, MappingRule
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
-from mex.common.models.base.rules import AdditiveRule, PreventiveRule, SubtractiveRule
+from mex.common.models.base.rules import (
+    AdditiveRule,
+    PreventiveRule,
+    SubtractiveRule,
+    WorkflowRule,
+)
 from mex.common.models.base.status import Status, VersionStatus
 from mex.common.models.bibliographic_resource import (
     AdditiveBibliographicResource,
@@ -134,6 +144,7 @@ from mex.common.models.bibliographic_resource import (
     PreventiveBibliographicResource,
     PreviewBibliographicResource,
     SubtractiveBibliographicResource,
+    WorkflowBibliographicResource,
 )
 from mex.common.models.consent import (
     AdditiveConsent,
@@ -147,6 +158,7 @@ from mex.common.models.consent import (
     PreventiveConsent,
     PreviewConsent,
     SubtractiveConsent,
+    WorkflowConsent,
 )
 from mex.common.models.contact_point import (
     AdditiveContactPoint,
@@ -160,6 +172,7 @@ from mex.common.models.contact_point import (
     PreventiveContactPoint,
     PreviewContactPoint,
     SubtractiveContactPoint,
+    WorkflowContactPoint,
 )
 from mex.common.models.distribution import (
     AdditiveDistribution,
@@ -173,6 +186,7 @@ from mex.common.models.distribution import (
     PreventiveDistribution,
     PreviewDistribution,
     SubtractiveDistribution,
+    WorkflowDistribution,
 )
 from mex.common.models.organization import (
     AdditiveOrganization,
@@ -186,6 +200,7 @@ from mex.common.models.organization import (
     PreventiveOrganization,
     PreviewOrganization,
     SubtractiveOrganization,
+    WorkflowOrganization,
 )
 from mex.common.models.organizational_unit import (
     AdditiveOrganizationalUnit,
@@ -199,6 +214,7 @@ from mex.common.models.organizational_unit import (
     PreventiveOrganizationalUnit,
     PreviewOrganizationalUnit,
     SubtractiveOrganizationalUnit,
+    WorkflowOrganizationalUnit,
 )
 from mex.common.models.person import (
     AdditivePerson,
@@ -212,6 +228,7 @@ from mex.common.models.person import (
     PreventivePerson,
     PreviewPerson,
     SubtractivePerson,
+    WorkflowPerson,
 )
 from mex.common.models.primary_source import (
     AdditivePrimarySource,
@@ -225,6 +242,7 @@ from mex.common.models.primary_source import (
     PrimarySourceRuleSetRequest,
     PrimarySourceRuleSetResponse,
     SubtractivePrimarySource,
+    WorkflowPrimarySource,
 )
 from mex.common.models.resource import (
     AdditiveResource,
@@ -238,6 +256,7 @@ from mex.common.models.resource import (
     ResourceRuleSetRequest,
     ResourceRuleSetResponse,
     SubtractiveResource,
+    WorkflowResource,
 )
 from mex.common.models.variable import (
     AdditiveVariable,
@@ -251,6 +270,7 @@ from mex.common.models.variable import (
     VariableMapping,
     VariableRuleSetRequest,
     VariableRuleSetResponse,
+    WorkflowVariable,
 )
 from mex.common.models.variable_group import (
     AdditiveVariableGroup,
@@ -264,6 +284,7 @@ from mex.common.models.variable_group import (
     VariableGroupMapping,
     VariableGroupRuleSetRequest,
     VariableGroupRuleSetResponse,
+    WorkflowVariableGroup,
 )
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
@@ -298,6 +319,8 @@ __all__ = (
     "RULE_SET_RESPONSE_CLASSES_BY_NAME",
     "SUBTRACTIVE_MODEL_CLASSES",
     "SUBTRACTIVE_MODEL_CLASSES_BY_NAME",
+    "WORKFLOW_MODEL_CLASSES",
+    "WORKFLOW_MODEL_CLASSES_BY_NAME",
     "AccessPlatformFilter",
     "AccessPlatformMapping",
     "AccessPlatformRuleSetRequest",
@@ -332,6 +355,7 @@ __all__ = (
     "AnyRuleSetRequest",
     "AnyRuleSetResponse",
     "AnySubtractiveModel",
+    "AnyWorkflowModel",
     "BaseAccessPlatform",
     "BaseActivity",
     "BaseBibliographicResource",
@@ -477,6 +501,21 @@ __all__ = (
     "VariableRuleSetRequest",
     "VariableRuleSetResponse",
     "VersionStatus",
+    "WorkflowAccessPlatform",
+    "WorkflowActivity",
+    "WorkflowBibliographicResource",
+    "WorkflowConsent",
+    "WorkflowContactPoint",
+    "WorkflowDistribution",
+    "WorkflowModelTypeAdapter",
+    "WorkflowOrganization",
+    "WorkflowOrganizationalUnit",
+    "WorkflowPerson",
+    "WorkflowPrimarySource",
+    "WorkflowResource",
+    "WorkflowRule",
+    "WorkflowVariable",
+    "WorkflowVariableGroup",
 )
 
 MEX_PRIMARY_SOURCE_IDENTIFIER = ExtractedPrimarySourceIdentifier("00000000000001")
@@ -659,7 +698,34 @@ PREVENTIVE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyPreventiveModel]]] = {
     cls.__name__: cls for cls in PREVENTIVE_MODEL_CLASSES
 }
 
-AnyRuleModel = AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel
+AnyWorkflowModel = (
+    WorkflowAccessPlatform
+    | WorkflowActivity
+    | WorkflowBibliographicResource
+    | WorkflowConsent
+    | WorkflowContactPoint
+    | WorkflowDistribution
+    | WorkflowOrganization
+    | WorkflowOrganizationalUnit
+    | WorkflowPerson
+    | WorkflowPrimarySource
+    | WorkflowResource
+    | WorkflowVariable
+    | WorkflowVariableGroup
+)
+WorkflowModelTypeAdapter: TypeAdapter[AnyWorkflowModel] = TypeAdapter(
+    Annotated[AnyWorkflowModel, Field(discriminator="entityType")]
+)
+WORKFLOW_MODEL_CLASSES: Final[list[type[AnyWorkflowModel]]] = list(
+    get_args(AnyWorkflowModel)
+)
+WORKFLOW_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyWorkflowModel]]] = {
+    cls.__name__: cls for cls in WORKFLOW_MODEL_CLASSES
+}
+
+AnyRuleModel = (
+    AnyAdditiveModel | AnySubtractiveModel | AnyPreventiveModel | AnyWorkflowModel
+)
 RuleModelTypeAdapter: TypeAdapter[AnyRuleModel] = TypeAdapter(
     Annotated[AnyRuleModel, Field(discriminator="entityType")]
 )
@@ -667,13 +733,14 @@ RULE_MODEL_CLASSES: Final[list[type[AnyRuleModel]]] = list(get_args(AnyRuleModel
 RULE_MODEL_CLASSES_BY_NAME: Final[dict[str, type[AnyRuleModel]]] = {
     cls.__name__: cls for cls in RULE_MODEL_CLASSES
 }
-AnyRuleModelName = Literal["additive", "subtractive", "preventive"]
+AnyRuleModelName = Literal["additive", "subtractive", "preventive", "workflow"]
 RULE_MODEL_CLASSES_BY_TYPE_BY_NAME: Final[
     Mapping[AnyRuleModelName, Mapping[str, type[AnyRuleModel]]]
 ] = {
     "additive": ADDITIVE_MODEL_CLASSES_BY_NAME,
     "subtractive": SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
     "preventive": PREVENTIVE_MODEL_CLASSES_BY_NAME,
+    "workflow": WORKFLOW_MODEL_CLASSES_BY_NAME,
 }
 
 AnyRuleSetRequest = (

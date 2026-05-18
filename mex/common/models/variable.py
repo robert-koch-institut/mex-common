@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedVariableIdentifier,
@@ -356,12 +357,21 @@ class PreventiveVariable(_Stem, PreventiveRule):
     valueSet: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowVariable(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged variable items."""
+
+    entityType: Annotated[
+        Literal["WorkflowVariable"], Field(alias="$type", frozen=True)
+    ] = "WorkflowVariable"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a variable item."""
 
     additive: AdditiveVariable = AdditiveVariable()
     subtractive: SubtractiveVariable = SubtractiveVariable()
     preventive: PreventiveVariable = PreventiveVariable()
+    workflow: WorkflowVariable = WorkflowVariable()
 
 
 class VariableRuleSetRequest(_BaseRuleSet):

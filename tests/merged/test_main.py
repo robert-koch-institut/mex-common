@@ -17,6 +17,7 @@ from mex.common.merged.main import (
     _get_merged_class,
     _pick_usable_values,
     create_merged_item,
+    is_item_publishable,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
@@ -43,6 +44,7 @@ from mex.common.models import (
     SubtractiveContactPoint,
     SubtractivePerson,
     SubtractiveResource,
+    WorkflowContactPoint,
 )
 from mex.common.testing import Joker
 from mex.common.types import (
@@ -50,6 +52,7 @@ from mex.common.types import (
     AnyValidation,
     Identifier,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
     Text,
     TextLanguage,
     Theme,
@@ -300,7 +303,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "entityType": "MergedResource",
                 "identifier": "bFQoRhcVH5DHU6",
             },
-            id="single extracted item",
+            id="single_extracted_item",
         ),
         pytest.param(
             [
@@ -352,7 +355,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "identifier": Identifier.generate(seed=42),
                 "entityType": "MergedPerson",
             },
-            id="extracted items and rule set",
+            id="extracted_items_and_rule_set",
         ),
         pytest.param(
             [],
@@ -379,7 +382,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "identifier": Identifier.generate(seed=42),
                 "entityType": "MergedPerson",
             },
-            id="only rule set",
+            id="only_rule_set",
         ),
         pytest.param(
             [
@@ -418,7 +421,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "identifier": Identifier.generate(seed=42),
                 "entityType": "MergedPerson",
             },
-            id="only extracted items",
+            id="only_extracted_items",
         ),
         pytest.param(
             [
@@ -446,7 +449,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "responsibleUnit": [Identifier.generate(seed=98)],
                 "entityType": "PreviewActivity",
             },
-            id="get preview of merged items",
+            id="get_preview_of_merged_items",
         ),
         pytest.param(
             [
@@ -467,7 +470,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "entityType": "PreviewContactPoint",
                 "email": ["manager@krusty.ocean"],
             },
-            id="preview allows cardinality error",
+            id="preview_allows_cardinality_error",
         ),
         pytest.param(
             [
@@ -484,7 +487,7 @@ def test_ensure_rule_set_returns_existing() -> None:
             ),
             Validation.IGNORE,
             None,
-            id="ignore mode validation returns none",
+            id="ignore_mode_validation_returns_none",
         ),
         pytest.param(
             [
@@ -523,7 +526,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "entityType": "MergedContactPoint",
                 "identifier": Joker(),
             },
-            id="stable order by identifier",
+            id="stable_order_by_identifier",
         ),
         pytest.param(
             [
@@ -554,7 +557,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "title": [{"language": TextLanguage.EN, "value": "Dummy resource"}],
                 "unitInCharge": ["bFQoRhcVH5DIax"],
             },
-            id="lenient validation allows multiple optional values",
+            id="lenient_validation_allows_multiple_optional_values",
         ),
     ],
 )
@@ -584,7 +587,7 @@ def test_create_merged_item(
             [],
             None,
             "One of rule_set or extracted_items is required.",
-            id="error if neither is supplied",
+            id="error_if_neither_is_supplied",
         ),
         pytest.param(
             [
@@ -600,7 +603,7 @@ def test_create_merged_item(
                 )
             ),
             "List should have at least 1 item after validation, not 0",
-            id="merging raises cardinality error",
+            id="merging_raises_cardinality_error",
         ),
     ],
 )
@@ -618,6 +621,49 @@ def test_create_merged_item_errors(
         )
     error = exc_info.value
     assert expected in f"{error}: {error.__cause__}"
+
+
+@pytest.mark.parametrize(
+    ("rule_set", "publishing_target", "expected"),
+    [
+        pytest.param(
+            ContactPointRuleSetRequest(
+                workflow=WorkflowContactPoint(
+                    forbiddenPublishingTarget=[PublishingTarget.DATENKOMPASS],
+                ),
+            ),
+            PublishingTarget.DATENKOMPASS,
+            False,
+            id="False_because_publishing_target_is_forbidden",
+        ),
+        pytest.param(
+            ContactPointRuleSetRequest(
+                workflow=WorkflowContactPoint(
+                    forbiddenPublishingTarget=[],
+                ),
+            ),
+            PublishingTarget.DATENKOMPASS,
+            True,
+            id="True_because_no_forbidden_publishing_targets",
+        ),
+        pytest.param(
+            None,
+            PublishingTarget.DATENKOMPASS,
+            True,
+            id="True_because_no_workflow_rule_which_forbids_publishing_targets",
+        ),
+    ],
+)
+def test_is_item_publishable(
+    rule_set: AnyRuleSetRequest | None,
+    publishing_target: PublishingTarget,
+    expected: bool,  # noqa: FBT001
+) -> None:
+    result = is_item_publishable(
+        rule_set,
+        publishing_target,
+    )
+    assert result == expected
 
 
 @pytest.fixture(autouse=True)
@@ -645,7 +691,7 @@ def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
 @pytest.mark.fuzzing
 def test_create_merged_item_with_artificial_data() -> None:
     """Return artificial dummy data."""
-    from mex.artificial.helpers import (  # type: ignore[import-not-found]  # noqa: PLC0415
+    from mex.artificial.helpers import (  # noqa: PLC0415
         create_artificial_items_and_rule_sets,
     )
 

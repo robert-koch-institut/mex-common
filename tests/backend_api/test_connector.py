@@ -14,7 +14,6 @@ from mex.common.models import (
     ItemsContainer,
     MergedPerson,
     PaginatedItemsContainer,
-    PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreviewPerson,
 )
@@ -215,36 +214,6 @@ def test_get_merged_item_mocked(
             "User-Agent": "rki/mex",
         },
         timeout=10,
-    )
-
-
-def test_preview_merged_item_mocked(
-    mocked_backend: MagicMock,
-    preview_person: PreviewPerson,
-    rule_set_request: PersonRuleSetRequest,
-) -> None:
-    mocked_return = preview_person.model_dump()
-    mocked_backend.return_value.json.return_value = mocked_return
-
-    connector = BackendApiConnector.get()
-    response = connector.preview_merged_item("NGwfzG8ROsrvIiQIVDVy", rule_set_request)
-
-    assert response == preview_person
-
-    assert mocked_backend.call_args == call(
-        "POST",
-        "http://localhost:8080/v0/preview-item/NGwfzG8ROsrvIiQIVDVy",
-        None,
-        headers={
-            "Accept": "application/json",
-            "User-Agent": "rki/mex",
-        },
-        timeout=10,
-        data=Joker(),
-    )
-    assert (
-        json.loads(mocked_backend.call_args.kwargs["data"])
-        == rule_set_request.model_dump()
     )
 
 

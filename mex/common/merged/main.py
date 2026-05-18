@@ -25,7 +25,13 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import AnyPrimitiveType, AnyValidation, Identifier, Validation
+from mex.common.types import (
+    AnyPrimitiveType,
+    AnyValidation,
+    Identifier,
+    PublishingTarget,
+    Validation,
+)
 from mex.common.utils import ensure_list
 
 
@@ -289,6 +295,20 @@ def _ensure_rule_set(
         rule_set_class_name = f"{stem_type}RuleSetRequest"
         rule_set = RULE_SET_REQUEST_CLASSES_BY_NAME[rule_set_class_name]()
     return rule_set
+
+
+def is_item_publishable(
+    rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
+    publishing_target: PublishingTarget,
+) -> bool:
+    """Check if item is publishable.
+
+    E.g.
+    - return False if publishing target is in ForbiddenPublishingTarget in Workflow rule
+    """
+    if rule_set is None:
+        return True
+    return publishing_target not in rule_set.workflow.forbiddenPublishingTarget
 
 
 @overload
