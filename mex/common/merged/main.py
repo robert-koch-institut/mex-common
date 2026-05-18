@@ -304,11 +304,11 @@ def is_item_publishable(
     """Check if item is publishable.
 
     E.g.
-    - return false if publishing target is in ForbiddenPublishingTarget in Workflow rule
+    - return False if publishing target is in ForbiddenPublishingTarget in Workflow rule
     """
-    return not (
-        rule_set and publishing_target in rule_set.workflow.forbiddenPublishingTarget
-    )
+    if rule_set is None:
+        return True
+    return publishing_target not in rule_set.workflow.forbiddenPublishingTarget
 
 
 @overload
