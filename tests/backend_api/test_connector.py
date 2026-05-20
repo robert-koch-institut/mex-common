@@ -275,6 +275,90 @@ def test_get_preview_item_mocked(
     )
 
 
+def test_fetch_publishable_merged_items_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    mocked_return = {"items": [merged_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_publishable_merged_items(
+        publishing_target="invenio",
+        query_string="Tintzmann",
+        entity_type=["MergedPerson", "MergedContactPoint"],
+        limit=1,
+    )
+
+    assert response.items == [merged_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/publishable-merged-item",
+        {
+            "publishingTarget": "invenio",
+            "q": "Tintzmann",
+            "identifier": None,
+            "entityType": ["MergedPerson", "MergedContactPoint"],
+            "referenceField": None,
+            "referencedIdentifier": None,
+            "skip": "0",
+            "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_fetch_all_publishable_merged_items_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    merged_person_json = merged_person.model_dump()
+    mocked_backend.return_value.json.side_effect = [
+        {"status": "ok"},  # status check
+        {"items": [], "total": 103},  # call to gauge the total
+        {"items": [merged_person_json] * 100, "total": 103},  # first page 0-99
+        {"items": [merged_person_json] * 3, "total": 103},  # second page 100-103
+    ]
+
+    connector = BackendApiConnector.get()
+    items = list(
+        connector.fetch_all_publishable_merged_items(
+            publishing_target="invenio", query_string="Tintzmann"
+        ),
+    )
+
+    # expect 4 calls: status check, get the total, and get two pages 0-99/100-103
+    assert len(mocked_backend.call_args_list) == 4
+
+    # expect all 103 persons to be there
+    assert items == [merged_person] * 103
+
+    # expect the last call to be made with the correct parameters
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/publishable-merged-item",
+        {
+            "publishingTarget": "invenio",
+            "q": "Tintzmann",
+            "identifier": None,
+            "entityType": None,
+            "referenceField": None,
+            "referencedIdentifier": None,
+            "skip": "100",
+            "limit": "100",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
 def test_get_rule_set_mocked(
     mocked_backend: MagicMock, rule_set_response: PersonRuleSetResponse
 ) -> None:
