@@ -9,8 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- BREAKING: New workflow rule defining forbidden targets for publishing of merged items
-- BREAKING: creation of merged items now needs publishing target parameter
+- BREAKING: Added workflow rule to all rule sets
+  - it defines forbidden targets for publishing of merged items
+  - This change affects what kind of data is stored in database and might therefore
+    have unexpected side effects
+  - If your repo depends on mex-common AND on mex-backend, make sure to update both to
+    versions that include the workflow rule
+- new "is_item_publishable" function
 
 ### Changes
 
@@ -19,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+- Post endpoint for preview_merged_item
 
 ### Fixed
 
