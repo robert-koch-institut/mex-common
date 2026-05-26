@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedOrganizationalUnitIdentifier,
@@ -321,12 +322,21 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowOrganizationalUnit(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged organizational unit items."""
+
+    entityType: Annotated[
+        Literal["WorkflowOrganizationalUnit"], Field(alias="$type", frozen=True)
+    ] = "WorkflowOrganizationalUnit"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an organizational unit item."""
 
     additive: AdditiveOrganizationalUnit = AdditiveOrganizationalUnit()
     subtractive: SubtractiveOrganizationalUnit = SubtractiveOrganizationalUnit()
     preventive: PreventiveOrganizationalUnit = PreventiveOrganizationalUnit()
+    workflow: WorkflowOrganizationalUnit = WorkflowOrganizationalUnit()
 
 
 class OrganizationalUnitRuleSetRequest(_BaseRuleSet):

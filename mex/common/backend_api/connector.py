@@ -230,30 +230,6 @@ class BackendApiConnector(HTTPConnector):
         )
         return MergedModelTypeAdapter.validate_python(response)
 
-    def preview_merged_item(
-        self,
-        stable_target_id: str,
-        rule_set: AnyRuleSetRequest,
-    ) -> AnyPreviewModel:
-        """Return a preview for merging the given rule-set with stored extracted items.
-
-        Args:
-            stable_target_id: The extracted items' `stableTargetId`
-            rule_set: A rule-set to use for previewing
-
-        Raises:
-            HTTPError: If preview produces errors, crashes or times out
-
-        Returns:
-            A single merged item
-        """
-        response = self.request(
-            method="POST",
-            endpoint=f"preview-item/{stable_target_id}",
-            payload=rule_set,
-        )
-        return PreviewModelTypeAdapter.validate_python(response)
-
     def fetch_preview_items(  # noqa: PLR0913
         self,
         *,
@@ -318,6 +294,103 @@ class BackendApiConnector(HTTPConnector):
         )
         return PreviewModelTypeAdapter.validate_python(response)
 
+    def fetch_publishable_merged_items(  # noqa: PLR0913
+        self,
+        *,
+        publishing_target: str,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,
+        reference_field: str | None = None,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> PaginatedItemsContainer[AnyMergedModel]:
+        """Fetch publishable merged items that match the given set of filters.
+
+        Args:
+            publishing_target: The target to publish the items to
+            query_string: Full-text search query
+            identifier: Merged item identifier filter
+            entity_type: The items' entityType
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
+            skip: How many items to skip for pagination
+            limit: How many items to return in one page
+
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
+
+        Returns:
+            One page of publishable merged items and the total count that was matched
+        """
+        response = self.request(
+            method="GET",
+            endpoint="publishable-merged-item",
+            params={
+                "publishingTarget": publishing_target,
+                "q": query_string,
+                "identifier": identifier,
+                "entityType": entity_type,
+                "referencedIdentifier": referenced_identifier,
+                "referenceField": reference_field,
+                "skip": str(skip),
+                "limit": str(limit),
+            },
+        )
+        return PaginatedItemsContainer[AnyMergedModel].model_validate(response)
+
+    def fetch_all_publishable_merged_items(  # noqa: PLR0913
+        self,
+        *,
+        publishing_target: str,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        referenced_identifier: list[str] | None = None,
+        reference_field: str | None = None,
+    ) -> Generator[AnyMergedModel, None, None]:
+        """Fetch all publishable merged items that match the given set of filters.
+
+        Args:
+            publishing_target: The target to publish the items to
+            query_string: Full-text search query
+            identifier: Merged item identifier filter
+            entity_type: The items' entityType
+            referenced_identifier: Merged item identifiers filter
+            reference_field: Field name to filter for
+
+        Raises:
+            HTTPError: If search was not accepted, crashes or times out
+
+        Returns:
+            Generator for all publishable merged items that match the filters
+        """
+        response = self.fetch_publishable_merged_items(
+            publishing_target=publishing_target,
+            query_string=query_string,
+            identifier=identifier,
+            entity_type=entity_type,
+            referenced_identifier=referenced_identifier,
+            reference_field=reference_field,
+            skip=0,
+            limit=1,
+        )
+        total_item_number = response.total
+        item_number_limit = 100  # 100 is the maximum possible number per get-request
+        for item_counter in range(0, total_item_number, item_number_limit):
+            response = self.fetch_publishable_merged_items(
+                publishing_target=publishing_target,
+                query_string=query_string,
+                identifier=identifier,
+                entity_type=entity_type,
+                referenced_identifier=referenced_identifier,
+                reference_field=reference_field,
+                skip=item_counter,
+                limit=item_number_limit,
+            )
+            yield from response.items
+
     def create_rule_set(
         self,
         rule_set: AnyRuleSetRequest,
@@ -340,7 +413,7 @@ class BackendApiConnector(HTTPConnector):
         self,
         stable_target_id: str,
     ) -> AnyRuleSetResponse:
-        """Return a triple of rules for the given `stableTargetId`.
+        """Return the rules for the given `stableTargetId`.
 
         Args:
             stable_target_id: The merged item's identifier
@@ -349,7 +422,7 @@ class BackendApiConnector(HTTPConnector):
             HTTPError: If no rule-set was found
 
         Returns:
-            A set of three rules
+            A set of four rules
         """
         response = self.request(
             method="GET",
@@ -370,7 +443,7 @@ class BackendApiConnector(HTTPConnector):
             HTTPError: If no rule-set was found
 
         Returns:
-            A set of three rules
+            A set of four rules
         """
         response = self.request(
             method="PUT", endpoint=f"rule-set/{stable_target_id}", payload=rule_set
