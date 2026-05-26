@@ -328,14 +328,14 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "40.15.0"
+version = "37.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32'" },
+    { name = "tzdata" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7f/13/6741787bd91c4109c7bed047d68273965cd52ce8a5f773c471b949334b6d/faker-40.15.0.tar.gz", hash = "sha256:20f3a6ec8c266b74d4c554e34118b21c3c2056c0b4a519d15c8decb3a4e6e795", size = 1967447, upload-time = "2026-04-17T20:05:27.555Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3d/84/e95acaa848b855e15c83331d0401ee5f84b2f60889255c2e055cb4fb6bdf/faker-37.12.0.tar.gz", hash = "sha256:7505e59a7e02fa9010f06c3e1e92f8250d4cfbb30632296140c2d6dbef09b0fa", size = 1935741, upload-time = "2025-10-24T15:19:58.764Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/a7/a600f8f30d4505e89166de51dd121bd540ab8e560e8cf0901de00a81de8c/faker-40.15.0-py3-none-any.whl", hash = "sha256:71ab3c3370da9d2205ab74ffb0fd51273063ad562b3a3bb69d0026a20923e318", size = 2004447, upload-time = "2026-04-17T20:05:25.437Z" },
+    { url = "https://files.pythonhosted.org/packages/8e/98/2c050dec90e295a524c9b65c4cb9e7c302386a296b2938710448cbd267d5/faker-37.12.0-py3-none-any.whl", hash = "sha256:afe7ccc038da92f2fbae30d8e16d19d91e92e242f8401ce9caf44de892bab4c4", size = 1975461, upload-time = "2025-10-24T15:19:55.739Z" },
 ]
 
 [[package]]
@@ -640,24 +640,23 @@ wheels = [
 
 [[package]]
 name = "mex-artificial"
-version = "1.4.1"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
     { name = "faker" },
     { name = "mex-common" },
     { name = "pydantic" },
-    { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/59/03/5f21f7c0bd53297bb9fc583d0de9dc5253976769b31b4920ca88b00cdb3f/mex_artificial-1.4.1.tar.gz", hash = "sha256:0d095067c9f2e134d98f8828cdacdeb11b4fea475470f0dc49341c9c59828b79", size = 11811, upload-time = "2026-04-01T13:38:37.062Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9a/f3/23dbb17d887b9032f1d9e5dfc264263d6c5c9f0a06d400c4c4e263ce315d/mex_artificial-1.0.0.tar.gz", hash = "sha256:a49eb0b7dd72141b16cb97acd05bb5b69bda10e5222dec3d4117d7c68192095b", size = 15017, upload-time = "2025-08-21T15:29:34.691Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/68/db3f1f7d5c7b6440a9dffe52ef42b2179117973725003b14625e47e10330/mex_artificial-1.4.1-py3-none-any.whl", hash = "sha256:cd5f296dcf711c88f9b912113deb029739c05b55c87878163495c8d99cd5f786", size = 12943, upload-time = "2026-04-01T13:38:35.907Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/58/7eab3eec16eecb5af40b4069d239783be8594df583999bb2447186c07613/mex_artificial-1.0.0-py3-none-any.whl", hash = "sha256:c7a35a458da8de261ab11605de3bebdb6452c52858bb3ea1462f5593e25f66aa", size = 12223, upload-time = "2025-08-21T15:29:33.389Z" },
 ]
 
 [[package]]
 name = "mex-common"
-version = "1.19.0"
+version = "2.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "backoff" },
