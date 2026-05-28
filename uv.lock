@@ -328,14 +328,14 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "37.12.0"
+version = "40.19.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3d/84/e95acaa848b855e15c83331d0401ee5f84b2f60889255c2e055cb4fb6bdf/faker-37.12.0.tar.gz", hash = "sha256:7505e59a7e02fa9010f06c3e1e92f8250d4cfbb30632296140c2d6dbef09b0fa", size = 1935741, upload-time = "2025-10-24T15:19:58.764Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/15/01/28c8ddae8caaf82c929655000963d83e3f01265a9af34e823c2ef2eee8ac/faker-40.19.1.tar.gz", hash = "sha256:76fa71fd3bf320db25e5504eb356f9a76b8a95cd6098524d006f446035b6b89d", size = 1969318, upload-time = "2026-05-22T15:57:37.433Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8e/98/2c050dec90e295a524c9b65c4cb9e7c302386a296b2938710448cbd267d5/faker-37.12.0-py3-none-any.whl", hash = "sha256:afe7ccc038da92f2fbae30d8e16d19d91e92e242f8401ce9caf44de892bab4c4", size = 1975461, upload-time = "2025-10-24T15:19:55.739Z" },
+    { url = "https://files.pythonhosted.org/packages/49/b4/40a1ec12ec834604f3848143343baf1c67bc9a1096e401907eaa0d25876a/faker-40.19.1-py3-none-any.whl", hash = "sha256:265259b37c013838baaae34940207288170df385d6c5281413fce56a3504d580", size = 2007643, upload-time = "2026-05-22T15:57:35.867Z" },
 ]
 
 [[package]]
@@ -640,18 +640,19 @@ wheels = [
 
 [[package]]
 name = "mex-artificial"
-version = "1.0.0"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
     { name = "faker" },
     { name = "mex-common" },
     { name = "pydantic" },
+    { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9a/f3/23dbb17d887b9032f1d9e5dfc264263d6c5c9f0a06d400c4c4e263ce315d/mex_artificial-1.0.0.tar.gz", hash = "sha256:a49eb0b7dd72141b16cb97acd05bb5b69bda10e5222dec3d4117d7c68192095b", size = 15017, upload-time = "2025-08-21T15:29:34.691Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/bc/84d245bb4b041c746c86ccdb049b7f54fe35f28b3697e422149365ad5b56/mex_artificial-2.0.0.tar.gz", hash = "sha256:44f6882838b0101824daa09c02a37e04725250d13719b001e4747ce9b16a8127", size = 11982, upload-time = "2026-05-26T08:39:55.574Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fa/58/7eab3eec16eecb5af40b4069d239783be8594df583999bb2447186c07613/mex_artificial-1.0.0-py3-none-any.whl", hash = "sha256:c7a35a458da8de261ab11605de3bebdb6452c52858bb3ea1462f5593e25f66aa", size = 12223, upload-time = "2025-08-21T15:29:33.389Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/d6/5d522c92a09451ca54f2c20d4c24db1856b0b8f4475327b8f911ebf4a706/mex_artificial-2.0.0-py3-none-any.whl", hash = "sha256:7db1239037442c18a0cc739b0e71e2641a3c6b8051bfa4fd41a889b0621543ae", size = 13026, upload-time = "2026-05-26T08:39:54.284Z" },
 ]
 
 [[package]]
@@ -732,7 +733,7 @@ dev = [
     { name = "types-requests" },
     { name = "types-tabulate" },
 ]
-fuzzing = [{ name = "mex-artificial" }]
+fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 
 [[package]]
 name = "mex-model"
