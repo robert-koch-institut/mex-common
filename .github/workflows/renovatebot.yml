@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 1
 
       - name: Run renovatebot
-        uses: renovatebot/github-action@68a3ea99af6ad249940b5a9fdf44fc6d7f14378b # v46.1.6
+        uses: renovatebot/github-action@693b9ef15eec82123529a37c782242f091365961 # v46.1.14
         env:
           RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.MEX_PLAIN_SIGNING_KEY }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
