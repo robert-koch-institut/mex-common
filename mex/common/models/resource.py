@@ -45,6 +45,7 @@ from mex.common.types import (
     YearMonthDay,
     YearMonthDayTime,
 )
+from mex.common.types.vocabulary import Concept
 
 ConformsToStr = Annotated[
     str,
@@ -150,6 +151,15 @@ class _OptionalLists(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
+    analytics: Annotated[
+        list[MergedDistributionIdentifier],
+        Field(
+            description="An analytics distribution of the dataset.",
+            json_schema_extra={
+                "sameAs": ["http://healthdataportal.eu/ns/health#analytics"]
+            },
+        ),
+    ] = []
     anonymizationPseudonymization: Annotated[
         list[AnonymizationPseudonymization],
         Field(
@@ -215,6 +225,13 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    end: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(
+            description="End date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
+        ),
+    ] = []
     externalPartner: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
@@ -223,6 +240,19 @@ class _OptionalLists(_Stem):
                 "creation of the resource."
             ),
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
+    ] = []
+    hasCodeValues: Annotated[
+        list[Text],
+        Field(
+            description=(
+                "The code values of the respective coding systems that are applied to "
+                "the dataset, for example code value 'U07.1' as used in the "
+                "coding system 'ICD-10'."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://healthdataportal.eu/ns/health#hasCodeValues"]
+            },
         ),
     ] = []
     hasLegalBasis: Annotated[
@@ -249,6 +279,19 @@ class _OptionalLists(_Stem):
                 "or personal data."
             ),
             json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPurpose"]},
+        ),
+    ] = []
+    healthCategory: Annotated[
+        list[Concept],
+        Field(
+            description=(
+                "The category of electronic data for secondary use to which this "
+                "resource belongs, as described in Article 51 of the Commission "
+                "Regulation on the European Health Data Space."
+            ),
+            json_schema_extra={
+                "sameAs": ["http://healthdataportal.eu/ns/health#healthCategory"]
+            },
         ),
     ] = []
     icd10code: Annotated[
@@ -319,6 +362,35 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    numberOfRecords: Annotated[
+        int | None,
+        Field(
+            description=(
+                "The total number of records in the dataset. The number reflects the "
+                "total data entries (e.g., consultations, prescriptions, lab results, "
+                "hospital admissions) according to the dataset's content."
+            ),
+            json_schema_extra={
+                "subPropertyOf": [
+                    "http://healthdataportal.eu/ns/health#numberOfRecords"
+                ]
+            },
+        ),
+    ] = None
+    numberOfUniqueIndividuals: Annotated[
+        int | None,
+        Field(
+            description=(
+                "The number of records for unique individuals represented in the "
+                "dataset."
+            ),
+            json_schema_extra={
+                "subPropertyOf": [
+                    "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
+                ]
+            },
+        ),
+    ] = None
     populationCoverage: Annotated[
         list[Text],
         Field(
@@ -364,6 +436,13 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    relatedResource: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            description="A related Resource.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/relation"]},
+        ),
+    ] = []
     resourceCreationMethod: Annotated[
         list[ResourceCreationMethod],
         Field(
@@ -398,11 +477,37 @@ class _OptionalLists(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/rights"]},
         ),
     ] = []
+    sample: Annotated[
+        list[MergedDistributionIdentifier],
+        Field(
+            description=(
+                "A sample distribution of the dataset, which can be anonymized or "
+                "synthetic data, or the data dictionary."
+            ),
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/adms/sample"]},
+        ),
+    ] = []
+    source: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            description=(
+                "A related Resource from which the described Resource is derived."
+            ),
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/source"]},
+        ),
+    ] = []
     spatial: Annotated[
         list[Text],
         Field(
             description="Spatial coverage of the resource.",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/spatial"]},
+        ),
+    ] = []
+    start: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(
+            description="Start date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = []
     stateOfDataProcessing: Annotated[

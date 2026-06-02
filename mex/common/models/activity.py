@@ -150,6 +150,13 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    relatedActivity: Annotated[
+        list[MergedActivityIdentifier],
+        Field(
+            description="A related Activity.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/relation"]},
+        ),
+    ] = []
     shortName: Annotated[
         list[Text],
         Field(

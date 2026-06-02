@@ -61,6 +61,14 @@ class _OptionalLists(_Stem):
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
         ),
     ] = []
+    contributor: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            description="A person responsible for making contributions to the "
+            "resource.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
+    ] = []
     description: Annotated[
         list[Text],
         Field(
