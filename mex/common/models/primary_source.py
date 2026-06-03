@@ -302,6 +302,7 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     ] = "PreventivePrimarySource"
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
+    contributor: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
     locatedAt: list[MergedPrimarySourceIdentifier] = []
@@ -353,6 +354,7 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     version: list[MappingField[VersionStr | None]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
+    contributor: list[MergedPersonIdentifier] = []
     description: list[MappingField[list[Text]]] = []
     documentation: list[MappingField[list[Link]]] = []
     locatedAt: list[MappingField[list[Link]]] = []

@@ -225,13 +225,6 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
-    end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(
-            description="End date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
-        ),
-    ] = []
     externalPartner: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
@@ -362,35 +355,6 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
-    numberOfRecords: Annotated[
-        int | None,
-        Field(
-            description=(
-                "The total number of records in the dataset. The number reflects the "
-                "total data entries (e.g., consultations, prescriptions, lab results, "
-                "hospital admissions) according to the dataset's content."
-            ),
-            json_schema_extra={
-                "subPropertyOf": [
-                    "http://healthdataportal.eu/ns/health#numberOfRecords"
-                ]
-            },
-        ),
-    ] = None
-    numberOfUniqueIndividuals: Annotated[
-        int | None,
-        Field(
-            description=(
-                "The number of records for unique individuals represented in the "
-                "dataset."
-            ),
-            json_schema_extra={
-                "subPropertyOf": [
-                    "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
-                ]
-            },
-        ),
-    ] = None
     populationCoverage: Annotated[
         list[Text],
         Field(
@@ -503,13 +467,6 @@ class _OptionalLists(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
-    start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(
-            description="Start date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
-        ),
-    ] = []
     stateOfDataProcessing: Annotated[
         list[DataProcessingState],
         Field(
@@ -615,6 +572,13 @@ class _OptionalValues(_Stem):
         DoiStr | None,
         Field(description="The Digital Object Identifier (DOI) of the resource."),
     ] = None
+    end: Annotated[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        Field(
+            description="End date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
+        ),
+    ] = None
     hasPersonalData: Annotated[
         PersonalData | None,
         Field(
@@ -660,6 +624,35 @@ class _OptionalValues(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = None
+    numberOfRecords: Annotated[
+        int | None,
+        Field(
+            description=(
+                "The total number of records in the dataset. The number reflects the "
+                "total data entries (e.g., consultations, prescriptions, lab results, "
+                "hospital admissions) according to the dataset's content."
+            ),
+            json_schema_extra={
+                "subPropertyOf": [
+                    "http://healthdataportal.eu/ns/health#numberOfRecords"
+                ]
+            },
+        ),
+    ] = None
+    numberOfUniqueIndividuals: Annotated[
+        int | None,
+        Field(
+            description=(
+                "The number of records for unique individuals represented in the "
+                "dataset."
+            ),
+            json_schema_extra={
+                "subPropertyOf": [
+                    "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
+                ]
+            },
+        ),
+    ] = None
     sizeOfDataBasis: Annotated[
         str | None,
         Field(
@@ -667,6 +660,13 @@ class _OptionalValues(_Stem):
                 "The size of the underlying data basis, e.g. for studies: the "
                 "size of the sample."
             )
+        ),
+    ] = None
+    start: Annotated[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        Field(
+            description="Start date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = None
     temporal: Annotated[
@@ -737,6 +737,13 @@ class _VariadicValues(_Stem):
         list[DoiStr],
         Field(description="The Digital Object Identifier (DOI) of the resource."),
     ] = []
+    end: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(
+            description="End date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
+        ),
+    ] = []
     hasPersonalData: Annotated[
         list[PersonalData],
         Field(
@@ -782,6 +789,35 @@ class _VariadicValues(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = []
+    numberOfRecords: Annotated[
+        list[int],
+        Field(
+            description=(
+                "The total number of records in the dataset. The number reflects the "
+                "total data entries (e.g., consultations, prescriptions, lab results, "
+                "hospital admissions) according to the dataset's content."
+            ),
+            json_schema_extra={
+                "subPropertyOf": [
+                    "http://healthdataportal.eu/ns/health#numberOfRecords"
+                ]
+            },
+        ),
+    ] = []
+    numberOfUniqueIndividuals: Annotated[
+        list[int],
+        Field(
+            description=(
+                "The number of records for unique individuals represented in the "
+                "dataset."
+            ),
+            json_schema_extra={
+                "subPropertyOf": [
+                    "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
+                ]
+            },
+        ),
+    ] = []
     sizeOfDataBasis: Annotated[
         list[str],
         Field(
@@ -789,6 +825,13 @@ class _VariadicValues(_Stem):
                 "The size of the underlying data basis, e.g. for studies: the "
                 "size of the sample."
             )
+        ),
+    ] = []
+    start: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(
+            description="Start date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = []
     temporal: Annotated[
@@ -984,21 +1027,25 @@ class PreventiveResource(_Stem, PreventiveRule):
     accessRestriction: list[MergedPrimarySourceIdentifier] = []
     accrualPeriodicity: list[MergedPrimarySourceIdentifier] = []
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
+    analytics: list[MergedPrimarySourceIdentifier] = []
     anonymizationPseudonymization: list[MergedPrimarySourceIdentifier] = []
     conformsTo: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
     contributingUnit: list[MergedPrimarySourceIdentifier] = []
     contributor: list[MergedPrimarySourceIdentifier] = []
     created: list[MergedPrimarySourceIdentifier] = []
-    doi: list[MergedPrimarySourceIdentifier] = []
     creator: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
     distribution: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
+    doi: list[MergedPrimarySourceIdentifier] = []
+    end: list[MergedPrimarySourceIdentifier] = []
     externalPartner: list[MergedPrimarySourceIdentifier] = []
+    hasCodeValues: list[MergedPrimarySourceIdentifier] = []
     hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
     hasPurpose: list[MergedPrimarySourceIdentifier] = []
     hasPersonalData: list[MergedPrimarySourceIdentifier] = []
+    healthCategory: list[MergedPrimarySourceIdentifier] = []
     icd10code: list[MergedPrimarySourceIdentifier] = []
     instrumentToolOrApparatus: list[MergedPrimarySourceIdentifier] = []
     isPartOf: list[MergedPrimarySourceIdentifier] = []
@@ -1012,16 +1059,22 @@ class PreventiveResource(_Stem, PreventiveRule):
     methodDescription: list[MergedPrimarySourceIdentifier] = []
     minTypicalAge: list[MergedPrimarySourceIdentifier] = []
     modified: list[MergedPrimarySourceIdentifier] = []
+    numberOfRecords: list[MergedPrimarySourceIdentifier] = []
+    numberOfUniqueIndividuals: list[MergedPrimarySourceIdentifier] = []
     populationCoverage: list[MergedPrimarySourceIdentifier] = []
     provenance: list[MergedPrimarySourceIdentifier] = []
     publication: list[MergedPrimarySourceIdentifier] = []
     publisher: list[MergedPrimarySourceIdentifier] = []
     qualityInformation: list[MergedPrimarySourceIdentifier] = []
+    relatedResource: list[MergedPrimarySourceIdentifier] = []
     resourceCreationMethod: list[MergedPrimarySourceIdentifier] = []
     resourceTypeGeneral: list[MergedPrimarySourceIdentifier] = []
     resourceTypeSpecific: list[MergedPrimarySourceIdentifier] = []
     rights: list[MergedPrimarySourceIdentifier] = []
+    sample: list[MergedPrimarySourceIdentifier] = []
+    source: list[MergedPrimarySourceIdentifier] = []
     sizeOfDataBasis: list[MergedPrimarySourceIdentifier] = []
+    start: list[MergedPrimarySourceIdentifier] = []
     spatial: list[MergedPrimarySourceIdentifier] = []
     stateOfDataProcessing: list[MergedPrimarySourceIdentifier] = []
     temporal: list[MergedPrimarySourceIdentifier] = []
@@ -1079,6 +1132,9 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
     ] = []
     doi: list[MappingField[DoiStr | None]] = []
+    end: list[
+        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
+    ] = []
     hasPersonalData: list[MappingField[PersonalData | None]] = []
     license: list[MappingField[License | None]] = []
     maxTypicalAge: list[MappingField[MaxTypicalAgeInt | None]] = []
@@ -1086,7 +1142,12 @@ class ResourceMapping(_Stem, BaseMapping):
     modified: list[
         MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
     ] = []
+    numberOfRecords: list[MappingField[int | None]] = []
+    numberOfUniqueIndividuals: list[MappingField[int | None]] = []
     sizeOfDataBasis: list[MappingField[str | None]] = []
+    start: list[
+        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
+    ] = []
     temporal: list[
         MappingField[
             YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
@@ -1105,6 +1166,7 @@ class ResourceMapping(_Stem, BaseMapping):
     ]
     accessPlatform: list[MappingField[list[MergedAccessPlatformIdentifier]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
+    analytics: list[MappingField[list[MergedDistributionIdentifier]]] = []
     anonymizationPseudonymization: list[
         MappingField[list[AnonymizationPseudonymization]]
     ] = []
@@ -1116,8 +1178,10 @@ class ResourceMapping(_Stem, BaseMapping):
     distribution: list[MappingField[list[MergedDistributionIdentifier]]] = []
     documentation: list[MappingField[list[Link]]] = []
     externalPartner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
+    hasCodeValues: list[MappingField[list[Text]]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []
     hasPurpose: list[MappingField[list[Text]]] = []
+    healthCategory: list[MappingField[list[Concept]]] = []
     icd10code: list[MappingField[list[str]]] = []
     instrumentToolOrApparatus: list[MappingField[list[Text]]] = []
     isPartOf: list[MappingField[list[MergedResourceIdentifier]]] = []
@@ -1132,10 +1196,13 @@ class ResourceMapping(_Stem, BaseMapping):
     publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
     publisher: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     qualityInformation: list[MappingField[list[Text]]] = []
+    relatedResource: list[MappingField[list[MergedResourceIdentifier]]] = []
     resourceCreationMethod: list[MappingField[list[ResourceCreationMethod]]] = []
     resourceTypeGeneral: list[MappingField[list[ResourceTypeGeneral]]] = []
     resourceTypeSpecific: list[MappingField[list[Text]]] = []
     rights: list[MappingField[list[Text]]] = []
+    sample: list[MappingField[list[MergedDistributionIdentifier]]] = []
+    source: list[MappingField[list[MergedResourceIdentifier]]] = []
     spatial: list[MappingField[list[Text]]] = []
     stateOfDataProcessing: list[MappingField[list[DataProcessingState]]] = []
 
