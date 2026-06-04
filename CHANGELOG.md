@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Model update v5.0: add optional fields to entity type models
+- BREAKING: Model update v5.0: add optional fields to entity type models
 
 ### Changes
 
