@@ -170,3 +170,6 @@ packages = ["mex"]
 
 [tool.hatch.build.targets.sdist]
 packages = ["mex"]
+
+[tool.uv.sources]
+mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", branch = "feature/mx_2260_mex_model_v5_revision" }
