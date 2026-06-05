@@ -704,7 +704,7 @@ requires-dist = [
     { name = "click", specifier = ">=8,<9" },
     { name = "langdetect", specifier = ">=1,<2" },
     { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?branch=feature%2Fmx_2260_mex_model_v5_revision" },
+    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=refs%2Fpull%2F449%2Fhead" },
     { name = "networkx", specifier = ">=3" },
     { name = "numpy", specifier = ">=2,<3" },
     { name = "pandas", specifier = ">=3,<4" },
@@ -738,7 +738,7 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 [[package]]
 name = "mex-model"
 version = "5.0.0"
-source = { git = "https://github.com/robert-koch-institut/mex-model.git?branch=feature%2Fmx_2260_mex_model_v5_revision#de5d8759dba92032f07b00e62020118eb1f350d5" }
+source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=refs%2Fpull%2F449%2Fhead#0261ff1309b24b7a1ccf38ae529057597cd6d97e" }
 
 [[package]]
 name = "mypy"
