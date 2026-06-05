@@ -21,6 +21,7 @@ from mex.common.types import (
     DataProcessingState,
     ExtractedResourceIdentifier,
     Frequency,
+    HealthCategory,
     Identifier,
     Language,
     License,
@@ -45,7 +46,6 @@ from mex.common.types import (
     YearMonthDay,
     YearMonthDayTime,
 )
-from mex.common.types.vocabulary import Concept
 
 ConformsToStr = Annotated[
     str,
@@ -275,7 +275,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     healthCategory: Annotated[
-        list[Concept],
+        list[HealthCategory],
         Field(
             description=(
                 "The category of electronic data for secondary use to which this "
@@ -1181,7 +1181,7 @@ class ResourceMapping(_Stem, BaseMapping):
     hasCodeValues: list[MappingField[list[Text]]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []
     hasPurpose: list[MappingField[list[Text]]] = []
-    healthCategory: list[MappingField[list[Concept]]] = []
+    healthCategory: list[MappingField[list[HealthCategory]]] = []
     icd10code: list[MappingField[list[str]]] = []
     instrumentToolOrApparatus: list[MappingField[list[Text]]] = []
     isPartOf: list[MappingField[list[MergedResourceIdentifier]]] = []
