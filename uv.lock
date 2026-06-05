@@ -704,7 +704,7 @@ requires-dist = [
     { name = "click", specifier = ">=8,<9" },
     { name = "langdetect", specifier = ">=1,<2" },
     { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=refs%2Fpull%2F449%2Fhead" },
+    { name = "mex-model", specifier = ">=5,<6" },
     { name = "networkx", specifier = ">=3" },
     { name = "numpy", specifier = ">=2,<3" },
     { name = "pandas", specifier = ">=3,<4" },
@@ -738,7 +738,11 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 [[package]]
 name = "mex-model"
 version = "5.0.0"
-source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=refs%2Fpull%2F449%2Fhead#0261ff1309b24b7a1ccf38ae529057597cd6d97e" }
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2d/d8/a8a834303130310ada2a736d05c4d79d2297333f74b798706b2d71f265a4/mex_model-5.0.0.tar.gz", hash = "sha256:e866971a8c01bb5e99a60b6f90aa042d465805ca88f314bcdc9697d77ac78312", size = 60013, upload-time = "2026-06-02T14:18:40.165Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c3/b7/cff23bbf4a86138765a8814269d5d3ef50758e0d569d4840e1c6e7fdf3e9/mex_model-5.0.0-py3-none-any.whl", hash = "sha256:98d77581bf0f9f3941968b6b06068ab3ffbc712ea1dd0f60435163162f9ddc92", size = 98193, upload-time = "2026-06-02T14:18:39.003Z" },
+]
 
 [[package]]
 name = "mypy"
