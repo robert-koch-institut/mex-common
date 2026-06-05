@@ -495,7 +495,7 @@ class ActivityMapping(_Stem, BaseMapping):
     involvedUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
     isPartOfActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
-    relatedActivity: list[MergedActivityIdentifier] = []
+    relatedActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     shortName: list[MappingField[list[Text]]] = []
     start: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
     succeeds: list[MappingField[list[MergedActivityIdentifier]]] = []

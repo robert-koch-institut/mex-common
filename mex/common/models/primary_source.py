@@ -354,7 +354,7 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     version: list[MappingField[VersionStr | None]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
-    contributor: list[MergedPersonIdentifier] = []
+    contributor: list[MappingField[list[MergedPersonIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
     documentation: list[MappingField[list[Link]]] = []
     locatedAt: list[MappingField[list[Link]]] = []
