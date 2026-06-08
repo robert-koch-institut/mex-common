@@ -22,6 +22,7 @@ from mex.common.models import (
     Status,
     VersionStatus,
 )
+from mex.common.models.base.model import BaseModel
 from mex.common.models.person import MergedPerson
 from mex.common.settings import BaseSettings
 from mex.common.types import (
@@ -34,6 +35,13 @@ from mex.common.types import (
 _IngestibleModelT = TypeVar(
     "_IngestibleModelT", bound=AnyExtractedModel | AnyRuleSetResponse
 )
+
+
+class ReferenceFilter(BaseModel):
+    """Reference filter definition with a field and list of identifiers."""
+
+    field: str
+    identifiers: list[str]
 
 
 class BackendApiConnector(HTTPConnector):
@@ -501,6 +509,31 @@ class BackendApiConnector(HTTPConnector):
                 "mergedIdentifier": str(merged_identifier),
             },
         )
+
+    def search_preview_items(  # noqa: PLR0913
+        self,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        references: list[ReferenceFilter] | None = None,
+        skip: int = 0,
+        limit: int = 10,
+    ) -> PaginatedItemsContainer[AnyPreviewModel]:
+        """Search for preview items in the backend."""
+        payload = {
+            "q": query_string,
+            "identifier": identifier,
+            "entityType": entity_type,
+            "referenceFilters": references,
+            "skip": skip,
+            "limit": limit,
+        }
+        response = self.request(
+            method="POST",
+            endpoint="preview-item/_search",
+            payload=payload,
+        )
+        return PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
 
     def search_organization_in_wikidata(
         self,
