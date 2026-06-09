@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/26afa8
+
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/57105a
 - BREAKING: transform_ldap_person functions expect ID now instead of whole organisation
 
