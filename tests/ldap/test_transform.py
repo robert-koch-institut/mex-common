@@ -91,7 +91,7 @@ def test_transform_ldap_persons_to_extracted_persons(
         [ldap_person],
         extracted_primary_source_ids["ldap"],
         [extracted_unit],
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
     extracted_person = extracted_persons[0]
 
@@ -142,7 +142,7 @@ def test_transform_any_ldap_actor_to_extracted_persons_or_contact_points(
         ldap_actors,
         [extracted_unit],
         extracted_primary_source_ids["ldap"],
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
     assert [
@@ -254,7 +254,7 @@ def test_transform_ldap_persons_with_query_to_extracted_persons(
         ldap_persons_with_query,
         extracted_primary_source_ids["ldap"],
         [extracted_unit],
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
     assert len(extracted_persons) == 1
