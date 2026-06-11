@@ -1,7 +1,7 @@
 fail_fast: false
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.15.15
     hooks:
       - id: ruff-check
         name: ruff-check
@@ -9,7 +9,7 @@ repos:
       - id: ruff-format
         name: ruff-format
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: pretty-format-json
         name: json
@@ -25,7 +25,7 @@ repos:
       - id: fix-byte-order-marker
         name: byte-order
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.8
+    rev: 0.11.19
     hooks:
       - id: uv-lock
         name: uv

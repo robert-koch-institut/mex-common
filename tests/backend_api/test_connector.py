@@ -6,6 +6,7 @@ import pytest
 from mex.common.backend_api.connector import (
     BackendApiConnector,
     LDAPBackendApiConnector,
+    ReferenceFilter,
 )
 from mex.common.models import (
     AnyExtractedModel,
@@ -22,6 +23,7 @@ from mex.common.types import (
     ExtractedPersonIdentifier,
     MergedPersonIdentifier,
 )
+from mex.common.types.identifier import MergedOrganizationIdentifier
 
 
 @pytest.mark.usefixtures("mocked_backend")
@@ -272,6 +274,49 @@ def test_get_preview_item_mocked(
             "User-Agent": "rki/mex",
         },
         timeout=10,
+    )
+
+
+def test_search_preview_items_mocked(
+    mocked_backend: MagicMock, preview_person: PreviewPerson
+) -> None:
+    mocked_return = {"items": [preview_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    affiliation = str(MergedOrganizationIdentifier.generate(seed=300))
+
+    connector = BackendApiConnector.get()
+    response = connector.search_preview_items(
+        query_string="Tintzmann",
+        entity_type=["PreviewPerson", "PreviewContactPoint"],
+        references=[ReferenceFilter(field="affiliation", identifiers=[affiliation])],
+        limit=1,
+    )
+
+    assert response.items == [preview_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/preview-item/_search",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=json.dumps(
+            {
+                "q": "Tintzmann",
+                "identifier": None,
+                "entityType": ["PreviewPerson", "PreviewContactPoint"],
+                "referenceFilters": [
+                    {"field": "affiliation", "identifiers": [affiliation]}
+                ],
+                "skip": 0,
+                "limit": 1,
+            }
+        ),
     )
 
 
