@@ -9,13 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- BREAKING: Model update v5.0: add optional fields to entity type models
 - added function `search_preview_items` in backend_api connector for advanced reference filtering
 
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
-
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/26afa8
 
 ### Deprecated
 
