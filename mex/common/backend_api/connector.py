@@ -302,6 +302,31 @@ class BackendApiConnector(HTTPConnector):
         )
         return PreviewModelTypeAdapter.validate_python(response)
 
+    def search_preview_items(  # noqa: PLR0913
+        self,
+        query_string: str | None = None,
+        identifier: str | None = None,
+        entity_type: list[str] | None = None,
+        references: list[ReferenceFilter] | None = None,
+        skip: int = 0,
+        limit: int = 10,
+    ) -> PaginatedItemsContainer[AnyPreviewModel]:
+        """Search for preview items with advanced filter combinations."""
+        payload = {
+            "q": query_string,
+            "identifier": identifier,
+            "entityType": entity_type,
+            "referenceFilters": references,
+            "skip": skip,
+            "limit": limit,
+        }
+        response = self.request(
+            method="POST",
+            endpoint="preview-item/_search",
+            payload=payload,
+        )
+        return PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
+
     def fetch_publishable_merged_items(  # noqa: PLR0913
         self,
         *,
@@ -509,31 +534,6 @@ class BackendApiConnector(HTTPConnector):
                 "mergedIdentifier": str(merged_identifier),
             },
         )
-
-    def search_preview_items(  # noqa: PLR0913
-        self,
-        query_string: str | None = None,
-        identifier: str | None = None,
-        entity_type: list[str] | None = None,
-        references: list[ReferenceFilter] | None = None,
-        skip: int = 0,
-        limit: int = 10,
-    ) -> PaginatedItemsContainer[AnyPreviewModel]:
-        """Search for preview items in the backend."""
-        payload = {
-            "q": query_string,
-            "identifier": identifier,
-            "entityType": entity_type,
-            "referenceFilters": references,
-            "skip": skip,
-            "limit": limit,
-        }
-        response = self.request(
-            method="POST",
-            endpoint="preview-item/_search",
-            payload=payload,
-        )
-        return PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
 
     def search_organization_in_wikidata(
         self,
