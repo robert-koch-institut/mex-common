@@ -61,6 +61,14 @@ class _OptionalLists(_Stem):
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
         ),
     ] = []
+    contributor: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            description="A person responsible for making contributions to the "
+            "resource.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+        ),
+    ] = []
     description: Annotated[
         list[Text],
         Field(
@@ -294,6 +302,7 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     ] = "PreventivePrimarySource"
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
+    contributor: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
     locatedAt: list[MergedPrimarySourceIdentifier] = []
@@ -345,6 +354,7 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     version: list[MappingField[VersionStr | None]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
+    contributor: list[MappingField[list[MergedPersonIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
     documentation: list[MappingField[list[Link]]] = []
     locatedAt: list[MappingField[list[Link]]] = []

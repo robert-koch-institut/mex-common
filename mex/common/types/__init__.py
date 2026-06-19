@@ -62,6 +62,7 @@ from mex.common.types.vocabulary import (
     ConsentType,
     DataProcessingState,
     Frequency,
+    HealthCategory,
     Language,
     License,
     MIMEType,
@@ -119,6 +120,7 @@ __all__ = (
     "ExtractedVariableGroupIdentifier",
     "ExtractedVariableIdentifier",
     "Frequency",
+    "HealthCategory",
     "Identifier",
     "IdentityProvider",
     "Language",
@@ -174,6 +176,7 @@ AnyVocabularyEnum = (
     | ConsentType
     | DataProcessingState
     | Frequency
+    | HealthCategory
     | Language
     | License
     | MIMEType

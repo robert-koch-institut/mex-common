@@ -150,6 +150,13 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    relatedActivity: Annotated[
+        list[MergedActivityIdentifier],
+        Field(
+            description="A related Activity.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/relation"]},
+        ),
+    ] = []
     shortName: Annotated[
         list[Text],
         Field(
@@ -419,6 +426,7 @@ class PreventiveActivity(_Stem, PreventiveRule):
     isPartOfActivity: list[MergedPrimarySourceIdentifier] = []
     publication: list[MergedPrimarySourceIdentifier] = []
     responsibleUnit: list[MergedPrimarySourceIdentifier] = []
+    relatedActivity: list[MergedPrimarySourceIdentifier] = []
     shortName: list[MergedPrimarySourceIdentifier] = []
     start: list[MergedPrimarySourceIdentifier] = []
     succeeds: list[MergedPrimarySourceIdentifier] = []
@@ -487,6 +495,7 @@ class ActivityMapping(_Stem, BaseMapping):
     involvedUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
     isPartOfActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
+    relatedActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     shortName: list[MappingField[list[Text]]] = []
     start: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
     succeeds: list[MappingField[list[MergedActivityIdentifier]]] = []
