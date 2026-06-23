@@ -1,8 +1,8 @@
 import json
 from collections.abc import Iterable
 from functools import lru_cache
-from pathlib import Path
 
+from mex.common.assets import get_assets_connector
 from mex.common.logging import logger
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.models import OrganigramUnit
@@ -21,8 +21,8 @@ def extract_organigram_units() -> list[OrganigramUnit]:
         List of organigram units
     """
     settings = BaseSettings.get()
-    with Path(settings.organigram_path).open() as fh:
-        raw_units = json.load(fh)
+    file_contents = get_assets_connector().load_file(settings.organigram_path)
+    raw_units = json.loads(file_contents.decode('utf-8'))
     logger.info("extracted %s organigram units", len(raw_units))
     return [OrganigramUnit.model_validate(raw) for raw in raw_units]
 

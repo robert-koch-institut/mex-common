@@ -14,6 +14,7 @@ from tabulate import tabulate
 from mex.common.context import SingleSingletonStore
 from mex.common.logging import logger
 from mex.common.types import (
+    AssetsConnectorType,
     AssetsPath,
     IdentityProvider,
     OpsPath,
@@ -136,6 +137,11 @@ class BaseSettings(PydanticBaseSettings):
         IdentityProvider.MEMORY,
         description="Provider to assign identifiers to new model instances.",
         validation_alias="MEX_IDENTITY_PROVIDER",
+    )
+    assets_connector: AssetsConnectorType = Field(
+        AssetsConnectorType.FILESYSTEM,
+        description="Connector to load assets from different sources.",
+        validation_alias="MEX_ASSETS_CONNECTOR",
     )
     backend_api_url: HttpUrl = Field(
         HttpUrl("http://localhost:8080/"),
