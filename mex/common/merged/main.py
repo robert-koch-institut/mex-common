@@ -1,6 +1,6 @@
 from collections.abc import Iterable, Mapping
 from itertools import chain
-from typing import Literal, cast, overload
+from typing import Literal, TypeVar, cast, overload
 
 from pydantic_core import ValidationError
 
@@ -17,10 +17,13 @@ from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     PREVIEW_MODEL_CLASSES_BY_NAME,
+    RULE_MODEL_CLASSES_BY_NAME,
+    RULE_MODEL_CLASSES_BY_TYPE_BY_NAME,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
     AnyExtractedModel,
     AnyMergedModel,
     AnyPreviewModel,
+    AnyRuleModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
 )
@@ -33,6 +36,9 @@ from mex.common.types import (
     Validation,
 )
 from mex.common.utils import ensure_list
+
+RuleT = TypeVar("RuleT", bound=AnyRuleModel)
+RuleSetResponseT = TypeVar("RuleSetResponseT", bound=AnyRuleSetResponse)
 
 
 def _collect_extracted_values(
@@ -395,3 +401,83 @@ def create_merged_item(
             raise MergingError(msg) from error
         logger.debug("%s %s:%s", msg, merged_class.__name__, identifier)
     return None
+
+
+def merge_rules(left: RuleT, right: RuleT) -> RuleT:
+    """Merge two rules of the same type into a new rule.
+
+    Works for any rule type (additive, subtractive, preventive or workflow).
+    For each mergeable field, the resulting rule contains the concatenation of
+    `left` and `right` values with duplicates removed while preserving order.
+
+    Args:
+        left: Rule whose values come first
+        right: Rule of the same type whose values are appended
+
+    Raises:
+        MergingError: When `left` and `right` are not of the same type
+
+    Returns:
+        A new rule instance of the same type with the merged field values
+    """
+    if left.entityType != right.entityType:
+        msg = (
+            "Cannot merge rules of different types: "
+            f"{left.entityType} and {right.entityType}."
+        )
+        raise MergingError(msg)
+
+    merged_dict: dict[str, ValueList] = {}
+    for field in MERGEABLE_FIELDS_BY_CLASS_NAME[left.entityType]:
+        seen_values: set[AnyPrimitiveType] = set()
+        merged_values: ValueList = []
+        for value in chain(
+            ensure_list(getattr(left, field)), ensure_list(getattr(right, field))
+        ):
+            if value not in seen_values:
+                seen_values.add(value)
+                merged_values.append(value)
+        merged_dict[field] = merged_values
+
+    rule_class = RULE_MODEL_CLASSES_BY_NAME[left.entityType]
+    return cast("RuleT", rule_class.model_validate(merged_dict))
+
+
+def merge_rule_set_responses(
+    keeper: RuleSetResponseT,
+    goner: RuleSetResponseT,
+) -> RuleSetResponseT:
+    """Merge two rule set responses of the same type into a new response.
+
+    Each of the contained rules (additive, subtractive, preventive and workflow)
+    is merged with `merge_rules`, combining the values of `keeper` and `goner`
+    while removing duplicates. The `stableTargetId` of `keeper` is kept for the
+    result, while the `stableTargetId` of `goner` is discarded.
+
+    Args:
+        keeper: Rule set response that survives the merge; its values come first
+            and its `stableTargetId` is carried over to the result
+        goner: Rule set response of the same type that is merged into `keeper`;
+            its values are appended and its `stableTargetId` is ignored
+
+    Raises:
+        MergingError: When `keeper` and `goner` are not of the same type
+
+    Returns:
+        A new rule set response of the same type with the merged rules and the
+        `stableTargetId` of `keeper`
+    """
+    if keeper.entityType != goner.entityType:
+        msg = (
+            "Cannot merge rule set responses of different types: "
+            f"{keeper.entityType} and {goner.entityType}."
+        )
+        raise MergingError(msg)
+
+    rule_set_dict: dict[str, object] = {
+        rule_type: merge_rules(getattr(keeper, rule_type), getattr(goner, rule_type))
+        for rule_type in RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
+    }
+    rule_set_dict["stableTargetId"] = keeper.stableTargetId
+
+    return cast("RuleSetResponseT", type(keeper).model_validate(rule_set_dict))

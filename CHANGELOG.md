@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- added `merge_rules` to merge two rules of the same type
+- added `merge_rule_set_responses` to merge two rule set responses
+
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b

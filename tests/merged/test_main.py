@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 from pytest import FixtureRequest
 
-from mex.common.exceptions import MExError
+from mex.common.exceptions import MergingError, MExError
 from mex.common.merged.main import (
     _apply_lenient_fallback,
     _collect_additive_values,
@@ -18,6 +18,8 @@ from mex.common.merged.main import (
     _pick_usable_values,
     create_merged_item,
     is_item_publishable,
+    merge_rule_set_responses,
+    merge_rules,
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
@@ -36,10 +38,12 @@ from mex.common.models import (
     ExtractedResource,
     MergedPerson,
     PersonRuleSetRequest,
+    PersonRuleSetResponse,
     PreventivePerson,
     PreventiveResource,
     PreviewPerson,
     ResourceRuleSetRequest,
+    ResourceRuleSetResponse,
     SubtractiveActivity,
     SubtractiveContactPoint,
     SubtractivePerson,
@@ -51,7 +55,9 @@ from mex.common.types import (
     AccessRestriction,
     AnyValidation,
     Identifier,
+    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    MergedResourceIdentifier,
     PublishingTarget,
     Text,
     TextLanguage,
@@ -666,12 +672,93 @@ def test_is_item_publishable(
     assert result == expected
 
 
+def test_merge_rules_additive() -> None:
+    merged = merge_rules(
+        AdditivePerson(givenName=["Alice", "Bob"]),
+        AdditivePerson(givenName=["Bob", "Charlie"]),
+    )
+    assert isinstance(merged, AdditivePerson)
+    assert merged.givenName == ["Alice", "Bob", "Charlie"]
+
+
+def test_merge_rules_subtractive() -> None:
+    merged = merge_rules(
+        SubtractivePerson(givenName=["Alice"]),
+        SubtractivePerson(givenName=["Alice", "Bob"]),
+    )
+    assert isinstance(merged, SubtractivePerson)
+    assert merged.givenName == ["Alice", "Bob"]
+
+
+def test_merge_rules_preventive() -> None:
+    primary_source = MergedPrimarySourceIdentifier.generate(seed=99)
+    merged = merge_rules(
+        PreventivePerson(givenName=[primary_source]),
+        PreventivePerson(givenName=[primary_source]),
+    )
+    assert isinstance(merged, PreventivePerson)
+    assert merged.givenName == [primary_source]
+
+
+def test_merge_rules_workflow() -> None:
+    merged = merge_rules(
+        WorkflowContactPoint(forbiddenPublishingTarget=[PublishingTarget.INVENIO]),
+        WorkflowContactPoint(forbiddenPublishingTarget=[PublishingTarget.INVENIO]),
+    )
+    assert isinstance(merged, WorkflowContactPoint)
+    assert merged.forbiddenPublishingTarget == [PublishingTarget.INVENIO]
+
+
+def test_merge_rules_different_types_raises() -> None:
+    with pytest.raises(MergingError, match="Cannot merge rules of different types"):
+        merge_rules(AdditivePerson(), AdditiveResource())
+
+
+def test_merge_rule_set_responses() -> None:
+    primary_source = MergedPrimarySourceIdentifier.generate(seed=7)
+    keeper_id = MergedPersonIdentifier.generate(seed=1)
+    goner_id = MergedPersonIdentifier.generate(seed=2)
+    merged = merge_rule_set_responses(
+        PersonRuleSetResponse(
+            stableTargetId=keeper_id,
+            additive=AdditivePerson(givenName=["Alice", "Bob"]),
+            subtractive=SubtractivePerson(givenName=["X"]),
+            preventive=PreventivePerson(givenName=[primary_source]),
+        ),
+        PersonRuleSetResponse(
+            stableTargetId=goner_id,
+            additive=AdditivePerson(givenName=["Bob", "Charlie"]),
+            subtractive=SubtractivePerson(givenName=["X", "Y"]),
+            preventive=PreventivePerson(givenName=[primary_source]),
+        ),
+    )
+    assert isinstance(merged, PersonRuleSetResponse)
+    # the keeper's stableTargetId is kept, the goner's is discarded
+    assert merged.stableTargetId == keeper_id
+    assert merged.additive.givenName == ["Alice", "Bob", "Charlie"]
+    assert merged.subtractive.givenName == ["X", "Y"]
+    assert merged.preventive.givenName == [primary_source]
+
+
+def test_merge_rule_set_responses_different_types_raises() -> None:
+    keeper = PersonRuleSetResponse(
+        stableTargetId=MergedPersonIdentifier.generate(seed=1)
+    )
+    goner = ResourceRuleSetResponse(
+        stableTargetId=MergedResourceIdentifier.generate(seed=2)
+    )
+    with pytest.raises(
+        MergingError, match="Cannot merge rule set responses of different types"
+    ):
+        merge_rule_set_responses(keeper, goner)
+
+
 @pytest.fixture(autouse=True)
 def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
     """Skips fuzzing test if fuzzing is not explicitly requested and mex.artificial is not installed.
 
     Rationale: fuzzing depends on mex-artificial, which in turn depends on mex-common. This is a dependency loop.
-    If we introduce breaking changes in mex-common, mex-artificial must be updated to accomodate these breaking changes.
+    If we introduce breaking changes in mex-common, mex-artificial must be updated to accommodate these breaking changes.
     We do not want to break our entire test pipeline if this happens and therefore isolate fuzzing tests.
     """
     # RATIONALE
