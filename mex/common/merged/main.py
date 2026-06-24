@@ -30,6 +30,7 @@ from mex.common.models import (
 )
 from mex.common.transform import ensure_prefix
 from mex.common.types import (
+    AnyMergedIdentifier,
     AnyPrimitiveType,
     AnyValidation,
     Identifier,
@@ -495,7 +496,7 @@ def merge_rule_set_responses(
         )
         raise MergingError(msg)
 
-    rule_set_dict: dict[str, object] = {
+    rule_set_dict: dict[str, AnyRuleModel | AnyMergedIdentifier] = {
         rule_type: merge_rules(
             getattr(keeper, rule_type),
             getattr(goner, rule_type),
