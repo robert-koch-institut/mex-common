@@ -47,13 +47,16 @@ class LDAPConnector(BaseConnector):
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
         port = int(url.port) if url.port else None
-        ca_certs_file = (
-            None
-            if isinstance(settings.verify_session, bool)
-            else settings.verify_session
-        )
+        if isinstance(settings.verify_session, bool):
+            tls_validate = (
+                ssl.CERT_REQUIRED if settings.verify_session else ssl.CERT_NONE
+            )
+            ca_certs_file = None
+        else:
+            tls_validate = ssl.CERT_REQUIRED
+            ca_certs_file = settings.verify_session
         tls_configuration = Tls(
-            validate=ssl.CERT_REQUIRED,
+            validate=tls_validate,
             version=ssl.PROTOCOL_SSLv23,
             ca_certs_file=ca_certs_file,
         )

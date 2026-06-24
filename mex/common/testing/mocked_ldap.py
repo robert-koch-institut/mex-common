@@ -18,7 +18,9 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedOrganizationalUnit,
     ExtractedPerson,
+    PaginatedItemsContainer,
 )
+from mex.common.settings import BaseSettings
 from mex.common.transform import MExEncoder, normalize
 from mex.common.types import MergedPrimarySourceIdentifier
 
@@ -153,12 +155,15 @@ def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
         serialized = json.dumps(obj, cls=MExEncoder, ensure_ascii=False)
         return set(normalize(serialized.lower()).split())
 
-    def mock_search(_self: LDAPConnector, **kwargs: dict[str, Any]) -> list[LDAPActor]:
+    def mock_search(
+        _self: LDAPConnector, **kwargs: dict[str, Any]
+    ) -> PaginatedItemsContainer[LDAPActor]:
         tokenized_query = tokenize(kwargs)
         actors_by_score = [
             (len(tokenized_query & tokenize(actor)), actor) for actor in actors
         ]
-        return [i[1] for i in sorted(actors_by_score, key=lambda i: i[0])][-1:]
+        items = [i[1] for i in sorted(actors_by_score, key=lambda i: i[0])][-1:]
+        return PaginatedItemsContainer[LDAPActor](items=items, total=len(items))
 
     return mock_search
 
@@ -197,8 +202,6 @@ def mocked_ldap(  # noqa: PLR0913
         if "MEX_LDAP_SEARCH_BASE" not in os.environ:
             pytest.skip("Ldap mock server not configured")
         else:
-            # TODO(ND): Make this configurable in mex-common
-
-            from mex.common.ldap import connector as connector_module  # noqa: PLC0415
-
-            monkeypatch.setattr(connector_module, "AUTO_BIND_NO_TLS", "DEFAULT")
+            # the mock server uses a self-signed certificate, so disable TLS
+            # verification to allow connecting to it during testing
+            monkeypatch.setattr(BaseSettings.get(), "verify_session", False)
