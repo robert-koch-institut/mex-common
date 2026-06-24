@@ -37,8 +37,8 @@ def test_get_persons_mocked() -> None:
     connector = LDAPConnector.get()
     persons = connector.get_persons(surname="Fictitious", given_name="Frieda")
 
-    assert len(persons) == 1
-    assert persons[0].model_dump(exclude_defaults=True) == {
+    assert len(persons.items) == persons.total == 1
+    assert persons.items[0].model_dump(exclude_defaults=True) == {
         "department": "FG99",
         "displayName": "Fictitious, Frieda, Dr.",
         "employeeID": "71",

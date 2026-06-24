@@ -52,7 +52,7 @@ def roland_resolved(
         ldap_roland_resolved,
         get_extracted_primary_source_id_by_name("ldap"),
         mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 
@@ -84,7 +84,7 @@ def juturna_felicitas(
         ldap_juturna_felicitas,
         get_extracted_primary_source_id_by_name("ldap"),
         mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 
@@ -116,7 +116,7 @@ def frieda_fictitious(
         ldap_frieda_fictitious,
         get_extracted_primary_source_id_by_name("ldap"),
         mocked_units_by_identifier_in_primary_source,
-        extracted_organization_rki,
+        extracted_organization_rki.stableTargetId,
     )
 
 
