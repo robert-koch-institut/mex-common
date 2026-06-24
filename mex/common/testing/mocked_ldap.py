@@ -19,8 +19,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPerson,
 )
-from mex.common.primary_source.helpers import get_extracted_primary_source_id_by_name
 from mex.common.transform import MExEncoder, normalize
+from mex.common.types import MergedPrimarySourceIdentifier
 
 
 @pytest.fixture
@@ -46,11 +46,12 @@ def roland_resolved(
         str, ExtractedOrganizationalUnit
     ],
     extracted_organization_rki: ExtractedOrganization,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> ExtractedPerson:
     """Return an ExtractedPerson for Roland Resolved."""
     return transform_ldap_person_to_extracted_person(
         ldap_roland_resolved,
-        get_extracted_primary_source_id_by_name("ldap"),
+        extracted_primary_source_ids["ldap"],
         mocked_units_by_identifier_in_primary_source,
         extracted_organization_rki.stableTargetId,
     )
@@ -78,11 +79,12 @@ def juturna_felicitas(
         str, ExtractedOrganizationalUnit
     ],
     extracted_organization_rki: ExtractedOrganization,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> ExtractedPerson:
     """Return an ExtractedPerson for Juturna Felicitás."""
     return transform_ldap_person_to_extracted_person(
         ldap_juturna_felicitas,
-        get_extracted_primary_source_id_by_name("ldap"),
+        extracted_primary_source_ids["ldap"],
         mocked_units_by_identifier_in_primary_source,
         extracted_organization_rki.stableTargetId,
     )
@@ -110,11 +112,12 @@ def frieda_fictitious(
         str, ExtractedOrganizationalUnit
     ],
     extracted_organization_rki: ExtractedOrganization,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> ExtractedPerson:
     """Return an LDAPPerson for Frieda Fictitious."""
     return transform_ldap_person_to_extracted_person(
         ldap_frieda_fictitious,
-        get_extracted_primary_source_id_by_name("ldap"),
+        extracted_primary_source_ids["ldap"],
         mocked_units_by_identifier_in_primary_source,
         extracted_organization_rki.stableTargetId,
     )
@@ -132,11 +135,14 @@ def ldap_contact_point() -> LDAPFunctionalAccount:
 
 
 @pytest.fixture
-def contact_point(ldap_contact_point: LDAPFunctionalAccount) -> ExtractedContactPoint:
+def contact_point(
+    ldap_contact_point: LDAPFunctionalAccount,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
+) -> ExtractedContactPoint:
     """Return an ExtractedContactPoint for a dummy contact point."""
     return transform_ldap_functional_account_to_extracted_contact_point(
         ldap_contact_point,
-        get_extracted_primary_source_id_by_name("ldap"),
+        extracted_primary_source_ids["ldap"],
     )
 
 
