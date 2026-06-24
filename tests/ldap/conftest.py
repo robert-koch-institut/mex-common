@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from functools import lru_cache
 from typing import Any
 from unittest.mock import MagicMock, Mock
 
@@ -55,6 +56,7 @@ def ldap_mocker(monkeypatch: MonkeyPatch) -> LDAPMocker:
                     [{"attributes": e} for e in entries] for entries in results
                 ]
             )
+            self._cached_fetch_all = lru_cache(1000)(self._fetch_all)
 
         monkeypatch.setattr(LDAPConnector, "__init__", __init__)
 

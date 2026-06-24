@@ -89,6 +89,10 @@ def test_get_wikidata_organization() -> None:
                 {"language": "de", "value": "RKI"},
                 {"language": "de", "value": "Robert-Koch-Institut"},
                 {"language": "de", "value": "Kochsches Institut"},
+                {
+                    "language": "de",
+                    "value": "Robert Koch-Institut",
+                },
             ],
             "en": [
                 {"language": "en", "value": "RKI"},

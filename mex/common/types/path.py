@@ -76,5 +76,9 @@ class AssetsPath(PathWrapper):
     """Custom path for settings that can be absolute or relative to `assets_dir`."""
 
 
+class OpsPath(PathWrapper):
+    """Custom path for settings that can be absolute or relative to `ops_dir`."""
+
+
 class WorkPath(PathWrapper):
     """Custom path for settings that can be absolute or relative to `work_dir`."""

@@ -120,9 +120,11 @@ def get_inner_types(
     # Handle Literal types based on the unpack_literal flag
     elif origin_type is Literal:
         if unpack_literal:
-            yield origin_type  # Return Literal if unpacking is allowed
+            # Return Literal if unpacking is allowed
+            yield origin_type  # type: ignore[misc]
         else:
-            yield annotation  # Return the full annotation if not
+            # Return the full annotation if not
+            yield annotation
 
     # Yield the origin type if present
     elif origin_type is not None:

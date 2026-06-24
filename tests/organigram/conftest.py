@@ -17,37 +17,6 @@ from mex.common.types import (
 
 
 @pytest.fixture
-def child_unit() -> OrganigramUnit:
-    """Return a child unit corresponding to the test_data."""
-    return OrganigramUnit(
-        shortName=[Text(value="C1")],
-        alternativeName=[
-            Text(value="CHLD"),
-            Text(value="C1 Sub-Unit"),
-            Text(value="C1 Unterabteilung"),
-        ],
-        identifier="child-unit",
-        name=[
-            Text(value="CHLD Unterabteilung", language="de"),
-            Text(value="C1: Sub Unit", language="en"),
-        ],
-        parentUnit="parent-unit",
-    )
-
-
-@pytest.fixture
-def extracted_child_unit(
-    child_unit: OrganigramUnit,
-    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-    rki_organization_id: MergedOrganizationIdentifier,
-) -> ExtractedOrganizationalUnit:
-    """Return the child unit transformed to an ExtractedOrganizationalUnit."""
-    return transform_organigram_units_to_organizational_units(
-        [child_unit], extracted_primary_source_ids["organigram"], rki_organization_id
-    )[0]
-
-
-@pytest.fixture
 def parent_unit() -> OrganigramUnit:
     """Return a parent unit corresponding to the test_data."""
     return OrganigramUnit(
@@ -77,6 +46,43 @@ def extracted_parent_unit(
     return transform_organigram_units_to_organizational_units(
         [parent_unit], extracted_primary_source_ids["organigram"], rki_organization_id
     )[0]
+
+
+@pytest.fixture
+def child_unit() -> OrganigramUnit:
+    """Return a child unit corresponding to the test_data."""
+    return OrganigramUnit(
+        shortName=[Text(value="C1")],
+        alternativeName=[
+            Text(value="CHLD"),
+            Text(value="C1 Sub-Unit"),
+            Text(value="C1 Unterabteilung"),
+        ],
+        identifier="child-unit",
+        name=[
+            Text(value="CHLD Unterabteilung", language="de"),
+            Text(value="C1: Sub Unit", language="en"),
+        ],
+        parentUnit="parent-unit",
+    )
+
+
+@pytest.fixture
+def extracted_child_unit(
+    child_unit: OrganigramUnit,
+    parent_unit: OrganigramUnit,
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
+    rki_organization_id: MergedOrganizationIdentifier,
+) -> ExtractedOrganizationalUnit:
+    """Return the child unit transformed to an ExtractedOrganizationalUnit."""
+    units = transform_organigram_units_to_organizational_units(
+        [child_unit, parent_unit],
+        extracted_primary_source_ids["organigram"],
+        rki_organization_id,
+    )
+    return next(
+        unit for unit in units if unit.identifierInPrimarySource == "child-unit"
+    )
 
 
 @pytest.fixture

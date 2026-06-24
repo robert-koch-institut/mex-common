@@ -15,17 +15,20 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 1
 
       - name: Run renovatebot
-        uses: renovatebot/github-action@v46.1.1
+        uses: renovatebot/github-action@8217b3fc286df088d7c27f3255fe8414463bc0fd # v46.1.15
         env:
-          RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-          RENOVATE_REPOSITORIES: "robert-koch-institut/mex-common"
+          RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.MEX_PLAIN_SIGNING_KEY }}
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
         with:
           configurationFile: renovate.json
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          token: ${{ secrets.MEX_RENOVATE_TOKEN }}

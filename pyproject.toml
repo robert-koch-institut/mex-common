@@ -1,10 +1,10 @@
 [project]
 name = "mex-common"
-version = "1.16.0"
+version = "3.0.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
-license = { file = "LICENSE" }
+license = "MIT"
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
 requires-python = ">=3.11,<3.15"
 dependencies = [
@@ -12,12 +12,12 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model>=4.10,<4.11",
+    "mex-model>=5,<6",
     "networkx>=3",
     "numpy>=2,<3",
     "pandas>=3,<4",
-    "pyarrow>=23,<24",
-    "pydantic-settings>=2.13,<2.14",
+    "pyarrow>=24,<25",
+    "pydantic-settings>=2.14,<2.15",
     "pydantic>=2,<3",
     "tabulate>=0.9",
     "pytz>=2025",
@@ -41,6 +41,9 @@ dev = [
     "types-requests",
     "types-tabulate",
 ]
+fuzzing = [
+    "mex-artificial>=2",
+]
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
@@ -55,7 +58,7 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = 'langdetect.*'
+module = ['langdetect.*', 'mex.artificial.helpers']
 ignore_missing_imports = true
 
 [tool.pydantic-mypy]
@@ -72,7 +75,10 @@ addopts = [
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]
-markers = "integration: mark a test as integration test"
+markers = [
+    "integration: mark a test as integration test",
+    "fuzzing: mark a test as fuzzing test, requiring fuzzing dependencies"
+]
 
 [tool.ruff]
 fix = true
@@ -145,6 +151,9 @@ select = ["ALL"]
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
 "reflex" = "rx"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]

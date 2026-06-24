@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     AccessRestriction,
@@ -560,7 +561,7 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
 
 
 class PreviewBibliographicResource(
-    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
@@ -667,12 +668,21 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowBibliographicResource(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged bibliographic resource items."""
+
+    entityType: Annotated[
+        Literal["WorkflowBibliographicResource"], Field(alias="$type", frozen=True)
+    ] = "WorkflowBibliographicResource"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a bibliographic resource item."""
 
     additive: AdditiveBibliographicResource = AdditiveBibliographicResource()
     subtractive: SubtractiveBibliographicResource = SubtractiveBibliographicResource()
     preventive: PreventiveBibliographicResource = PreventiveBibliographicResource()
+    workflow: WorkflowBibliographicResource = WorkflowBibliographicResource()
 
 
 class BibliographicResourceRuleSetRequest(_BaseRuleSet):

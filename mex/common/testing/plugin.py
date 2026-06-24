@@ -25,7 +25,13 @@ from mex.common.primary_source.extract import extract_seed_primary_sources
 from mex.common.primary_source.transform import (
     transform_seed_primary_sources_to_extracted_primary_sources,
 )
-from mex.common.settings import SETTINGS_STORE, BaseSettings
+from mex.common.settings import (
+    MEX_ASSETS_DIR,
+    MEX_OPS_DIR,
+    MEX_WORK_DIR,
+    SETTINGS_STORE,
+    BaseSettings,
+)
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.common.wikidata.connector import WikidataAPIConnector
 from mex.common.wikidata.models import WikidataOrganization
@@ -57,19 +63,20 @@ def patch_reprs(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture(autouse=True)
-def isolate_assets_dir(
+def isolate_assets_and_ops_dir(
     is_integration_test: bool,  # noqa: FBT001
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Disable the `MEX_ASSETS_DIR` environment variable for unit testing."""
+    """Disable assets and ops dir environment variables for unit testing."""
     if not is_integration_test:  # pragma: no cover
-        monkeypatch.delenv("MEX_ASSETS_DIR", raising=False)
+        monkeypatch.delenv(MEX_ASSETS_DIR, raising=False)
+        monkeypatch.delenv(MEX_OPS_DIR, raising=False)
 
 
 @pytest.fixture(autouse=True)
 def isolate_work_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Set the `MEX_WORK_DIR` environment variable to a temp path for all tests."""
-    monkeypatch.setenv("MEX_WORK_DIR", str(tmp_path))
+    monkeypatch.setenv(MEX_WORK_DIR, str(tmp_path))
 
 
 @pytest.fixture(autouse=True)
@@ -80,7 +87,7 @@ def settings() -> BaseSettings:
 
 @pytest.fixture(autouse=True)
 def isolate_settings(
-    isolate_assets_dir: None,  # noqa: ARG001
+    isolate_assets_and_ops_dir: None,  # noqa: ARG001
     isolate_work_dir: None,  # noqa: ARG001
 ) -> Generator[None, None, None]:
     """Automatically reset the settings singleton store."""

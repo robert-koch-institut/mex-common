@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
+
 ### Deprecated
 
 ### Removed
@@ -20,6 +22,100 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [3.0.0] - 2026-06-19
+
+### Added
+
+- BREAKING: Model update v5.0: add optional fields to entity type models
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/52887e
+
+## [2.1.0] - 2026-06-17
+
+### Added
+
+- added function `search_preview_items` in backend_api connector for advanced reference filtering
+
+### Changes
+
+- BREAKING: transform_ldap_person functions expect ID now instead of whole organisation
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+
+### Fixed
+
+- fix fuzzing tests
+
+## [2.0.1] - 2026-05-26
+
+## [2.0.0] - 2026-05-26
+
+### Added
+
+- BREAKING: Added workflow rule to all rule sets
+  - it defines forbidden targets for publishing of merged items
+  - This change affects what kind of data is stored in database and might therefore
+    have unexpected side effects
+  - If your repo depends on mex-common AND on mex-backend, make sure to update both to
+    versions that include the workflow rule
+- new "is_item_publishable" function
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/dd987e
+
+### Removed
+
+- Post endpoint for preview_merged_item
+
+## [1.19.0] - 2026-04-17
+
+### Added
+
+- add get_preview_item by stableTargetId to BackendAPIConnector
+- **BREAKING** add configuration parameter `ops_dir`. Settings are now read from
+  `ops_dir/config/.env` and `ops_dir/config/secrets/*`. Make sure your environment
+  variable `MEX_OPS_DIR` points to your local mex-ops directory.
+  For dependent repositories: change the type of your Settings parameters that point to
+  migrated files (e.g. certificates) to `OpsPath`.
+
+## [1.18.1] - 2026-04-01
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/43f715
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/172aac
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/491e2d
+
+## [1.18.0] - 2026-03-25
+
+### Added
+
+- fuzzing test for PreviewItem generation using mex-artificial
+
+### Changes
+
+- verify ldap server certificate
+
+### Fixed
+
+- adding multiple OptionalValues via an AdditiveRule no longer breaks creation of PreviewItem
+
+## [1.17.0] - 2026-03-17
+
+### Changes
+
+- LDAPConnector is now fully paginated
+  - fetching ldap items is cached
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
+
+## [1.16.1] - 2026-03-02
+
+### Changes
+
+- expand ALL_REFERENCE_FIELD_NAMES to include additive reference fields (supersededBy)
 
 ## [1.16.0] - 2026-02-19
 

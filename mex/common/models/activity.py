@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ActivityType,
@@ -147,6 +148,13 @@ class _OptionalLists(_Stem):
             json_schema_extra={
                 "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
             },
+        ),
+    ] = []
+    relatedActivity: Annotated[
+        list[MergedActivityIdentifier],
+        Field(
+            description="A related Activity.",
+            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/relation"]},
         ),
     ] = []
     shortName: Annotated[
@@ -418,6 +426,7 @@ class PreventiveActivity(_Stem, PreventiveRule):
     isPartOfActivity: list[MergedPrimarySourceIdentifier] = []
     publication: list[MergedPrimarySourceIdentifier] = []
     responsibleUnit: list[MergedPrimarySourceIdentifier] = []
+    relatedActivity: list[MergedPrimarySourceIdentifier] = []
     shortName: list[MergedPrimarySourceIdentifier] = []
     start: list[MergedPrimarySourceIdentifier] = []
     succeeds: list[MergedPrimarySourceIdentifier] = []
@@ -426,12 +435,21 @@ class PreventiveActivity(_Stem, PreventiveRule):
     website: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowActivity(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged activity items."""
+
+    entityType: Annotated[
+        Literal["WorkflowActivity"], Field(alias="$type", frozen=True)
+    ] = "WorkflowActivity"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for an activity item."""
 
     additive: AdditiveActivity = AdditiveActivity()
     subtractive: SubtractiveActivity = SubtractiveActivity()
     preventive: PreventiveActivity = PreventiveActivity()
+    workflow: WorkflowActivity = WorkflowActivity()
 
 
 class ActivityRuleSetRequest(_BaseRuleSet):
@@ -477,6 +495,7 @@ class ActivityMapping(_Stem, BaseMapping):
     involvedUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
     isPartOfActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
+    relatedActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     shortName: list[MappingField[list[Text]]] = []
     start: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
     succeeds: list[MappingField[list[MergedActivityIdentifier]]] = []

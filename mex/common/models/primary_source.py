@@ -13,6 +13,7 @@ from mex.common.models.base.rules import (
     PreventiveRule,
     RuleSet,
     SubtractiveRule,
+    WorkflowRule,
 )
 from mex.common.types import (
     ExtractedPrimarySourceIdentifier,
@@ -58,6 +59,14 @@ class _OptionalLists(_Stem):
         Field(
             description="An agent that serves as a contact for the primary source.",
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+        ),
+    ] = []
+    contributor: Annotated[
+        list[MergedPersonIdentifier],
+        Field(
+            description="A person responsible for making contributions to the "
+            "resource.",
+            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     description: Annotated[
@@ -222,7 +231,7 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     ] = None
 
 
-class PreviewPrimarySource(_OptionalLists, _OptionalValues, PreviewItem):
+class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
@@ -293,6 +302,7 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     ] = "PreventivePrimarySource"
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
+    contributor: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
     locatedAt: list[MergedPrimarySourceIdentifier] = []
@@ -301,12 +311,21 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     version: list[MergedPrimarySourceIdentifier] = []
 
 
+class WorkflowPrimarySource(_Stem, WorkflowRule):
+    """Rule to prevent publishing of merged primary source items."""
+
+    entityType: Annotated[
+        Literal["WorkflowPrimarySource"], Field(alias="$type", frozen=True)
+    ] = "WorkflowPrimarySource"
+
+
 class _BaseRuleSet(_Stem, RuleSet):
     """Base class for sets of rules for a primary source item."""
 
     additive: AdditivePrimarySource = AdditivePrimarySource()
     subtractive: SubtractivePrimarySource = SubtractivePrimarySource()
     preventive: PreventivePrimarySource = PreventivePrimarySource()
+    workflow: WorkflowPrimarySource = WorkflowPrimarySource()
 
 
 class PrimarySourceRuleSetRequest(_BaseRuleSet):
@@ -335,6 +354,7 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     version: list[MappingField[VersionStr | None]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
+    contributor: list[MappingField[list[MergedPersonIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
     documentation: list[MappingField[list[Link]]] = []
     locatedAt: list[MappingField[list[Link]]] = []

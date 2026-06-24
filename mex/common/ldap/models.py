@@ -1,4 +1,4 @@
-from typing import Final, Literal, get_args
+from typing import Any, Final, Literal, get_args
 
 from pydantic import UUID4, TypeAdapter
 
@@ -48,3 +48,10 @@ LDAPFunctionalAccountsTypeAdapter: TypeAdapter[list[LDAPFunctionalAccount]] = (
     TypeAdapter(list[LDAPFunctionalAccount])
 )
 LDAPPersonsTypeAdapter: TypeAdapter[list[LDAPPerson]] = TypeAdapter(list[LDAPPerson])
+
+
+class LDAPFetchResult(BaseModel):
+    """Model class for LDAP fetch result."""
+
+    total: int
+    raw_items: list[dict[str, Any]]

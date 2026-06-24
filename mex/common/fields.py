@@ -8,6 +8,7 @@ from mex.common.models import (
     PREVENTIVE_MODEL_CLASSES_BY_NAME,
     PREVIEW_MODEL_CLASSES_BY_NAME,
     SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
+    WORKFLOW_MODEL_CLASSES_BY_NAME,
 )
 from mex.common.types import (
     MERGED_IDENTIFIER_CLASSES,
@@ -37,6 +38,7 @@ ALL_MODEL_CLASSES_BY_NAME = {
     **NESTED_MODEL_CLASSES_BY_NAME,
     **PREVIEW_MODEL_CLASSES_BY_NAME,
     **PREVENTIVE_MODEL_CLASSES_BY_NAME,
+    **WORKFLOW_MODEL_CLASSES_BY_NAME,
     **SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
 }
 
@@ -302,11 +304,14 @@ INBOUND_REFERENCE_FIELDS_BY_CLASS_NAME = {
     }
 }
 
-# fields from any extracted class that contain references
+# fields from any extracted or additive class that contain references
 ALL_REFERENCE_FIELD_NAMES = sorted(
     {
         field_name
-        for class_name in EXTRACTED_MODEL_CLASSES_BY_NAME
+        for class_name in chain(
+            EXTRACTED_MODEL_CLASSES_BY_NAME,
+            ADDITIVE_MODEL_CLASSES_BY_NAME,
+        )
         for field_name in REFERENCE_FIELDS_BY_CLASS_NAME[class_name]
     }
 )

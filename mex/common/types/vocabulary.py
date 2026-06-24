@@ -192,6 +192,12 @@ class Frequency(VocabularyEnum):
     __vocabulary__ = "frequency"
 
 
+class HealthCategory(VocabularyEnum):
+    """Type for health category."""
+
+    __vocabulary__ = "health-category"
+
+
 class Language(VocabularyEnum):
     """Language type."""
 

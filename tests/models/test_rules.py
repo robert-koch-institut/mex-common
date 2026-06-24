@@ -6,6 +6,7 @@ from mex.common.models import (
     RULE_SET_REQUEST_CLASSES,
     RULE_SET_RESPONSE_CLASSES,
     SUBTRACTIVE_MODEL_CLASSES,
+    WORKFLOW_MODEL_CLASSES,
 )
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 
@@ -18,6 +19,7 @@ def test_all_rules_are_defined() -> None:
         RULE_SET_REQUEST_CLASSES,
         RULE_SET_RESPONSE_CLASSES,
         SUBTRACTIVE_MODEL_CLASSES,
+        WORKFLOW_MODEL_CLASSES,
     ):
         assert sorted(c.stemType for c in lookup) == stem_types
 
@@ -67,6 +69,12 @@ def test_preventive_models_define_all_fields_as_correct_type() -> None:
                 assert field_info.annotation == list[MergedPrimarySourceIdentifier]
                 assert field_info.is_required() is False
                 assert field_info.default == []
+
+
+def test_workflow_models_have_no_required_fields() -> None:
+    for workflow_model in WORKFLOW_MODEL_CLASSES:
+        model = workflow_model()
+        assert model.model_dump(exclude_unset=True) == {}
 
 
 def test_rule_set_request_models_have_no_required_fields() -> None:

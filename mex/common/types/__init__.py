@@ -34,7 +34,8 @@ from mex.common.types.identifier import (
 )
 from mex.common.types.identity import IdentityProvider
 from mex.common.types.link import Link, LinkLanguage
-from mex.common.types.path import AssetsPath, PathWrapper, WorkPath
+from mex.common.types.path import AssetsPath, OpsPath, PathWrapper, WorkPath
+from mex.common.types.publishing_target import PublishingTarget
 from mex.common.types.sink import Sink
 from mex.common.types.temporal_entity import (
     CET,
@@ -61,6 +62,7 @@ from mex.common.types.vocabulary import (
     ConsentType,
     DataProcessingState,
     Frequency,
+    HealthCategory,
     Language,
     License,
     MIMEType,
@@ -118,6 +120,7 @@ __all__ = (
     "ExtractedVariableGroupIdentifier",
     "ExtractedVariableIdentifier",
     "Frequency",
+    "HealthCategory",
     "Identifier",
     "IdentityProvider",
     "Language",
@@ -140,8 +143,10 @@ __all__ = (
     "MergedResourceIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
+    "OpsPath",
     "PathWrapper",
     "PersonalData",
+    "PublishingTarget",
     "ResourceCreationMethod",
     "ResourceTypeGeneral",
     "Sink",
@@ -171,6 +176,7 @@ AnyVocabularyEnum = (
     | ConsentType
     | DataProcessingState
     | Frequency
+    | HealthCategory
     | Language
     | License
     | MIMEType

@@ -1,4 +1,4 @@
-name: CVE Scan
+name: Fuzzing
 
 on:
   push:
@@ -9,22 +9,26 @@ on:
       - opened
       - reopened
       - synchronize
-  schedule:
-    - cron: "14 3 * * 1-5"
   workflow_dispatch:
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: on
+  PIP_NO_CLEAN: on
+  PIP_NO_INPUT: on
+  PIP_PREFER_BINARY: on
+  PY_COLORS: "1"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  scan:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.11, 3.12, 3.13, 3.14 ]
     timeout-minutes: 10
-    permissions:
-      contents: read
-      security-events: write
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -57,20 +61,9 @@ jobs:
           python-version: 3.14
 
       - name: Install requirements
-        run: make setup
+        run: |
+          echo ${{ matrix.python-version }} > .python-version
+          make install
 
-      - name: Run trivy
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          format: 'sarif'
-          list-all-pkgs: 'true'
-          output: 'trivy-results.sarif'
-          scan-ref: '.'
-          scan-type: 'fs'
-          severity: 'MEDIUM,HIGH,CRITICAL'
-
-      - name: Publish results
-        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+      - name: Run fuzzing tests
+        run: make fuzzing

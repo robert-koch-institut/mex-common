@@ -13,14 +13,12 @@
     "lockFileMaintenance": {
         "enabled": true,
         "schedule": [
-            "before 4am on monday"
+            "on monday"
         ]
     },
     "packageRules": [
         {
-            "matchPackageNames": [
-                "mex-*"
-            ],
+            "description": "Apply all updates after cooldown of 7 days, hopefully avoiding malicious updates which are yanked in the meantime",
             "matchUpdateTypes": [
                 "digest",
                 "lockFileMaintenance",
@@ -28,19 +26,53 @@
                 "minor",
                 "patch",
                 "pin"
+            ],
+            "minimumReleaseAge": "7 days",
+            "minimumReleaseAgeBehaviour": "timestamp-optional"
+        },
+        {
+            "description": "Pin GitHub Actions to SHA digests for supply chain security",
+            "matchManagers": [
+                "github-actions"
+            ],
+            "pinDigests": true
+        },
+        {
+            "description": "Group all GitHub Actions updates into a single PR",
+            "groupName": "github-actions",
+            "matchManagers": [
+                "github-actions"
             ]
         },
         {
+            "description": "Group all non-major Python updates into a single PR",
+            "groupName": "python non-major",
+            "matchCurrentVersion": "!/^0/",
+            "matchManagers": [
+                "pep621",
+                "pip_requirements"
+            ],
             "matchUpdateTypes": [
-                "digest",
-                "lockFileMaintenance",
-                "major",
                 "minor",
                 "patch",
-                "pin"
+                "pin",
+                "digest"
+            ]
+        },
+        {
+            "description": "Immediately apply updates of mex packages in dedicated PR",
+            "groupName": null,
+            "matchPackageNames": [
+                "mex-*"
             ],
-            "minimumReleaseAge": "7 days"
+            "minimumReleaseAge": "0 days"
         }
     ],
-    "prFooter": ""
+    "prFooter": "",
+    "pre-commit": {
+        "enabled": true
+    },
+    "vulnerabilityAlerts": {
+        "enabled": true
+    }
 }
