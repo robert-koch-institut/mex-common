@@ -1,4 +1,3 @@
-import json
 import os
 from collections.abc import Callable
 from typing import Any
@@ -21,7 +20,6 @@ from mex.common.models import (
     PaginatedItemsContainer,
 )
 from mex.common.settings import BaseSettings
-from mex.common.transform import MExEncoder, normalize
 from mex.common.types import MergedPrimarySourceIdentifier
 
 
@@ -148,22 +146,81 @@ def contact_point(
     )
 
 
-def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
-    """Create a mocked search that picks the best match by simple token matching."""
+# mapping from `get_persons` search kwargs to the LDAP attributes they filter on
+_SEARCH_ATTR_BY_KWARG = {
+    "display_name": "displayName",
+    "employee_id": "employeeID",
+    "given_name": "givenName",
+    "mail": "mail",
+    "object_guid": "objectGUID",
+    "sam_account_name": "sAMAccountName",
+    "surname": "sn",
+}
 
-    def tokenize(obj: object) -> set[str]:
-        serialized = json.dumps(obj, cls=MExEncoder, ensure_ascii=False)
-        return set(normalize(serialized.lower()).split())
+
+def _attribute_values(actor: LDAPActor, attribute: str) -> list[str]:
+    """Return an actor's attribute values as a list of strings."""
+    value = getattr(actor, attribute, None)
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(item) for item in value]
+    return [str(value)]
+
+
+def _actor_matches(actor: LDAPActor, **kwargs: str) -> bool:
+    """Check whether an actor matches all non-wildcard search filters."""
+    for kwarg, value in kwargs.items():
+        if value == "*":
+            continue
+        attribute = _SEARCH_ATTR_BY_KWARG[kwarg]
+        values = [v.lower() for v in _attribute_values(actor, attribute)]
+        if value.lower() not in values:
+            return False
+    return True
+
+
+def ldap_mock_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
+    """Create a mocked attribute search that faithfully filters the given actors."""
 
     def mock_search(
-        _self: LDAPConnector, **kwargs: dict[str, Any]
+        _self: LDAPConnector,
+        *,
+        limit: int = 10,
+        offset: int = 0,
+        **kwargs: str,
     ) -> PaginatedItemsContainer[LDAPActor]:
-        tokenized_query = tokenize(kwargs)
-        actors_by_score = [
-            (len(tokenized_query & tokenize(actor)), actor) for actor in actors
-        ]
-        items = [i[1] for i in sorted(actors_by_score, key=lambda i: i[0])][-1:]
-        return PaginatedItemsContainer[LDAPActor](items=items, total=len(items))
+        matched = [actor for actor in actors if _actor_matches(actor, **kwargs)]
+        return PaginatedItemsContainer[LDAPActor](
+            items=matched[offset : offset + limit], total=len(matched)
+        )
+
+    return mock_search
+
+
+def ldap_mock_query_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
+    """Create a mocked query search over display names and functional account mails."""
+
+    def mock_search(
+        _self: LDAPConnector,
+        *,
+        query: str = "*",
+        limit: int = 10,
+        offset: int = 0,
+    ) -> PaginatedItemsContainer[LDAPActor]:
+        def matches(actor: LDAPActor) -> bool:
+            if query == "*":
+                return True
+            if isinstance(actor, LDAPFunctionalAccount):
+                fields = _attribute_values(actor, "mail")
+            else:
+                fields = _attribute_values(actor, "displayName")
+            return query.lower() in [field.lower() for field in fields]
+
+        matched = [actor for actor in actors if matches(actor)]
+        return PaginatedItemsContainer[LDAPActor](
+            items=matched[offset : offset + limit], total=len(matched)
+        )
 
     return mock_search
 
@@ -196,6 +253,18 @@ def mocked_ldap(  # noqa: PLR0913
             "get_persons",
             ldap_mock_searcher(
                 [ldap_roland_resolved, ldap_juturna_felicitas, ldap_frieda_fictitious]
+            ),
+        )
+        monkeypatch.setattr(
+            LDAPConnector,
+            "get_persons_or_functional_accounts",
+            ldap_mock_query_searcher(
+                [
+                    ldap_roland_resolved,
+                    ldap_juturna_felicitas,
+                    ldap_frieda_fictitious,
+                    ldap_contact_point,
+                ]
             ),
         )
     elif request.param == "ldap_mock_server":
