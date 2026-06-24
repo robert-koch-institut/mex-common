@@ -16,6 +16,7 @@ from mex.common.merged.types import (
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    PREVENTIVE_MODEL_CLASSES_BY_NAME,
     PREVIEW_MODEL_CLASSES_BY_NAME,
     RULE_MODEL_CLASSES_BY_NAME,
     RULE_MODEL_CLASSES_BY_TYPE_BY_NAME,
@@ -32,6 +33,7 @@ from mex.common.types import (
     AnyPrimitiveType,
     AnyValidation,
     Identifier,
+    MergedPrimarySourceIdentifier,
     PublishingTarget,
     Validation,
 )
@@ -403,49 +405,66 @@ def create_merged_item(
     return None
 
 
-def merge_rules(left: RuleT, right: RuleT) -> RuleT:
+def merge_rules(
+    keeper: RuleT,
+    goner: RuleT,
+    valid_primary_sources: list[MergedPrimarySourceIdentifier],
+) -> RuleT:
     """Merge two rules of the same type into a new rule.
 
     Works for any rule type (additive, subtractive, preventive or workflow).
     For each mergeable field, the resulting rule contains the concatenation of
-    `left` and `right` values with duplicates removed while preserving order.
+    `keeper` and `goner` values with duplicates removed while preserving order.
+
+    For preventive rules, the primary source identifiers contributed by `goner`
+    are only kept when they are part of `valid_primary_sources`; `keeper` values
+    are always kept. For other rule types `valid_primary_sources` has no effect.
 
     Args:
-        left: Rule whose values come first
-        right: Rule of the same type whose values are appended
+        keeper: Rule that survives the merge; its values come first
+        goner: Rule of the same type that is merged into `keeper`; its values
+            are appended
+        valid_primary_sources: Primary source identifiers whose preventive
+            entries from `goner` may be kept
 
     Raises:
-        MergingError: When `left` and `right` are not of the same type
+        MergingError: When `keeper` and `goner` are not of the same type
 
     Returns:
         A new rule instance of the same type with the merged field values
     """
-    if left.entityType != right.entityType:
+    if keeper.entityType != goner.entityType:
         msg = (
             "Cannot merge rules of different types: "
-            f"{left.entityType} and {right.entityType}."
+            f"{keeper.entityType} and {goner.entityType}."
         )
         raise MergingError(msg)
 
+    is_preventive = keeper.entityType in PREVENTIVE_MODEL_CLASSES_BY_NAME
+    valid_sources = set(valid_primary_sources)
+
     merged_dict: dict[str, ValueList] = {}
-    for field in MERGEABLE_FIELDS_BY_CLASS_NAME[left.entityType]:
+    for field in MERGEABLE_FIELDS_BY_CLASS_NAME[keeper.entityType]:
+        goner_values = ensure_list(getattr(goner, field))
+        if is_preventive:
+            goner_values = [value for value in goner_values if value in valid_sources]
+
         seen_values: set[AnyPrimitiveType] = set()
         merged_values: ValueList = []
-        for value in chain(
-            ensure_list(getattr(left, field)), ensure_list(getattr(right, field))
-        ):
+        for value in chain(ensure_list(getattr(keeper, field)), goner_values):
             if value not in seen_values:
                 seen_values.add(value)
                 merged_values.append(value)
         merged_dict[field] = merged_values
 
-    rule_class = RULE_MODEL_CLASSES_BY_NAME[left.entityType]
+    rule_class = RULE_MODEL_CLASSES_BY_NAME[keeper.entityType]
     return cast("RuleT", rule_class.model_validate(merged_dict))
 
 
 def merge_rule_set_responses(
     keeper: RuleSetResponseT,
     goner: RuleSetResponseT,
+    valid_primary_sources: list[MergedPrimarySourceIdentifier],
 ) -> RuleSetResponseT:
     """Merge two rule set responses of the same type into a new response.
 
@@ -459,6 +478,8 @@ def merge_rule_set_responses(
             and its `stableTargetId` is carried over to the result
         goner: Rule set response of the same type that is merged into `keeper`;
             its values are appended and its `stableTargetId` is ignored
+        valid_primary_sources: Primary source identifiers whose preventive
+            entries from `goner` may be kept
 
     Raises:
         MergingError: When `keeper` and `goner` are not of the same type
@@ -475,7 +496,11 @@ def merge_rule_set_responses(
         raise MergingError(msg)
 
     rule_set_dict: dict[str, object] = {
-        rule_type: merge_rules(getattr(keeper, rule_type), getattr(goner, rule_type))
+        rule_type: merge_rules(
+            getattr(keeper, rule_type),
+            getattr(goner, rule_type),
+            valid_primary_sources,
+        )
         for rule_type in RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
     }
     rule_set_dict["stableTargetId"] = keeper.stableTargetId

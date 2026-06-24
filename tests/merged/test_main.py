@@ -676,6 +676,7 @@ def test_merge_rules_additive() -> None:
     merged = merge_rules(
         AdditivePerson(givenName=["Alice", "Bob"]),
         AdditivePerson(givenName=["Bob", "Charlie"]),
+        [],
     )
     assert isinstance(merged, AdditivePerson)
     assert merged.givenName == ["Alice", "Bob", "Charlie"]
@@ -685,25 +686,31 @@ def test_merge_rules_subtractive() -> None:
     merged = merge_rules(
         SubtractivePerson(givenName=["Alice"]),
         SubtractivePerson(givenName=["Alice", "Bob"]),
+        [],
     )
     assert isinstance(merged, SubtractivePerson)
     assert merged.givenName == ["Alice", "Bob"]
 
 
-def test_merge_rules_preventive() -> None:
-    primary_source = MergedPrimarySourceIdentifier.generate(seed=99)
+def test_merge_rules_preventive_filters_goner_by_valid_primary_sources() -> None:
+    keeper_source = MergedPrimarySourceIdentifier.generate(seed=1)
+    valid_source = MergedPrimarySourceIdentifier.generate(seed=2)
+    invalid_source = MergedPrimarySourceIdentifier.generate(seed=3)
     merged = merge_rules(
-        PreventivePerson(givenName=[primary_source]),
-        PreventivePerson(givenName=[primary_source]),
+        PreventivePerson(givenName=[keeper_source]),
+        PreventivePerson(givenName=[valid_source, invalid_source]),
+        [keeper_source, valid_source],
     )
     assert isinstance(merged, PreventivePerson)
-    assert merged.givenName == [primary_source]
+    # keeper values are always kept, goner values only when they are valid
+    assert merged.givenName == [keeper_source, valid_source]
 
 
 def test_merge_rules_workflow() -> None:
     merged = merge_rules(
         WorkflowContactPoint(forbiddenPublishingTarget=[PublishingTarget.INVENIO]),
         WorkflowContactPoint(forbiddenPublishingTarget=[PublishingTarget.INVENIO]),
+        [],
     )
     assert isinstance(merged, WorkflowContactPoint)
     assert merged.forbiddenPublishingTarget == [PublishingTarget.INVENIO]
@@ -711,11 +718,12 @@ def test_merge_rules_workflow() -> None:
 
 def test_merge_rules_different_types_raises() -> None:
     with pytest.raises(MergingError, match="Cannot merge rules of different types"):
-        merge_rules(AdditivePerson(), AdditiveResource())
+        merge_rules(AdditivePerson(), AdditiveResource(), [])
 
 
 def test_merge_rule_set_responses() -> None:
-    primary_source = MergedPrimarySourceIdentifier.generate(seed=7)
+    keeper_source = MergedPrimarySourceIdentifier.generate(seed=7)
+    goner_source = MergedPrimarySourceIdentifier.generate(seed=8)
     keeper_id = MergedPersonIdentifier.generate(seed=1)
     goner_id = MergedPersonIdentifier.generate(seed=2)
     merged = merge_rule_set_responses(
@@ -723,21 +731,23 @@ def test_merge_rule_set_responses() -> None:
             stableTargetId=keeper_id,
             additive=AdditivePerson(givenName=["Alice", "Bob"]),
             subtractive=SubtractivePerson(givenName=["X"]),
-            preventive=PreventivePerson(givenName=[primary_source]),
+            preventive=PreventivePerson(givenName=[keeper_source]),
         ),
         PersonRuleSetResponse(
             stableTargetId=goner_id,
             additive=AdditivePerson(givenName=["Bob", "Charlie"]),
             subtractive=SubtractivePerson(givenName=["X", "Y"]),
-            preventive=PreventivePerson(givenName=[primary_source]),
+            preventive=PreventivePerson(givenName=[goner_source]),
         ),
+        [keeper_source],
     )
     assert isinstance(merged, PersonRuleSetResponse)
     # the keeper's stableTargetId is kept, the goner's is discarded
     assert merged.stableTargetId == keeper_id
     assert merged.additive.givenName == ["Alice", "Bob", "Charlie"]
     assert merged.subtractive.givenName == ["X", "Y"]
-    assert merged.preventive.givenName == [primary_source]
+    # goner's preventive source is dropped because it is not a valid primary source
+    assert merged.preventive.givenName == [keeper_source]
 
 
 def test_merge_rule_set_responses_different_types_raises() -> None:
@@ -750,7 +760,7 @@ def test_merge_rule_set_responses_different_types_raises() -> None:
     with pytest.raises(
         MergingError, match="Cannot merge rule set responses of different types"
     ):
-        merge_rule_set_responses(keeper, goner)
+        merge_rule_set_responses(keeper, goner, [])
 
 
 @pytest.fixture(autouse=True)
