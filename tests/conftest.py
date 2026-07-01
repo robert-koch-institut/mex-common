@@ -23,7 +23,10 @@ from mex.common.types import (
     Text,
 )
 
-pytest_plugins = ("mex.common.testing.plugin",)
+pytest_plugins = (
+    "mex.common.testing.plugin",
+    "mex.common.testing.mocked_ldap",
+)
 
 
 @pytest.fixture
