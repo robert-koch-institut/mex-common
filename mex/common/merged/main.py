@@ -1,6 +1,6 @@
 from collections.abc import Iterable, Mapping
 from itertools import chain
-from typing import Literal, cast, overload
+from typing import Literal, TypeVar, cast, overload
 
 from pydantic_core import ValidationError
 
@@ -16,23 +16,32 @@ from mex.common.merged.types import (
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    PREVENTIVE_MODEL_CLASSES_BY_NAME,
     PREVIEW_MODEL_CLASSES_BY_NAME,
+    RULE_MODEL_CLASSES_BY_NAME,
+    RULE_MODEL_CLASSES_BY_TYPE_BY_NAME,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
     AnyExtractedModel,
     AnyMergedModel,
     AnyPreviewModel,
+    AnyRuleModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_prefix
 from mex.common.types import (
+    AnyMergedIdentifier,
     AnyPrimitiveType,
     AnyValidation,
     Identifier,
+    MergedPrimarySourceIdentifier,
     PublishingTarget,
     Validation,
 )
 from mex.common.utils import ensure_list
+
+RuleT = TypeVar("RuleT", bound=AnyRuleModel)
+RuleSetResponseT = TypeVar("RuleSetResponseT", bound=AnyRuleSetResponse)
 
 
 def _collect_extracted_values(
@@ -395,3 +404,117 @@ def create_merged_item(
             raise MergingError(msg) from error
         logger.debug("%s %s:%s", msg, merged_class.__name__, identifier)
     return None
+
+
+def _ensure_same_entity_type(
+    keeper: AnyRuleModel | AnyRuleSetRequest | AnyRuleSetResponse,
+    goner: AnyRuleModel | AnyRuleSetRequest | AnyRuleSetResponse,
+) -> None:
+    """Ensure two items to be merged share the same entity type.
+
+    Args:
+        keeper: Item that survives the merge
+        goner: Item that is merged into `keeper`
+
+    Raises:
+        MergingError: When `keeper` and `goner` are not of the same type
+    """
+    if keeper.entityType != goner.entityType:
+        msg = (
+            "Cannot merge two different types: "
+            f"{keeper.entityType} and {goner.entityType}."
+        )
+        raise MergingError(msg)
+
+
+def merge_rules(
+    keeper: RuleT,
+    goner: RuleT,
+    valid_primary_sources: list[MergedPrimarySourceIdentifier],
+) -> RuleT:
+    """Merge two rules of the same type into a new rule.
+
+    Works for any rule type (additive, subtractive, preventive or workflow).
+    For each mergeable field, the resulting rule contains the concatenation of
+    `keeper` and `goner` values with duplicates removed while preserving order.
+
+    For preventive rules, the primary source identifiers contributed by `goner`
+    are only kept when they are part of `valid_primary_sources`; `keeper` values
+    are always kept. For other rule types `valid_primary_sources` has no effect.
+
+    Args:
+        keeper: Rule that survives the merge; its values come first
+        goner: Rule of the same type that is merged into `keeper`; its values
+            are appended
+        valid_primary_sources: Primary source identifiers whose preventive
+            entries from `goner` may be kept
+
+    Raises:
+        MergingError: When `keeper` and `goner` are not of the same type
+
+    Returns:
+        A new rule instance of the same type with the merged field values
+    """
+    _ensure_same_entity_type(keeper, goner)
+
+    is_preventive = keeper.entityType in PREVENTIVE_MODEL_CLASSES_BY_NAME
+    valid_sources = set(valid_primary_sources)
+
+    merged_dict: dict[str, ValueList] = {}
+    for field in MERGEABLE_FIELDS_BY_CLASS_NAME[keeper.entityType]:
+        goner_values = ensure_list(getattr(goner, field))
+        if is_preventive:
+            goner_values = [value for value in goner_values if value in valid_sources]
+
+        seen_values: set[AnyPrimitiveType] = set()
+        merged_values: ValueList = []
+        for value in chain(ensure_list(getattr(keeper, field)), goner_values):
+            if value not in seen_values:
+                seen_values.add(value)
+                merged_values.append(value)
+        merged_dict[field] = merged_values
+
+    rule_class = RULE_MODEL_CLASSES_BY_NAME[keeper.entityType]
+    return cast("RuleT", rule_class.model_validate(merged_dict))
+
+
+def merge_rule_set_responses(
+    keeper: RuleSetResponseT,
+    goner: RuleSetResponseT,
+    valid_primary_sources: list[MergedPrimarySourceIdentifier],
+) -> RuleSetResponseT:
+    """Merge two rule set responses of the same type into a new response.
+
+    Each of the contained rules (additive, subtractive, preventive and workflow)
+    is merged with `merge_rules`, combining the values of `keeper` and `goner`
+    while removing duplicates. The `stableTargetId` of `keeper` is kept for the
+    result, while the `stableTargetId` of `goner` is discarded.
+
+    Args:
+        keeper: Rule set response that survives the merge; its values come first
+            and its `stableTargetId` is carried over to the result
+        goner: Rule set response of the same type that is merged into `keeper`;
+            its values are appended and its `stableTargetId` is ignored
+        valid_primary_sources: Primary source identifiers whose preventive
+            entries from `goner` may be kept
+
+    Raises:
+        MergingError: When `keeper` and `goner` are not of the same type
+
+    Returns:
+        A new rule set response of the same type with the merged rules and the
+        `stableTargetId` of `keeper`
+    """
+    _ensure_same_entity_type(keeper, goner)
+
+    rule_set_dict: dict[str, AnyRuleModel | AnyMergedIdentifier] = {
+        rule_type: merge_rules(
+            getattr(keeper, rule_type),
+            getattr(goner, rule_type),
+            valid_primary_sources,
+        )
+        for rule_type in RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
+    }
+    rule_set_dict["stableTargetId"] = keeper.stableTargetId
+
+    return cast("RuleSetResponseT", type(keeper).model_validate(rule_set_dict))
