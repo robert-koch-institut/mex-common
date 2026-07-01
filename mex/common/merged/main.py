@@ -406,6 +406,27 @@ def create_merged_item(
     return None
 
 
+def _ensure_same_entity_type(
+    keeper: AnyRuleModel | AnyRuleSetRequest | AnyRuleSetResponse,
+    goner: AnyRuleModel | AnyRuleSetRequest | AnyRuleSetResponse,
+) -> None:
+    """Ensure two items to be merged share the same entity type.
+
+    Args:
+        keeper: Item that survives the merge
+        goner: Item that is merged into `keeper`
+
+    Raises:
+        MergingError: When `keeper` and `goner` are not of the same type
+    """
+    if keeper.entityType != goner.entityType:
+        msg = (
+            "Cannot merge two different types: "
+            f"{keeper.entityType} and {goner.entityType}."
+        )
+        raise MergingError(msg)
+
+
 def merge_rules(
     keeper: RuleT,
     goner: RuleT,
@@ -434,12 +455,7 @@ def merge_rules(
     Returns:
         A new rule instance of the same type with the merged field values
     """
-    if keeper.entityType != goner.entityType:
-        msg = (
-            "Cannot merge rules of different types: "
-            f"{keeper.entityType} and {goner.entityType}."
-        )
-        raise MergingError(msg)
+    _ensure_same_entity_type(keeper, goner)
 
     is_preventive = keeper.entityType in PREVENTIVE_MODEL_CLASSES_BY_NAME
     valid_sources = set(valid_primary_sources)
@@ -489,12 +505,7 @@ def merge_rule_set_responses(
         A new rule set response of the same type with the merged rules and the
         `stableTargetId` of `keeper`
     """
-    if keeper.entityType != goner.entityType:
-        msg = (
-            "Cannot merge rule set responses of different types: "
-            f"{keeper.entityType} and {goner.entityType}."
-        )
-        raise MergingError(msg)
+    _ensure_same_entity_type(keeper, goner)
 
     rule_set_dict: dict[str, AnyRuleModel | AnyMergedIdentifier] = {
         rule_type: merge_rules(

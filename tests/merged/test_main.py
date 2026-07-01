@@ -13,6 +13,7 @@ from mex.common.merged.main import (
     _collect_subtractive_values,
     _create_merged_dict,
     _ensure_rule_set,
+    _ensure_same_entity_type,
     _filter_usable_values,
     _get_merged_class,
     _pick_usable_values,
@@ -716,8 +717,20 @@ def test_merge_rules_workflow() -> None:
     assert merged.forbiddenPublishingTarget == [PublishingTarget.INVENIO]
 
 
+def test_ensure_same_entity_type_passes_for_same_type() -> None:
+    _ensure_same_entity_type(AdditivePerson(), AdditivePerson())  # does not raise
+
+
+def test_ensure_same_entity_type_raises_for_different_types() -> None:
+    with pytest.raises(
+        MergingError,
+        match="Cannot merge two different types: AdditivePerson and AdditiveResource",
+    ):
+        _ensure_same_entity_type(AdditivePerson(), AdditiveResource())
+
+
 def test_merge_rules_different_types_raises() -> None:
-    with pytest.raises(MergingError, match="Cannot merge rules of different types"):
+    with pytest.raises(MergingError, match="Cannot merge two different types"):
         merge_rules(AdditivePerson(), AdditiveResource(), [])
 
 
@@ -757,9 +770,7 @@ def test_merge_rule_set_responses_different_types_raises() -> None:
     goner = ResourceRuleSetResponse(
         stableTargetId=MergedResourceIdentifier.generate(seed=2)
     )
-    with pytest.raises(
-        MergingError, match="Cannot merge rule set responses of different types"
-    ):
+    with pytest.raises(MergingError, match="Cannot merge two different types"):
         merge_rule_set_responses(keeper, goner, [])
 
 
