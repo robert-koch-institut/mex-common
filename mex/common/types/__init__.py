@@ -32,6 +32,7 @@ from mex.common.types.identifier import (
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
 )
+from mex.common.types.assets import AssetsConnectorType
 from mex.common.types.identity import IdentityProvider
 from mex.common.types.link import Link, LinkLanguage
 from mex.common.types.path import AssetsPath, OpsPath, PathWrapper, WorkPath
@@ -100,6 +101,7 @@ __all__ = (
     "AnyPrimitiveType",
     "AnyValidation",
     "AnyVocabularyEnum",
+    "AssetsConnectorType",
     "AssetsPath",
     "BibliographicResourceType",
     "ConsentStatus",
