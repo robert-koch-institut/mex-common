@@ -1,17 +1,18 @@
 from abc import abstractmethod
+from os import PathLike
 
 from mex.common.connector import BaseConnector
-from mex.common.types import AssetsPath
+
 
 class BaseAssetsConnector(BaseConnector):
     """Base class for assets connectors that handle file loading."""
 
     @abstractmethod
-    def load_file(self, path: AssetsPath) -> bytes:
-        """Load a file from the given AssetsPath and return bytes.
+    def load_file(self, path: PathLike[str]) -> bytes:
+        """Load a file from the given Path and return bytes.
 
         Args:
-            path: The AssetsPath pointing to the file to load
+            path: The Path pointing to the file to load
 
         Returns:
             The file contents as bytes
@@ -20,3 +21,4 @@ class BaseAssetsConnector(BaseConnector):
             FileNotFoundError: If the file does not exist
             IOError: For other file access issues
         """
+        ...
