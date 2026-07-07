@@ -1,31 +1,35 @@
-from os import PathLike
-from pathlib import Path
-
 from mex.common.assets.base import BaseAssetsConnector
+from mex.common.settings import BaseSettings
 
 
 class FilesystemAssetsConnector(BaseAssetsConnector):
     """Filesystem-based implementation of assets connector."""
 
-    def __init__(self) -> None:  # pragma: no cover
+    def __init__(self) -> None:
         """Create a new connector instance."""
+        self._assets_dir = BaseSettings.get().assets_dir
 
-    def load_file(self, path: PathLike[str]) -> bytes:
-        """Load a file from the filesystem.
+    def read(self, path: str) -> bytes:
+        """Read a file from the filesystem.
 
         Args:
-            path: The Path pointing to the file to load
+            path: The path pointing to the file to load
 
         Returns:
             The file contents as bytes
 
         Raises:
-            FileNotFoundError: If the file does not exist
-            IOError: For other file access issues
+            PermissionError: For file access permission issues
         """
-        # Read and return the file contents as bytes
-        with Path(path).open("rb") as file_handle:
+        msg = "given path is not valid or not in assets directory"
+        try:
+            target_path = (self._assets_dir / path).resolve(strict=True)
+        except OSError:
+            raise PermissionError(msg) from None
+        if not target_path.is_relative_to(self._assets_dir):
+            raise PermissionError(msg)
+        with target_path.open("rb") as file_handle:
             return file_handle.read()
 
-    def close(self) -> None:  # pragma: no cover
-        """Close the connector's underlying sockets."""
+    def close(self) -> None:
+        """Nothing to close for filesystem access."""

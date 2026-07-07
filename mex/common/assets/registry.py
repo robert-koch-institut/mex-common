@@ -2,10 +2,11 @@ from typing import TYPE_CHECKING, Final
 
 from mex.common.types import AssetsConnectorType
 
-if TYPE_CHECKING:
-    from .base import BaseAssetsConnector
+if TYPE_CHECKING:  # pragma: no cover
+    from mex.common.assets.base import BaseAssetsConnector
 
 _CONNECTOR_REGISTRY: Final[dict[AssetsConnectorType, type["BaseAssetsConnector"]]] = {}
+
 
 def register_assets_connector(
     key: AssetsConnectorType, connector_cls: type["BaseAssetsConnector"]
@@ -23,6 +24,7 @@ def register_assets_connector(
         msg = f"Already registered assets connector: {key}"
         raise RuntimeError(msg)
     _CONNECTOR_REGISTRY[key] = connector_cls
+
 
 def get_assets_connector() -> "BaseAssetsConnector":
     """Get an instance of the assets connector as configured by `assets_connector`.
