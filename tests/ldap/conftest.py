@@ -1,18 +1,7 @@
-from collections.abc import Callable
-from functools import lru_cache
-from typing import Any
-from unittest.mock import MagicMock, Mock
-
 import pytest
-from ldap3 import Connection
 from ldap3.core.exceptions import LDAPSocketOpenError
-from pytest import MonkeyPatch
 
 from mex.common.ldap.connector import LDAPConnector
-
-PagedSearchResults = list[list[dict[str, Any]]]
-LDAPMocker = Callable[[PagedSearchResults], None]
-
 
 SAMPLE_PERSON_ATTRS = {
     "company": ["RKI"],
@@ -27,40 +16,6 @@ SAMPLE_PERSON_ATTRS = {
     "sAMAccountName": ["SampleS"],
     "sn": ["Sample"],
 }
-
-XY_FUNC_ACCOUNT_ATTRS = {
-    "mail": ["XY@mail.tld"],
-    "objectGUID": ["{00000000-0000-4000-8000-000000000044}"],
-    "sAMAccountName": ["XY"],
-    "ou": ["Funktion"],
-}
-
-XY2_FUNC_ACCOUNT_ATTRS = {
-    "mail": ["XY2@mail.tld"],
-    "objectGUID": ["{00000000-0000-4000-8000-000000000045}"],
-    "sAMAccountName": ["XY2"],
-    "ou": ["Funktion"],
-}
-
-
-@pytest.fixture
-def ldap_mocker(monkeypatch: MonkeyPatch) -> LDAPMocker:
-    """Patch the LDAP connector to return `SAMPLE_PERSON_ATTRS` from its connection."""
-
-    def mocker(results: PagedSearchResults) -> None:
-        def __init__(self: LDAPConnector) -> None:
-            self._search_base = "DC=foo"
-            self._connection = MagicMock(spec=Connection, extend=Mock())
-            self._connection.extend.standard.paged_search = MagicMock(
-                side_effect=[
-                    [{"attributes": e} for e in entries] for entries in results
-                ]
-            )
-            self._cached_fetch_all = lru_cache(1000)(self._fetch_all)
-
-        monkeypatch.setattr(LDAPConnector, "__init__", __init__)
-
-    return mocker
 
 
 @pytest.fixture(autouse=True)
