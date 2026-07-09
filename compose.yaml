@@ -1,0 +1,14 @@
+services:
+  slapd:
+    image: thoteam/slapd-server-mock
+    platform: linux/amd64
+    ports:
+      - 636:636
+    volumes:
+      - ./assets/raw-data/ldap/:/bootstrap/
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-x", "-o", "tls_reqcert=never", "-H", "ldaps://localhost:636", "-b", "dc=ldapmock,dc=local", "-D", "cn=admin,dc=ldapmock,dc=local", "-w", "adminpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

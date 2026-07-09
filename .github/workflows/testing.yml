@@ -34,12 +34,15 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 1
 
+      - name: Start containers
+        run: docker compose up -d slapd
+
       - name: Cache requirements
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-requirements
         with:
@@ -49,7 +52,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache environment
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-environment
         with:
@@ -59,7 +62,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: 3.14
 
@@ -69,4 +72,11 @@ jobs:
           make install
 
       - name: Run test suite
-        run: make unit
+        env:
+          MEX_LDAP_URL: ldap://cn=admin,dc=ldapmock,dc=local:adminpass@localhost:636
+          MEX_LDAP_SEARCH_BASE: dc=ldapmock,dc=local
+        run: make test
+
+      - name: Cleanup containers
+        if: always()
+        run: docker compose down slapd

@@ -1,5 +1,4 @@
 import re
-from typing import Any
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -7,16 +6,27 @@ import pytest
 from ldap3.core.exceptions import LDAPSocketSendError
 from pytest import MonkeyPatch
 
-from mex.common.exceptions import MExError
+from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.ldap.connector import LDAPConnector
-from mex.common.ldap.models import LDAPFunctionalAccount, LDAPPerson
-from tests.ldap.conftest import (
-    SAMPLE_PERSON_ATTRS,
-    XY2_FUNC_ACCOUNT_ATTRS,
-    XY_FUNC_ACCOUNT_ATTRS,
-    LDAPMocker,
-    PagedSearchResults,
-)
+
+# expected results derived from `assets/raw-data/ldap/data.ldif.TEMPLATE`
+FRIEDA_FICTITIOUS = {
+    "department": "FG99",
+    "displayName": "Fictitious, Frieda, Dr.",
+    "employeeID": "71",
+    "givenName": ["Frieda"],
+    "mail": ["fictitiousf@rki.de"],
+    "objectGUID": UUID("00000000-0000-4000-8000-000000000003"),
+    "sAMAccountName": "FictitiousF",
+    "sn": "Fictitious",
+}
+CONTACT_C = {
+    "mail": ["contactc@rki.de"],
+    "objectGUID": UUID("00000000-0000-4000-8000-000000000004"),
+    "ou": ["Funktion"],
+    "sAMAccountName": "ContactC",
+}
+ALL_PERSON_ACCOUNTS = {"ResolvedR", "FelicitasJ", "FictitiousF"}
 
 
 @pytest.mark.parametrize(
@@ -32,194 +42,83 @@ def test_sanitize_value(value: str, expected: str) -> None:
     assert LDAPConnector._sanitize(value) == expected
 
 
-def test_get_persons_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_persons() -> None:
     connector = LDAPConnector.get()
-    persons = connector.get_persons(surname="Sample", given_name="Kim")
 
+    persons = connector.get_persons(surname="Fictitious", given_name="Frieda")
+    assert persons.total == len(persons.items) == 1
+    assert persons.items[0].model_dump(exclude_defaults=True) == FRIEDA_FICTITIOUS
+
+    all_persons = connector.get_persons()
+    assert all_persons.total == 3
+    assert {p.sAMAccountName for p in all_persons.items} == ALL_PERSON_ACCOUNTS
+
+    missing = connector.get_persons(surname="does-not-exist")
+    assert missing.total == 0
+    assert missing.items == []
+
+
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_functional_accounts() -> None:
+    connector = LDAPConnector.get()
+
+    accounts = connector.get_functional_accounts(mail="contactc@rki.de")
+    assert accounts.total == len(accounts.items) == 1
+    assert accounts.items[0].model_dump(exclude_defaults=True) == CONTACT_C
+
+    missing = connector.get_functional_accounts(mail="does-not-exist@rki.de")
+    assert missing.total == 0
+    assert missing.items == []
+
+
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_persons_or_functional_accounts() -> None:
+    connector = LDAPConnector.get()
+
+    persons = connector.get_persons_or_functional_accounts(
+        query="Fictitious, Frieda, Dr."
+    )
     assert persons.total == 1
-    assert persons.items[0].model_dump(exclude_none=True) == {
-        "company": "RKI",
-        "department": "XY",
-        "departmentNumber": "XY2",
-        "displayName": "Sample, Sam",
-        "employeeID": "1024",
-        "givenName": ["Sam"],
-        "mail": ["SampleS@mail.tld"],
-        "objectGUID": UUID(int=0, version=4),
-        "ou": ["XY"],
-        "sAMAccountName": "SampleS",
-        "sn": "Sample",
-    }
+    assert persons.items[0].model_dump(exclude_defaults=True) == FRIEDA_FICTITIOUS
+
+    accounts = connector.get_persons_or_functional_accounts(query="contactc@rki.de")
+    assert accounts.total == 1
+    assert accounts.items[0].model_dump(exclude_defaults=True) == CONTACT_C
+
+    everyone = connector.get_persons_or_functional_accounts(query="*")
+    assert everyone.total == 4
+
+    missing = connector.get_persons_or_functional_accounts(query="does-not-exist")
+    assert missing.total == 0
+    assert missing.items == []
 
 
-@pytest.mark.parametrize(
-    ("kwargs", "pattern"),
-    [
-        ({"surname": "müller"}, r".{37,}"),  # needs more than one guid to pass
-        ({"surname": "nobody-has-this-name"}, r""),  # only empty list passes
-    ],
-    ids=[
-        "common_surname",
-        "nonexistent_person",
-    ],
-)
-@pytest.mark.integration
-def test_get_persons_ldap(kwargs: dict[str, Any], pattern: str) -> None:
-    connector = LDAPConnector.get()
-    persons = connector.get_persons(**kwargs)
-
-    flat_result = ",".join(str(p.objectGUID) for p in persons.items)
-    assert re.match(pattern, flat_result)
-
-
-@pytest.mark.integration
-def test_get_persons_or_functional_accounts_ldap() -> None:
-    connector = LDAPConnector.get()
-    assert (
-        len(connector.get_persons_or_functional_accounts(query="mex@rki.de").items) == 1
-    )
-    assert (
-        len(connector.get_persons_or_functional_accounts(query="*a*", limit=7).items)
-        == 7
-    )
-    assert not connector.get_persons_or_functional_accounts(
-        query="non-existent-bla"
-    ).items
-
-
-def test_get_persons_or_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS, SAMPLE_PERSON_ATTRS]])
-    connector = LDAPConnector.get()
-    functional_accounts = connector.get_persons_or_functional_accounts(query="XY")
-    assert functional_accounts.items == [
-        LDAPFunctionalAccount(
-            displayName=None,
-            mail=["XY@mail.tld"],
-            objectGUID=UUID("00000000-0000-4000-8000-000000000044"),
-            sAMAccountName="XY",
-            ou=["Funktion"],
-        ),
-        LDAPPerson(
-            displayName="Sample, Sam",
-            mail=["SampleS@mail.tld"],
-            objectGUID=UUID("00000000-0000-4000-8000-000000000000"),
-            sAMAccountName="SampleS",
-            company="RKI",
-            department="XY",
-            departmentNumber="XY2",
-            employeeID="1024",
-            givenName=["Sam"],
-            ou=["XY"],
-            sn="Sample",
-        ),
-    ]
-
-
-@pytest.mark.parametrize(
-    ("mail", "pattern"),
-    [
-        ("mex@rki.de", r".{36}"),  # exactly one guid
-        ("non-existent@function.xyz", r"^$"),  # empty result
-    ],
-    ids=[
-        "mex_functional_account",
-        "nonexistent_functional_account",
-    ],
-)
-@pytest.mark.integration
-def test_get_functional_accounts_ldap(mail: str, pattern: str) -> None:
-    connector = LDAPConnector.get()
-    functional_accounts = connector.get_functional_accounts(mail=mail)
-
-    flat_result = ",".join(str(p.objectGUID) for p in functional_accounts.items)
-    assert re.match(pattern, flat_result)
-
-
-def test_get_functional_accounts_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
-    connector = LDAPConnector.get()
-    functional_accounts = connector.get_functional_accounts(mail="XY@mail.tld")
-
-    assert functional_accounts.total == 1
-    assert functional_accounts.items[0].model_dump(exclude_none=True) == {
-        "mail": ["XY@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
-        "sAMAccountName": "XY",
-        "ou": ["Funktion"],
-    }
-
-
-@pytest.mark.parametrize(
-    ("search_results", "error_text"),
-    [
-        ([[]], "Cannot find AD person"),
-        ([[SAMPLE_PERSON_ATTRS, SAMPLE_PERSON_ATTRS]], "Found multiple AD persons"),
-    ],
-)
-def test_get_person_mocked_error(
-    ldap_mocker: LDAPMocker, search_results: PagedSearchResults, error_text: str
-) -> None:
-    ldap_mocker(search_results)
-    connector = LDAPConnector.get()
-    with pytest.raises(MExError, match=error_text):
-        connector.get_person(object_guid="whatever")
-
-
-def test_get_person_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[SAMPLE_PERSON_ATTRS]])
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_person() -> None:
     connector = LDAPConnector.get()
 
-    person = connector.get_person(object_guid=SAMPLE_PERSON_ATTRS["objectGUID"][0])
+    person = connector.get_person(employee_id="71")
+    assert person.model_dump(exclude_defaults=True) == FRIEDA_FICTITIOUS
 
-    expected = {
-        "company": "RKI",
-        "department": "XY",
-        "departmentNumber": "XY2",
-        "displayName": "Sample, Sam",
-        "employeeID": "1024",
-        "givenName": ["Sam"],
-        "mail": ["SampleS@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000000"),
-        "ou": ["XY"],
-        "sAMAccountName": "SampleS",
-        "sn": "Sample",
-    }
-    assert person.model_dump(exclude_none=True) == expected
+    with pytest.raises(EmptySearchResultError, match="Cannot find AD person"):
+        connector.get_person(surname="does-not-exist")
+
+    with pytest.raises(FoundMoreThanOneError, match="Found multiple AD persons"):
+        connector.get_person()
 
 
-@pytest.mark.parametrize(
-    ("search_results", "error_text"),
-    [
-        ([[]], "Cannot find AD functional account"),
-        (
-            [[XY_FUNC_ACCOUNT_ATTRS, XY2_FUNC_ACCOUNT_ATTRS]],
-            "Found multiple AD functional accounts",
-        ),
-    ],
-)
-def test_get_functional_account_mocked_error(
-    ldap_mocker: LDAPMocker, search_results: PagedSearchResults, error_text: str
-) -> None:
-    ldap_mocker(search_results)
-    connector = LDAPConnector.get()
-    with pytest.raises(MExError, match=error_text):
-        connector.get_functional_account(mail="whatever")
-
-
-def test_functional_account_mocked(ldap_mocker: LDAPMocker) -> None:
-    ldap_mocker([[XY_FUNC_ACCOUNT_ATTRS]])
+@pytest.mark.usefixtures("mocked_ldap")
+def test_get_functional_account() -> None:
     connector = LDAPConnector.get()
 
-    unit = connector.get_functional_account(mail=XY_FUNC_ACCOUNT_ATTRS["mail"][0])
+    account = connector.get_functional_account(mail="contactc@rki.de")
+    assert account.model_dump(exclude_defaults=True) == CONTACT_C
 
-    expected = {
-        "mail": ["XY@mail.tld"],
-        "objectGUID": UUID("00000000-0000-4000-8000-000000000044"),
-        "sAMAccountName": "XY",
-        "ou": ["Funktion"],
-    }
-    assert unit.model_dump(exclude_none=True) == expected
+    with pytest.raises(
+        EmptySearchResultError, match="Cannot find AD functional account"
+    ):
+        connector.get_functional_account(mail="does-not-exist@rki.de")
 
 
 def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
