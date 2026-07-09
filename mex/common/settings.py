@@ -174,19 +174,17 @@ class BaseSettings(PydanticBaseSettings):
         ),
         validation_alias="MEX_VERIFY_SESSION",
     )
-    organigram_path: AssetsPath = Field(
-        AssetsPath("raw-data/organigram/organizational_units.json"),
+    organigram_path: str = Field(
+        "raw-data/organigram/organizational_units.json",
         description=(
-            "Path to the JSON file describing the organizational units, "
-            "absolute path or relative to `assets_dir`."
+            "Relative assets path to the JSON file describing the organizational units."
         ),
         validation_alias="MEX_ORGANIGRAM_PATH",
     )
-    primary_sources_path: AssetsPath = Field(
-        AssetsPath("raw-data/primary-sources/primary-sources.json"),
+    primary_sources_path: str = Field(
+        "raw-data/primary-sources/primary-sources.json",
         description=(
-            "Path to the JSON file describing the primary sources, "
-            "absolute path or relative to `assets_dir`."
+            "Relative assets path to the JSON file describing the primary sources."
         ),
         validation_alias="MEX_PRIMARY_SOURCES_PATH",
     )

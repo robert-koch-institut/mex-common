@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use assets connector to read organigram and primary-sources JSONs
+- register sinks during init of mex.common (instead of mex.common.sinks) for consistency
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/192830
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
 

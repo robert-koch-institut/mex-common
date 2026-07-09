@@ -1,10 +1,15 @@
 from mex.common.assets import FilesystemAssetsConnector, register_assets_connector
-from mex.common.identity.backend_api import BackendApiIdentityProvider
-from mex.common.identity.memory import MemoryIdentityProvider
-from mex.common.identity.registry import register_provider
-from mex.common.types import AssetsConnectorType, IdentityProvider
+from mex.common.identity import (
+    BackendApiIdentityProvider,
+    MemoryIdentityProvider,
+    register_provider,
+)
+from mex.common.sinks import BackendApiSink, NdjsonSink, register_sink
+from mex.common.types import AssetsConnectorType, IdentityProvider, Sink
 
-# register the default providers shipped with mex-common
-register_provider(IdentityProvider.MEMORY, MemoryIdentityProvider)
-register_provider(IdentityProvider.BACKEND, BackendApiIdentityProvider)
+# register the default implementations shipped with mex-common
 register_assets_connector(AssetsConnectorType.FILESYSTEM, FilesystemAssetsConnector)
+register_provider(IdentityProvider.BACKEND, BackendApiIdentityProvider)
+register_provider(IdentityProvider.MEMORY, MemoryIdentityProvider)
+register_sink(Sink.BACKEND, BackendApiSink)
+register_sink(Sink.NDJSON, NdjsonSink)
