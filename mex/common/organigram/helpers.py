@@ -94,7 +94,7 @@ def get_extracted_organizational_unit_with_parents(
 
 
 def build_child_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
-    """Builds a dictionary with all children per unit from a list of units.
+    """Builds a dictionary with all direct children per unit from a list of units.
 
     Args:
         units: list of organizational units (Extracted, Merged, or OrganigramUnit)
@@ -129,8 +129,13 @@ def _collect_descendants(
         _collect_descendants(child_map, child_id, descendant_ids)
 
 
-def find_descendants(units: list[_TOrganizationalUnit], parent_id: str) -> list[str]:
+def find_all_descendants(
+    units: list[_TOrganizationalUnit], parent_id: str
+) -> list[str]:
     """Find ids of all descendant (great{n}/grand/child) units for any parent unit id.
+
+    Returned IDs depend on input value, i.e. merged items => stableTargetId,
+    OrganigramUnit = str (like "FG99")
 
     Args:
         units: list of organizational units (Extracted, Merged, or OrganigramUnit)
@@ -146,3 +151,23 @@ def find_descendants(units: list[_TOrganizationalUnit], parent_id: str) -> list[
 
     _collect_descendants(child_map, str(parent_id), descendant_ids)
     return list(descendant_ids)
+
+
+def find_first_level_descendants(
+    units: list[_TOrganizationalUnit], parent_id: str
+) -> list[str]:
+    """Find ids of all 1st level descendant (direct child) units for any parent unit id.
+
+    Returned IDs depend on input value, i.e. merged items => stableTargetId,
+    OrganigramUnit = str (like "FG99")
+
+    Args:
+        units: list of organizational units (Extracted, Merged, or OrganigramUnit)
+                in which to search for descendants
+        parent_id: identifier of the parent unit
+
+    Returns:
+        list of unique direct child unit ids, excluding the starting parent_id
+    """
+    child_map = build_child_map(units)
+    return child_map[parent_id]

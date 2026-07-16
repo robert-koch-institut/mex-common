@@ -1,7 +1,8 @@
 from mex.common.models import ExtractedOrganizationalUnit
 from mex.common.organigram.helpers import (
     build_child_map,
-    find_descendants,
+    find_all_descendants,
+    find_first_level_descendants,
     get_extracted_organizational_unit_with_parents,
 )
 from mex.common.organigram.models import OrganigramUnit
@@ -18,10 +19,21 @@ def test_build_child_map(
     assert test_map == {"parent-unit": ["child-unit", "child-unit", "child-unit"]}
 
 
-def test_find_descendants(
+def test_find_all_descendants(
     child_unit: OrganigramUnit, parent_unit: OrganigramUnit
 ) -> None:
-    child_ids = find_descendants(
+    child_ids = find_all_descendants(
+        [child_unit, child_unit, child_unit, parent_unit, parent_unit],
+        str(parent_unit.identifier),
+    )
+
+    assert child_ids == [child_unit.identifier]
+
+
+def test_find_first_level_descendants(
+    child_unit: OrganigramUnit, parent_unit: OrganigramUnit
+) -> None:
+    child_ids = find_first_level_descendants(
         [child_unit, child_unit, child_unit, parent_unit, parent_unit],
         str(parent_unit.identifier),
     )
