@@ -170,4 +170,4 @@ def get_first_level_child_unit_ids(
         list of unique direct child unit ids, excluding the starting parent_id
     """
     child_map = build_child_unit_map(units)
-    return child_map[parent_id]
+    return sorted(set(child_map[parent_id]))
