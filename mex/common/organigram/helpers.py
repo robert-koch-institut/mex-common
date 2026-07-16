@@ -93,7 +93,7 @@ def get_extracted_organizational_unit_with_parents(
     return list(extracted_unit_by_id_in_primary_source.values())
 
 
-def build_child_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
+def build_child_unit_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:
     """Builds a dictionary with all direct children per unit from a list of units.
 
     Args:
@@ -129,7 +129,7 @@ def _collect_descendants(
         _collect_descendants(child_map, child_id, descendant_ids)
 
 
-def find_all_descendants(
+def get_all_descendant_unit_ids(
     units: list[_TOrganizationalUnit], parent_id: str
 ) -> list[str]:
     """Find ids of all descendant (great{n}/grand/child) units for any parent unit id.
@@ -146,14 +146,14 @@ def find_all_descendants(
         list of all unique descendant organizational unit ids (children,
                 grandchildren, ...), excluding the starting parent_id
     """
-    child_map = build_child_map(units)
+    child_map = build_child_unit_map(units)
     descendant_ids: set[str] = set()
 
     _collect_descendants(child_map, str(parent_id), descendant_ids)
     return list(descendant_ids)
 
 
-def find_first_level_descendants(
+def get_first_level_child_unit_ids(
     units: list[_TOrganizationalUnit], parent_id: str
 ) -> list[str]:
     """Find ids of all 1st level descendant (direct child) units for any parent unit id.
@@ -169,5 +169,5 @@ def find_first_level_descendants(
     Returns:
         list of unique direct child unit ids, excluding the starting parent_id
     """
-    child_map = build_child_map(units)
+    child_map = build_child_unit_map(units)
     return child_map[parent_id]
