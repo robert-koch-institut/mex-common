@@ -4,9 +4,7 @@ from typing import Final
 
 from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 from mex.common.settings import BaseSettings
-from mex.common.sinks.backend_api import BackendApiSink
 from mex.common.sinks.base import BaseSink
-from mex.common.sinks.ndjson import NdjsonSink
 from mex.common.types import Sink
 
 _SINK_REGISTRY: Final[dict[Sink, type["BaseSink"]]] = {}
@@ -72,8 +70,3 @@ def get_sink() -> "BaseSink":
         A function that pours the models into all configured sinks
     """
     return _MultiSink.get()
-
-
-# register the default providers shipped with mex-common
-register_sink(Sink.BACKEND, BackendApiSink)
-register_sink(Sink.NDJSON, NdjsonSink)

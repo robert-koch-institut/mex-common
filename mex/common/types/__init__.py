@@ -1,5 +1,6 @@
 from typing import Final, Literal, get_args
 
+from mex.common.types.assets import AssetsConnectorType
 from mex.common.types.identifier import (
     IDENTIFIER_PATTERN,
     ExtractedAccessPlatformIdentifier,
@@ -100,6 +101,7 @@ __all__ = (
     "AnyPrimitiveType",
     "AnyValidation",
     "AnyVocabularyEnum",
+    "AssetsConnectorType",
     "AssetsPath",
     "BibliographicResourceType",
     "ConsentStatus",
