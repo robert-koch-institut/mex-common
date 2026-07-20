@@ -225,6 +225,13 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    end: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(
+            description="End date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
+        ),
+    ] = []
     externalPartner: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
@@ -467,6 +474,13 @@ class _OptionalLists(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
+    start: Annotated[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Field(
+            description="Start date of the temporal coverage of the resource.",
+            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
+        ),
+    ] = []
     stateOfDataProcessing: Annotated[
         list[DataProcessingState],
         Field(
@@ -572,13 +586,6 @@ class _OptionalValues(_Stem):
         DoiStr | None,
         Field(description="The Digital Object Identifier (DOI) of the resource."),
     ] = None
-    end: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(
-            description="End date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
-        ),
-    ] = None
     hasPersonalData: Annotated[
         PersonalData | None,
         Field(
@@ -662,13 +669,6 @@ class _OptionalValues(_Stem):
             )
         ),
     ] = None
-    start: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
-        Field(
-            description="Start date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
-        ),
-    ] = None
     temporal: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None,
         Field(
@@ -736,13 +736,6 @@ class _VariadicValues(_Stem):
     doi: Annotated[
         list[DoiStr],
         Field(description="The Digital Object Identifier (DOI) of the resource."),
-    ] = []
-    end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(
-            description="End date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
-        ),
     ] = []
     hasPersonalData: Annotated[
         list[PersonalData],
@@ -825,13 +818,6 @@ class _VariadicValues(_Stem):
                 "The size of the underlying data basis, e.g. for studies: the "
                 "size of the sample."
             )
-        ),
-    ] = []
-    start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
-        Field(
-            description="Start date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = []
     temporal: Annotated[
@@ -1132,9 +1118,6 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
     ] = []
     doi: list[MappingField[DoiStr | None]] = []
-    end: list[
-        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
-    ] = []
     hasPersonalData: list[MappingField[PersonalData | None]] = []
     license: list[MappingField[License | None]] = []
     maxTypicalAge: list[MappingField[MaxTypicalAgeInt | None]] = []
@@ -1145,9 +1128,6 @@ class ResourceMapping(_Stem, BaseMapping):
     numberOfRecords: list[MappingField[int | None]] = []
     numberOfUniqueIndividuals: list[MappingField[int | None]] = []
     sizeOfDataBasis: list[MappingField[str | None]] = []
-    start: list[
-        MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year | None]
-    ] = []
     temporal: list[
         MappingField[
             YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
@@ -1177,6 +1157,7 @@ class ResourceMapping(_Stem, BaseMapping):
     description: list[MappingField[list[Text]]] = []
     distribution: list[MappingField[list[MergedDistributionIdentifier]]] = []
     documentation: list[MappingField[list[Link]]] = []
+    end: list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = []
     externalPartner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     hasCodeValues: list[MappingField[list[Text]]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []
@@ -1204,6 +1185,7 @@ class ResourceMapping(_Stem, BaseMapping):
     sample: list[MappingField[list[MergedDistributionIdentifier]]] = []
     source: list[MappingField[list[MergedResourceIdentifier]]] = []
     spatial: list[MappingField[list[Text]]] = []
+    start: list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = []
     stateOfDataProcessing: list[MappingField[list[DataProcessingState]]] = []
 
 
