@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- make `ensure_rule_set` in `mex.common.merged.main` public
+
 ### Deprecated
 
 ### Removed
