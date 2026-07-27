@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- bump dependency to mex-model 5.0.3 and update resource to fixed start and end type.
-
 ### Security
+
+## [3.1.1] - 2026-07-27
+
+### Fixed
+
+- bump dependency to mex-model 5.0.3 and update resource to fixed start and end type.
 
 ## [3.1.0] - 2026-07-17
 
