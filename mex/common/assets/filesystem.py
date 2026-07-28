@@ -23,14 +23,8 @@ class FilesystemAssetsConnector(BaseAssetsConnector):
         Raises:
             PermissionError: For file access permission issues
         """
-        msg = "given path is not valid or not in assets directory"
-        try:
-            target_path = (self._assets_dir / path).resolve(strict=True)
-        except OSError:
-            raise PermissionError(msg) from None
-        if not target_path.is_relative_to(self._assets_dir):
-            raise PermissionError(msg)
-        with target_path.open("rb") as file_handle:
+        resolved_path = self._resolve_path_and_check_permission(path)
+        with resolved_path.open("rb") as file_handle:
             return file_handle.read()
 
     def glob(self, path: str, pattern: str) -> list[str]:
@@ -42,8 +36,33 @@ class FilesystemAssetsConnector(BaseAssetsConnector):
 
         Returns:
             List of file names
+
+        Raises:
+            PermissionError: For file access permission issues
         """
-        return [str(file_path) for file_path in Path(path).glob(pattern=pattern)]
+        resolved_path = self._resolve_path_and_check_permission(path)
+        return [str(file_path) for file_path in resolved_path.glob(pattern=pattern)]
 
     def close(self) -> None:
         """Nothing to close for filesystem access."""
+
+    def _resolve_path_and_check_permission(self, path: str) -> Path:
+        """Resolve a path and check whether path is permitted.
+
+        Args:
+            path: The path pointing to the file to load
+
+        Returns:
+            resolved path
+
+        Raises:
+            PermissionError: For file access permission issues
+        """
+        msg = "given path is not valid or not in assets directory"
+        try:
+            resolved_path = (self._assets_dir / path).resolve(strict=True)
+        except OSError:
+            raise PermissionError(msg) from None
+        if not resolved_path.is_relative_to(self._assets_dir):
+            raise PermissionError(msg)
+        return resolved_path

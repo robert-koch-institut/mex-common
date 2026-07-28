@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 
 from mex.common.assets.filesystem import FilesystemAssetsConnector
@@ -13,16 +11,22 @@ def test_filesystem_read() -> None:
     assert "Unterabteilung" in returned.decode("utf-8")
 
 
-def test_read_only_allows_existing_path() -> None:
+def test_glob() -> None:
+    connector = FilesystemAssetsConnector.get()
+    returned = connector.glob("raw-data/organigram", "*.*")
+    assert returned[0].endswith("organizational_units.json")
+
+
+def test_connector_only_allows_existing_path() -> None:
     connector = FilesystemAssetsConnector.get()
 
     with pytest.raises(
         PermissionError, match="given path is not valid or not in assets directory"
     ):
-        connector.read("this/path/does/not/exist.txt")
+        connector._resolve_path_and_check_permission("this/path/does/not/exist.txt")
 
 
-def test_read_only_allows_sub_path(settings: BaseSettings) -> None:
+def test_connector_only_allows_sub_path(settings: BaseSettings) -> None:
     connector = FilesystemAssetsConnector.get()
     existing_file_outside_assets = "../pyproject.toml"
 
@@ -30,12 +34,4 @@ def test_read_only_allows_sub_path(settings: BaseSettings) -> None:
     with pytest.raises(
         PermissionError, match="given path is not valid or not in assets directory"
     ):
-        connector.read(existing_file_outside_assets)
-
-
-def test_glob() -> None:
-    connector = FilesystemAssetsConnector.get()
-    returned = connector.glob("assets/raw-data/organigram", "*.*")
-    assert returned == [
-        str(Path("assets/raw-data/organigram/organizational_units.json"))
-    ]
+        connector._resolve_path_and_check_permission(existing_file_outside_assets)
