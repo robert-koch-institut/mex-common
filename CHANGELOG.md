@@ -11,11 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- retry `429` responses with an exponential backoff (about 90s over 5 tries)
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix broken `RequestException.response` check that disabled all `429` and `5xx`
+  retries, so failing hosts are now retried again (and fail slower) as intended
 
 ### Security
 
