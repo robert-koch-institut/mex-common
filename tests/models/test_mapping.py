@@ -314,7 +314,7 @@ def test_mapping_model_schema() -> None:
             "Text": {
                 "description": 'Type class for text objects.\n\nTexts can be parsed from nested JSON objects or from raw strings.\n\nExample:\n    Text(value="foo") == Text.model_validate("foo")',
                 "properties": {
-                    "value": {"minLength": 1, "title": "Value", "type": "string"},
+                    "value": {"minLength": 1, "type": "string"},
                     "language": {
                         "anyOf": [{"$ref": "#/$defs/TextLanguage"}, {"type": "null"}],
                         "default": None,
@@ -337,7 +337,6 @@ def test_mapping_model_schema() -> None:
             "$type": {
                 "const": "VariableGroupMapping",
                 "default": "VariableGroupMapping",
-                "title": "$Type",
                 "type": "string",
             },
             "hadPrimarySource": {
@@ -345,13 +344,11 @@ def test_mapping_model_schema() -> None:
                     "$ref": "#/$defs/MappingField_MergedPrimarySourceIdentifier_"
                 },
                 "minItems": 1,
-                "title": "Hadprimarysource",
                 "type": "array",
             },
             "identifierInPrimarySource": {
                 "items": {"$ref": "#/$defs/MappingField_str_"},
                 "minItems": 1,
-                "title": "Identifierinprimarysource",
                 "type": "array",
             },
             "containedBy": {
@@ -359,13 +356,11 @@ def test_mapping_model_schema() -> None:
                     "$ref": "#/$defs/MappingField_list_MergedResourceIdentifier__"
                 },
                 "minItems": 1,
-                "title": "Containedby",
                 "type": "array",
             },
             "label": {
                 "items": {"$ref": "#/$defs/MappingField_list_Text__"},
                 "minItems": 1,
-                "title": "Label",
                 "type": "array",
             },
         },

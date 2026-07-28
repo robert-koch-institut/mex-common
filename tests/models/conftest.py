@@ -65,8 +65,11 @@ def _sub_only_text(repl: Callable[[str], str], string: str) -> str:
 
 
 def prepare_generated_field(field: str, obj: dict[str, Any]) -> None:
-    # discard title but save value for later
-    title = obj.pop("title", field)  # field title is only in generated
+    # discard the titles that identifier, vocabulary and temporal types set on their
+    # own schemas, but save the value for later: the identifier class name is the only
+    # hint at which entity-type a reference field points to
+    # (field titles are not generated at all, see `JsonSchemaGenerator`)
+    title = obj.pop("title", "")
 
     # the generated schema does not use $ref for identifiers and vocabulary fields
     # so we convert the generated fields to look like the specified schema

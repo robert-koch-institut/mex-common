@@ -90,7 +90,6 @@ def test_filter_model_schema() -> None:
             "$type": {
                 "const": "PersonFilter",
                 "default": "PersonFilter",
-                "title": "$Type",
                 "type": "string",
             },
             "fields": {
