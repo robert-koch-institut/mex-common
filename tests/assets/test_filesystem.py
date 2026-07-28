@@ -29,3 +29,9 @@ def test_read_only_allows_sub_path(settings: BaseSettings) -> None:
         PermissionError, match="given path is not valid or not in assets directory"
     ):
         connector.read(existing_file_outside_assets)
+
+
+def test_glob() -> None:
+    connector = FilesystemAssetsConnector.get()
+    returned = connector.glob("assets/raw-data/organigram", "*.*")
+    assert returned == ["assets\\raw-data\\organigram\\organizational_units.json"]
