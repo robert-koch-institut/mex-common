@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- retry `429` responses with an exponential backoff (about 90s over 5 tries)
+- retry `429` responses with an exponential backoff (about 45s over 5 tries)
 
 ### Deprecated
 

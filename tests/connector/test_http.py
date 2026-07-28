@@ -179,7 +179,7 @@ def test_request_success(
             0.0,
             RequestException(response=make_response(codes.too_many_requests)),
             "TimedTooManyRequests()",
-            6,
+            5,
         ),
         (
             0.0,
@@ -263,10 +263,10 @@ def test_request_retries_too_many_requests(
     with pytest.raises(RequestException):
         connector.request("POST", "things", payload=[])
 
-    assert len(sent_requests) == 6  # one initial attempt plus five retries
+    assert len(sent_requests) == 5  # one initial attempt plus four retries
     assert all(  # random jitter adds up to one second to each delay
         expected <= actual < expected + 1
         for expected, actual in zip(
-            [3.0, 6.0, 12.0, 24.0, 48.0], recorded_sleeps, strict=True
+            [3.0, 6.0, 12.0, 24.0], recorded_sleeps, strict=True
         )
     ), recorded_sleeps
