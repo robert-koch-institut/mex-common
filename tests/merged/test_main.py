@@ -12,12 +12,12 @@ from mex.common.merged.main import (
     _collect_preventive_sources,
     _collect_subtractive_values,
     _create_merged_dict,
-    _ensure_rule_set,
     _ensure_same_entity_type,
     _filter_usable_values,
     _get_merged_class,
     _pick_usable_values,
     create_merged_item,
+    ensure_rule_set,
     is_item_publishable,
     merge_rule_set_responses,
     merge_rules,
@@ -267,7 +267,7 @@ def test_get_merged_class(
 
 
 def test_ensure_rule_set_creates_default() -> None:
-    result = _ensure_rule_set(None, "Person")
+    result = ensure_rule_set(None, "Person")
 
     assert isinstance(result, PersonRuleSetRequest)
 
@@ -275,7 +275,7 @@ def test_ensure_rule_set_creates_default() -> None:
 def test_ensure_rule_set_returns_existing() -> None:
     existing_rule_set = PersonRuleSetRequest()
 
-    result = _ensure_rule_set(existing_rule_set, "Person")
+    result = ensure_rule_set(existing_rule_set, "Person")
 
     assert result is existing_rule_set
 

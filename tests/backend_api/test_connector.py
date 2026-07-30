@@ -67,7 +67,6 @@ def test_fetch_extracted_items_mocked(
     connector = BackendApiConnector.get()
     response = connector.fetch_extracted_items(
         query_string="Tintzmann",
-        stable_target_id="NGwfzG8ROsrvIiQIVDVy",
         entity_type=["ExtractedPerson", "ExtractedContactPoint"],
         skip=0,
         limit=1,
@@ -81,12 +80,91 @@ def test_fetch_extracted_items_mocked(
         "http://localhost:8080/v0/extracted-item",
         {
             "q": "Tintzmann",
-            "stableTargetId": "NGwfzG8ROsrvIiQIVDVy",
             "entityType": ["ExtractedPerson", "ExtractedContactPoint"],
-            "referenceField": None,
-            "referencedIdentifier": None,
             "skip": "0",
             "limit": "1",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_fetch_extracted_items_with_reference_filters_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = {"items": [extracted_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    affiliation = str(MergedOrganizationIdentifier.generate(seed=300))
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_extracted_items(
+        query_string="Tintzmann",
+        entity_type=["ExtractedPerson", "ExtractedContactPoint"],
+        reference_filters=[
+            ReferenceFilter(field="affiliation", identifiers=[affiliation])
+        ],
+        limit=1,
+    )
+
+    assert response.items == [extracted_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/extracted-item/_search",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=json.dumps(
+            {
+                "q": "Tintzmann",
+                "entityType": ["ExtractedPerson", "ExtractedContactPoint"],
+                "referenceFilters": [
+                    {"field": "affiliation", "identifiers": [affiliation]}
+                ],
+                "skip": 0,
+                "limit": 1,
+            }
+        ),
+    )
+
+
+def test_fetch_all_extracted_items_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    extracted_person_json = extracted_person.model_dump()
+    mocked_backend.return_value.json.side_effect = [
+        {"status": "ok"},  # status check
+        {"items": [], "total": 103},  # call to gauge the total
+        {"items": [extracted_person_json] * 100, "total": 103},  # first page 0-99
+        {"items": [extracted_person_json] * 3, "total": 103},  # second page 100-103
+    ]
+
+    connector = BackendApiConnector.get()
+    items = list(connector.fetch_all_extracted_items(query_string="Tintzmann"))
+
+    # expect 4 calls: status check, get the total, and get two pages 0-99/100-103
+    assert len(mocked_backend.call_args_list) == 4
+
+    # expect all 103 persons to be there
+    assert items == [extracted_person] * 103
+
+    # expect the last call to be made with the correct parameters
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/extracted-item",
+        {
+            "q": "Tintzmann",
+            "entityType": None,
+            "skip": "100",
+            "limit": "100",
         },
         headers={
             "Accept": "application/json",
@@ -142,8 +220,6 @@ def test_fetch_merged_items_mocked(
             "q": "Tintzmann",
             "identifier": None,
             "entityType": ["MergedPerson", "MergedContactPoint"],
-            "referenceField": None,
-            "referencedIdentifier": None,
             "skip": "0",
             "limit": "1",
         },
@@ -152,6 +228,51 @@ def test_fetch_merged_items_mocked(
             "User-Agent": "rki/mex",
         },
         timeout=10,
+    )
+
+
+def test_fetch_merged_items_with_reference_filters_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    mocked_return = {"items": [merged_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    affiliation = str(MergedOrganizationIdentifier.generate(seed=300))
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_merged_items(
+        query_string="Tintzmann",
+        entity_type=["MergedPerson", "MergedContactPoint"],
+        reference_filters=[
+            ReferenceFilter(field="affiliation", identifiers=[affiliation])
+        ],
+        limit=1,
+    )
+
+    assert response.items == [merged_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/merged-item/_search",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=json.dumps(
+            {
+                "q": "Tintzmann",
+                "identifier": None,
+                "entityType": ["MergedPerson", "MergedContactPoint"],
+                "referenceFilters": [
+                    {"field": "affiliation", "identifiers": [affiliation]}
+                ],
+                "skip": 0,
+                "limit": 1,
+            }
+        ),
     )
 
 
@@ -183,8 +304,6 @@ def test_fetch_all_merged_items_mocked(
             "q": "Tintzmann",
             "identifier": None,
             "entityType": None,
-            "referenceField": None,
-            "referencedIdentifier": None,
             "skip": "100",
             "limit": "100",
         },
@@ -241,8 +360,6 @@ def test_fetch_preview_items_mocked(
             "q": "foobar",
             "identifier": None,
             "entityType": None,
-            "referenceField": None,
-            "referencedIdentifier": None,
             "skip": "0",
             "limit": "1",
         },
@@ -277,7 +394,7 @@ def test_get_preview_item_mocked(
     )
 
 
-def test_search_preview_items_mocked(
+def test_fetch_preview_items_with_reference_filters_mocked(
     mocked_backend: MagicMock, preview_person: PreviewPerson
 ) -> None:
     mocked_return = {"items": [preview_person.model_dump()], "total": 3}
@@ -286,10 +403,12 @@ def test_search_preview_items_mocked(
     affiliation = str(MergedOrganizationIdentifier.generate(seed=300))
 
     connector = BackendApiConnector.get()
-    response = connector.search_preview_items(
+    response = connector.fetch_preview_items(
         query_string="Tintzmann",
         entity_type=["PreviewPerson", "PreviewContactPoint"],
-        references=[ReferenceFilter(field="affiliation", identifiers=[affiliation])],
+        reference_filters=[
+            ReferenceFilter(field="affiliation", identifiers=[affiliation])
+        ],
         limit=1,
     )
 
@@ -345,8 +464,6 @@ def test_fetch_publishable_merged_items_mocked(
             "q": "Tintzmann",
             "identifier": None,
             "entityType": ["MergedPerson", "MergedContactPoint"],
-            "referenceField": None,
-            "referencedIdentifier": None,
             "skip": "0",
             "limit": "1",
         },
@@ -355,6 +472,53 @@ def test_fetch_publishable_merged_items_mocked(
             "User-Agent": "rki/mex",
         },
         timeout=10,
+    )
+
+
+def test_fetch_publishable_merged_items_with_reference_filters_mocked(
+    mocked_backend: MagicMock, merged_person: MergedPerson
+) -> None:
+    mocked_return = {"items": [merged_person.model_dump()], "total": 3}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    affiliation = str(MergedOrganizationIdentifier.generate(seed=300))
+
+    connector = BackendApiConnector.get()
+    response = connector.fetch_publishable_merged_items(
+        publishing_target="invenio",
+        query_string="Tintzmann",
+        entity_type=["MergedPerson", "MergedContactPoint"],
+        reference_filters=[
+            ReferenceFilter(field="affiliation", identifiers=[affiliation])
+        ],
+        limit=1,
+    )
+
+    assert response.items == [merged_person]
+    assert response.total == 3
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/publishable-merged-item/_search",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=json.dumps(
+            {
+                "publishingTarget": "invenio",
+                "q": "Tintzmann",
+                "identifier": None,
+                "entityType": ["MergedPerson", "MergedContactPoint"],
+                "referenceFilters": [
+                    {"field": "affiliation", "identifiers": [affiliation]}
+                ],
+                "skip": 0,
+                "limit": 1,
+            }
+        ),
     )
 
 
@@ -391,8 +555,6 @@ def test_fetch_all_publishable_merged_items_mocked(
             "q": "Tintzmann",
             "identifier": None,
             "entityType": None,
-            "referenceField": None,
-            "referencedIdentifier": None,
             "skip": "100",
             "limit": "100",
         },
