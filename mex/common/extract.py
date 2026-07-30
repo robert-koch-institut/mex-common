@@ -1,11 +1,13 @@
 from collections import defaultdict
 from collections.abc import Generator
+from io import BytesIO
 from os import PathLike
 from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import pandas as pd
 from pydantic import ValidationError
 
+from mex.common.assets.filesystem import FilesystemAssetsConnector
 from mex.common.logging import logger
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -58,7 +60,9 @@ def parse_csv(  # noqa: C901
     error_summary: defaultdict[str, int] = defaultdict(int)
     total_rows_processed = 0
     total_rows_successfully_processed = 0
-
+    if isinstance(path_or_buffer, (str, PathLike)):
+        connector = FilesystemAssetsConnector.get()
+        path_or_buffer = BytesIO(connector.read(str(path_or_buffer)))
     with pd.read_csv(
         path_or_buffer,
         chunksize=chunksize,
