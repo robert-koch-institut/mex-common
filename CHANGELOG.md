@@ -9,13 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add `reference_filters` argument to `fetch_*_items` methods of `BackendApiConnector`,
+  using POST `_search` endpoints when needed, otherwise sticking with GET
+- add `fetch_all_extracted_items` to `BackendApiConnector` for completeness sake
+
 ### Changes
 
 - retry `429` responses with an exponential backoff (about 45s over 5 tries)
+- make `ensure_rule_set` in `mex.common.merged.main` public
 
 ### Deprecated
 
 ### Removed
+
+- BREAKING: remove `search_preview_items` from `BackendApiConnector`,
+  use `fetch_preview_items(reference_filters=...)` instead
+- BREAKING: drop the deprecated `referenced_identifier`, `reference_field` and
+  `stable_target_id` search arguments, use `reference_filters` instead
 
 ### Fixed
 
