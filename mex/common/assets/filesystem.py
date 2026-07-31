@@ -41,7 +41,10 @@ class FilesystemAssetsConnector(BaseAssetsConnector):
             PermissionError: For file access permission issues
         """
         resolved_path = self._resolve_path_and_check_permission(path)
-        return [str(file_path) for file_path in resolved_path.glob(pattern=pattern)]
+        return [
+            str(self._resolve_path_and_check_permission(str(file_path)))
+            for file_path in resolved_path.glob(pattern=pattern)
+        ]
 
     def close(self) -> None:
         """Nothing to close for filesystem access."""
