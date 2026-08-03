@@ -6,7 +6,6 @@ from mex.common.identity.registry import get_provider, register_provider
 
 __all__ = (
     "BackendApiIdentityProvider",
-    "BackendApiIdentityProvider",
     "BaseProvider",
     "Identity",
     "MemoryIdentityProvider",
