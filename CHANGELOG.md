@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fixed linting erros caused by ruff update
+- fixed linting erros caused by ruff update and lock-filemaintenance
 
 ### Security
 
