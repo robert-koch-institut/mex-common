@@ -6,7 +6,6 @@ from mex.common.sinks.registry import get_sink, register_sink
 __all__ = (
     "BackendApiSink",
     "BaseSink",
-    "BaseSink",
     "NdjsonSink",
     "get_sink",
     "register_sink",

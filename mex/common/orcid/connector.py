@@ -36,7 +36,7 @@ class OrcidConnector(HTTPConnector):
         response = self.request(method="GET", endpoint=endpoint)
         return OrcidRecord.model_validate(response)
 
-    def search_records_by_name(  # noqa: PLR0913
+    def search_records_by_name(  # noqa: PLR0913, PLR0917
         self,
         given_names: str | None = None,
         family_name: str | None = None,
