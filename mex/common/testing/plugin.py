@@ -230,7 +230,7 @@ def mocked_orcid(
 
     monkeypatch.setattr(OrcidConnector, "__init__", mocked_init)
 
-    def search_records_by_name(  # noqa: PLR0913
+    def search_records_by_name(  # noqa: PLR0913, PLR0917
         _self: OrcidConnector,
         given_names: str | None = None,
         family_name: str | None = None,  # noqa: ARG001
