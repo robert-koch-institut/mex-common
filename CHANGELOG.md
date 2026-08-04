@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
+this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -21,14 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- BREAKING: remove `search_preview_items` from `BackendApiConnector`,
-  use `fetch_preview_items(reference_filters=...)` instead
+- BREAKING: remove `search_preview_items` from `BackendApiConnector`, use
+  `fetch_preview_items(reference_filters=...)` instead
 - BREAKING: drop the deprecated `referenced_identifier`, `reference_field` and
   `stable_target_id` search arguments, use `reference_filters` instead
 
 ### Fixed
 
 - fixed linting erros caused by ruff update and lock-filemaintenance
+- testing plugin: fixture `ìs_integration_test` returns true for non-function markers,
+  e.g. on module level
 
 ### Security
 
@@ -68,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- added function `search_preview_items` in backend_api connector for advanced reference filtering
+- added function `search_preview_items` in backend_api connector for advanced reference
+  filtering
 
 ### Changes
 
@@ -86,11 +89,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - BREAKING: Added workflow rule to all rule sets
-  - it defines forbidden targets for publishing of merged items
-  - This change affects what kind of data is stored in database and might therefore
-    have unexpected side effects
-  - If your repo depends on mex-common AND on mex-backend, make sure to update both to
-    versions that include the workflow rule
+    - it defines forbidden targets for publishing of merged items
+    - This change affects what kind of data is stored in database and might therefore
+      have unexpected side effects
+    - If your repo depends on mex-common AND on mex-backend, make sure to update both to
+      versions that include the workflow rule
 - new "is_item_publishable" function
 
 ### Changes
@@ -108,9 +111,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add get_preview_item by stableTargetId to BackendAPIConnector
 - **BREAKING** add configuration parameter `ops_dir`. Settings are now read from
   `ops_dir/config/.env` and `ops_dir/config/secrets/*`. Make sure your environment
-  variable `MEX_OPS_DIR` points to your local mex-ops directory.
-  For dependent repositories: change the type of your Settings parameters that point to
-  migrated files (e.g. certificates) to `OpsPath`.
+  variable `MEX_OPS_DIR` points to your local mex-ops directory. For dependent
+  repositories: change the type of your Settings parameters that point to migrated files
+  (e.g. certificates) to `OpsPath`.
 
 ## [1.18.1] - 2026-04-01
 
@@ -132,14 +135,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- adding multiple OptionalValues via an AdditiveRule no longer breaks creation of PreviewItem
+- adding multiple OptionalValues via an AdditiveRule no longer breaks creation of
+  PreviewItem
 
 ## [1.17.0] - 2026-03-17
 
 ### Changes
 
 - LDAPConnector is now fully paginated
-  - fetching ldap items is cached
+    - fetching ldap items is cached
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
 
 ## [1.16.1] - 2026-03-02
@@ -154,25 +158,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - expose nested level implementations on the higher level module
 - added additional model lookups
-  - RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
-  - EXTRACTED_AND_RULE_MODEL_CLASSES_BY_NAME
-  - SEARCHABLE_FIELDS
-  - SEARCHABLE_CLASSES
-  - NESTED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME
-  - NESTED_ENTITY_TYPES_BY_CLASS_NAME
-  - REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME
-  - STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME
-  - REFERENCED_ENTITY_TYPES_BY_CLASS_NAME
-  - REFERENCED_FIELD_REFERENCING_TUPLES
-  - INBOUND_REFERENCE_FIELDS_BY_CLASS_NAME
-  - ALL_REFERENCE_FIELD_NAMES
+    - RULE_MODEL_CLASSES_BY_TYPE_BY_NAME
+    - EXTRACTED_AND_RULE_MODEL_CLASSES_BY_NAME
+    - SEARCHABLE_FIELDS
+    - SEARCHABLE_CLASSES
+    - NESTED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME
+    - NESTED_ENTITY_TYPES_BY_CLASS_NAME
+    - REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME
+    - STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME
+    - REFERENCED_ENTITY_TYPES_BY_CLASS_NAME
+    - REFERENCED_FIELD_REFERENCING_TUPLES
+    - INBOUND_REFERENCE_FIELDS_BY_CLASS_NAME
+    - ALL_REFERENCE_FIELD_NAMES
 - added utils `camelcase_to_title` and `clean_dict`
 - added missing methods to backend_api connector
-  - system_status
-  - flush_graph
-  - delete_rule_set
-  - delete_merged_item
-  - match_item
+    - system_status
+    - flush_graph
+    - delete_rule_set
+    - delete_merged_item
+    - match_item
 - add mex-editor identifiers: identifier, stableTargetId and identifierInPrimarySource
 
 ### Fixed
@@ -255,11 +259,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update mex-model to version 4.8 featuring translated entity types and repo maintenance
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
+- updated template
+  to https://github.com/robert-koch-institut/mex-template/commit/2039340
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - BREAKING: expects organization ID instead of organization in:
-  - transform_organigram_unit_to_extracted_organizational_unit
-  - transform_organigram_units_to_organizational_units
+    - transform_organigram_unit_to_extracted_organizational_unit
+    - transform_organigram_units_to_organizational_units
 - update mex-model to version 4.7 where "supersededBy" is added to merged items
 - use `model_title_generator` instead of hardcoding model titles
 - move `hadPrimarySource` and `identifierInPrimarySource` from concrete mapping models
@@ -326,22 +331,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: expects primary source id instead of primary source in:
-  - get_merged_ids_by_employee_ids
-  - get_merged_ids_by_query_string
-  - transform_ldap_persons_to_extracted_persons
-  - transform_ldap_functional_accounts_to_extracted_contact_points
-  - transform_ldap_persons_with_query_to_extracted_persons
-  - transform_ldap_person_to_extracted_person
-  - transform_ldap_functional_account_to_extracted_contact_point
-  - transform_any_ldap_actor_to_extracted_persons_or_contact_points
-  - transform_orcid_person_to_mex_person
-  - get_extracted_organizational_unit_with_parents
-  - transform_organigram_unit_to_extracted_organizational_unit
-  - transform_organigram_units_to_organizational_units
-  - transform_wikidata_organizations_to_extracted_organizations
-  - transform_wikidata_organization_to_extracted_organization
+    - get_merged_ids_by_employee_ids
+    - get_merged_ids_by_query_string
+    - transform_ldap_persons_to_extracted_persons
+    - transform_ldap_functional_accounts_to_extracted_contact_points
+    - transform_ldap_persons_with_query_to_extracted_persons
+    - transform_ldap_person_to_extracted_person
+    - transform_ldap_functional_account_to_extracted_contact_point
+    - transform_any_ldap_actor_to_extracted_persons_or_contact_points
+    - transform_orcid_person_to_mex_person
+    - get_extracted_organizational_unit_with_parents
+    - transform_organigram_unit_to_extracted_organizational_unit
+    - transform_organigram_units_to_organizational_units
+    - transform_wikidata_organizations_to_extracted_organizations
+    - transform_wikidata_organization_to_extracted_organization
 - BREAKING: returns primary source id dict instead of primary source dict in
-    extracted_primary_sources
+  extracted_primary_sources
 - BREAKING: email changed typing to annotated str for ContactPoint, OrgUnit and Person
 
 ### Removed
@@ -1025,7 +1030,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
   mocked_wikidata
-- convenience function `get_merged_organization_id_by_query_with_extract_transform_and_load`
+- convenience function
+  `get_merged_organization_id_by_query_with_extract_transform_and_load`
   for getting the stableTargetId of an organization, while transforming and loading the
   organization using the provided load function
 - models for rule-set requests and responses along with typing and lookups
@@ -1049,8 +1055,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - changed backend api connector payload to "items"
 
 - update wikidata search organization request query, with optional language parameter
-  wikidata query search can be enhanced by specifying the language.
-  EN is the default language.
+  wikidata query search can be enhanced by specifying the language. EN is the default
+  language.
 
 ## [0.32.0] - 2024-07-23
 
@@ -1147,8 +1153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - move `BaseModel` specific descriptions from class to model to avoid duplication
 - BREAKING: move `FILTER_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
 - BREAKING: move `MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
-- BREAKING: change `MEX_PRIMARY_SOURCE_IDENTIFIER` to end in `1`,
-  so that it differs from `MEX_PRIMARY_SOURCE_STABLE_TARGET_ID`
+- BREAKING: change `MEX_PRIMARY_SOURCE_IDENTIFIER` to end in `1`, so that it differs
+  from `MEX_PRIMARY_SOURCE_STABLE_TARGET_ID`
 
 ## [0.25.1] - 2024-05-21
 
@@ -1355,8 +1361,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 - deprecate `MExModel.get_entity_type`, use `cls.__name__` instead
-- deprecate `mex.common.models.MODEL_CLASSES[_BY_ENTITY_TYPE]`,
-  use the more precise lists or dicts like `EXTRACTED_MODEL_CLASSES_BY_NAME` instead
+- deprecate `mex.common.models.MODEL_CLASSES[_BY_ENTITY_TYPE]`, use the more precise
+  lists or dicts like `EXTRACTED_MODEL_CLASSES_BY_NAME` instead
 
 ## [0.17.1] - 2023-12-20
 

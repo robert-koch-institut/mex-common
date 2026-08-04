@@ -106,7 +106,7 @@ def isolate_connectors() -> Generator[None, None, None]:
 @pytest.fixture()
 def is_integration_test(request: pytest.FixtureRequest) -> bool:
     """Check the markers of a test to see if this is an integration test."""
-    return any(m.name == "integration" for m in request.keywords.get("pytestmark", ()))
+    return request.node.get_closest_marker("integration") is not None
 
 
 @pytest.fixture()
