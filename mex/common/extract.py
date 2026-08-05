@@ -62,7 +62,7 @@ def parse_csv(  # noqa: C901
     with pd.read_csv(
         path_or_buffer,
         chunksize=chunksize,
-        dtype=get_dtypes_for_model(into),  # type: ignore[arg-type]
+        dtype=get_dtypes_for_model(into),
         **kwargs,
     ) as reader:
         for i, chunk in enumerate(reader):

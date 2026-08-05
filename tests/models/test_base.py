@@ -28,18 +28,24 @@ class ComplexDummyModel(BaseModel):
         ({"optional_str": ["value"]}, {"optional_str": "value"}),
         (
             {"required_str": []},
-            "Input should be a valid string [type=string_type, input_value=None, "
-            "input_type=NoneType]",
+            (
+                "Input should be a valid string [type=string_type, input_value=None, "
+                "input_type=NoneType]"
+            ),
         ),
         (
             {"required_str": [None]},
-            "Input should be a valid string [type=string_type, input_value=None, "
-            "input_type=NoneType]",
+            (
+                "Input should be a valid string [type=string_type, input_value=None, "
+                "input_type=NoneType]"
+            ),
         ),
         (
             {"required_str": ["value", "value"]},
-            "got multiple values for required_str [type=value_error, "
-            "input_value={'required_str': ['value', 'value']}, input_type=dict]",
+            (
+                "got multiple values for required_str [type=value_error, "
+                "input_value={'required_str': ['value', 'value']}, input_type=dict]"
+            ),
         ),
         ({"optional_list": None}, {"optional_list": None}),
         ({"optional_list": "value"}, {"optional_list": ["value"]}),
@@ -49,8 +55,10 @@ class ComplexDummyModel(BaseModel):
         ({"computed_int": [42]}, {"computed_int": 42}),
         (
             {"computed_int": 9999999},
-            "Cannot set computed fields to custom values! [type=value_error, "
-            "input_value={}, input_type=dict]",
+            (
+                "Cannot set computed fields to custom values! [type=value_error, "
+                "input_value={}, input_type=dict]"
+            ),
         ),
     ],
     ids=[
