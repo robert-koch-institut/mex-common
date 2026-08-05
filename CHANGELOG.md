@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fixed linting erros caused by ruff update and lock-filemaintenance
+- fix docstrings of `SingletonStore`, `SingleSingletonStore` and `_ConnectorStore`,
+  which incorrectly described the stored singletons as thread-local
 
 ### Security
 

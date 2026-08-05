@@ -7,7 +7,7 @@ from mex.common.transform import dromedary_to_snake
 
 
 class _ConnectorStore(SingletonStore["BaseConnector"]):
-    """Thin wrapper for storing thread-local singletons of connectors."""
+    """Thin wrapper for storing one singleton connector instance per class."""
 
     def reset(self) -> None:
         """Close all connectors and remove them from the singleton store."""
