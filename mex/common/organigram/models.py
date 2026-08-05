@@ -10,5 +10,5 @@ class OrganigramUnit(BaseModel):
     identifier: str
     name: list[Text]
     alternativeName: list[Text] = []
-    parentUnit: None | str = None
-    website: None | Link = None
+    parentUnit: str | None = None
+    website: Link | None = None

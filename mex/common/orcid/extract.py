@@ -62,7 +62,7 @@ def get_orcid_record_by_name(
     )
 
 
-def search_records_by_name(  # noqa: PLR0913
+def search_records_by_name(  # noqa: PLR0913, PLR0917
     given_names: str | None = None,
     family_name: str | None = None,
     given_and_family_names: str | None = None,

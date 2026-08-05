@@ -195,7 +195,7 @@ def test_request_success(
         "timed read timeout",
     ],
 )
-def test_request_failure(  # noqa: PLR0913
+def test_request_failure(  # noqa: PLR0913, PLR0917
     monkeypatch: MonkeyPatch,
     caplog: LogCaptureFixture,
     fake_response_time: float,

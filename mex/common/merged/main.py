@@ -284,7 +284,7 @@ def _get_merged_class(
     return model_class_lookup[entity_type]
 
 
-def _ensure_rule_set(
+def ensure_rule_set(
     rule_set: AnyRuleSetRequest | AnyRuleSetResponse | None,
     stem_type: str,
 ) -> AnyRuleSetRequest | AnyRuleSetResponse:
@@ -389,7 +389,7 @@ def create_merged_item(
 
     # Get mergeable fields and ensure rule set instance
     fields = MERGEABLE_FIELDS_BY_CLASS_NAME[merged_class.__name__]
-    rule_set = _ensure_rule_set(rule_set, merged_class.stemType)
+    rule_set = ensure_rule_set(rule_set, merged_class.stemType)
 
     # Create a dictionary of merged values and set the merged identifier
     merged_dict = _create_merged_dict(fields, extracted_items, rule_set, validation)
