@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- retry `429` responses with an exponential backoff (about 45s over 5 tries)
 - make `ensure_rule_set` in `mex.common.merged.main` public
 
 ### Deprecated
@@ -28,9 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix broken `RequestException.response` check that disabled all `429` and `5xx`
+  retries, so failing hosts are now retried again (and fail slower) as intended
 - fixed linting erros caused by ruff update and lock-filemaintenance
 - testing plugin: fixture `ìs_integration_test` returns true for non-function markers,
   e.g. on module level
+- fix docstrings of `SingletonStore`, `SingleSingletonStore` and `_ConnectorStore`,
+  which incorrectly described the stored singletons as thread-local
 
 ### Security
 

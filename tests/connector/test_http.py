@@ -1,3 +1,4 @@
+import json
 import time
 from typing import Any
 from unittest.mock import MagicMock, Mock, call
@@ -21,6 +22,23 @@ class DummyHTTPConnector(HTTPConnector):
 
     def _check_availability(self) -> None:
         pass
+
+
+def make_response(status_code: int) -> Response:
+    """Create a real response object with the given status code."""
+    response = Response()
+    response.status_code = status_code
+    response.url = "https://www.example.com/things"
+    response._content = json.dumps({"status": status_code}).encode()
+    return response
+
+
+@pytest.fixture
+def recorded_sleeps(monkeypatch: MonkeyPatch) -> list[float]:
+    """Patch `time.sleep` to record the backoff delays instead of waiting."""
+    sleeps: list[float] = []
+    monkeypatch.setattr(time, "sleep", sleeps.append)
+    return sleeps
 
 
 @pytest.fixture
@@ -153,25 +171,13 @@ def test_request_success(
     [
         (
             0.0,
-            RequestException(
-                response=Mock(
-                    status_code=codes.internal_server_error,
-                    json=MagicMock(
-                        return_value={"status": codes.internal_server_error}
-                    ),
-                )
-            ),
+            RequestException(response=make_response(codes.internal_server_error)),
             "TimedServerError()",
             5,
         ),
         (
             0.0,
-            RequestException(
-                response=Mock(
-                    status_code=codes.too_many_requests,
-                    json=MagicMock(return_value={"status": codes.too_many_requests}),
-                )
-            ),
+            RequestException(response=make_response(codes.too_many_requests)),
             "TimedTooManyRequests()",
             5,
         ),
@@ -195,6 +201,7 @@ def test_request_success(
         "timed read timeout",
     ],
 )
+@pytest.mark.usefixtures("recorded_sleeps")
 def test_request_failure(  # noqa: PLR0913, PLR0917
     monkeypatch: MonkeyPatch,
     caplog: LogCaptureFixture,
@@ -231,3 +238,35 @@ def test_request_failure(  # noqa: PLR0913, PLR0917
     assert caplog.messages[-1].startswith(
         f"Giving up _send_request(...) after {expected_retries} tries"
     )
+
+
+def test_request_retries_too_many_requests(
+    monkeypatch: MonkeyPatch,
+    recorded_sleeps: list[float],
+) -> None:
+    sent_requests: list[tuple[Any, ...]] = []
+
+    def mock_request(*args: Any, **__: Any) -> Response:  # noqa: ANN401
+        sent_requests.append(args)
+        return make_response(codes.too_many_requests)
+
+    mocked_session = MagicMock(spec=requests.Session, name="dummy_session")
+    mocked_session.request = mock_request
+
+    def set_mocked_session(self: DummyHTTPConnector) -> None:
+        self.session = mocked_session
+
+    monkeypatch.setattr(DummyHTTPConnector, "_set_session", set_mocked_session)
+
+    connector = DummyHTTPConnector.get()
+
+    with pytest.raises(RequestException):
+        connector.request("POST", "things", payload=[])
+
+    assert len(sent_requests) == 5  # one initial attempt plus four retries
+    assert all(  # random jitter adds up to one second to each delay
+        expected <= actual < expected + 1
+        for expected, actual in zip(
+            [3.0, 6.0, 12.0, 24.0], recorded_sleeps, strict=True
+        )
+    ), recorded_sleeps
