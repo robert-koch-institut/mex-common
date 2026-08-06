@@ -67,8 +67,18 @@ class HTTPConnector(BaseConnector):
     )
     @backoff.on_exception(  # proportionally backoff on server fault
         wait_gen=backoff.runtime,
-        exception=(TimedReadTimeout, TimedTooManyRequests, TimedServerError),
+        exception=(TimedReadTimeout, TimedServerError),
         value=bounded_backoff(PROPORTIONAL_BACKOFF_MIN, TIMEOUT_MAX),
+        max_tries=5,
+        jitter=backoff.random_jitter,
+        logger=logger,
+    )
+    @backoff.on_exception(  # exponentially backoff on rejected requests
+        wait_gen=backoff.expo,
+        exception=TimedTooManyRequests,
+        base=2,
+        factor=PROPORTIONAL_BACKOFF_MIN,
+        max_value=TIMEOUT_MAX,
         max_tries=5,
         jitter=backoff.random_jitter,
         logger=logger,
@@ -88,9 +98,15 @@ class HTTPConnector(BaseConnector):
         except ReadTimeout as exc:
             raise TimedReadTimeout.create(exc, t0) from exc
         except RequestException as exc:
-            if exc.response and exc.response.status_code >= codes.internal_server_error:
+            if (
+                exc.response is not None
+                and exc.response.status_code >= codes.internal_server_error
+            ):
                 raise TimedServerError.create(exc, t0) from exc
-            if exc.response and exc.response.status_code == codes.too_many_requests:
+            if (
+                exc.response is not None
+                and exc.response.status_code == codes.too_many_requests
+            ):
                 raise TimedTooManyRequests.create(exc, t0) from exc
             raise
         return response
