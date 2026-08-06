@@ -16,9 +16,7 @@ def test_filesystem_read() -> None:
 def test_glob() -> None:
     connector = FilesystemAssetsConnector.get()
     returned = connector.glob("raw-data/organigram", "*.*")
-    assert returned == [
-        str(Path.cwd() / "assets/raw-data/organigram/organizational_units.json")
-    ]
+    assert returned == [str(Path("raw-data/organigram/organizational_units.json"))]
 
 
 def test_connector_only_allows_existing_path() -> None:

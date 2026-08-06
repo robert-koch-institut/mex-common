@@ -42,7 +42,11 @@ class FilesystemAssetsConnector(BaseAssetsConnector):
         """
         resolved_path = self._resolve_path_and_check_permission(path)
         return [
-            str(self._resolve_path_and_check_permission(str(file_path)))
+            str(
+                self._resolve_path_and_check_permission(str(file_path)).relative_to(
+                    self._assets_dir
+                )
+            )
             for file_path in resolved_path.glob(pattern=pattern)
         ]
 
