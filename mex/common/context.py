@@ -5,7 +5,12 @@ _SingletonT = TypeVar("_SingletonT")
 
 
 class SingletonStore(Generic[_SingletonT]):
-    """Thin wrapper for storing thread-local singletons."""
+    """Thin wrapper for storing one singleton instance per class.
+
+    Instances are kept in a plain dict, so a store is shared by all threads that
+    access it and is not synchronized. Concurrent `load` calls for the same class
+    may each create an instance, of which only the last one is kept.
+    """
 
     def __init__(self) -> None:
         """Create a new singleton store with the given type."""
@@ -35,10 +40,13 @@ class SingletonStore(Generic[_SingletonT]):
 
 
 class SingleSingletonStore(Generic[_SingletonT]):
-    """Thin wrapper for storing a single thread-local singleton.
+    """Thin wrapper for storing a single singleton instance.
 
     Stores only a single instance. Requested class must either be
     the same or a parent class of the stored class.
+
+    Like `SingletonStore`, the instance is shared by all threads that access the
+    store and access to it is not synchronized.
     """
 
     def __init__(self) -> None:
