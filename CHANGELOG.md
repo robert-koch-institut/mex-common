@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix broken `RequestException.response` check that disabled all `429` and `5xx`
   retries, so failing hosts are now retried again (and fail slower) as intended
 - fixed linting erros caused by ruff update and lock-filemaintenance
+- fix docstrings of `SingletonStore`, `SingleSingletonStore` and `_ConnectorStore`,
+  which incorrectly described the stored singletons as thread-local
 
 ### Security
 
