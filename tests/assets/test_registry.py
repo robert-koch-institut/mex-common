@@ -25,6 +25,9 @@ class DummyAssetsConnector(BaseAssetsConnector):
     def read(self, _path: str) -> bytes:  # pragma: no cover
         raise RuntimeError
 
+    def glob(self, _path: str, _pattern: str) -> list[str]:  # pragma: no cover
+        raise RuntimeError
+
     def close(self) -> None:
         pass
 
