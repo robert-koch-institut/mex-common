@@ -31,8 +31,9 @@
             "minimumReleaseAgeBehaviour": "timestamp-optional"
         },
         {
-            "description": "Pin GitHub Actions to SHA digests for supply chain security",
+            "description": "Pin GitHub Actions and compose images to SHA digests for supply chain security",
             "matchManagers": [
+                "docker-compose",
                 "github-actions"
             ],
             "pinDigests": true
