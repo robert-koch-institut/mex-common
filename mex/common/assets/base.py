@@ -31,5 +31,8 @@ class BaseAssetsConnector(BaseConnector):
 
         Returns:
             List of file names
+
+        Raises:
+            PermissionError: For file access permission issues
         """
         ...
