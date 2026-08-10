@@ -1,6 +1,6 @@
 services:
   slapd:
-    image: thoteam/slapd-server-mock
+    image: thoteam/slapd-server-mock@sha256:f1f976cab47facefc1128d7ebd6b26e20c725fbb990b07e40e79801ec8b77b1f
     platform: linux/amd64
     ports:
       - 636:636
