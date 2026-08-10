@@ -20,3 +20,19 @@ class BaseAssetsConnector(BaseConnector):
             PermissionError: For file access permission issues
         """
         ...
+
+    @abstractmethod
+    def glob(self, path: str, pattern: str) -> list[str]:
+        """Return the list of file names from a given path.
+
+        Args:
+            path: The path pointing to the file to read
+            pattern: pattern to match
+
+        Returns:
+            List of file names
+
+        Raises:
+            PermissionError: For file access permission issues
+        """
+        ...

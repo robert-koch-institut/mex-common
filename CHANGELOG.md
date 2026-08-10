@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- glob to assets connector
 - add `reference_filters` argument to `fetch_*_items` methods of `BackendApiConnector`,
   using POST `_search` endpoints when needed, otherwise sticking with GET
 - add `fetch_all_extracted_items` to `BackendApiConnector` for completeness sake
