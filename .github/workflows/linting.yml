@@ -52,10 +52,11 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-environment
-        path: ~/.cache/uv
-        key: ${{ env.cache-name }}-${{ hashFiles('uv.lock') }}
-        restore-keys: |
-          ${{ env.cache-name }}-
+        with:
+          path: ~/.cache/uv
+          key: ${{ env.cache-name }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
 
       - name: Cache pre-commit
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
