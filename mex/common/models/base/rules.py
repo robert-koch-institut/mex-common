@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from pydantic import Field
 
@@ -29,9 +29,3 @@ class WorkflowRule(BaseModel, extra="forbid"):
 
 class RuleSet(BaseModel, extra="forbid"):
     """Base class for a set of additive, subtractive, preventive & workflow rule."""
-
-    if TYPE_CHECKING:  # pragma: no cover
-        additive: AdditiveRule
-        subtractive: SubtractiveRule
-        preventive: PreventiveRule
-        workflow: WorkflowRule

@@ -14,7 +14,7 @@ from pydantic_core import core_schema
 from mex.common.transform import normalize
 from mex.model import VOCABULARY_JSON_BY_NAME
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from enum import _EnumDict
 
     from mex.common.types import Text
