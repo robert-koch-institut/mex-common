@@ -19,10 +19,7 @@ from mex.common.models import (
     PreviewPerson,
 )
 from mex.common.testing import Joker
-from mex.common.types import (
-    ExtractedPersonIdentifier,
-    MergedPersonIdentifier,
-)
+from mex.common.types import MergedPersonIdentifier
 from mex.common.types.identifier import MergedOrganizationIdentifier
 
 
@@ -644,16 +641,16 @@ def test_delete_merged_item_mocked(mocked_backend: MagicMock) -> None:
     )
 
 
-def test_match_item_mocked(mocked_backend: MagicMock) -> None:
-    extracted_id = ExtractedPersonIdentifier("e3VhxMhEKyjqN5flzLpiEB")
-    merged_id = MergedPersonIdentifier("NGwfzG8ROsrvIiQIVDVy")
+def test_merge_items_mocked(mocked_backend: MagicMock) -> None:
+    goner_id = MergedPersonIdentifier("e3VhxMhEKyjqN5flzLpiEB")
+    keeper_id = MergedPersonIdentifier("NGwfzG8ROsrvIiQIVDVy")
 
     connector = BackendApiConnector.get()
-    connector.match_item(extracted_id, merged_id)
+    connector.merge_items(goner_id, keeper_id)
 
     assert mocked_backend.call_args == call(
         "POST",
-        "http://localhost:8080/v0/match",
+        "http://localhost:8080/v0/merge",
         None,
         headers={
             "Accept": "application/json",
@@ -663,6 +660,6 @@ def test_match_item_mocked(mocked_backend: MagicMock) -> None:
         data=Joker(),
     )
     assert json.loads(mocked_backend.call_args.kwargs["data"]) == {
-        "extractedIdentifier": "e3VhxMhEKyjqN5flzLpiEB",
-        "mergedIdentifier": "NGwfzG8ROsrvIiQIVDVy",
+        "gonerIdentifier": "e3VhxMhEKyjqN5flzLpiEB",
+        "keeperIdentifier": "NGwfzG8ROsrvIiQIVDVy",
     }
