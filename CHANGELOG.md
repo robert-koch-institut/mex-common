@@ -29,16 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `fetch_preview_items(reference_filters=...)` instead
 - BREAKING: drop the deprecated `referenced_identifier`, `reference_field` and
   `stable_target_id` search arguments, use `reference_filters` instead
+- BREAKING: removed `mex.common.extract`, use `parse_csv` to mex-extractors
+- BREAKING: removed `mex.common.sorters`, use `topological_sort` from mex-extractors
 
 ### Fixed
 
 - fix broken `RequestException.response` check that disabled all `429` and `5xx`
   retries, so failing hosts are now retried again (and fail slower) as intended
-- fixed linting erros caused by ruff update and lock-filemaintenance
+- fixed linting errors caused by ruff update and lock-file maintenance
 - testing plugin: fixture `ìs_integration_test` returns true for non-function markers,
   e.g. on module level
 - fix docstrings of `SingletonStore`, `SingleSingletonStore` and `_ConnectorStore`,
   which incorrectly described the stored singletons as thread-local
+- removed unused numpy and pyarrow dependencies
 
 ### Security
 
