@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [3.2.0] - 2026-08-11
+
+### Added
+
 - glob to assets connector
 - add `reference_filters` argument to `fetch_*_items` methods of `BackendApiConnector`,
   using POST `_search` endpoints when needed, otherwise sticking with GET
@@ -20,8 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - retry `429` responses with an exponential backoff (about 45s over 5 tries)
 - make `ensure_rule_set` in `mex.common.merged.main` public
 - BREAKING: replace `match_item` on `BackendApiConnector` with `merge_items`
-
-### Deprecated
 
 ### Removed
 
@@ -42,8 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix docstrings of `SingletonStore`, `SingleSingletonStore` and `_ConnectorStore`,
   which incorrectly described the stored singletons as thread-local
 - removed unused numpy and pyarrow dependencies
-
-### Security
 
 ## [3.1.1] - 2026-07-27
 
