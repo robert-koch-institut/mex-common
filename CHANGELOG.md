@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- load langdetect profiles lazily to save ~150ms on every initial mex-common import
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- closed some unintended coverage gaps
 
 ### Security
 
