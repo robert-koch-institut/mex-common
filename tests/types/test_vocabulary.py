@@ -1,30 +1,71 @@
-import json
+import re
 
 import pytest
 from pydantic import BaseModel, ValidationError
-from pytest import MonkeyPatch
 
-from mex.common.types import VocabularyEnum
+from mex.common.types import VOCABULARY_ENUMS, AnyVocabularyEnum, VocabularyEnum
 from mex.model import VOCABULARY_JSON_BY_NAME
-from tests.types.conftest import TESTDATA_DIR
+
+# vocabularies in mex-model that are not backed by an enum in mex-common
+NON_ENUM_VOCABULARIES = {"concept-schemes"}
 
 
-@pytest.fixture
-def use_dummy_vocabulary(monkeypatch: MonkeyPatch) -> None:
-    with (TESTDATA_DIR / "dummy-vocabulary.json").open() as fh:
-        dummy_vocabulary = json.load(fh)
-    monkeypatch.setitem(VOCABULARY_JSON_BY_NAME, "dummy_vocabulary", dummy_vocabulary)
+def concept_to_member_name(pref_label_en: str) -> str:
+    """Derive the enum member name from the english prefLabel of a concept."""
+    return "_".join(
+        word.upper() for word in re.split("[^a-zA-Z0-9]", pref_label_en) if word
+    )
 
 
-@pytest.mark.usefixtures("use_dummy_vocabulary")
+def scheme_to_vocabulary_name(scheme: str) -> str:
+    """Derive the vocabulary slug of a scheme url, e.g. `access-restriction`."""
+    return scheme.rsplit("/", 1)[-1]
+
+
+class DummyEnum(VocabularyEnum):
+    """Dummy vocabulary for testing."""
+
+    __scheme__ = "https://mex.rki.de/item/dummy-vocabulary"
+
+    PREF_EN_ONE = "https://mex.rki.de/item/dummy-concept-1"
+    PREF_EN_TWO = "https://mex.rki.de/item/dummy-concept-2"
+
+
+@pytest.mark.parametrize(
+    "vocabulary_enum",
+    VOCABULARY_ENUMS,
+    ids=[vocabulary_enum.__name__ for vocabulary_enum in VOCABULARY_ENUMS],
+)
+def test_hardcoded_enum_matches_mex_model(
+    vocabulary_enum: type[AnyVocabularyEnum],
+) -> None:
+    vocabulary_name = scheme_to_vocabulary_name(vocabulary_enum.__scheme__)
+    concepts = VOCABULARY_JSON_BY_NAME[vocabulary_name.replace("-", "_")]
+
+    # check names, values and order of the hardcoded members match the vocabulary
+    assert [(member.name, member.value) for member in vocabulary_enum] == [
+        (concept_to_member_name(concept["prefLabel"]["en"]), concept["identifier"])
+        for concept in concepts
+    ]
+
+    # check the hardcoded scheme matches the one the concepts declare
+    assert {concept["inScheme"] for concept in concepts} == {vocabulary_enum.__scheme__}
+
+
+def test_vocabulary_enums_cover_all_vocabularies() -> None:
+    enum_vocabularies = {
+        scheme_to_vocabulary_name(vocabulary_enum.__scheme__)
+        for vocabulary_enum in VOCABULARY_ENUMS
+    }
+    all_vocabularies = {name.replace("_", "-") for name in VOCABULARY_JSON_BY_NAME}
+    assert enum_vocabularies == all_vocabularies - NON_ENUM_VOCABULARIES
+
+
 def test_vocabulary_enum_model() -> None:
-    class DummyEnum(VocabularyEnum):
-        __vocabulary__ = "dummy-vocabulary"
-
-    # check enum names are loaded correctly
+    # check enum names are hardcoded correctly
     assert [c.name for c in DummyEnum] == ["PREF_EN_ONE", "PREF_EN_TWO"]
 
-    # check enum values are loaded correctly
+    # check enum values are hardcoded correctly
     assert [c.value for c in DummyEnum] == [
         "https://mex.rki.de/item/dummy-concept-1",
         "https://mex.rki.de/item/dummy-concept-2",
@@ -53,11 +94,7 @@ def test_vocabulary_enum_model() -> None:
     assert model.dummy == DummyEnum["PREF_EN_TWO"]
 
 
-@pytest.mark.usefixtures("use_dummy_vocabulary")
 def test_vocabulary_enum_schema() -> None:
-    class DummyEnum(VocabularyEnum):
-        __vocabulary__ = "dummy-vocabulary"
-
     class DummyModel(BaseModel):
         dummy: DummyEnum
 
@@ -75,16 +112,3 @@ def test_vocabulary_enum_schema() -> None:
         "title": "DummyModel",
         "type": "object",
     }
-
-
-@pytest.mark.usefixtures("use_dummy_vocabulary")
-def test_vocabulary_enum_find() -> None:
-    class DummyEnum(VocabularyEnum):
-        __vocabulary__ = "dummy-vocabulary"
-
-    assert len(DummyEnum.__concepts__) == 2
-    assert DummyEnum.find("not-found") is None
-
-    found_enum = DummyEnum.find("pref-de-one")
-    assert found_enum is not None
-    assert found_enum.value == "https://mex.rki.de/item/dummy-concept-1"

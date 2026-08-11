@@ -11,11 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: hardcode all vocabulary enum members in `mex.common.types.vocabulary`
+  instead of generating them at import time from `mex-model`, so that static analysis
+  and IDEs can see the members (use `Theme.PUBLIC_HEALTH` instead of
+  `Theme["PUBLIC_HEALTH"]`); a new test guards against drift from `mex-model`
+- BREAKING: replace the `__vocabulary__` slug on vocabulary enums with `__scheme__`,
+  which holds the full scheme url, e.g. `https://mex.rki.de/item/access-restriction`
+- BREAKING: rename `License.CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL` to
+  `License.CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL` and
+  `Theme.ANIMAL_EXPERIMENTAL_RESEARCH_AND_R` to
+  `Theme.ANIMAL_EXPERIMENTAL_RESEARCH_AND_3R`, because digits in concept labels are
+  no longer dropped from member names
+
 ### Deprecated
 
 ### Removed
 
 - removed unused type hints for RuleSet base class properties
+- BREAKING: remove `VocabularyEnum.find`, because concept labels are no longer loaded
+  at runtime; look concepts up via `mex.model.VOCABULARY_JSON_BY_NAME` instead
+- BREAKING: remove the `VocabularyLoader` metaclass as well as the `Concept` and
+  `BilingualText` models, vocabulary enums are now plain `Enum` subclasses
 
 ### Fixed
 

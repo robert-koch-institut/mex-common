@@ -73,7 +73,6 @@ from mex.common.types.vocabulary import (
     TechnicalAccessibility,
     Theme,
     VocabularyEnum,
-    VocabularyLoader,
 )
 
 __all__ = (
@@ -160,7 +159,6 @@ __all__ = (
     "Theme",
     "Validation",
     "VocabularyEnum",
-    "VocabularyLoader",
     "WorkPath",
     "Year",
     "YearMonth",

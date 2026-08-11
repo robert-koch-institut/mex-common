@@ -1,109 +1,16 @@
-import re
-from enum import Enum, EnumMeta
-from typing import TYPE_CHECKING, ClassVar, Self, Union
+from enum import Enum
+from typing import ClassVar
 
-from pydantic import (
-    AnyUrl,
-    BaseModel,
-    GetCoreSchemaHandler,
-    GetJsonSchemaHandler,
-    json_schema,
-)
+from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
-
-from mex.common.transform import normalize
-from mex.model import VOCABULARY_JSON_BY_NAME
-
-if TYPE_CHECKING:
-    from enum import _EnumDict
-
-    from mex.common.types import Text
 
 VOCABULARY_PATTERN = r"https://mex.rki.de/item/[a-z0-9-]+"
 
 
-class BilingualText(BaseModel):
-    """String-field translated in German and English."""
+class VocabularyEnum(Enum):
+    """Base class for enums of concepts from a controlled vocabulary."""
 
-    de: str | None = None
-    en: str | None = None
-
-
-class Concept(BaseModel):
-    """Single entry in a vocabulary with stable ID, labels and definition."""
-
-    identifier: AnyUrl
-    inScheme: AnyUrl
-    prefLabel: BilingualText
-    altLabel: list[BilingualText] = []
-    definition: BilingualText | None = None
-
-
-class VocabularyLoader(EnumMeta):
-    """Metaclass to load names and values from a JSON file and create a dynamic enum."""
-
-    def __new__(
-        cls, name: str, bases: tuple[type], dct: "_EnumDict"
-    ) -> "VocabularyLoader":
-        """Create a new enum class by loading the configured vocabulary JSON."""
-        if vocabulary_name := dct.get("__vocabulary__"):
-            dct["__concepts__"] = cls.parse_raw(vocabulary_name.replace("-", "_"))
-            for concept in dct["__concepts__"]:
-                caps = "_".join(
-                    word.upper()
-                    for word in re.split("[^a-zA-Z0-9]", concept.prefLabel.en)
-                    if word
-                )
-                dct[caps] = str(concept.identifier)
-        return super().__new__(cls, name, bases, dct)
-
-    @classmethod
-    def parse_raw(cls, vocabulary_name: str) -> list[Concept]:
-        """Parse vocabulary and return concepts as list."""
-        return [
-            Concept.model_validate(raw_vocabulary)
-            for raw_vocabulary in VOCABULARY_JSON_BY_NAME[vocabulary_name]
-        ]
-
-
-class VocabularyEnum(Enum, metaclass=VocabularyLoader):
-    """Base class for vocabulary enums that sets the correct metaclass."""
-
-    __vocabulary__: ClassVar[str]
-    __concepts__: ClassVar[list[Concept]]
-
-    @classmethod
-    def find(cls, search_term: Union[str, "Text"]) -> Self | None:
-        """Get the enum instance that matches a label of the underlying concepts.
-
-        The given `search_term` can be string or a Text with an optional language
-        setting to narrow down the search fields.
-        The `prefLabel` and `altLabel` of the concepts which were used to create this
-        vocabulary are searched for exact matches to the `search_term`.
-
-        Args:
-            search_term: String or Text to look for
-
-        Returns:
-            Enum instance for the found concept or None
-        """
-        language = getattr(search_term, "language", None)
-        search_term = normalize(str(search_term))
-        for concept in cls.__concepts__:
-            searchable_labels = []
-            for label in (concept.prefLabel, *concept.altLabel):
-                if not label:
-                    continue
-                if language is None:
-                    if label.de:
-                        searchable_labels.append(normalize(label.de))
-                    if label.en:
-                        searchable_labels.append(normalize(label.en))
-                elif language_label := label.model_dump().get(language.value):
-                    searchable_labels.append(normalize(language_label))
-            if search_term in searchable_labels:
-                return cls(str(concept.identifier))
-        return None
+    __scheme__: ClassVar[str]
 
     @classmethod
     def __get_pydantic_core_schema__(
@@ -135,118 +42,275 @@ class VocabularyEnum(Enum, metaclass=VocabularyLoader):
     ) -> json_schema.JsonSchemaValue:
         """Modify the json schema to add the scheme and an example."""
         json_schema_ = handler(core_schema_)
-        json_schema_["examples"] = [str(cls.__concepts__[0].identifier)]
-        json_schema_["useScheme"] = f"https://mex.rki.de/item/{cls.__vocabulary__}"
+        json_schema_["examples"] = [str(next(iter(cls)).value)]
+        json_schema_["useScheme"] = cls.__scheme__
         return json_schema_
 
     def __repr__(self) -> str:
-        """Overwrite representation because dynamic enum names are unknown to mypy."""
+        """Overwrite representation to be more concise and copy-pasteable."""
         return f'{self.__class__.__name__}["{self.name}"]'
 
 
 class AccessRestriction(VocabularyEnum):
     """The access restriction type."""
 
-    __vocabulary__ = "access-restriction"
+    __scheme__ = "https://mex.rki.de/item/access-restriction"
+
+    OPEN = "https://mex.rki.de/item/access-restriction-1"
+    RESTRICTED = "https://mex.rki.de/item/access-restriction-2"
 
 
 class ActivityType(VocabularyEnum):
     """The activity type."""
 
-    __vocabulary__ = "activity-type"
+    __scheme__ = "https://mex.rki.de/item/activity-type"
+
+    THIRD_PARTY_FUNDED_PROJECT = "https://mex.rki.de/item/activity-type-1"
+    INTERNAL_PROJECT_ENDEAVOR = "https://mex.rki.de/item/activity-type-3"
+    OTHER = "https://mex.rki.de/item/activity-type-6"
 
 
 class AnonymizationPseudonymization(VocabularyEnum):
     """Whether the resource is anonymized/pseudonymized."""
 
-    __vocabulary__ = "anonymization-pseudonymization"
+    __scheme__ = "https://mex.rki.de/item/anonymization-pseudonymization"
+
+    ANONYMIZED = "https://mex.rki.de/item/anonymization-pseudonymization-1"
+    PSEUDONYMIZED = "https://mex.rki.de/item/anonymization-pseudonymization-2"
 
 
 class APIType(VocabularyEnum):
     """Technical standard or style of a network API."""
 
-    __vocabulary__ = "api-type"
+    __scheme__ = "https://mex.rki.de/item/api-type"
+
+    REST = "https://mex.rki.de/item/api-type-1"
+    SOAP = "https://mex.rki.de/item/api-type-2"
+    SPARQL_ENDPOINT = "https://mex.rki.de/item/api-type-3"
+    PROPRIETARY = "https://mex.rki.de/item/api-type-4"
+    RPC = "https://mex.rki.de/item/api-type-5"
+    GRAPHQL = "https://mex.rki.de/item/api-type-6"
+    OTHER = "https://mex.rki.de/item/api-type-7"
 
 
 class BibliographicResourceType(VocabularyEnum):
     """The type of a bibliographic resource."""
 
-    __vocabulary__ = "bibliographic-resource-type"
+    __scheme__ = "https://mex.rki.de/item/bibliographic-resource-type"
+
+    BOOK = "https://mex.rki.de/item/bibliographic-resource-type-1"
+    BOOK_CHAPTER = "https://mex.rki.de/item/bibliographic-resource-type-2"
+    CONFERENCE_PAPER = "https://mex.rki.de/item/bibliographic-resource-type-3"
+    DOCTORAL_THESIS = "https://mex.rki.de/item/bibliographic-resource-type-4"
+    HABILITATION_THESIS = "https://mex.rki.de/item/bibliographic-resource-type-5"
+    JOURNAL = "https://mex.rki.de/item/bibliographic-resource-type-6"
+    JOURNAL_ARTICLE = "https://mex.rki.de/item/bibliographic-resource-type-7"
+    OTHER = "https://mex.rki.de/item/bibliographic-resource-type-8"
+    POSTER = "https://mex.rki.de/item/bibliographic-resource-type-9"
+    PREPRINT = "https://mex.rki.de/item/bibliographic-resource-type-10"
+    PRESENTATION = "https://mex.rki.de/item/bibliographic-resource-type-11"
+    BERICHT = "https://mex.rki.de/item/bibliographic-resource-type-12"
+    SEMINAR_PAPER = "https://mex.rki.de/item/bibliographic-resource-type-13"
+    THESIS = "https://mex.rki.de/item/bibliographic-resource-type-14"
 
 
 class ConsentStatus(VocabularyEnum):
     """The status of a consent."""
 
-    __vocabulary__ = "consent-status"
+    __scheme__ = "https://mex.rki.de/item/consent-status"
+
+    INVALID_FOR_PROCESSING = "https://mex.rki.de/item/consent-status-1"
+    VALID_FOR_PROCESSING = "https://mex.rki.de/item/consent-status-2"
 
 
 class ConsentType(VocabularyEnum):
     """The type of a consent."""
 
-    __vocabulary__ = "consent-type"
+    __scheme__ = "https://mex.rki.de/item/consent-type"
+
+    EXPRESSED_CONSENT = "https://mex.rki.de/item/consent-type-2"
 
 
 class DataProcessingState(VocabularyEnum):
     """Type for state of data processing."""
 
-    __vocabulary__ = "data-processing-state"
+    __scheme__ = "https://mex.rki.de/item/data-processing-state"
+
+    RAW_DATA = "https://mex.rki.de/item/data-processing-state-1"
+    SECONDARY_DATA = "https://mex.rki.de/item/data-processing-state-2"
+    AGGREGATED = "https://mex.rki.de/item/data-processing-state-3"
+    PLAUSIBILITY_CHECKED = "https://mex.rki.de/item/data-processing-state-4"
+    NORMALIZED = "https://mex.rki.de/item/data-processing-state-5"
 
 
 class Frequency(VocabularyEnum):
     """Frequency type."""
 
-    __vocabulary__ = "frequency"
+    __scheme__ = "https://mex.rki.de/item/frequency"
+
+    TRIENNIAL = "https://mex.rki.de/item/frequency-1"
+    BIENNIAL = "https://mex.rki.de/item/frequency-2"
+    ANNUAL = "https://mex.rki.de/item/frequency-3"
+    SEMIANNUAL = "https://mex.rki.de/item/frequency-4"
+    THREE_TIMES_A_YEAR = "https://mex.rki.de/item/frequency-5"
+    QUARTERLY = "https://mex.rki.de/item/frequency-6"
+    BIMONTHLY = "https://mex.rki.de/item/frequency-7"
+    MONTHLY = "https://mex.rki.de/item/frequency-8"
+    SEMIMONTHLY = "https://mex.rki.de/item/frequency-9"
+    BIWEEKLY = "https://mex.rki.de/item/frequency-10"
+    THREE_TIMES_A_MONTH = "https://mex.rki.de/item/frequency-11"
+    WEEKLY = "https://mex.rki.de/item/frequency-12"
+    SEMIWEEKLY = "https://mex.rki.de/item/frequency-13"
+    THREE_TIME_A_WEEK = "https://mex.rki.de/item/frequency-14"
+    DAILY = "https://mex.rki.de/item/frequency-15"
+    CONTINUOUS = "https://mex.rki.de/item/frequency-16"
+    IRREGULAR = "https://mex.rki.de/item/frequency-17"
 
 
 class HealthCategory(VocabularyEnum):
     """Type for health category."""
 
-    __vocabulary__ = "health-category"
+    __scheme__ = "https://mex.rki.de/item/health-category"
+
+    ELECTRONIC_HEALTH_DATA_FROM_EHRS = "https://mex.rki.de/item/health-category-1"
+    MEDICAL_AND_MORTALITY_REGISTRY_DATA = "https://mex.rki.de/item/health-category-2"
+    OTHER_HUMAN_MOLECULAR_AND_OMICS_DATA = "https://mex.rki.de/item/health-category-3"
+    DATA_ON_HEALTH_PROFESSIONALS = "https://mex.rki.de/item/health-category-4"
+    MEDICINAL_AND_MEDICAL_PRODUCT_REGISTRY_DATA = (
+        "https://mex.rki.de/item/health-category-5"
+    )
+    DATA_ON_HEALTH_DETERMINANTS = "https://mex.rki.de/item/health-category-6"
+    DATA_FROM_RESEARCH_COHORTS_AND_SURVEYS = "https://mex.rki.de/item/health-category-7"
+    OTHER_DATA_FROM_MEDICAL_DEVICES = "https://mex.rki.de/item/health-category-8"
+    DATA_FROM_REGULATED_CLINICAL_RESEARCH = "https://mex.rki.de/item/health-category-9"
+    AGGREGATED_DATA_ON_HEALTHCARE_NEEDS_PROVISION_AND_RESOURCES = (
+        "https://mex.rki.de/item/health-category-10"
+    )
+    AUTOMATICALLY_GENERATED_PERSONAL_ELECTRONIC_HEALTH_DATA = (
+        "https://mex.rki.de/item/health-category-11"
+    )
+    HUMAN_GENETIC_EPIGENOMIC_AND_GENOMIC_DATA = (
+        "https://mex.rki.de/item/health-category-12"
+    )
+    ADMINISTRATIVE_DATA = "https://mex.rki.de/item/health-category-13"
+    DATA_ON_PATHOGENS = "https://mex.rki.de/item/health-category-14"
+    HEALTH_DATA_FROM_BIOBANKS = "https://mex.rki.de/item/health-category-15"
+    DATA_FROM_POPULATION_BASED_HEALTH_DATA_REGISTRIES = (
+        "https://mex.rki.de/item/health-category-16"
+    )
+    WELLNESS_APPLICATION_DATA = "https://mex.rki.de/item/health-category-17"
 
 
 class Language(VocabularyEnum):
     """Language type."""
 
-    __vocabulary__ = "language"
+    __scheme__ = "https://mex.rki.de/item/language"
+
+    GERMAN = "https://mex.rki.de/item/language-1"
+    ENGLISH = "https://mex.rki.de/item/language-2"
+    FRENCH = "https://mex.rki.de/item/language-3"
+    SPANISH = "https://mex.rki.de/item/language-4"
+    RUSSIAN = "https://mex.rki.de/item/language-5"
 
 
 class License(VocabularyEnum):
     """License type."""
 
-    __vocabulary__ = "license"
+    __scheme__ = "https://mex.rki.de/item/license"
+
+    CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL = "https://mex.rki.de/item/license-1"
 
 
 class MIMEType(VocabularyEnum):
     """The mime type."""
 
-    __vocabulary__ = "mime-type"
+    __scheme__ = "https://mex.rki.de/item/mime-type"
+
+    DOCX = "https://mex.rki.de/item/mime-type-1"
+    XLSX = "https://mex.rki.de/item/mime-type-2"
+    PPTX = "https://mex.rki.de/item/mime-type-3"
+    PDF = "https://mex.rki.de/item/mime-type-4"
+    TIFF = "https://mex.rki.de/item/mime-type-5"
+    MHTML = "https://mex.rki.de/item/mime-type-6"
+    CSV = "https://mex.rki.de/item/mime-type-7"
+    XML = "https://mex.rki.de/item/mime-type-8"
+    ATOM = "https://mex.rki.de/item/mime-type-9"
+    SAS = "https://mex.rki.de/item/mime-type-10"
+    STATA = "https://mex.rki.de/item/mime-type-11"
+    FASTQ = "https://mex.rki.de/item/mime-type-12"
+    TSV = "https://mex.rki.de/item/mime-type-13"
+    PPT = "https://mex.rki.de/item/mime-type-14"
+    XLS = "https://mex.rki.de/item/mime-type-15"
+    ZIP = "https://mex.rki.de/item/mime-type-16"
+    TAR_GZ = "https://mex.rki.de/item/mime-type-17"
+    HTML = "https://mex.rki.de/item/mime-type-18"
+    JSON = "https://mex.rki.de/item/mime-type-19"
 
 
 class PersonalData(VocabularyEnum):
     """Classification of personal data."""
 
-    __vocabulary__ = "personal-data"
+    __scheme__ = "https://mex.rki.de/item/personal-data"
+
+    PERSONAL_DATA = "https://mex.rki.de/item/personal-data-1"
+    NO_PERSONAL_DATA = "https://mex.rki.de/item/personal-data-2"
 
 
 class ResourceCreationMethod(VocabularyEnum):
     """The creation method of a resource."""
 
-    __vocabulary__ = "resource-creation-method"
+    __scheme__ = "https://mex.rki.de/item/resource-creation-method"
+
+    OTHER = "https://mex.rki.de/item/resource-creation-method-1"
+    STUDIES_SURVEYS_AND_INTERVIEWS = (
+        "https://mex.rki.de/item/resource-creation-method-2"
+    )
+    SURVEILLANCE = "https://mex.rki.de/item/resource-creation-method-3"
+    LABORATORY_TESTS = "https://mex.rki.de/item/resource-creation-method-4"
+    SEQUENCING = "https://mex.rki.de/item/resource-creation-method-5"
+    REGISTRY = "https://mex.rki.de/item/resource-creation-method-6"
+    MODELS_AND_SIMULATIONS = "https://mex.rki.de/item/resource-creation-method-7"
 
 
 class ResourceTypeGeneral(VocabularyEnum):
     """The general type of a resource."""
 
-    __vocabulary__ = "resource-type-general"
+    __scheme__ = "https://mex.rki.de/item/resource-type-general"
+
+    SAMPLES = "https://mex.rki.de/item/resource-type-general-2"
+    DATA_COLLECTION = "https://mex.rki.de/item/resource-type-general-13"
+    DATASET = "https://mex.rki.de/item/resource-type-general-14"
+    TEXT = "https://mex.rki.de/item/resource-type-general-15"
+    IMAGE = "https://mex.rki.de/item/resource-type-general-16"
+    SOFTWARE_CODE = "https://mex.rki.de/item/resource-type-general-17"
+    OTHER = "https://mex.rki.de/item/resource-type-general-18"
 
 
 class TechnicalAccessibility(VocabularyEnum):
     """Technical accessibility within RKI and outside of RKI."""
 
-    __vocabulary__ = "technical-accessibility"
+    __scheme__ = "https://mex.rki.de/item/technical-accessibility"
+
+    INTERNAL = "https://mex.rki.de/item/technical-accessibility-1"
+    EXTERNAL = "https://mex.rki.de/item/technical-accessibility-2"
 
 
 class Theme(VocabularyEnum):
     """The theme type."""
 
-    __vocabulary__ = "theme"
+    __scheme__ = "https://mex.rki.de/item/theme"
+
+    PUBLIC_HEALTH = "https://mex.rki.de/item/theme-1"
+    INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY = "https://mex.rki.de/item/theme-11"
+    PATHOGENESIS_RESEARCH_AND_DIAGNOSTIC_DEVELOPMENT = (
+        "https://mex.rki.de/item/theme-20"
+    )
+    GENERAL_MICROBIOLOGY_AND_MOLECULAR_BIOLOGY = "https://mex.rki.de/item/theme-21"
+    BIOLOGICAL_TOXIN_RESEARCH_AND_DIAGNOSTICS = "https://mex.rki.de/item/theme-22"
+    BIOINFORMATICS_AND_SYSTEMS_BIOLOGY = "https://mex.rki.de/item/theme-23"
+    ANIMAL_EXPERIMENTAL_RESEARCH_AND_3R = "https://mex.rki.de/item/theme-24"
+    ARTIFICIAL_INTELLIGENCE_AND_MACHINE_LEARNING = "https://mex.rki.de/item/theme-25"
+    NON_COMMUNICABLE_DISEASES_AND_HEALTH_SURVEILLANCE = (
+        "https://mex.rki.de/item/theme-36"
+    )
+    INTERNATIONAL_HEALTH_PROTECTION = "https://mex.rki.de/item/theme-37"
