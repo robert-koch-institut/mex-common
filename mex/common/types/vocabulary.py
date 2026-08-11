@@ -24,15 +24,9 @@ class VocabularyEnum(Enum):
                     core_schema.no_info_plain_validator_function(cls),
                 ],
             ),
-            python_schema=core_schema.chain_schema(
-                [
-                    core_schema.is_instance_schema(cls | str),
-                    core_schema.no_info_plain_validator_function(cls),
-                ]
-            ),
+            python_schema=core_schema.no_info_plain_validator_function(cls),
             serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda s: s.value,
-                when_used="unless-none",
+                lambda s: s.value, when_used="unless-none"
             ),
         )
 
@@ -45,10 +39,6 @@ class VocabularyEnum(Enum):
         json_schema_["examples"] = [str(next(iter(cls)).value)]
         json_schema_["useScheme"] = cls.__scheme__
         return json_schema_
-
-    def __repr__(self) -> str:
-        """Overwrite representation to be more concise and copy-pasteable."""
-        return f'{self.__class__.__name__}["{self.name}"]'
 
 
 class AccessRestriction(VocabularyEnum):

@@ -32,6 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   at runtime; look concepts up via `mex.model.VOCABULARY_JSON_BY_NAME` instead
 - BREAKING: remove the `VocabularyLoader` metaclass as well as the `Concept` and
   `BilingualText` models, vocabulary enums are now plain `Enum` subclasses
+- BREAKING: remove the custom `VocabularyEnum.__repr__`, which only existed to work
+  around member names being invisible to static analysis and shadowed the `patch_reprs`
+  fixture of `mex.common.testing`; vocabulary enums now repr like any other enum, so
+  test suites using that fixture see `AccessRestriction.OPEN` instead of
+  `AccessRestriction["OPEN"]`
 
 ### Fixed
 

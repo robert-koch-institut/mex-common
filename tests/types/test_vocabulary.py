@@ -71,9 +71,6 @@ def test_vocabulary_enum_model() -> None:
         "https://mex.rki.de/item/dummy-concept-2",
     ]
 
-    # check enum instance representation
-    assert repr(DummyEnum["PREF_EN_ONE"]) == 'DummyEnum["PREF_EN_ONE"]'
-
     class DummyModel(BaseModel):
         dummy: DummyEnum
 
