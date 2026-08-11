@@ -168,6 +168,12 @@ class BibliographicResourceType(VocabularyEnum):
     __vocabulary__ = "bibliographic-resource-type"
 
 
+class CodingSystem(VocabularyEnum):
+    """The type of a coding system."""
+
+    __vocabulary__ = "coding-system"
+
+
 class ConsentStatus(VocabularyEnum):
     """The status of a consent."""
 
