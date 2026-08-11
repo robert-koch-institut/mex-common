@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Final
 
 from mex.common.types import IdentityProvider
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from mex.common.identity.base import BaseProvider
 
 _PROVIDER_REGISTRY: Final[dict[IdentityProvider, type["BaseProvider"]]] = {}
