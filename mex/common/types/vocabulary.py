@@ -1,3 +1,4 @@
+import re
 from enum import Enum, EnumMeta
 from typing import TYPE_CHECKING, ClassVar, Self, Union
 
@@ -10,7 +11,7 @@ from pydantic import (
 )
 from pydantic_core import core_schema
 
-from mex.common.transform import normalize, split_to_caps
+from mex.common.transform import normalize
 from mex.model import VOCABULARY_JSON_BY_NAME
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -48,7 +49,12 @@ class VocabularyLoader(EnumMeta):
         if vocabulary_name := dct.get("__vocabulary__"):
             dct["__concepts__"] = cls.parse_raw(vocabulary_name.replace("-", "_"))
             for concept in dct["__concepts__"]:
-                dct[split_to_caps(concept.prefLabel.en)] = str(concept.identifier)
+                caps = "_".join(
+                    word.upper()
+                    for word in re.split("[^a-zA-Z0-9]", concept.prefLabel.en)
+                    if word
+                )
+                dct[caps] = str(concept.identifier)
         return super().__new__(cls, name, bases, dct)
 
     @classmethod
