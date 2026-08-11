@@ -1,6 +1,6 @@
 [project]
 name = "mex-common"
-version = "3.1.1"
+version = "3.2.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -13,14 +13,11 @@ dependencies = [
     "langdetect>=1,<2",
     "ldap3>=2,<3",
     "mex-model>=5,<6",
-    "networkx>=3",
-    "numpy>=2,<3",
     "pandas>=3,<4",
-    "pyarrow>=25,<26",
-    "pydantic-settings>=2.14,<2.15",
+    "pydantic-settings>=2,<3",
     "pydantic>=2,<3",
-    "tabulate>=0.9",
-    "pytz>=2025",
+    "tabulate>=0.10,<1",
+    "pytz>=2026,<2027",
     "requests>=2,<3",
 ]
 
@@ -29,14 +26,13 @@ dev = [
     "ipdb>=0.13",
     "mypy>=1",
     "pandas-stubs",
-    "pytest-cov>=6",
+    "pytest-cov>=7",
     "pytest-random-order>=1",
     "pytest-xdist>=3",
-    "pytest>=8",
-    "ruff>=0.15",
+    "pytest>=9",
+    "ruff>=0.16",
     "sphinx>=9",
     "types-ldap3",
-    "types-networkx",
     "types-pytz",
     "types-requests",
     "types-tabulate",
