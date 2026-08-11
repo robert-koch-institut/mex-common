@@ -28,7 +28,6 @@ from mex.common.models.base.model import BaseModel
 from mex.common.models.person import MergedPerson
 from mex.common.settings import BaseSettings
 from mex.common.types import (
-    AnyExtractedIdentifier,
     AnyMergedIdentifier,
     Identifier,
     MergedPrimarySourceIdentifier,
@@ -547,26 +546,26 @@ class BackendApiConnector(HTTPConnector):
             params={"includeRuleSet": str(include_rule_set).lower()},
         )
 
-    def match_item(
+    def merge_items(
         self,
-        extracted_identifier: AnyExtractedIdentifier,
-        merged_identifier: AnyMergedIdentifier,
+        goner_identifier: AnyMergedIdentifier,
+        keeper_identifier: AnyMergedIdentifier,
     ) -> None:
-        """Match an extracted item to a merged item.
+        """Merge a goner merged item into a keeper merged item.
 
         Args:
-            extracted_identifier: Identifier of the extracted item
-            merged_identifier: Identifier of the merged item
+            goner_identifier: Identifier of the merged item to be merged away
+            keeper_identifier: Identifier of the merged item to keep
 
         Raises:
-            HTTPError: If matching was not accepted
+            HTTPError: If merging was not accepted
         """
         self.request(
             method="POST",
-            endpoint="match",
+            endpoint="merge",
             payload={
-                "extractedIdentifier": str(extracted_identifier),
-                "mergedIdentifier": str(merged_identifier),
+                "gonerIdentifier": str(goner_identifier),
+                "keeperIdentifier": str(keeper_identifier),
             },
         )
 
