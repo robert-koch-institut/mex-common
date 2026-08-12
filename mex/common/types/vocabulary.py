@@ -99,7 +99,7 @@ class BibliographicResourceType(VocabularyEnum):
     POSTER = "https://mex.rki.de/item/bibliographic-resource-type-9"
     PREPRINT = "https://mex.rki.de/item/bibliographic-resource-type-10"
     PRESENTATION = "https://mex.rki.de/item/bibliographic-resource-type-11"
-    BERICHT = "https://mex.rki.de/item/bibliographic-resource-type-12"
+    REPORT = "https://mex.rki.de/item/bibliographic-resource-type-12"
     SEMINAR_PAPER = "https://mex.rki.de/item/bibliographic-resource-type-13"
     THESIS = "https://mex.rki.de/item/bibliographic-resource-type-14"
 
@@ -107,7 +107,30 @@ class BibliographicResourceType(VocabularyEnum):
 class CodingSystem(VocabularyEnum):
     """The type of a coding system."""
 
-    __vocabulary__ = "coding-system"
+    __scheme__ = "https://mex.rki.de/item/coding-system"
+
+    ICD_10 = "https://mex.rki.de/item/coding-system-1"
+    ICD_11 = "https://mex.rki.de/item/coding-system-2"
+    LOINC = "https://mex.rki.de/item/coding-system-3"
+    SNOMED_CLINICAL_TERMS = "https://mex.rki.de/item/coding-system-4"
+    EDQM_STANDARD_TERMS = "https://mex.rki.de/item/coding-system-5"
+    ICHI = "https://mex.rki.de/item/coding-system-6"
+    MEDDRA = "https://mex.rki.de/item/coding-system-7"
+    ORPHACODE = "https://mex.rki.de/item/coding-system-8"
+    GMDN = "https://mex.rki.de/item/coding-system-9"
+    HGNC = "https://mex.rki.de/item/coding-system-10"
+    OPS = "https://mex.rki.de/item/coding-system-11"
+    UCUM = "https://mex.rki.de/item/coding-system-12"
+    RXNORM = "https://mex.rki.de/item/coding-system-13"
+    ATC = "https://mex.rki.de/item/coding-system-14"
+    UMLS = "https://mex.rki.de/item/coding-system-15"
+    ICD_9_CM = "https://mex.rki.de/item/coding-system-16"
+    ICD_O_3 = "https://mex.rki.de/item/coding-system-17"
+    ICF = "https://mex.rki.de/item/coding-system-18"
+    ICPC_3 = "https://mex.rki.de/item/coding-system-19"
+    ICPC_2 = "https://mex.rki.de/item/coding-system-20"
+    MESH = "https://mex.rki.de/item/coding-system-21"
+    OTHER = "https://mex.rki.de/item/coding-system-22"
 
 
 class ConsentStatus(VocabularyEnum):
@@ -250,6 +273,30 @@ class PersonalData(VocabularyEnum):
 
     PERSONAL_DATA = "https://mex.rki.de/item/personal-data-1"
     NO_PERSONAL_DATA = "https://mex.rki.de/item/personal-data-2"
+
+
+class Purpose(VocabularyEnum):
+    """The purpose of processing data."""
+
+    __scheme__ = "https://mex.rki.de/item/purpose"
+
+    MONITORING_SURVEILLANCE = "https://mex.rki.de/item/purpose-1"
+    IDENTIFYING_TRENDS = "https://mex.rki.de/item/purpose-11"
+    DETECTION_OF_UNUSUAL_EVENTS_AND_EARLY_WARNING = "https://mex.rki.de/item/purpose-12"
+    ESTIMATING_THE_BURDEN_OF_DISEASE = "https://mex.rki.de/item/purpose-13"
+    INFORMATION_REPORTING = "https://mex.rki.de/item/purpose-2"
+    INFORMATION_FOR_THE_PROFESSIONAL_COMMUNITY = "https://mex.rki.de/item/purpose-21"
+    INFORMATION_FOR_DECISION_MAKERS = "https://mex.rki.de/item/purpose-22"
+    INFORMATION_FOR_THE_PUBLIC = "https://mex.rki.de/item/purpose-23"
+    MEASURES_QUALITY_CONTROL = "https://mex.rki.de/item/purpose-3"
+    DERIVING_RECOMMENDATIONS_FOR_PREVENTIVE_MEASURES = (
+        "https://mex.rki.de/item/purpose-31"
+    )
+    EVALUATION_OF_MEASURES = "https://mex.rki.de/item/purpose-32"
+    HEALTHCARE_GOVERNANCE = "https://mex.rki.de/item/purpose-33"
+    RESEARCH = "https://mex.rki.de/item/purpose-4"
+    PATHOGEN_DIAGNOSIS = "https://mex.rki.de/item/purpose-5"
+    OTHER = "https://mex.rki.de/item/purpose-6"
 
 
 class ResourceCreationMethod(VocabularyEnum):

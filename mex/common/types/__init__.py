@@ -71,6 +71,7 @@ from mex.common.types.vocabulary import (
     License,
     MIMEType,
     PersonalData,
+    Purpose,
     ResourceCreationMethod,
     ResourceTypeGeneral,
     TechnicalAccessibility,
@@ -154,6 +155,7 @@ __all__ = (
     "PathWrapper",
     "PersonalData",
     "PublishingTarget",
+    "Purpose",
     "ResourceCreationMethod",
     "ResourceTypeGeneral",
     "Sink",
@@ -188,6 +190,7 @@ AnyVocabularyEnum = (
     | License
     | MIMEType
     | PersonalData
+    | Purpose
     | ResourceCreationMethod
     | ResourceTypeGeneral
     | TechnicalAccessibility

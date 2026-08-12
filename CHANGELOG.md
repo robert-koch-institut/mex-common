@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   fixture of `mex.common.testing`; vocabulary enums now repr like any other enum, so
   test suites using that fixture see `AccessRestriction.OPEN` instead of
   `AccessRestriction["OPEN"]`
+- removed now unused `split_to_caps` string transformer
 
 ### Fixed
 
