@@ -104,6 +104,12 @@ class BibliographicResourceType(VocabularyEnum):
     THESIS = "https://mex.rki.de/item/bibliographic-resource-type-14"
 
 
+class CodingSystem(VocabularyEnum):
+    """The type of a coding system."""
+
+    __vocabulary__ = "coding-system"
+
+
 class ConsentStatus(VocabularyEnum):
     """The status of a consent."""
 

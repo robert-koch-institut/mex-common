@@ -28,9 +28,7 @@ from mex.common.types import (
 
 VersionStr = Annotated[
     str,
-    Field(
-        examples=["v1", "2023-01-16", "Schema 9"],
-    ),
+    Field(examples=["v1", "2023-01-16", "Schema 9"], max_length=100),
 ]
 AnyContactIdentifier = Annotated[
     MergedOrganizationalUnitIdentifier

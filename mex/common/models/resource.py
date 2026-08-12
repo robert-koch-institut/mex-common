@@ -46,6 +46,8 @@ from mex.common.types import (
     YearMonthDay,
     YearMonthDayTime,
 )
+from mex.common.types.identifier import MergedResourceSeriesIdentifier
+from mex.common.types.vocabulary import CodingSystem
 
 ConformsToStr = Annotated[
     str,
@@ -105,6 +107,10 @@ TemporalStr = Annotated[
             "1998-2008",
         ],
     ),
+]
+VersionStr = Annotated[
+    str,
+    Field(examples=["v1", "2023-01-16", "Schema 9"], max_length=100),
 ]
 AnyContactIdentifier = Annotated[
     MergedOrganizationalUnitIdentifier
@@ -255,6 +261,15 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
+    hasCodingSystem: Annotated[
+        list[CodingSystem],
+        Field(
+            description=("Coding systems in use (i.e. ICD-10, SNOMED-CT)."),
+            json_schema_extra={
+                "sameAs": ["http://healthdataportal.eu/ns/health#hasCodingSystem"]
+            },
+        ),
+    ] = []
     hasLegalBasis: Annotated[
         list[Text],
         Field(
@@ -272,6 +287,16 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasPurpose: Annotated[
+        list[Text],
+        Field(
+            description=(
+                "A free text statement of the purpose of the processing of data "
+                "or personal data."
+            ),
+            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPurpose"]},
+        ),
+    ] = []
+    hasPurposeDescription: Annotated[
         list[Text],
         Field(
             description=(
@@ -308,6 +333,31 @@ class _OptionalLists(_Stem):
             ),
         ),
     ] = []
+    inSeries: Annotated[
+        list[MergedResourceSeriesIdentifier],
+        Field(
+            description=("A resource series of which the resource is part."),
+            json_schema_extra={"sameAs": ["https://www.w3.org/ns/dcat#inSeries"]},
+        ),
+    ] = []
+    inSeriesFirstResource: Annotated[
+        list[MergedResourceSeriesIdentifier],
+        Field(
+            description=(
+                "The first resource in an ordered collection or series of resources."
+            ),
+            json_schema_extra={"sameAs": ["https://www.w3.org/ns/dcat#first"]},
+        ),
+    ] = []
+    inSeriesLastResource: Annotated[
+        list[MergedResourceSeriesIdentifier],
+        Field(
+            description=(
+                "The last resource in an ordered collection or series of resources."
+            ),
+            json_schema_extra={"sameAs": ["https://www.w3.org/ns/dcat#last"]},
+        ),
+    ] = []
     isPartOf: Annotated[
         list[MergedResourceIdentifier],
         Field(
@@ -323,6 +373,16 @@ class _OptionalLists(_Stem):
         Field(
             description="A keyword or tag describing the resource.",
             json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]},
+        ),
+    ] = []
+    landingPage: Annotated[
+        list[Link],
+        Field(
+            description=(
+                "A web page that provides access to the resource, its distributions "
+                "and/or additional information."
+            ),
+            json_schema_extra={"sameAs": ["https://www.w3.org/ns/dcat#landingPage"]},
         ),
     ] = []
     language: Annotated[
@@ -676,6 +736,13 @@ class _OptionalValues(_Stem):
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/temporal"]},
         ),
     ] = None
+    version: Annotated[
+        VersionStr | None,
+        Field(
+            description=("The version indicator (name or identifier) of a resource."),
+            json_schema_extra="https://www.w3.org/ns/dcat#version",
+        ),
+    ] = None
     wasGeneratedBy: Annotated[
         MergedActivityIdentifier | None,
         Field(
@@ -825,6 +892,13 @@ class _VariadicValues(_Stem):
         Field(
             description="Temporal coverage of the resource.",
             json_schema_extra={"sameAs": ["http://purl.org/dc/terms/temporal"]},
+        ),
+    ] = []
+    version: Annotated[
+        list[VersionStr],
+        Field(
+            description=("The version indicator (name or identifier) of a resource."),
+            json_schema_extra="https://www.w3.org/ns/dcat#version",
         ),
     ] = []
     wasGeneratedBy: Annotated[
@@ -1060,8 +1134,8 @@ class PreventiveResource(_Stem, PreventiveRule):
     sample: list[MergedPrimarySourceIdentifier] = []
     source: list[MergedPrimarySourceIdentifier] = []
     sizeOfDataBasis: list[MergedPrimarySourceIdentifier] = []
-    start: list[MergedPrimarySourceIdentifier] = []
     spatial: list[MergedPrimarySourceIdentifier] = []
+    start: list[MergedPrimarySourceIdentifier] = []
     stateOfDataProcessing: list[MergedPrimarySourceIdentifier] = []
     temporal: list[MergedPrimarySourceIdentifier] = []
     theme: list[MergedPrimarySourceIdentifier] = []

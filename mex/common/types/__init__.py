@@ -15,6 +15,7 @@ from mex.common.types.identifier import (
     ExtractedPersonIdentifier,
     ExtractedPrimarySourceIdentifier,
     ExtractedResourceIdentifier,
+    ExtractedResourceSeriesIdentifier,
     ExtractedVariableGroupIdentifier,
     ExtractedVariableIdentifier,
     Identifier,
@@ -30,6 +31,7 @@ from mex.common.types.identifier import (
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
+    MergedResourceSeriesIdentifier,
     MergedVariableGroupIdentifier,
     MergedVariableIdentifier,
 )
@@ -59,6 +61,7 @@ from mex.common.types.vocabulary import (
     AnonymizationPseudonymization,
     APIType,
     BibliographicResourceType,
+    CodingSystem,
     ConsentStatus,
     ConsentType,
     DataProcessingState,
@@ -103,6 +106,7 @@ __all__ = (
     "AssetsConnectorType",
     "AssetsPath",
     "BibliographicResourceType",
+    "CodingSystem",
     "ConsentStatus",
     "ConsentType",
     "DataProcessingState",
@@ -118,6 +122,7 @@ __all__ = (
     "ExtractedPersonIdentifier",
     "ExtractedPrimarySourceIdentifier",
     "ExtractedResourceIdentifier",
+    "ExtractedResourceSeriesIdentifier",
     "ExtractedVariableGroupIdentifier",
     "ExtractedVariableIdentifier",
     "Frequency",
@@ -142,6 +147,7 @@ __all__ = (
     "MergedPersonIdentifier",
     "MergedPrimarySourceIdentifier",
     "MergedResourceIdentifier",
+    "MergedResourceSeriesIdentifier",
     "MergedVariableGroupIdentifier",
     "MergedVariableIdentifier",
     "OpsPath",
@@ -172,6 +178,7 @@ AnyVocabularyEnum = (
     | AnonymizationPseudonymization
     | APIType
     | BibliographicResourceType
+    | CodingSystem
     | ConsentStatus
     | ConsentType
     | DataProcessingState
@@ -219,6 +226,7 @@ AnyMergedIdentifier = (
     | MergedPersonIdentifier
     | MergedPrimarySourceIdentifier
     | MergedResourceIdentifier
+    | MergedResourceSeriesIdentifier
     | MergedVariableGroupIdentifier
     | MergedVariableIdentifier
 )
@@ -241,6 +249,7 @@ AnyExtractedIdentifier = (
     | ExtractedPersonIdentifier
     | ExtractedPrimarySourceIdentifier
     | ExtractedResourceIdentifier
+    | ExtractedResourceSeriesIdentifier
     | ExtractedVariableGroupIdentifier
     | ExtractedVariableIdentifier
 )

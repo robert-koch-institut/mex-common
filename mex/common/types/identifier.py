@@ -129,6 +129,10 @@ class ExtractedResourceIdentifier(ExtractedIdentifier):
     """Identifier for extracted resources."""
 
 
+class ExtractedResourceSeriesIdentifier(ExtractedIdentifier):
+    """Identifier for extracted resource series."""
+
+
 class ExtractedVariableIdentifier(ExtractedIdentifier):
     """Identifier for extracted variables."""
 
@@ -183,6 +187,10 @@ class MergedPrimarySourceIdentifier(MergedIdentifier):
 
 class MergedResourceIdentifier(MergedIdentifier):
     """Identifier for merged resources."""
+
+
+class MergedResourceSeriesIdentifier(MergedIdentifier):
+    """Identifier for merged resource series."""
 
 
 class MergedVariableIdentifier(MergedIdentifier):
