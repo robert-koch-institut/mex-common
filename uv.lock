@@ -744,7 +744,7 @@ requires-dist = [
     { name = "click", specifier = ">=8,<9" },
     { name = "langdetect", specifier = ">=1,<2" },
     { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", specifier = ">=5,<6" },
+    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=hotfix%2Ftechnical-accessibility-typo" },
     { name = "pandas", specifier = ">=3,<4" },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pydantic-settings", specifier = ">=2,<3" },
@@ -773,12 +773,8 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 
 [[package]]
 name = "mex-model"
-version = "5.0.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/82/ec/c1abdb9f771c17895f025055bd8c7a62a3819f66bc78df6e69483ada3bc3/mex_model-5.0.3.tar.gz", hash = "sha256:25514548c74fb247f4e2fa01a0c8d38f68aad326463b09f13cf1fe163bbd235c", size = 60074, upload-time = "2026-07-15T13:41:14.872Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0a/54/854e99a8617d2457aa6d2e47c990a76b33b02eb27158a402c020838919f2/mex_model-5.0.3-py3-none-any.whl", hash = "sha256:3bb6f03d294f85d031b6c4f1edd24479ae704ce0fe2a403b95e262521e99f36b", size = 98358, upload-time = "2026-07-15T13:41:13.77Z" },
-]
+version = "5.1.0"
+source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=hotfix%2Ftechnical-accessibility-typo#8f9739ef124a782cad9f4c6b5f6269abf9f75f43" }
 
 [[package]]
 name = "mypy"
