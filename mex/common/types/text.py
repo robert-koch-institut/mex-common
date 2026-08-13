@@ -1,13 +1,23 @@
 from enum import StrEnum
+from functools import lru_cache
 from typing import Annotated, Any
 
 from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
 from langdetect.lang_detect_exception import LangDetectException
 from pydantic import BaseModel, Field, model_validator
 
-DETECTOR_FACTORY = DetectorFactory()
-DETECTOR_FACTORY.load_profile(PROFILES_DIRECTORY)
-DETECTOR_FACTORY.seed = 0
+
+@lru_cache(maxsize=1)
+def get_detector_factory() -> DetectorFactory:
+    """Return a detector factory with lazily loaded language profiles.
+
+    Loading the language profiles is expensive, so it is deferred until the first
+    text without an explicit language is parsed, instead of happening on import.
+    """
+    detector_factory = DetectorFactory()
+    detector_factory.load_profile(PROFILES_DIRECTORY)
+    detector_factory.seed = 0
+    return detector_factory
 
 
 class TextLanguage(StrEnum):
@@ -65,7 +75,7 @@ class Text(BaseModel):
         value = values.get("value")
         if value and "language" not in values:
             try:
-                detector = DETECTOR_FACTORY.create()
+                detector = get_detector_factory().create()
                 detector.append(value)
                 language = get_language_by_confidence(detector)
             except (LangDetectException, ValueError):

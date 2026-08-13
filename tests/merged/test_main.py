@@ -790,14 +790,14 @@ def skip_fuzzing_tests_unless_requested(request: FixtureRequest) -> None:
     is_fuzzing_explicitly_requested = config.option.markexpr and "fuzzing" in str(
         config.option.markexpr
     )
-    if not is_fuzzing_explicitly_requested:
+    if not is_fuzzing_explicitly_requested:  # pragma: no cover
         pytest.skip(
             "Skipping fuzzing tests as they were not explicitly requested using pytest -m fuzzing"
         )
 
 
 @pytest.mark.fuzzing
-def test_create_merged_item_with_artificial_data() -> None:
+def test_create_merged_item_with_artificial_data() -> None:  # pragma: no cover
     """Return artificial dummy data."""
     from mex.artificial.helpers import (  # noqa: PLC0415
         create_artificial_items_and_rule_sets,

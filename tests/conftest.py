@@ -7,7 +7,6 @@ from mex.common.models import (
     ExtractedOrganization,
     ExtractedPerson,
     MergedPerson,
-    PersonRuleSetRequest,
     PersonRuleSetResponse,
     PreventivePerson,
     PreviewPerson,
@@ -91,17 +90,6 @@ def preview_person() -> PreviewPerson:
         identifier=MergedPersonIdentifier.generate(seed=876),
         affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
         email=["TintzmannM@rki.de"],
-    )
-
-
-@pytest.fixture
-def rule_set_request() -> PersonRuleSetRequest:
-    """Return a dummy person rule set request for testing purposes."""
-    return PersonRuleSetRequest(
-        additive=AdditivePerson(),
-        subtractive=SubtractivePerson(fullName="That's not my name!"),
-        preventive=PreventivePerson(),
-        workflow=WorkflowPerson(),
     )
 
 
