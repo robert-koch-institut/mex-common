@@ -94,7 +94,7 @@ PublicationPlaceStr = Annotated[
     Field(
         examples=[
             "Berlin",
-            "Chigago",
+            "Chicago",
             "NYC/NY",
             "Tampa, FL",
         ],
@@ -137,7 +137,7 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="An account of the publication.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/abstract"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/abstract"]},
         ),
     ] = []
     alternateIdentifier: Annotated[
@@ -145,7 +145,9 @@ class _OptionalLists(_Stem):
         Field(
             description="Another identifier used for the reference.",
             json_schema_extra={
-                "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
+                "closeMatch": [
+                    "http://datacite.org/schema/kernel-4/alternateIdentifier"
+                ]
             },
         ),
     ] = []
@@ -153,26 +155,23 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="Another title for the publication.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     bibliographicResourceType: Annotated[
         list[BibliographicResourceType],
         Field(
             description="The type of bibliographic resource.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     contributingUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
-                "An organizational unit of RKI, that is contributing to the "
-                "publication."
+                "An organizational unit of RKI that is contributing to the publication."
             ),
-            json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
-            },
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     distribution: Annotated[
@@ -180,7 +179,7 @@ class _OptionalLists(_Stem):
         Field(
             description=(
                 "An available distribution of the publication ([DCAT, 2020-02-04]"
-                "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))"
+                "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
             ),
         ),
     ] = []
@@ -188,14 +187,14 @@ class _OptionalLists(_Stem):
         list[MergedPersonIdentifier],
         Field(
             description="The editor of the publication.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     editorOfSeries: Annotated[
         list[MergedPersonIdentifier],
         Field(
             description="The editor of the series.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     isbnIssn: Annotated[
@@ -206,7 +205,9 @@ class _OptionalLists(_Stem):
                 "publication."
             ),
             json_schema_extra={
-                "sameAs": ["http://datacite.org/schema/kernel-4/alternateIdentifier"]
+                "closeMatch": [
+                    "http://datacite.org/schema/kernel-4/alternateIdentifier"
+                ]
             },
         ),
     ] = []
@@ -223,14 +224,14 @@ class _OptionalLists(_Stem):
                 "A keyword or tag describing the resource ([DCAT, 2020-02-04]"
                 "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     language: Annotated[
         list[Language],
         Field(
             description="The language in which the publication was written.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/language"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/language"]},
         ),
     ] = []
     publisher: Annotated[
@@ -241,7 +242,7 @@ class _OptionalLists(_Stem):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/"
                 "dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": "http://purl.org/dc/terms/publisher"},
+            json_schema_extra={"closeMatch": "http://purl.org/dc/terms/publisher"},
         ),
     ] = []
     repositoryURL: Annotated[
@@ -257,21 +258,21 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="The subtitle of the publication.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     titleOfBook: Annotated[
         list[Text],
         Field(
             description="The title of the book in which the book section is published.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     titleOfSeries: Annotated[
         list[Text],
         Field(
-            description="The title of the book series, the book belongs to.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/title"]},
+            description="The title of the book series that the book belongs to.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
 
@@ -282,7 +283,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The author of the publication.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/creator"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
         ),
     ]
     title: Annotated[
@@ -290,7 +291,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The full title of the publication.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ]
 
@@ -323,7 +324,7 @@ class _OptionalValues(_Stem):
                 "Date of formal issuance of the publication ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
         ),
     ] = None
     license: Annotated[
@@ -334,7 +335,7 @@ class _OptionalValues(_Stem):
                 "the publication ([DCT, 2020-01-20](http://dublincore.org/"
                 "specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = None
     pages: Annotated[
@@ -350,7 +351,7 @@ class _OptionalValues(_Stem):
         Field(
             description="The year in which the publication was issued.",
             json_schema_extra={
-                "sameAs": "http://datacite.org/schema/kernel-4/publicationYear"
+                "closeMatch": "http://datacite.org/schema/kernel-4/publicationYear"
             },
         ),
     ] = None
@@ -358,7 +359,7 @@ class _OptionalValues(_Stem):
         SectionStr | None,
         Field(
             description=(
-                "The name of the chapter of the publication, the book section "
+                "The name of the chapter of the publication that the book section "
                 "belongs to."
             )
         ),
@@ -378,7 +379,7 @@ class _RequiredValues(_Stem):
         AccessRestriction,
         Field(
             description="Indicates how access to the publication is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ]
 
@@ -388,7 +389,7 @@ class _SparseValues(_Stem):
         AccessRestriction | None,
         Field(
             description="Indicates how access to the publication is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = None
 
@@ -398,7 +399,7 @@ class _VariadicValues(_Stem):
         list[AccessRestriction],
         Field(
             description="Indicates how access to the publication is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     doi: Annotated[
@@ -456,7 +457,7 @@ class _VariadicValues(_Stem):
         list[SectionStr],
         Field(
             description=(
-                "The name of the chapter of the publication, the book section "
+                "The name of the chapter of the publication that the book section "
                 "belongs to."
             )
         ),
@@ -478,7 +479,7 @@ class BaseBibliographicResource(
     _RequiredValues,
     json_schema_extra={
         "description": "A book, article, or other documentary resource.",
-        "sameAs": ["http://purl.org/dc/terms/BibliographicResource"],
+        "closeMatch": ["http://purl.org/dc/terms/BibliographicResource"],
     },
 ):
     """All fields for a valid bibliographic resource except for provenance."""
@@ -504,7 +505,7 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -541,7 +542,7 @@ class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -578,7 +579,7 @@ class PreviewBibliographicResource(
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

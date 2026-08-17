@@ -48,21 +48,23 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="An alternative name for the access platform.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the access platform.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
         ),
     ] = []
     description: Annotated[
         list[Text],
         Field(
             description="A short description of the access platform.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     landingPage: Annotated[
@@ -73,14 +75,16 @@ class _OptionalLists(_Stem):
                 "access to the catalog, a dataset, its distributions and/or "
                 "additional information."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#landingPage"]},
+            json_schema_extra={
+                "closeMatch": ["https://www.w3.org/ns/dcat#landingPage"]
+            },
         ),
     ] = []
     title: Annotated[
         list[Text],
         Field(
             description="The name of the access platform.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     unitInCharge: Annotated[
@@ -90,7 +94,9 @@ class _OptionalLists(_Stem):
                 "This property refers to agents who assume responsibility and "
                 "accountability for the resource and its appropriate maintenance."
             ),
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
         ),
     ] = []
 
@@ -104,7 +110,7 @@ class _OptionalValues(_Stem):
                 "including their operations, parameters etc."
             ),
             json_schema_extra={
-                "sameAs": ["http://www.w3.org/ns/dcat#endpointDescription"]
+                "closeMatch": ["http://www.w3.org/ns/dcat#endpointDescription"]
             },
         ),
     ] = None
@@ -112,7 +118,7 @@ class _OptionalValues(_Stem):
         APIType | None,
         Field(
             description="The type of endpoint, e.g. REST.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
     endpointURL: Annotated[
@@ -120,9 +126,9 @@ class _OptionalValues(_Stem):
         Field(
             description=(
                 "The root location or primary endpoint of the service "
-                "(a Web-resolvable IRI)"
+                "(a Web-resolvable IRI)."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endpointURL"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endpointURL"]},
         ),
     ] = None
 
@@ -132,11 +138,11 @@ class _RequiredValues(_Stem):
         TechnicalAccessibility,
         Field(
             description=(
-                "Indicates form if the platform can be accessed only within RKI "
+                "Indicates if the platform can be accessed only within RKI "
                 "network (internally) or if the platform is accessible publicly "
                 "(externally)."
             ),
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ]
 
@@ -146,11 +152,11 @@ class _SparseValues(_Stem):
         TechnicalAccessibility | None,
         Field(
             description=(
-                "Indicates form if the platform can be accessed only within RKI "
+                "Indicates if the platform can be accessed only within RKI "
                 "network (internally) or if the platform is accessible publicly "
                 "(externally)."
             ),
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
 
@@ -169,7 +175,7 @@ class _VariadicValues(_Stem):
         list[APIType],
         Field(
             description="The type of endpoint, e.g. REST.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     endpointURL: Annotated[
@@ -177,7 +183,7 @@ class _VariadicValues(_Stem):
         Field(
             description=(
                 "The root location or primary endpoint of the service "
-                "(a Web-resolvable IRI)"
+                "(a Web-resolvable IRI)."
             ),
         ),
     ] = []
@@ -185,11 +191,11 @@ class _VariadicValues(_Stem):
         list[TechnicalAccessibility],
         Field(
             description=(
-                "Indicates form if the platform can be accessed only within RKI "
+                "Indicates if the platform can be accessed only within RKI "
                 "network (internally) or if the platform is accessible publicly "
                 "(externally)."
             ),
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
 
@@ -203,7 +209,7 @@ class BaseAccessPlatform(
             "A technical system or service that provides access to distributions or "
             "resources."
         ),
-        "sameAs": ["http://www.w3.org/ns/dcat#DataService"],
+        "closeMatch": ["http://www.w3.org/ns/dcat#DataService"],
     },
 ):
     """All fields for a valid access platform except for provenance."""
@@ -229,7 +235,7 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -266,7 +272,7 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -303,7 +309,7 @@ class PreviewAccessPlatform(
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

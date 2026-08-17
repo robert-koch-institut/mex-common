@@ -246,7 +246,7 @@ def test_split_to_camel(string: str, expected: str) -> None:
     ("string", "expected"),
     [
         ("", ""),
-        ("Foo(Bar) 99 - Batz", "FOO_BAR_BATZ"),
+        ("Foo(Bar) 99 - Batz", "FOO_BAR_99_BATZ"),
     ],
 )
 def test_split_to_caps(string: str, expected: str) -> None:

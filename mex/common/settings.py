@@ -35,7 +35,7 @@ class BaseSettings(PydanticBaseSettings):
     Settings are accessed through a singleton instance of a pydantic settings class.
     The singleton instance can be loaded lazily by calling `BaseSettings.get()`.
 
-    The base settings should only contain options, that are used by common code.
+    The base settings should only contain options that are used by common code.
     To add more configuration options for a specific subsystem, create a new subclass
     and define the required fields there. To load a singleton for that subclass,
     simply call `SubsystemSettings.get()`.

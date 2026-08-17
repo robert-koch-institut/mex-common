@@ -85,7 +85,7 @@ class _OptionalLists(_Stem):
         Field(
             description="An organization that the described person is affiliated with.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "https://schema.org/affiliation",
                     "http://www.wikidata.org/entity/P1416",
                 ]
@@ -97,7 +97,7 @@ class _OptionalLists(_Stem):
         Field(
             description="The email address through which the person can be contacted.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
@@ -109,7 +109,7 @@ class _OptionalLists(_Stem):
         Field(
             description="The name inherited from the family.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://xmlns.com/foaf/0.1/familyName",
                     "https://schema.org/familyName",
                 ]
@@ -123,7 +123,7 @@ class _OptionalLists(_Stem):
                 "The full name of a person. Also used if the naming schema "
                 "(given name and family name) does not apply to the name."
             ),
-            json_schema_extra={"sameAs": ["http://xmlns.com/foaf/0.1/name"]},
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ] = []
     givenName: Annotated[
@@ -131,7 +131,7 @@ class _OptionalLists(_Stem):
         Field(
             description="The name given to the person e.g. by their parents.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://xmlns.com/foaf/0.1/givenName",
                     "https://schema.org/givenName",
                 ]
@@ -144,7 +144,7 @@ class _OptionalLists(_Stem):
             description=(
                 "The ISNI (International Standard Name Identifier) of the person."
             ),
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P213"]},
         ),
     ] = []
     memberOf: Annotated[
@@ -152,7 +152,7 @@ class _OptionalLists(_Stem):
         Field(
             description="Organizational unit at RKI the person is associated with.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of"
                 ]
             },
@@ -162,7 +162,7 @@ class _OptionalLists(_Stem):
         list[OrcidIdStr],
         Field(
             description="Identifier of a person from the ORCID authority file.",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P496"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P496"]},
         ),
     ] = []
 
@@ -175,7 +175,7 @@ class BasePerson(
             "comprises real persons who live or are assumed to have lived ([CIDOC CRM, "
             "version 7.1.1](https://cidoc-crm.org/html/cidoc_crm_v7.1.1.html))."
         ),
-        "sameAs": [
+        "closeMatch": [
             "http://www.cidoc-crm.org/cidoc-crm/E21_Person",
             "http://xmlns.com/foaf/0.1/Person",
             "http://www.w3.org/2006/vcard/ns#Individual",
@@ -205,7 +205,7 @@ class ExtractedPerson(BasePerson, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -242,7 +242,7 @@ class MergedPerson(BasePerson, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -277,7 +277,7 @@ class PreviewPerson(_OptionalLists, PreviewItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

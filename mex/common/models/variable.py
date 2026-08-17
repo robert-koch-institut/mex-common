@@ -63,11 +63,11 @@ class _OptionalLists(_Stem):
         list[MergedVariableGroupIdentifier],
         Field(
             description=(
-                "The variable group, the described variable is part of. Used to "
+                "The variable group that the described variable is part of. Used to "
                 "group variables together, depending on how they are structured in "
                 "the primary source."
             ),
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     description: Annotated[
@@ -77,7 +77,7 @@ class _OptionalLists(_Stem):
                 "A description of the variable. How the variable is defined in "
                 "the primary source."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     valueSet: Annotated[
@@ -93,7 +93,7 @@ class _RequiredLists(_Stem):
             description="The name of the variable.",
             min_length=1,
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://purl.org/dc/terms/title",
                     "http://www.w3.org/2000/01/rdf-schema#label",
                 ]
@@ -103,9 +103,9 @@ class _RequiredLists(_Stem):
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description="The resource, the variable is used in.",
+            description="The resource that the variable is used in.",
             min_length=1,
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ]
 
@@ -116,7 +116,7 @@ class _SparseLists(_Stem):
         Field(
             description="The name of the variable.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://purl.org/dc/terms/title",
                     "http://www.w3.org/2000/01/rdf-schema#label",
                 ]
@@ -126,8 +126,8 @@ class _SparseLists(_Stem):
     usedIn: Annotated[
         list[MergedResourceIdentifier],
         Field(
-            description="The resource, the variable is used in.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+            description="The resource that the variable is used in.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
 
@@ -142,7 +142,7 @@ class _OptionalValues(_Stem):
                 "dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://purl.org/dc/terms/conformsTo",
                     "https://schema.org/codingSystem",
                 ]
@@ -153,7 +153,7 @@ class _OptionalValues(_Stem):
         DataTypeStr | None,
         Field(
             description="The defined data type of the variable.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/csvw#datatype"]},
         ),
     ] = None
 
@@ -168,7 +168,7 @@ class _VariadicValues(_Stem):
                 "dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://purl.org/dc/terms/conformsTo",
                     "https://schema.org/codingSystem",
                 ]
@@ -179,7 +179,7 @@ class _VariadicValues(_Stem):
         list[DataTypeStr],
         Field(
             description="The defined data type of the variable.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/csvw#datatype"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/csvw#datatype"]},
         ),
     ] = []
 
@@ -221,7 +221,7 @@ class ExtractedVariable(BaseVariable, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -258,7 +258,7 @@ class MergedVariable(BaseVariable, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -293,7 +293,7 @@ class PreviewVariable(_OptionalLists, _SparseLists, _VariadicValues, PreviewItem
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

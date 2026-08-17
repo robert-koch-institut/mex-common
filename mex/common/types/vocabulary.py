@@ -186,6 +186,12 @@ class ConsentType(VocabularyEnum):
     __vocabulary__ = "consent-type"
 
 
+class Country(VocabularyEnum):
+    """The type of a consent."""
+
+    __vocabulary__ = "country"
+
+
 class DataProcessingState(VocabularyEnum):
     """Type for state of data processing."""
 
