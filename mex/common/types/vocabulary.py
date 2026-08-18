@@ -187,7 +187,7 @@ class ConsentType(VocabularyEnum):
 
 
 class Country(VocabularyEnum):
-    """The type of a consent."""
+    """The type of a country."""
 
     __vocabulary__ = "country"
 
