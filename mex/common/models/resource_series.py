@@ -136,14 +136,6 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
-    contact: Annotated[
-        list[AnyContactIdentifier],
-        Field(
-            description="A text describing the nature of the resource series.",
-            min_length=1,
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
-        ),
-    ]
     description: Annotated[
         list[Text],
         Field(
@@ -163,15 +155,6 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
-    accessPlatform: Annotated[
-        list[MergedAccessPlatformIdentifier],
-        Field(
-            description="A platform from which the resource series can be accessed.",
-            json_schema_extra={
-                "closeMatch": ["http://www.w3.org/ns/dcat#accessService"]
-            },
-        ),
-    ] = []
     description: Annotated[
         list[Text],
         Field(
@@ -432,14 +415,11 @@ class ResourceSeriesMapping(_Stem, BaseMapping):
         Literal["ResourceSeriesMapping"], Field(alias="$type", frozen=True)
     ] = "ResourceSeriesMapping"
     accrualPeriodicity: list[MappingField[Frequency | None]] = []
-    contact: Annotated[
-        list[MappingField[list[AnyContactIdentifier]]],
-        Field(min_length=1),
-    ]
+    contact: list[MappingField[list[AnyContactIdentifier]]] = []
     title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     accessPlatform: list[MappingField[list[MergedAccessPlatformIdentifier]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
-    description: list[MappingField[list[Text]]] = []
+    description: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     documentation: list[MappingField[list[Link]]] = []
     end: list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []
