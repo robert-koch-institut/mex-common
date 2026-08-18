@@ -207,7 +207,7 @@ class BaseResourceSeries(
         "closeMatch": ["http://healthdataportal.eu/ns/health#DatasetSeries"],
     },
 ):
-    """All fields for a valid resource."""
+    """All fields for a valid resource series except for provenance."""
 
 
 class ExtractedResourceSeries(BaseResourceSeries, ExtractedData):
