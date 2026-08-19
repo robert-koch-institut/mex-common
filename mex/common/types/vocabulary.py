@@ -133,12 +133,6 @@ class CodingSystem(VocabularyEnum):
     OTHER = "https://mex.rki.de/item/coding-system-22"
 
 
-class CodingSystem(VocabularyEnum):
-    """The type of a coding system."""
-
-    __vocabulary__ = "coding-system"
-
-
 class ConsentStatus(VocabularyEnum):
     """The status of a consent."""
 
