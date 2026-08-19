@@ -47,7 +47,7 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.common.types.identifier import MergedResourceSeriesIdentifier
-from mex.common.types.vocabulary import CodingSystem
+from mex.common.types.vocabulary import CodingSystem, Concept
 
 ConformsToStr = Annotated[
     str,
@@ -268,15 +268,6 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
-    hasCodingSystem: Annotated[
-        list[CodingSystem],
-        Field(
-            description=("Coding systems in use (i.e. ICD-10, SNOMED-CT)."),
-            json_schema_extra={
-                "sameAs": ["http://healthdataportal.eu/ns/health#hasCodingSystem"]
-            },
-        ),
-    ] = []
     hasLegalBasis: Annotated[
         list[Text],
         Field(
@@ -311,16 +302,6 @@ class _OptionalLists(_Stem):
                 "or personal data."
             ),
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPurpose"]},
-        ),
-    ] = []
-    hasPurposeDescription: Annotated[
-        list[Text],
-        Field(
-            description=(
-                "A free text statement of the purpose of the processing of data "
-                "or personal data."
-            ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPurpose"]},
         ),
     ] = []
     healthCategory: Annotated[
@@ -400,16 +381,6 @@ class _OptionalLists(_Stem):
                 "and/or additional information."
             ),
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#landingPage"]},
-        ),
-    ] = []
-    landingPage: Annotated[
-        list[Link],
-        Field(
-            description=(
-                "A web page that provides access to the resource, its distributions "
-                "and/or additional information."
-            ),
-            json_schema_extra={"sameAs": ["https://www.w3.org/ns/dcat#landingPage"]},
         ),
     ] = []
     language: Annotated[
@@ -776,13 +747,6 @@ class _OptionalValues(_Stem):
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#version"]},
         ),
     ] = None
-    version: Annotated[
-        VersionStr | None,
-        Field(
-            description=("The version indicator (name or identifier) of a resource."),
-            json_schema_extra="https://www.w3.org/ns/dcat#version",
-        ),
-    ] = None
     wasGeneratedBy: Annotated[
         MergedActivityIdentifier | None,
         Field(
@@ -939,13 +903,6 @@ class _VariadicValues(_Stem):
         Field(
             description=("The version indicator (name or identifier) of a resource."),
             json_schema_extra="http://www.w3.org/ns/dcat#version",
-        ),
-    ] = []
-    version: Annotated[
-        list[VersionStr],
-        Field(
-            description=("The version indicator (name or identifier) of a resource."),
-            json_schema_extra="https://www.w3.org/ns/dcat#version",
         ),
     ] = []
     wasGeneratedBy: Annotated[
