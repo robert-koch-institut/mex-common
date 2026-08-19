@@ -43,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [3.3.0] - 2026-08-19
+
+### Changes
+
+- load langdetect profiles lazily to save ~150ms on every initial mex-common import
+- BREAKING: update mex-model depedency to v5.1
+
+### Fixed
+
+- closed some unintended coverage gaps
+
 ## [3.2.0] - 2026-08-11
 
 ### Added

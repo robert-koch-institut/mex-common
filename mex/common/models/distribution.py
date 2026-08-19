@@ -48,7 +48,7 @@ class _OptionalLists(_Stem):
                 "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessURL"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#accessURL"]},
         ),
     ] = []
     downloadURL: Annotated[
@@ -60,7 +60,7 @@ class _OptionalLists(_Stem):
                 "`dcat:mediaType` ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#downloadURL"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#downloadURL"]},
         ),
     ] = []
 
@@ -71,7 +71,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The name of the distribution.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ]
 
@@ -81,7 +81,7 @@ class _SparseLists(_Stem):
         list[Text],
         Field(
             description="The name of the distribution.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
 
@@ -95,7 +95,9 @@ class _OptionalValues(_Stem):
                 "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#accessService"]
+            },
         ),
     ] = None
     license: Annotated[
@@ -106,7 +108,7 @@ class _OptionalValues(_Stem):
                 "the resource ([DCT, 2020-01-20](http://dublincore.org/"
                 "specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = None
     mediaType: Annotated[
@@ -119,7 +121,7 @@ class _OptionalValues(_Stem):
                 "REC-vocab-dcat-2-20200204/))."
             ),
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.w3.org/ns/dcat#mediaType",
                     "http://purl.org/dc/terms/format",
                 ]
@@ -133,7 +135,7 @@ class _OptionalValues(_Stem):
                 "Date on which the resource was changed ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = None
 
@@ -143,7 +145,7 @@ class _RequiredValues(_Stem):
         AccessRestriction,
         Field(
             description="Indicates how access to the distribution is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ]
     issued: Annotated[
@@ -153,7 +155,7 @@ class _RequiredValues(_Stem):
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/issued"]},
         ),
     ]
 
@@ -163,7 +165,7 @@ class _SparseValues(_Stem):
         AccessRestriction | None,
         Field(
             description="Indicates how access to the distribution is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = None
     issued: Annotated[
@@ -173,7 +175,7 @@ class _SparseValues(_Stem):
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/issued"]},
         ),
     ] = None
 
@@ -183,7 +185,7 @@ class _VariadicValues(_Stem):
         list[AccessRestriction],
         Field(
             description="Indicates how access to the distribution is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     accessService: Annotated[
@@ -191,10 +193,12 @@ class _VariadicValues(_Stem):
         Field(
             description=(
                 "A data service that gives access to the distribution of the "
-                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "dataset ([DCAT, 2020-02-04](http://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#accessService"]
+            },
         ),
     ] = []
     issued: Annotated[
@@ -204,7 +208,7 @@ class _VariadicValues(_Stem):
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/issued"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/issued"]},
         ),
     ] = []
     license: Annotated[
@@ -215,7 +219,7 @@ class _VariadicValues(_Stem):
                 "the resource ([DCT, 2020-01-20](http://dublincore.org/"
                 "specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = []
     mediaType: Annotated[
@@ -224,11 +228,11 @@ class _VariadicValues(_Stem):
             description=(
                 "The media type of the distribution as defined by "
                 "[IANA media types](https://www.iana.org/assignments/media-types/) "
-                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
+                "([DCAT, 2020-02-04](http://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.w3.org/ns/dcat#mediaType",
                     "http://purl.org/dc/terms/format",
                 ]
@@ -242,7 +246,7 @@ class _VariadicValues(_Stem):
                 "Date on which the resource was changed ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = []
 
@@ -261,7 +265,7 @@ class BaseDistribution(
             "any or all of the above) ([DCAT, 2020-02-04]"
             "(https://www.w3.org/TR/2020/REC-vocab-dcat-2-20200204/))."
         ),
-        "sameAs": ["http://www.w3.org/ns/dcat#Distribution"],
+        "closeMatch": ["http://www.w3.org/ns/dcat#Distribution"],
     },
 ):
     """All fields for a valid distribution except for provenance."""
@@ -287,7 +291,7 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -324,7 +328,7 @@ class MergedDistribution(BaseDistribution, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -361,7 +365,7 @@ class PreviewDistribution(
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

@@ -45,7 +45,7 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="An alternative name for the organizational unit.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     email: Annotated[
@@ -56,7 +56,7 @@ class _OptionalLists(_Stem):
                 "contacted."
             ),
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
@@ -66,8 +66,8 @@ class _OptionalLists(_Stem):
     shortName: Annotated[
         list[Text],
         Field(
-            description="A short name or abbreviation of the organization unit.",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+            description="A short name or abbreviation of the organizational unit.",
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1813"]},
         ),
     ] = []
     unitOf: Annotated[
@@ -77,7 +77,7 @@ class _OptionalLists(_Stem):
                 "Indicates an organization of which this unit is a part, e.g. a "
                 "department within a larger organization."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/org#unitOf"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/org#unitOf"]},
         ),
     ] = []
     website: Annotated[
@@ -88,7 +88,7 @@ class _OptionalLists(_Stem):
                 "organizational unit."
             ),
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.wikidata.org/entity/P856",
                     "http://www.w3.org/2006/vcard/ns#hasUrl",
                     "http://xmlns.com/foaf/0.1/homepage",
@@ -104,7 +104,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The official name of the organizational unit.",
             min_length=1,
-            json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
+            json_schema_extra={"closeMatch": "http://xmlns.com/foaf/0.1/name"},
         ),
     ]
 
@@ -114,7 +114,7 @@ class _SparseLists(_Stem):
         list[Text],
         Field(
             description="The official name of the organizational unit.",
-            json_schema_extra={"sameAs": "http://xmlns.com/foaf/0.1/name"},
+            json_schema_extra={"closeMatch": "http://xmlns.com/foaf/0.1/name"},
         ),
     ] = []
 
@@ -152,7 +152,7 @@ class BaseOrganizationalUnit(
             "of that Organization. In particular the unit would not be regarded as a "
             "legal entity in its own right."
         ),
-        "sameAs": [
+        "closeMatch": [
             "http://www.w3.org/ns/org#OrganizationalUnit",
             "http://www.w3.org/2006/vcard/ns#Group",
             "http://www.cidoc-crm.org/cidoc-crm/E_74_Group",
@@ -182,7 +182,7 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -219,7 +219,7 @@ class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -256,7 +256,7 @@ class PreviewOrganizationalUnit(
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

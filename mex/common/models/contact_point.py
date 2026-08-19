@@ -43,7 +43,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The email address associated to the contact point.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
@@ -59,7 +59,7 @@ class _SparseLists(_Stem):
         Field(
             description="The email address associated to the contact point.",
             json_schema_extra={
-                "sameAs": [
+                "closeMatch": [
                     "http://www.w3.org/2006/vcard/ns#hasEmail",
                     "https://schema.org/email",
                 ]
@@ -71,8 +71,8 @@ class _SparseLists(_Stem):
 class BaseContactPoint(
     _RequiredLists,
     json_schema_extra={
-        "description": "A mail address, where a group of people has access to.",
-        "sameAs": ["https://schema.org/ContactPoint"],
+        "description": "A mail address to which a group of people has access.",
+        "closeMatch": ["https://schema.org/ContactPoint"],
     },
 ):
     """All fields for a valid contact point except for provenance."""
@@ -98,7 +98,7 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -135,7 +135,7 @@ class MergedContactPoint(BaseContactPoint, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -170,7 +170,7 @@ class PreviewContactPoint(_SparseLists, PreviewItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

@@ -48,15 +48,17 @@ class _OptionalLists(_Stem):
     alternativeTitle: Annotated[
         list[Text],
         Field(
-            description="An alternative name for the primary source",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            description="An alternative name for the primary source.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the primary source.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
         ),
     ] = []
     contributor: Annotated[
@@ -64,14 +66,14 @@ class _OptionalLists(_Stem):
         Field(
             description="A person responsible for making contributions to the "
             "resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
         Field(
             description="A short description of the primary source.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     documentation: Annotated[
@@ -79,7 +81,7 @@ class _OptionalLists(_Stem):
         Field(
             description="A link to a document documenting the primary source.",
             json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
             },
         ),
     ] = []
@@ -96,7 +98,7 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="The name of the primary source.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     unitInCharge: Annotated[
@@ -107,7 +109,9 @@ class _OptionalLists(_Stem):
                 "accountability for the primary source and its appropriate "
                 "maintenance."
             ),
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
         ),
     ] = []
 
@@ -141,10 +145,10 @@ class BasePrimarySource(
     _OptionalValues,
     json_schema_extra={
         "description": (
-            "A collection of information, that is managed and curated by an RKI unit "
+            "A collection of information that is managed and curated by an RKI unit "
             "and lists activities and/or resources."
         ),
-        "sameAs": [
+        "closeMatch": [
             "http://www.w3.org/ns/dcat#Catalog",
             "http://www.w3.org/ns/prov#PrimarySource",
         ],
@@ -173,7 +177,7 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -210,7 +214,7 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -245,7 +249,7 @@ class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

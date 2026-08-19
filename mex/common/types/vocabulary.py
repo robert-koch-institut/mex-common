@@ -133,6 +133,12 @@ class CodingSystem(VocabularyEnum):
     OTHER = "https://mex.rki.de/item/coding-system-22"
 
 
+class CodingSystem(VocabularyEnum):
+    """The type of a coding system."""
+
+    __vocabulary__ = "coding-system"
+
+
 class ConsentStatus(VocabularyEnum):
     """The status of a consent."""
 
@@ -148,6 +154,12 @@ class ConsentType(VocabularyEnum):
     __scheme__ = "https://mex.rki.de/item/consent-type"
 
     EXPRESSED_CONSENT = "https://mex.rki.de/item/consent-type-2"
+
+
+class Country(VocabularyEnum):
+    """The type of a country."""
+
+    __vocabulary__ = "country"
 
 
 class DataProcessingState(VocabularyEnum):

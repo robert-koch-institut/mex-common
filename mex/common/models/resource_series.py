@@ -53,21 +53,25 @@ class _OptionalLists(_Stem):
         list[MergedAccessPlatformIdentifier],
         Field(
             description="A platform from which the resource series can be accessed.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#accessService"]
+            },
         ),
     ] = []
     alternativeTitle: Annotated[
         list[Text],
         Field(
             description="An alternative name for the resource series.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
-    description: Annotated[
-        list[Text],
+    contact: Annotated[
+        list[AnyContactIdentifier],
         Field(
-            description="A text describing the nature of the resource series.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+            description="An agent that serves as a contact for the resource series.",
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
         ),
     ] = []
     documentation: Annotated[
@@ -75,7 +79,7 @@ class _OptionalLists(_Stem):
         Field(
             description="A link to a document documenting the resource series.",
             json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
             },
         ),
     ] = []
@@ -83,7 +87,7 @@ class _OptionalLists(_Stem):
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="End date of the temporal coverage of the resource series.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
         ),
     ] = []
     hasLegalBasis: Annotated[
@@ -99,14 +103,14 @@ class _OptionalLists(_Stem):
                 "interpretation will require association with a law, e.g. "
                 "'EU GDPR'."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasLegalBasis"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasLegalBasis"]},
         ),
     ] = []
     keyword: Annotated[
         list[Text],
         Field(
             description="A keyword or tag describing the resource series.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     publisher: Annotated[
@@ -119,25 +123,25 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description="Spatial coverage of the resource series.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/spatial"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
     start: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
-            description="Start date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
+            description="Start date of the temporal coverage of the resource series.",
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = []
 
 
 class _RequiredLists(_Stem):
-    contact: Annotated[
-        list[AnyContactIdentifier],
+    description: Annotated[
+        list[Text],
         Field(
-            description="An agent that serves as a contact for the resource series.",
+            description="A text describing the nature of the resource series.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ]
     title: Annotated[
@@ -145,24 +149,24 @@ class _RequiredLists(_Stem):
         Field(
             description="The name of the resource series.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ]
 
 
 class _SparseLists(_Stem):
-    contact: Annotated[
-        list[AnyContactIdentifier],
+    description: Annotated[
+        list[Text],
         Field(
-            description="An agent that serves as a contact for the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+            description="A text describing the nature of the resource series.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     title: Annotated[
         list[Text],
         Field(
             description="The name of the resource series.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
 
@@ -173,7 +177,7 @@ class _OptionalValues(_Stem):
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+                "closeMatch": ["http://purl.org/dc/terms/accrualPeriodicity"]
             },
         ),
     ] = None
@@ -185,7 +189,7 @@ class _VariadicValues(_Stem):
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+                "closeMatch": ["http://purl.org/dc/terms/accrualPeriodicity"]
             },
         ),
     ] = []
@@ -197,13 +201,13 @@ class BaseResourceSeries(
     _OptionalValues,
     json_schema_extra={
         "description": (
-            "A collection of resource series that are published separately, but share "
+            "A collection of resources that are published separately, but share "
             "some characteristics that group them."
         ),
-        "sameAs": ["http://healthdataportal.eu/ns/health#DatasetSeries"],
+        "closeMatch": ["http://healthdataportal.eu/ns/health#DatasetSeries"],
     },
 ):
-    """All fields for a valid resource."""
+    """All fields for a valid resource series except for provenance."""
 
 
 class ExtractedResourceSeries(BaseResourceSeries, ExtractedData):
@@ -221,12 +225,12 @@ class ExtractedResourceSeries(BaseResourceSeries, ExtractedData):
         ExtractedResourceSeriesIdentifier,
         Field(
             description=(
-                "An unambiguous reference to the resource series within a given "
+                "An unambiguous reference to the resource within a given "
                 "context. Persistent identifiers should be provided as HTTP URIs "
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -258,12 +262,12 @@ class MergedResourceSeries(BaseResourceSeries, MergedItem):
         Field(
             json_schema_extra={
                 "description": (
-                    "An unambiguous reference to the resource series within a given "
+                    "An unambiguous reference to the resource within a given "
                     "context. Persistent identifiers should be provided as HTTP URIs "
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -293,12 +297,12 @@ class PreviewResourceSeries(_OptionalLists, _SparseLists, _VariadicValues, Previ
         Field(
             json_schema_extra={
                 "description": (
-                    "An unambiguous reference to the resource series within a given "
+                    "An unambiguous reference to the resource within a given "
                     "context. Persistent identifiers should be provided as HTTP URIs "
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -360,7 +364,6 @@ class PreventiveResourceSeries(_Stem, PreventiveRule):
     alternativeTitle: list[MergedPrimarySourceIdentifier] = []
     contact: list[MergedPrimarySourceIdentifier] = []
     description: list[MergedPrimarySourceIdentifier] = []
-    distribution: list[MergedPrimarySourceIdentifier] = []
     documentation: list[MergedPrimarySourceIdentifier] = []
     end: list[MergedPrimarySourceIdentifier] = []
     hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
@@ -412,14 +415,11 @@ class ResourceSeriesMapping(_Stem, BaseMapping):
         Literal["ResourceSeriesMapping"], Field(alias="$type", frozen=True)
     ] = "ResourceSeriesMapping"
     accrualPeriodicity: list[MappingField[Frequency | None]] = []
-    contact: Annotated[
-        list[MappingField[list[AnyContactIdentifier]]],
-        Field(min_length=1),
-    ]
+    contact: list[MappingField[list[AnyContactIdentifier]]] = []
     title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     accessPlatform: list[MappingField[list[MergedAccessPlatformIdentifier]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
-    description: list[MappingField[list[Text]]] = []
+    description: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     documentation: list[MappingField[list[Link]]] = []
     end: list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []

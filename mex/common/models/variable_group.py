@@ -35,11 +35,11 @@ class _RequiredLists(_Stem):
         list[MergedResourceIdentifier],
         Field(
             description=(
-                "The resource, the variable group is contained by. Used to "
+                "The resource that the variable group is contained by. Used to "
                 "connect a variable group to its resource."
             ),
             min_length=1,
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ]
     label: Annotated[
@@ -48,7 +48,7 @@ class _RequiredLists(_Stem):
             description="The name of the variable group.",
             min_length=1,
             json_schema_extra={
-                "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
+                "closeMatch": ["http://www.w3.org/2000/01/rdf-schema#label"]
             },
         ),
     ]
@@ -59,10 +59,10 @@ class _SparseLists(_Stem):
         list[MergedResourceIdentifier],
         Field(
             description=(
-                "The resource, the variable group is contained by. Used to "
+                "The resource that the variable group is contained by. Used to "
                 "connect a variable group to its resource."
             ),
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/isPartOf"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     label: Annotated[
@@ -70,7 +70,7 @@ class _SparseLists(_Stem):
         Field(
             description="The name of the variable group.",
             json_schema_extra={
-                "sameAs": ["http://www.w3.org/2000/01/rdf-schema#label"]
+                "closeMatch": ["http://www.w3.org/2000/01/rdf-schema#label"]
             },
         ),
     ] = []
@@ -108,7 +108,7 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -145,7 +145,7 @@ class MergedVariableGroup(BaseVariableGroup, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -180,7 +180,7 @@ class PreviewVariableGroup(_SparseLists, PreviewItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
