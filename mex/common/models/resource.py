@@ -46,6 +46,8 @@ from mex.common.types import (
     YearMonthDay,
     YearMonthDayTime,
 )
+from mex.common.types.identifier import MergedResourceSeriesIdentifier
+from mex.common.types.vocabulary import CodingSystem, Concept
 
 ConformsToStr = Annotated[
     str,
@@ -106,6 +108,10 @@ TemporalStr = Annotated[
         ],
     ),
 ]
+VersionStr = Annotated[
+    str,
+    Field(examples=["v1", "2023-01-16", "Schema 9"], max_length=100),
+]
 AnyContactIdentifier = Annotated[
     MergedOrganizationalUnitIdentifier
     | MergedPersonIdentifier
@@ -141,14 +147,16 @@ class _OptionalLists(_Stem):
         list[MergedAccessPlatformIdentifier],
         Field(
             description="A platform from which the resource can be accessed.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#accessService"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#accessService"]
+            },
         ),
     ] = []
     alternativeTitle: Annotated[
         list[Text],
         Field(
             description="An alternative name for the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     analytics: Annotated[
@@ -156,7 +164,7 @@ class _OptionalLists(_Stem):
         Field(
             description="An analytics distribution of the dataset.",
             json_schema_extra={
-                "sameAs": ["http://healthdataportal.eu/ns/health#analytics"]
+                "closeMatch": ["http://healthdataportal.eu/ns/health#analytics"]
             },
         ),
     ] = []
@@ -175,53 +183,49 @@ class _OptionalLists(_Stem):
                 "Standards used in the creation, analysis or transmission of the "
                 "resource."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/conformsTo"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/conformsTo"]},
         ),
     ] = []
     contributingUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
-                "An organizational unit of RKI, that is contributing to the resource."
+                "An organizational unit of RKI that is contributing to the resource."
             ),
-            json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
-            },
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     contributor: Annotated[
         list[MergedPersonIdentifier],
         Field(
             description="A person involved in the creation of the resource.",
-            json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/contributor"]
-            },
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     creator: Annotated[
         list[MergedPersonIdentifier],
         Field(
             description="A person responsible for making the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/creator"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
         ),
     ] = []
     description: Annotated[
         list[Text],
         Field(
             description="A text describing the nature of the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/description"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     distribution: Annotated[
         list[MergedDistributionIdentifier],
-        Field(description="An available distribution of the resource"),
+        Field(description="An available distribution of the resource."),
     ] = []
     documentation: Annotated[
         list[Link],
         Field(
             description="A link to a document documenting the resource.",
             json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/isReferencedBy"]
+                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
             },
         ),
     ] = []
@@ -229,7 +233,7 @@ class _OptionalLists(_Stem):
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="End date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#endDate"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
         ),
     ] = []
     externalPartner: Annotated[
@@ -239,7 +243,7 @@ class _OptionalLists(_Stem):
                 "An external organization that is somehow involved in the "
                 "creation of the resource."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/contributor"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     hasCodeValues: Annotated[
@@ -251,7 +255,16 @@ class _OptionalLists(_Stem):
                 "coding system 'ICD-10'."
             ),
             json_schema_extra={
-                "sameAs": ["http://healthdataportal.eu/ns/health#hasCodeValues"]
+                "closeMatch": ["http://healthdataportal.eu/ns/health#hasCodeValues"]
+            },
+        ),
+    ] = []
+    hasCodingSystem: Annotated[
+        list[CodingSystem],
+        Field(
+            description=("Coding systems in use (e.g. ICD-10, SNOMED-CT)."),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#hasCodingSystem"]
             },
         ),
     ] = []
@@ -268,7 +281,7 @@ class _OptionalLists(_Stem):
                 "interpretation will require association with a law, e.g. "
                 "'EU GDPR'."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasLegalBasis"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasLegalBasis"]},
         ),
     ] = []
     hasPurpose: Annotated[
@@ -278,7 +291,17 @@ class _OptionalLists(_Stem):
                 "A free text statement of the purpose of the processing of data "
                 "or personal data."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPurpose"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPurpose"]},
+        ),
+    ] = []
+    hasPurposeDescription: Annotated[
+        list[Text],
+        Field(
+            description=(
+                "A free text statement of the purpose of the processing of data "
+                "or personal data."
+            ),
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPurpose"]},
         ),
     ] = []
     healthCategory: Annotated[
@@ -290,7 +313,7 @@ class _OptionalLists(_Stem):
                 "Regulation on the European Health Data Space."
             ),
             json_schema_extra={
-                "sameAs": ["http://healthdataportal.eu/ns/health#healthCategory"]
+                "closeMatch": ["http://healthdataportal.eu/ns/health#healthCategory"]
             },
         ),
     ] = []
@@ -308,6 +331,31 @@ class _OptionalLists(_Stem):
             ),
         ),
     ] = []
+    inSeries: Annotated[
+        list[MergedResourceSeriesIdentifier],
+        Field(
+            description=("A resource series of which the resource is part."),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#inSeries"]},
+        ),
+    ] = []
+    inSeriesFirstResource: Annotated[
+        list[MergedResourceSeriesIdentifier],
+        Field(
+            description=(
+                "The first resource in an ordered collection or series of resources."
+            ),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#first"]},
+        ),
+    ] = []
+    inSeriesLastResource: Annotated[
+        list[MergedResourceSeriesIdentifier],
+        Field(
+            description=(
+                "The last resource in an ordered collection or series of resources."
+            ),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#last"]},
+        ),
+    ] = []
     isPartOf: Annotated[
         list[MergedResourceIdentifier],
         Field(
@@ -315,21 +363,31 @@ class _OptionalLists(_Stem):
                 "A related resource, in which the described resource is "
                 "physically or logically included."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isPartOf"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
         ),
     ] = []
     keyword: Annotated[
         list[Text],
         Field(
             description="A keyword or tag describing the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#keyword"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
+        ),
+    ] = []
+    landingPage: Annotated[
+        list[Link],
+        Field(
+            description=(
+                "A web page that provides access to the resource, its distributions "
+                "and/or additional information."
+            ),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#landingPage"]},
         ),
     ] = []
     language: Annotated[
         list[Language],
         Field(
             description="A language of the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/language"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/language"]},
         ),
     ] = []
     loincId: Annotated[
@@ -345,7 +403,7 @@ class _OptionalLists(_Stem):
         Field(
             description=(
                 "Method used in the research, analysis, observation or "
-                "processing of the object that is subject to the resource."
+                "processing of the object that is the subject of the resource."
             ),
         ),
     ] = []
@@ -353,13 +411,11 @@ class _OptionalLists(_Stem):
         list[Text],
         Field(
             description=(
-                "The description of the method, that was used to research, "
+                "The description of the method that was used for the research, "
                 "analysis, observation or processing of the object that was "
-                "subject to the resource."
+                "the subject of the resource."
             ),
-            json_schema_extra={
-                "subPropertyOf": ["http://purl.org/dc/terms/description"]
-            },
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     populationCoverage: Annotated[
@@ -378,7 +434,7 @@ class _OptionalLists(_Stem):
                 "how the data was collected, including methodologies, tools, and "
                 "protocols used."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/provenance"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/provenance"]},
         ),
     ] = []
     publication: Annotated[
@@ -386,10 +442,12 @@ class _OptionalLists(_Stem):
         Field(
             description=(
                 "A publication that deals with the research, analysis, "
-                "observation or processing of the object that was subject to the "
+                "observation or processing of the object that was the subject of the "
                 "resource, e.g. a research paper."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/isReferencedBy"]},
+            json_schema_extra={
+                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
+            },
         ),
     ] = []
     publisher: Annotated[
@@ -403,7 +461,7 @@ class _OptionalLists(_Stem):
         Field(
             description="Some information about the quality of the resource.",
             json_schema_extra={
-                "sameAs": ["http://www.w3.org/ns/dqv#hasQualityAnnotation"]
+                "closeMatch": ["http://www.w3.org/ns/dqv#hasQualityAnnotation"]
             },
         ),
     ] = []
@@ -411,21 +469,21 @@ class _OptionalLists(_Stem):
         list[MergedResourceIdentifier],
         Field(
             description="A related Resource.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/relation"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/relation"]},
         ),
     ] = []
     resourceCreationMethod: Annotated[
         list[ResourceCreationMethod],
         Field(
             description="Method how the resource was created.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     resourceTypeGeneral: Annotated[
         list[ResourceTypeGeneral],
         Field(
             description="General type of the resource.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     resourceTypeSpecific: Annotated[
@@ -435,7 +493,7 @@ class _OptionalLists(_Stem):
                 "A term describing the specific nature of the resource. A more "
                 "precise term than given by the property 'resourceTypeGeneral'."
             ),
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     rights: Annotated[
@@ -445,7 +503,7 @@ class _OptionalLists(_Stem):
                 "Information about rights held in and over the resource as well "
                 "as rights about the possibilities of the usage of the resource."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/rights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/rights"]},
         ),
     ] = []
     sample: Annotated[
@@ -455,7 +513,7 @@ class _OptionalLists(_Stem):
                 "A sample distribution of the dataset, which can be anonymized or "
                 "synthetic data, or the data dictionary."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/adms/sample"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/adms/sample"]},
         ),
     ] = []
     source: Annotated[
@@ -464,21 +522,21 @@ class _OptionalLists(_Stem):
             description=(
                 "A related Resource from which the described Resource is derived."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/source"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/source"]},
         ),
     ] = []
     spatial: Annotated[
         list[Text],
         Field(
             description="Spatial coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/spatial"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
     start: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Start date of the temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#startDate"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = []
     stateOfDataProcessing: Annotated[
@@ -495,7 +553,9 @@ class _RequiredLists(_Stem):
         Field(
             description="An agent that serves as a contact for the resource.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
         ),
     ]
     theme: Annotated[
@@ -505,7 +565,7 @@ class _RequiredLists(_Stem):
                 "A main category of the resource. A resource can have multiple themes."
             ),
             min_length=1,
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#theme"]},
         ),
     ]
     title: Annotated[
@@ -513,7 +573,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The name of the resource.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ]
     unitInCharge: Annotated[
@@ -524,7 +584,9 @@ class _RequiredLists(_Stem):
                 "accountability for the resource and its appropriate maintenance."
             ),
             min_length=1,
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
         ),
     ]
 
@@ -534,7 +596,9 @@ class _SparseLists(_Stem):
         list[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the resource.",
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#contactPoint"]},
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
         ),
     ] = []
     theme: Annotated[
@@ -543,14 +607,14 @@ class _SparseLists(_Stem):
             description=(
                 "A main category of the resource. A resource can have multiple themes."
             ),
-            json_schema_extra={"sameAs": ["http://www.w3.org/ns/dcat#theme"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#theme"]},
         ),
     ] = []
     title: Annotated[
         list[Text],
         Field(
             description="The name of the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     unitInCharge: Annotated[
@@ -560,7 +624,9 @@ class _SparseLists(_Stem):
                 "This property refers to agents who assume responsibility and "
                 "accountability for the resource and its appropriate maintenance."
             ),
-            json_schema_extra={"sameAs": ["http://dcat-ap.de/def/dcatde/maintainer"]},
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
         ),
     ] = []
 
@@ -571,15 +637,15 @@ class _OptionalValues(_Stem):
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+                "closeMatch": ["http://purl.org/dc/terms/accrualPeriodicity"]
             },
         ),
     ] = None
     created: Annotated[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
         Field(
-            description="Date of creation of the resource",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]},
+            description="Date of creation of the resource.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
         ),
     ] = None
     doi: Annotated[
@@ -593,7 +659,7 @@ class _OptionalValues(_Stem):
                 "Indicates, if a resource contains data directly or indirectly "
                 "associated or related to an individual."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPersonalData"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPersonalData"]},
         ),
     ] = None
     license: Annotated[
@@ -603,7 +669,7 @@ class _OptionalValues(_Stem):
                 "A legal document giving official permission to do something with "
                 "the resource."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = None
     maxTypicalAge: Annotated[
@@ -628,7 +694,7 @@ class _OptionalValues(_Stem):
         YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
         Field(
             description="Date on which the resource was changed.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = None
     numberOfRecords: Annotated[
@@ -640,9 +706,7 @@ class _OptionalValues(_Stem):
                 "hospital admissions) according to the dataset's content."
             ),
             json_schema_extra={
-                "subPropertyOf": [
-                    "http://healthdataportal.eu/ns/health#numberOfRecords"
-                ]
+                "closeMatch": ["http://healthdataportal.eu/ns/health#numberOfRecords"]
             },
         ),
     ] = None
@@ -654,7 +718,7 @@ class _OptionalValues(_Stem):
                 "dataset."
             ),
             json_schema_extra={
-                "subPropertyOf": [
+                "closeMatch": [
                     "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
                 ]
             },
@@ -673,7 +737,14 @@ class _OptionalValues(_Stem):
         YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None,
         Field(
             description="Temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/temporal"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/temporal"]},
+        ),
+    ] = None
+    version: Annotated[
+        VersionStr | None,
+        Field(
+            description=("The version indicator (name or identifier) of a resource."),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#version"]},
         ),
     ] = None
     wasGeneratedBy: Annotated[
@@ -684,7 +755,9 @@ class _OptionalValues(_Stem):
                 "activity. This entity did not exist before generation and "
                 "becomes available for usage after this generation."
             ),
-            json_schema_extra={"sameAs": "http://www.w3.org/ns/prov#wasGeneratedBy"},
+            json_schema_extra={
+                "closeMatch": "http://www.w3.org/ns/prov#wasGeneratedBy"
+            },
         ),
     ] = None
 
@@ -694,7 +767,7 @@ class _RequiredValues(_Stem):
         AccessRestriction,
         Field(
             description="Indicates how access to the resource is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ]
 
@@ -704,7 +777,7 @@ class _SparseValues(_Stem):
         AccessRestriction | None,
         Field(
             description="Indicates how access to the resource is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = None
 
@@ -714,7 +787,7 @@ class _VariadicValues(_Stem):
         list[AccessRestriction],
         Field(
             description="Indicates how access to the resource is restricted.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/accessRights"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     accrualPeriodicity: Annotated[
@@ -722,15 +795,15 @@ class _VariadicValues(_Stem):
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/terms/accrualPeriodicity"]
+                "closeMatch": ["http://purl.org/dc/terms/accrualPeriodicity"]
             },
         ),
     ] = []
     created: Annotated[
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
-            description="Date of creation of the resource",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/created"]},
+            description="Date of creation of the resource.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
         ),
     ] = []
     doi: Annotated[
@@ -744,7 +817,7 @@ class _VariadicValues(_Stem):
                 "Indicates, if a resource contains data directly or indirectly "
                 "associated or related to an individual."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasPersonalData"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPersonalData"]},
         ),
     ] = []
     license: Annotated[
@@ -754,7 +827,7 @@ class _VariadicValues(_Stem):
                 "A legal document giving official permission to do something with "
                 "the resource."
             ),
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/license"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = []
     maxTypicalAge: Annotated[
@@ -779,7 +852,7 @@ class _VariadicValues(_Stem):
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Date on which the resource was changed.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/modified"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = []
     numberOfRecords: Annotated[
@@ -791,9 +864,7 @@ class _VariadicValues(_Stem):
                 "hospital admissions) according to the dataset's content."
             ),
             json_schema_extra={
-                "subPropertyOf": [
-                    "http://healthdataportal.eu/ns/health#numberOfRecords"
-                ]
+                "closeMatch": ["http://healthdataportal.eu/ns/health#numberOfRecords"]
             },
         ),
     ] = []
@@ -805,7 +876,7 @@ class _VariadicValues(_Stem):
                 "dataset."
             ),
             json_schema_extra={
-                "subPropertyOf": [
+                "closeMatch": [
                     "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
                 ]
             },
@@ -824,7 +895,14 @@ class _VariadicValues(_Stem):
         list[YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr],
         Field(
             description="Temporal coverage of the resource.",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/temporal"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/temporal"]},
+        ),
+    ] = []
+    version: Annotated[
+        list[VersionStr],
+        Field(
+            description=("The version indicator (name or identifier) of a resource."),
+            json_schema_extra="http://www.w3.org/ns/dcat#version",
         ),
     ] = []
     wasGeneratedBy: Annotated[
@@ -835,7 +913,9 @@ class _VariadicValues(_Stem):
                 "activity. This entity did not exist before generation and "
                 "becomes available for usage after this generation."
             ),
-            json_schema_extra={"sameAs": "http://www.w3.org/ns/prov#wasGeneratedBy"},
+            json_schema_extra={
+                "closeMatch": "http://www.w3.org/ns/prov#wasGeneratedBy"
+            },
         ),
     ] = []
 
@@ -848,11 +928,11 @@ class BaseResource(
     json_schema_extra={
         "description": (
             "A defined piece of information or collection of information on Public "
-            "Health, that has been generated as part of a (research) activity at the "
+            "Health that has been generated as part of a (research) activity at the "
             "RKI or to comply with a (federal) law or regulation that applies to the "
             "RKI."
         ),
-        "sameAs": ["http://www.w3.org/ns/dcat#Dataset"],
+        "closeMatch": ["http://www.w3.org/ns/dcat#Dataset"],
     },
 ):
     """All fields for a valid resource except for provenance."""
@@ -878,7 +958,7 @@ class ExtractedResource(BaseResource, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -915,7 +995,7 @@ class MergedResource(BaseResource, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -952,7 +1032,7 @@ class PreviewResource(
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -1028,14 +1108,20 @@ class PreventiveResource(_Stem, PreventiveRule):
     end: list[MergedPrimarySourceIdentifier] = []
     externalPartner: list[MergedPrimarySourceIdentifier] = []
     hasCodeValues: list[MergedPrimarySourceIdentifier] = []
+    hasCodingSystem: list[MergedPrimarySourceIdentifier] = []
     hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
     hasPurpose: list[MergedPrimarySourceIdentifier] = []
+    hasPurposeDescription: list[MergedPrimarySourceIdentifier] = []
     hasPersonalData: list[MergedPrimarySourceIdentifier] = []
     healthCategory: list[MergedPrimarySourceIdentifier] = []
     icd10code: list[MergedPrimarySourceIdentifier] = []
     instrumentToolOrApparatus: list[MergedPrimarySourceIdentifier] = []
+    inSeries: list[MergedPrimarySourceIdentifier] = []
+    inSeriesFirstResource: list[MergedPrimarySourceIdentifier] = []
+    inSeriesLastResource: list[MergedPrimarySourceIdentifier] = []
     isPartOf: list[MergedPrimarySourceIdentifier] = []
     keyword: list[MergedPrimarySourceIdentifier] = []
+    landingPage: list[MergedPrimarySourceIdentifier] = []
     language: list[MergedPrimarySourceIdentifier] = []
     license: list[MergedPrimarySourceIdentifier] = []
     loincId: list[MergedPrimarySourceIdentifier] = []
@@ -1060,13 +1146,14 @@ class PreventiveResource(_Stem, PreventiveRule):
     sample: list[MergedPrimarySourceIdentifier] = []
     source: list[MergedPrimarySourceIdentifier] = []
     sizeOfDataBasis: list[MergedPrimarySourceIdentifier] = []
-    start: list[MergedPrimarySourceIdentifier] = []
     spatial: list[MergedPrimarySourceIdentifier] = []
+    start: list[MergedPrimarySourceIdentifier] = []
     stateOfDataProcessing: list[MergedPrimarySourceIdentifier] = []
     temporal: list[MergedPrimarySourceIdentifier] = []
     theme: list[MergedPrimarySourceIdentifier] = []
     title: list[MergedPrimarySourceIdentifier] = []
     unitInCharge: list[MergedPrimarySourceIdentifier] = []
+    version: list[MergedPrimarySourceIdentifier] = []
     wasGeneratedBy: list[MergedPrimarySourceIdentifier] = []
 
 
@@ -1133,6 +1220,7 @@ class ResourceMapping(_Stem, BaseMapping):
             YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
         ]
     ] = []
+    version: list[MappingField[VersionStr | None]] = []
     wasGeneratedBy: list[MappingField[MergedActivityIdentifier | None]] = []
     contact: Annotated[
         list[MappingField[list[AnyContactIdentifier]]],
@@ -1160,13 +1248,19 @@ class ResourceMapping(_Stem, BaseMapping):
     end: list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = []
     externalPartner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     hasCodeValues: list[MappingField[list[Text]]] = []
+    hasCodingSystem: list[MappingField[list[Concept]]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []
     hasPurpose: list[MappingField[list[Text]]] = []
+    hasPurposeDescription: list[MappingField[list[Text]]] = []
     healthCategory: list[MappingField[list[HealthCategory]]] = []
     icd10code: list[MappingField[list[str]]] = []
     instrumentToolOrApparatus: list[MappingField[list[Text]]] = []
+    inSeries: list[MappingField[list[MergedResourceSeriesIdentifier]]] = []
+    inSeriesFirstResource: list[MappingField[list[MergedResourceSeriesIdentifier]]] = []
+    inSeriesLastResource: list[MappingField[list[MergedResourceSeriesIdentifier]]] = []
     isPartOf: list[MappingField[list[MergedResourceIdentifier]]] = []
     keyword: list[MappingField[list[Text]]] = []
+    landingPage: list[MappingField[list[Link]]] = []
     language: list[MappingField[list[Language]]] = []
     loincId: list[MappingField[list[LoincIdStr]]] = []
     meshId: list[MappingField[list[MeshIdStr]]] = []

@@ -130,7 +130,7 @@ def get_inner_types(
     elif origin_type is not None:
         yield origin_type
 
-    # Yield the annotation if it is valid type, that isn't NoneType
+    # Yield the annotation if it is valid type that isn't NoneType
     elif isinstance(annotation, type) and annotation is not NoneType:
         yield annotation
 

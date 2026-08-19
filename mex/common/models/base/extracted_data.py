@@ -16,7 +16,9 @@ _ExtractedIdentifierT = TypeVar("_ExtractedIdentifierT", bound=ExtractedIdentifi
 HadPrimarySource = Annotated[
     MergedPrimarySourceIdentifier,
     Field(
-        json_schema_extra={"sameAs": ["http://www.w3.org/ns/prov#hadPrimarySource"]},
+        json_schema_extra={
+            "closeMatch": ["http://www.w3.org/ns/prov#hadPrimarySource"]
+        },
         frozen=True,
         description=(
             "A primary source for a topic refers to something produced by some "
@@ -31,7 +33,7 @@ HadPrimarySource = Annotated[
             "primary sources. It is recognized that the determination of primary "
             "sources can be up to interpretation, and should be done according to "
             "conventions accepted within the application's domain ([PROV-O, "
-            "2013-04-30 ](http://www.w3.org/TR/2013/REC-prov-o-20130430/))."
+            "2013-04-30](http://www.w3.org/TR/2013/REC-prov-o-20130430/))."
         ),
     ),
 ]
@@ -64,7 +66,7 @@ class ExtractedData(
     This class also adds a validator to automatically set identifiers for provenance.
     """
 
-    # The stableTargetId of the primary source, that this item was
+    # The stableTargetId of the primary source that this item was
     # extracted from. This field is mandatory for all extracted items to
     # aid with data provenance. Extracted primary sources also have this
     # field and are all extracted from a static primary source for MEx.

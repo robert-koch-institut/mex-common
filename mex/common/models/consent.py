@@ -35,7 +35,7 @@ class _OptionalValues(_Stem):
         ConsentType | None,
         Field(
             description="The type of consent.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
 
@@ -45,14 +45,14 @@ class _RequiredValues(_Stem):
         ConsentStatus,
         Field(
             description="Specifies the state or status of consent.",
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ]
     hasDataSubject: Annotated[
         MergedPersonIdentifier,
         Field(
             description="Indicates association with Data Subject.",
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasDataSubject"]},
         ),
     ]
     isIndicatedAtTime: Annotated[
@@ -62,7 +62,9 @@ class _RequiredValues(_Stem):
                 "Specifies the temporal information for when the entity has "
                 "indicated the specific context."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
+            json_schema_extra={
+                "closeMatch": ["https://w3id.org/dpv#isIndicatedAtTime"]
+            },
         ),
     ]
 
@@ -72,21 +74,21 @@ class _SparseValues(_Stem):
         ConsentStatus | None,
         Field(
             description="Specifies the state or status of consent.",
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ] = None
     hasDataSubject: Annotated[
         MergedPersonIdentifier | None,
         Field(
             description="Indicates association with Data Subject.",
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasDataSubject"]},
         ),
     ] = None
     hasConsentType: Annotated[
         ConsentType | None,
         Field(
             description="The type of consent.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
     isIndicatedAtTime: Annotated[
@@ -96,7 +98,9 @@ class _SparseValues(_Stem):
                 "Specifies the temporal information for when the entity has "
                 "indicated the specific context."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
+            json_schema_extra={
+                "closeMatch": ["https://w3id.org/dpv#isIndicatedAtTime"]
+            },
         ),
     ] = None
 
@@ -106,7 +110,7 @@ class _VariadicValues(_Stem):
         list[ConsentType],
         Field(
             description="The type of consent.",
-            json_schema_extra={"subPropertyOf": ["http://purl.org/dc/terms/type"]},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     hasConsentStatus: Annotated[
@@ -120,14 +124,14 @@ class _VariadicValues(_Stem):
                 "skos:Concept, this is no conflict, just another way of "
                 "implementing it."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasConsentStatus"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ] = []
     hasDataSubject: Annotated[
         list[MergedPersonIdentifier],
         Field(
             description="Indicates association with Data Subject.",
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#hasDataSubject"]},
+            json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasDataSubject"]},
         ),
     ] = []
     isIndicatedAtTime: Annotated[
@@ -137,7 +141,9 @@ class _VariadicValues(_Stem):
                 "Specifies the temporal information for when the entity has "
                 "indicated the specific context."
             ),
-            json_schema_extra={"sameAs": ["https://w3id.org/dpv#isIndicatedAtTime"]},
+            json_schema_extra={
+                "closeMatch": ["https://w3id.org/dpv#isIndicatedAtTime"]
+            },
         ),
     ] = []
 
@@ -147,7 +153,7 @@ class BaseConsent(
     _RequiredValues,
     json_schema_extra={
         "description": "Consent of the Data Subject for specified process or activity.",
-        "sameAs": ["https://w3id.org/dpv#Consent"],
+        "closeMatch": ["https://w3id.org/dpv#Consent"],
     },
 ):
     """All fields for a valid consent except for provenance."""
@@ -173,7 +179,7 @@ class ExtractedConsent(BaseConsent, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -210,7 +216,7 @@ class MergedConsent(BaseConsent, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -245,7 +251,7 @@ class PreviewConsent(_VariadicValues, _SparseValues, PreviewItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),

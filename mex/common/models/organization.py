@@ -21,6 +21,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
+from mex.common.types.vocabulary import Country
 
 GeprisIdStr = Annotated[
     str,
@@ -106,15 +107,22 @@ class _OptionalLists(_Stem):
     alternativeName: Annotated[
         list[Text],
         Field(
-            description="An alternative name for the organization",
-            json_schema_extra={"sameAs": ["http://purl.org/dc/terms/alternative"]},
+            description="An alternative name for the organization.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
+        ),
+    ] = []
+    country: Annotated[
+        list[Country],
+        Field(
+            description="Country or territory that this organization is in.",
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P17"]},
         ),
     ] = []
     geprisId: Annotated[
         list[GeprisIdStr],
         Field(
             description="Identifier from GEPRIS authority file.",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P4871"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P4871"]},
         ),
     ] = []
     gndId: Annotated[
@@ -124,7 +132,7 @@ class _OptionalLists(_Stem):
                 "An identifier from the German authority file named Gemeinsame "
                 "Normdatei (GND), curated by the German National Library (DNB)."
             ),
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P227"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P227"]},
         ),
     ] = []
     isniId: Annotated[
@@ -133,28 +141,28 @@ class _OptionalLists(_Stem):
             description=(
                 "The ISNI (International Standard Name Identifier) of the organization."
             ),
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P213"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P213"]},
         ),
     ] = []
     rorId: Annotated[
         list[RorIdStr],
         Field(
             description="An identifier of the Research Organization Registry (ROR).",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P6782"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P6782"]},
         ),
     ] = []
     shortName: Annotated[
         list[Text],
         Field(
             description="A short name or abbreviation of the organization.",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1813"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1813"]},
         ),
     ] = []
     viafId: Annotated[
         list[ViafIdStr],
         Field(
             description="Identifier from VIAF (Virtual Authority File).",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P214"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P214"]},
         ),
     ] = []
     wikidataId: Annotated[
@@ -169,7 +177,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The official name of the organization.",
             min_length=1,
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1448"]},
         ),
     ]
 
@@ -179,7 +187,7 @@ class _SparseLists(_Stem):
         list[Text],
         Field(
             description="The official name of the organization.",
-            json_schema_extra={"sameAs": ["http://www.wikidata.org/entity/P1448"]},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1448"]},
         ),
     ] = []
 
@@ -196,7 +204,7 @@ class BaseOrganization(
             "decomposable into hierarchical structures ([The Organization Ontology, "
             "2014-01-16](http://www.w3.org/TR/2014/REC-vocab-org-20140116/))."
         ),
-        "sameAs": [
+        "closeMatch": [
             "http://www.w3.org/ns/org#Organization",
             "http://xmlns.com/foaf/0.1/Organization",
             "http://www.w3.org/2006/vcard/ns#Organization",
@@ -227,7 +235,7 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
             json_schema_extra={
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"]
             },
         ),
     ]:
@@ -264,7 +272,7 @@ class MergedOrganization(BaseOrganization, MergedItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -299,7 +307,7 @@ class PreviewOrganization(_OptionalLists, _SparseLists, PreviewItem):
                     "([DCT, 2020-01-20](http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
                 ),
                 "readOnly": True,
-                "sameAs": ["http://purl.org/dc/elements/1.1/identifier"],
+                "closeMatch": ["http://purl.org/dc/elements/1.1/identifier"],
             },
             frozen=True,
         ),
@@ -353,6 +361,7 @@ class PreventiveOrganization(_Stem, PreventiveRule):
         Literal["PreventiveOrganization"], Field(alias="$type", frozen=True)
     ] = "PreventiveOrganization"
     alternativeName: list[MergedPrimarySourceIdentifier] = []
+    country: list[MergedPrimarySourceIdentifier] = []
     geprisId: list[MergedPrimarySourceIdentifier] = []
     gndId: list[MergedPrimarySourceIdentifier] = []
     isniId: list[MergedPrimarySourceIdentifier] = []
@@ -405,6 +414,7 @@ class OrganizationMapping(_Stem, BaseMapping):
     ] = "OrganizationMapping"
     officialName: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
+    country: list[MappingField[list[Country]]] = []
     geprisId: list[MappingField[list[GeprisIdStr]]] = []
     gndId: list[MappingField[list[GndIdStr]]] = []
     isniId: list[MappingField[list[IsniIdStr]]] = []

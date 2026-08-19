@@ -13,6 +13,7 @@ The current set of entity types includes:
 - Person
 - PrimarySource
 - Resource
+- ResourceSeries
 - Variable
 - VariableGroup
 
@@ -258,6 +259,20 @@ from mex.common.models.resource import (
     SubtractiveResource,
     WorkflowResource,
 )
+from mex.common.models.resource_series import (
+    AdditiveResourceSeries,
+    BaseResourceSeries,
+    ExtractedResourceSeries,
+    MergedResourceSeries,
+    PreventiveResourceSeries,
+    PreviewResourceSeries,
+    ResourceSeriesFilter,
+    ResourceSeriesMapping,
+    ResourceSeriesRuleSetRequest,
+    ResourceSeriesRuleSetResponse,
+    SubtractiveResourceSeries,
+    WorkflowResourceSeries,
+)
 from mex.common.models.variable import (
     AdditiveVariable,
     BaseVariable,
@@ -341,6 +356,7 @@ __all__ = (
     "AdditivePerson",
     "AdditivePrimarySource",
     "AdditiveResource",
+    "AdditiveResourceSeries",
     "AdditiveRule",
     "AdditiveVariable",
     "AdditiveVariableGroup",
@@ -370,6 +386,7 @@ __all__ = (
     "BasePerson",
     "BasePrimarySource",
     "BaseResource",
+    "BaseResourceSeries",
     "BaseVariable",
     "BaseVariableGroup",
     "BibliographicResourceFilter",
@@ -399,6 +416,7 @@ __all__ = (
     "ExtractedPerson",
     "ExtractedPrimarySource",
     "ExtractedResource",
+    "ExtractedResourceSeries",
     "ExtractedVariable",
     "ExtractedVariableGroup",
     "FilterField",
@@ -421,6 +439,7 @@ __all__ = (
     "MergedPerson",
     "MergedPrimarySource",
     "MergedResource",
+    "MergedResourceSeries",
     "MergedVariable",
     "MergedVariableGroup",
     "OrganizationFilter",
@@ -448,6 +467,7 @@ __all__ = (
     "PreventivePerson",
     "PreventivePrimarySource",
     "PreventiveResource",
+    "PreventiveResourceSeries",
     "PreventiveRule",
     "PreventiveVariable",
     "PreventiveVariableGroup",
@@ -463,6 +483,7 @@ __all__ = (
     "PreviewPerson",
     "PreviewPrimarySource",
     "PreviewResource",
+    "PreviewResourceSeries",
     "PreviewVariable",
     "PreviewVariableGroup",
     "PrimarySourceFilter",
@@ -473,6 +494,10 @@ __all__ = (
     "ResourceMapping",
     "ResourceRuleSetRequest",
     "ResourceRuleSetResponse",
+    "ResourceSeriesFilter",
+    "ResourceSeriesMapping",
+    "ResourceSeriesRuleSetRequest",
+    "ResourceSeriesRuleSetResponse",
     "RuleModelTypeAdapter",
     "RuleSetRequestTypeAdapter",
     "RuleSetResponseTypeAdapter",
@@ -489,6 +514,7 @@ __all__ = (
     "SubtractivePerson",
     "SubtractivePrimarySource",
     "SubtractiveResource",
+    "SubtractiveResourceSeries",
     "SubtractiveRule",
     "SubtractiveVariable",
     "SubtractiveVariableGroup",
@@ -513,6 +539,7 @@ __all__ = (
     "WorkflowPerson",
     "WorkflowPrimarySource",
     "WorkflowResource",
+    "WorkflowResourceSeries",
     "WorkflowRule",
     "WorkflowVariable",
     "WorkflowVariableGroup",
@@ -542,6 +569,7 @@ AnyBaseModel = (
     | BasePerson
     | BasePrimarySource
     | BaseResource
+    | BaseResourceSeries
     | BaseVariable
     | BaseVariableGroup
 )
@@ -562,6 +590,7 @@ AnyExtractedModel = (
     | ExtractedPerson
     | ExtractedPrimarySource
     | ExtractedResource
+    | ExtractedResourceSeries
     | ExtractedVariable
     | ExtractedVariableGroup
 )
@@ -587,6 +616,7 @@ AnyMergedModel = (
     | MergedPerson
     | MergedPrimarySource
     | MergedResource
+    | MergedResourceSeries
     | MergedVariable
     | MergedVariableGroup
 )
@@ -610,6 +640,7 @@ AnyPreviewModel = (
     | PreviewPerson
     | PreviewPrimarySource
     | PreviewResource
+    | PreviewResourceSeries
     | PreviewVariable
     | PreviewVariableGroup
 )
@@ -635,6 +666,7 @@ AnyAdditiveModel = (
     | AdditivePerson
     | AdditivePrimarySource
     | AdditiveResource
+    | AdditiveResourceSeries
     | AdditiveVariable
     | AdditiveVariableGroup
 )
@@ -660,6 +692,7 @@ AnySubtractiveModel = (
     | SubtractivePerson
     | SubtractivePrimarySource
     | SubtractiveResource
+    | SubtractiveResourceSeries
     | SubtractiveVariable
     | SubtractiveVariableGroup
 )
@@ -685,6 +718,7 @@ AnyPreventiveModel = (
     | PreventivePerson
     | PreventivePrimarySource
     | PreventiveResource
+    | PreventiveResourceSeries
     | PreventiveVariable
     | PreventiveVariableGroup
 )
@@ -710,6 +744,7 @@ AnyWorkflowModel = (
     | WorkflowPerson
     | WorkflowPrimarySource
     | WorkflowResource
+    | WorkflowResourceSeries
     | WorkflowVariable
     | WorkflowVariableGroup
 )
@@ -755,6 +790,7 @@ AnyRuleSetRequest = (
     | PersonRuleSetRequest
     | PrimarySourceRuleSetRequest
     | ResourceRuleSetRequest
+    | ResourceSeriesRuleSetRequest
     | VariableRuleSetRequest
     | VariableGroupRuleSetRequest
 )
@@ -780,6 +816,7 @@ AnyRuleSetResponse = (
     | PersonRuleSetResponse
     | PrimarySourceRuleSetResponse
     | ResourceRuleSetResponse
+    | ResourceSeriesRuleSetResponse
     | VariableRuleSetResponse
     | VariableGroupRuleSetResponse
 )
@@ -805,6 +842,7 @@ AnyMappingModel = (
     | PersonMapping
     | PrimarySourceMapping
     | ResourceMapping
+    | ResourceSeriesMapping
     | VariableMapping
     | VariableGroupMapping
 )
@@ -834,6 +872,7 @@ AnyFilterModel = (
     | PersonFilter
     | PrimarySourceFilter
     | ResourceFilter
+    | ResourceSeriesFilter
     | VariableFilter
     | VariableGroupFilter
 )
