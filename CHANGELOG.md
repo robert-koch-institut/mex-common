@@ -11,10 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: hardcode all vocabulary enum members in `mex.common.types.vocabulary`
-  instead of generating them at import time from `mex-model`, so that static analysis
-  and IDEs can see the members (use `Theme.PUBLIC_HEALTH` instead of
-  `Theme["PUBLIC_HEALTH"]`); a new test guards against drift from `mex-model`
+- hardcode all vocabulary enum members in `mex.common.types.vocabulary`
 - BREAKING: replace the `__vocabulary__` slug on vocabulary enums with `__scheme__`,
   which holds the full scheme url, e.g. `https://mex.rki.de/item/access-restriction`
 - BREAKING: rename `License.CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL` to
@@ -27,17 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- removed unused type hints for RuleSet base class properties
 - BREAKING: remove `VocabularyEnum.find`, because concept labels are no longer loaded
   at runtime; look concepts up via `mex.model.VOCABULARY_JSON_BY_NAME` instead
 - BREAKING: remove the `VocabularyLoader` metaclass as well as the `Concept` and
-  `BilingualText` models, vocabulary enums are now plain `Enum` subclasses
-- BREAKING: remove the custom `VocabularyEnum.__repr__`, which only existed to work
-  around member names being invisible to static analysis and shadowed the `patch_reprs`
-  fixture of `mex.common.testing`; vocabulary enums now repr like any other enum, so
-  test suites using that fixture see `AccessRestriction.OPEN` instead of
-  `AccessRestriction["OPEN"]`
+  `BilingualText` models, vocabulary enums are now `Enum` subclasses
+- BREAKING: remove the custom `VocabularyEnum.__repr__`
 - removed now unused `split_to_caps` string transformer
+- removed unused type hints for `RuleSet` base class properties
 
 ### Fixed
 
@@ -48,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - load langdetect profiles lazily to save ~150ms on every initial mex-common import
-- BREAKING: update mex-model depedency to v5.1
+- BREAKING: update mex-model dependency to v5.1
 
 ### Fixed
 
