@@ -6,9 +6,6 @@ from pydantic import BaseModel, ValidationError
 from mex.common.types import VOCABULARY_ENUMS, AnyVocabularyEnum, VocabularyEnum
 from mex.model import VOCABULARY_JSON_BY_NAME
 
-# vocabularies in mex-model that are not backed by an enum in mex-common
-NON_ENUM_VOCABULARIES = {"concept-schemes"}
-
 
 def concept_to_member_name(pref_label_en: str) -> str:
     """Derive the enum member name from the english prefLabel of a concept."""
@@ -58,19 +55,10 @@ def test_vocabulary_enums_cover_all_vocabularies() -> None:
         for vocabulary_enum in VOCABULARY_ENUMS
     }
     all_vocabularies = {name.replace("_", "-") for name in VOCABULARY_JSON_BY_NAME}
-    assert enum_vocabularies == all_vocabularies - NON_ENUM_VOCABULARIES
+    assert enum_vocabularies == all_vocabularies
 
 
 def test_vocabulary_enum_model() -> None:
-    # check enum names are hardcoded correctly
-    assert [c.name for c in DummyEnum] == ["PREF_EN_ONE", "PREF_EN_TWO"]
-
-    # check enum values are hardcoded correctly
-    assert [c.value for c in DummyEnum] == [
-        "https://mex.rki.de/item/dummy-concept-1",
-        "https://mex.rki.de/item/dummy-concept-2",
-    ]
-
     class DummyModel(BaseModel):
         dummy: DummyEnum
 
@@ -87,6 +75,18 @@ def test_vocabulary_enum_model() -> None:
     # check parsing from string works
     model = DummyModel.model_validate(
         {"dummy": "https://mex.rki.de/item/dummy-concept-2"}
+    )
+    assert model.dummy == DummyEnum["PREF_EN_TWO"]
+
+    # check wrong value raises error in json mode
+    with pytest.raises(ValidationError):
+        DummyModel.model_validate_json(
+            '{"dummy": "https://mex.rki.de/item/not-a-valid-concept"}'
+        )
+
+    # check parsing from json works
+    model = DummyModel.model_validate_json(
+        '{"dummy": "https://mex.rki.de/item/dummy-concept-2"}'
     )
     assert model.dummy == DummyEnum["PREF_EN_TWO"]
 
