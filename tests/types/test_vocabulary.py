@@ -49,13 +49,18 @@ def test_hardcoded_enum_matches_mex_model(
     assert {concept["inScheme"] for concept in concepts} == {vocabulary_enum.__scheme__}
 
 
-def test_vocabulary_enums_cover_all_vocabularies() -> None:
+def test_no_mismatch_between_vocabulary_enums_and_mex_model_vocabularies() -> None:
     enum_vocabularies = {
         scheme_to_vocabulary_name(vocabulary_enum.__scheme__)
         for vocabulary_enum in VOCABULARY_ENUMS
     }
     all_vocabularies = {name.replace("_", "-") for name in VOCABULARY_JSON_BY_NAME}
-    assert enum_vocabularies == all_vocabularies
+
+    missing_enums = all_vocabularies - enum_vocabularies
+    extra_enums = enum_vocabularies - all_vocabularies
+
+    assert not missing_enums, f"Missing vocabulary enums: {missing_enums}"
+    assert not extra_enums, f"Enums without vocabularies: {extra_enums}"
 
 
 def test_vocabulary_enum_model() -> None:
