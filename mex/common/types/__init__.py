@@ -64,6 +64,7 @@ from mex.common.types.vocabulary import (
     CodingSystem,
     ConsentStatus,
     ConsentType,
+    Country,
     DataProcessingState,
     Frequency,
     HealthCategory,
@@ -71,12 +72,12 @@ from mex.common.types.vocabulary import (
     License,
     MIMEType,
     PersonalData,
+    Purpose,
     ResourceCreationMethod,
     ResourceTypeGeneral,
     TechnicalAccessibility,
     Theme,
     VocabularyEnum,
-    VocabularyLoader,
 )
 
 __all__ = (
@@ -110,6 +111,7 @@ __all__ = (
     "CodingSystem",
     "ConsentStatus",
     "ConsentType",
+    "Country",
     "DataProcessingState",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
@@ -155,6 +157,7 @@ __all__ = (
     "PathWrapper",
     "PersonalData",
     "PublishingTarget",
+    "Purpose",
     "ResourceCreationMethod",
     "ResourceTypeGeneral",
     "Sink",
@@ -166,7 +169,6 @@ __all__ = (
     "Theme",
     "Validation",
     "VocabularyEnum",
-    "VocabularyLoader",
     "WorkPath",
     "Year",
     "YearMonth",
@@ -183,6 +185,7 @@ AnyVocabularyEnum = (
     | CodingSystem
     | ConsentStatus
     | ConsentType
+    | Country
     | DataProcessingState
     | Frequency
     | HealthCategory
@@ -190,6 +193,7 @@ AnyVocabularyEnum = (
     | License
     | MIMEType
     | PersonalData
+    | Purpose
     | ResourceCreationMethod
     | ResourceTypeGeneral
     | TechnicalAccessibility

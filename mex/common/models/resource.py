@@ -47,7 +47,7 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.common.types.identifier import MergedResourceSeriesIdentifier
-from mex.common.types.vocabulary import CodingSystem, Concept
+from mex.common.types.vocabulary import CodingSystem
 
 ConformsToStr = Annotated[
     str,
@@ -1248,7 +1248,7 @@ class ResourceMapping(_Stem, BaseMapping):
     end: list[MappingField[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = []
     externalPartner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     hasCodeValues: list[MappingField[list[Text]]] = []
-    hasCodingSystem: list[MappingField[list[Concept]]] = []
+    hasCodingSystem: list[MappingField[list[CodingSystem]]] = []
     hasLegalBasis: list[MappingField[list[Text]]] = []
     hasPurpose: list[MappingField[list[Text]]] = []
     hasPurposeDescription: list[MappingField[list[Text]]] = []

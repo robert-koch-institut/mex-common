@@ -288,10 +288,10 @@ def test_ensure_rule_set_returns_existing() -> None:
                 ExtractedResource(
                     identifierInPrimarySource="r1",
                     hadPrimarySource=Identifier.generate(seed=42),
-                    accessRestriction=AccessRestriction["OPEN"],
+                    accessRestriction=AccessRestriction.OPEN,
                     contact=[Identifier.generate(seed=999)],
                     unitInCharge=[Identifier.generate(seed=999)],
-                    theme=[Theme["PUBLIC_HEALTH"]],
+                    theme=[Theme.PUBLIC_HEALTH],
                     title=[Text(value="Dummy resource")],
                 )
             ],
@@ -541,10 +541,10 @@ def test_ensure_rule_set_returns_existing() -> None:
                     identifierInPrimarySource="resource_1",
                     hadPrimarySource=Identifier.generate(seed=42),
                     sizeOfDataBasis="enormous",
-                    accessRestriction=AccessRestriction["OPEN"],
+                    accessRestriction=AccessRestriction.OPEN,
                     contact=[Identifier.generate(seed=999)],
                     unitInCharge=[Identifier.generate(seed=999)],
-                    theme=[Theme["PUBLIC_HEALTH"]],
+                    theme=[Theme.PUBLIC_HEALTH],
                     title=[Text(value="Dummy resource")],
                 )
             ],

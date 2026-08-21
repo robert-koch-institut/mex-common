@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Final
 
 from mex.common.types import AssetsConnectorType
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from mex.common.assets.base import BaseAssetsConnector
 
 _CONNECTOR_REGISTRY: Final[dict[AssetsConnectorType, type["BaseAssetsConnector"]]] = {}
