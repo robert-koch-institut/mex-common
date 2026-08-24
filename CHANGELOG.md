@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [3.4.0] - 2026-08-24
+
+### Changes
+
 - hardcode all vocabulary enum members in `mex.common.types.vocabulary`
 - BREAKING: replace the `__vocabulary__` slug on vocabulary enums with `__scheme__`,
   which holds the full scheme url, e.g. `https://mex.rki.de/item/access-restriction`
@@ -19,8 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Theme.ANIMAL_EXPERIMENTAL_RESEARCH_AND_R` to
   `Theme.ANIMAL_EXPERIMENTAL_RESEARCH_AND_3R`, because digits in concept labels are
   no longer dropped from member names
-
-### Deprecated
 
 ### Removed
 
@@ -31,10 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: remove the custom `VocabularyEnum.__repr__`
 - removed now unused `split_to_caps` string transformer
 - removed unused type hints for `RuleSet` base class properties
-
-### Fixed
-
-### Security
 
 ## [3.3.0] - 2026-08-19
 
