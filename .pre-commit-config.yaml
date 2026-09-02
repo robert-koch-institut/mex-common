@@ -25,7 +25,7 @@ repos:
       - id: fix-byte-order-marker
         name: byte-order
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.5
+    rev: 0.12.6
     hooks:
       - id: uv-lock
         name: uv
