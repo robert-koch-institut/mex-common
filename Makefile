@@ -1,5 +1,8 @@
-.PHONY: all setup hooks install lint test fuzzing wheel docs
+.PHONY: all setup hooks install lint unit test fuzzing wheel docs
 all: install lint test
+
+SHELL := /bin/bash
+.SHELLFLAGS := -ec
 
 LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
 PWD = $(shell pwd)

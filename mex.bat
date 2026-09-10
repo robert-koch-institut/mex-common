@@ -63,5 +63,6 @@ exit /b %errorlevel%
 @REM use sphinx to auto-generate html docs from code
 echo generating docs
 uv run sphinx-apidoc -f -o docs/source mex
+if %errorlevel% neq 0 exit /b %errorlevel%
 uv run sphinx-build -aE -b dirhtml docs docs/dist
 exit /b %errorlevel%
