@@ -87,7 +87,7 @@ jobs:
       url: https://pypi.org/p/mex-common
     permissions:
       contents: write
-      id-token: write  # IMPORTANT: mandatory for trusted publishing
+      id-token: write # Required for python release signing and trusted publishing
 
     steps:
       - name: Checkout repo
@@ -133,6 +133,3 @@ jobs:
         run: |
           gh release create ${{ needs.release.outputs.tag }} \
           --generate-notes --latest --verify-tag dist/*
-
-      - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
