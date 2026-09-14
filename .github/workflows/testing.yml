@@ -85,4 +85,4 @@ jobs:
 
       - name: Cleanup containers
         if: always()
-        run: docker compose down slapd
+        run: docker compose down --volumes --remove-orphans

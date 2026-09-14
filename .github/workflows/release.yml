@@ -123,9 +123,8 @@ jobs:
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
 
       - name: Sign Python release artifacts
-        uses: sigstore/gh-action-sigstore-python@790bc6befb9d733738f18d8f895854b453640ec9 # v3.5.0
-        with:
-          inputs: ./dist/*
+        run: |
+          sigstore sign dist/*
 
       - name: Create a github release
         env:
