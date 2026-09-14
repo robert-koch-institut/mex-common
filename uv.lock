@@ -6,10 +6,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'win32'",
-    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -722,7 +722,7 @@ wheels = [
 
 [[package]]
 name = "mex-artificial"
-version = "3.0.1"
+version = "3.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
@@ -732,9 +732,9 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/17/b0/b8063053dab574837ebd2bb8b21402fb5e5dd26e17d4b5311078cf269957/mex_artificial-3.0.1.tar.gz", hash = "sha256:6037a50203e2cffd59dff1eac486b47db246dc0797fdf40bac3c1e7e1fe18ffb", size = 12129, upload-time = "2026-08-25T09:01:16.668Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/40/e0/b0260a4b047d71a3f4623934e587a4a0d99e47c8694c3ab57783037c74e7/mex_artificial-3.0.3.tar.gz", hash = "sha256:8a2b50ecd2743f762c210be2d654319cde204f3e34c261d78cb5a36aae8579e4", size = 12440, upload-time = "2026-09-14T12:51:11.306Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/1c/7925e5895a704da0f973e1b5b030a800f7a7e04057b8319abc79db0cf46f/mex_artificial-3.0.1-py3-none-any.whl", hash = "sha256:cbe83051e06ce43e66127c259f69229089793f54178c068b1f5d416bf9df61ba", size = 13173, upload-time = "2026-08-25T09:01:15.46Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/6b/52f3cd390e955f44710996a39eb380811fabac8df8efc43408277760603a/mex_artificial-3.0.3-py3-none-any.whl", hash = "sha256:2b275895a90c98ac3a2e7ec10abb8e4cf3c24b6b934fd501f77b079f1abbf67c", size = 13429, upload-time = "2026-09-14T12:51:09.971Z" },
 ]
 
 [[package]]
