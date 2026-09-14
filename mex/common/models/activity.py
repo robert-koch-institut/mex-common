@@ -32,6 +32,7 @@ from mex.common.types import (
     Year,
     YearMonth,
     YearMonthDay,
+    YearMonthDayTime,
 )
 
 AnyExternalAssociateIdentifier = Annotated[
@@ -84,7 +85,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDay | YearMonth | Year],
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="(Planned) end of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P582"]},
@@ -165,7 +166,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDay | YearMonth | Year],
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="The start of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P580"]},
@@ -222,7 +223,7 @@ class _RequiredLists(_Stem):
         Field(
             description="A unit that is responsible for the activity.",
             min_length=1,
-            json_schema_extra={"closeMatch": "http.//dcat-ap.de/def/dcatde/maintainer"},
+            json_schema_extra={"closeMatch": "http://dcat-ap.de/def/dcatde/maintainer"},
         ),
     ]
     title: Annotated[
@@ -489,7 +490,9 @@ class ActivityMapping(_Stem, BaseMapping):
     activityType: list[MappingField[list[ActivityType]]] = []
     alternativeTitle: list[MappingField[list[Text]]] = []
     documentation: list[MappingField[list[Link]]] = []
-    end: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
+    end: list[
+        MappingField[list[YearMonthDayTime | YearMonthDay | YearMonth | Year]]
+    ] = []
     externalAssociate: list[MappingField[list[AnyExternalAssociateIdentifier]]] = []
     funderOrCommissioner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     fundingProgram: list[MappingField[list[str]]] = []
@@ -499,7 +502,9 @@ class ActivityMapping(_Stem, BaseMapping):
     publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
     relatedActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
     shortName: list[MappingField[list[Text]]] = []
-    start: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
+    start: list[
+        MappingField[list[YearMonthDayTime | YearMonthDay | YearMonth | Year]]
+    ] = []
     succeeds: list[MappingField[list[MergedActivityIdentifier]]] = []
     theme: list[MappingField[list[Theme]]] = []
     website: list[MappingField[list[Link]]] = []
