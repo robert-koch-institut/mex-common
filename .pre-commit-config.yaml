@@ -25,12 +25,12 @@ repos:
       - id: fix-byte-order-marker
         name: byte-order
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 44.66.1
+    rev: 44.74.1
     hooks:
       - id: renovate-config-validator
         name: renovate
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.10
+    rev: 0.12.12
     hooks:
       - id: uv-lock
         name: uv
