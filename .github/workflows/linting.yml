@@ -73,6 +73,9 @@ jobs:
         with:
           python-version: 3.14
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libldap-dev libsasl2-dev
+
       - name: Install requirements
         run: |
           echo ${{ matrix.python-version }} > .python-version
