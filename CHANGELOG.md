@@ -35,6 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - replace `ldap3` (unmaintained since 2021, no security patches) with
   `python-ldap`, an actively maintained LDAP client
 
+## [3.4.1] - 2026-09-14
+
+### Changes
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
+- updated mex-model to 5.1.4
+
 ## [3.4.0] - 2026-08-24
 
 ### Changes
