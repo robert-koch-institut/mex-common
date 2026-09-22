@@ -11,14 +11,26 @@ dependencies = [
     "backoff>=2,<3",
     "click>=8,<9",
     "langdetect>=1,<2",
-    "ldap3>=2,<3",
     "mex-model>=5.1.2,<6",
+    "python-ldap>=3.4,<4",
     "pandas>=3,<4",
     "pydantic-settings>=2,<3",
     "pydantic>=2,<3",
     "tabulate>=0.10,<1",
     "pytz>=2026,<2027",
     "requests>=2,<3",
+]
+
+[tool.uv.sources]
+# python-ldap has no official Windows wheels, so on Windows we pull the
+# actively-maintained unofficial build from
+# https://github.com/cgohlke/python-ldap-build instead of building from
+# source. Bump this URL's version whenever the python-ldap dependency version
+# above changes. mex-common supports Python 3.11-3.14 (wider than the cp314
+# wheel below), so the marker is pinned to 3.14 specifically to avoid a
+# confusing wheel-tag-mismatch error on older interpreters on Windows.
+python-ldap = [
+    { url = "https://github.com/cgohlke/python-ldap-build/releases/download/v3.4.7/python_ldap-3.4.7-cp314-cp314-win_amd64.whl", marker = "sys_platform == 'win32' and python_full_version >= '3.14' and python_full_version < '3.15'" },
 ]
 
 [dependency-groups]
@@ -32,7 +44,6 @@ dev = [
     "pytest>=9",
     "ruff>=0.16",
     "sphinx>=9",
-    "types-ldap3",
     "types-pytz",
     "types-requests",
     "types-tabulate",
@@ -54,7 +65,7 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ['langdetect.*', 'mex.artificial.helpers']
+module = ['langdetect.*', 'ldap', 'ldap.*', 'mex.artificial.helpers']
 ignore_missing_imports = true
 
 [tool.pydantic-mypy]
