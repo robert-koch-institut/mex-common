@@ -64,6 +64,9 @@ components of the MEx project are open-sourced under the same license as well.
 ### Installation
 
 - install python on your system
+- on unix, install the OpenLDAP and Cyrus SASL development headers required to
+  build the `python-ldap` dependency from source, e.g. on Debian/Ubuntu:
+  `sudo apt-get install libldap-dev libsasl2-dev`
 - on unix, run `make install`
 - on windows, run `.\mex.bat install`
 

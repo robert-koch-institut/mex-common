@@ -11,13 +11,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: replace unmaintained `ldap3` with `python-ldap` as the LDAP client
+  used by `LDAPConnector`; public `LDAPConnector` method signatures and return
+  shapes are unchanged, but `ldap3`-specific exception types (e.g.
+  `ldap3.core.exceptions.*`) are gone in favor of `python-ldap`'s
+  `ldap.LDAPError` hierarchy
+- building `mex-common` from source now requires the OpenLDAP and Cyrus SASL
+  development headers (`libldap-dev`/`libsasl2-dev` on Debian/Ubuntu) to be
+  installed on the system, since `python-ldap` is a C extension; see README
+  for install instructions
+
 ### Deprecated
 
 ### Removed
 
+- BREAKING: remove `ldap3` dependency (unmaintained since 2021, no releases
+  since) and its `types-ldap3` dev dependency
+
 ### Fixed
 
 ### Security
+
+- replace `ldap3` (unmaintained since 2021, no security patches) with
+  `python-ldap`, an actively maintained LDAP client
 
 ## [3.4.0] - 2026-08-24
 
