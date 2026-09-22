@@ -71,7 +71,14 @@ class LDAPConnector(BaseConnector):
         self._cached_fetch_all = lru_cache(LDAP_FETCH_CACHE_SIZE)(self._fetch_all)
 
     def _setup_connection(self) -> LDAPObject:
-        """Set up a new LDAP connection."""
+        """Set up a new LDAP connection.
+
+        Note:
+            `OPT_X_TLS_NEWCTX` must be set after any `OPT_X_TLS_*` options, or
+            libldap silently ignores them (it caches an internal TLS context
+            that only picks up new settings once rebuilt). See the
+            python-ldap FAQ: https://www.python-ldap.org/en/latest/faq.html
+        """
         settings = BaseSettings.get()
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
@@ -89,7 +96,7 @@ class LDAPConnector(BaseConnector):
                 ldap.OPT_X_TLS_CACERTFILE, str(settings.verify_session)
             )
             connection.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_DEMAND)
-        # required for the TLS options above to take effect (python-ldap/OpenLDAP quirk)
+        # commits the OPT_X_TLS_* options set above, see docstring note
         connection.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
         try:
             connection.simple_bind_s(url.username, url.password)
