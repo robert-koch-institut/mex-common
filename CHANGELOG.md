@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Location entity type and wikidata helper to extract location from wikidata
+
 ### Changes
 
 ### Deprecated
