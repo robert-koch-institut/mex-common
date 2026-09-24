@@ -104,32 +104,10 @@ def transform_wikidata_location_to_extracted_location(
         return None
     return ExtractedLocation(
         wikidataId=f"http://www.wikidata.org/entity/{wikidata_location.identifier}",
-        officialName=labels,
-        shortName=_get_clean_short_names(wikidata_location.claims.short_name),
-        geprisId=[],
-        isniId=[
-            f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
-                " ", ""
-            )
-            for claim in wikidata_location.claims.isni_id
-        ],
-        gndId=[
-            f"https://d-nb.info/gnd/{claim.mainsnak.datavalue.value.text}"
-            for claim in wikidata_location.claims.gnd_id
-        ],
-        viafId=[
-            f"https://viaf.org/viaf/{claim.mainsnak.datavalue.value.text}"
-            for claim in wikidata_location.claims.viaf_id
-        ],
-        rorId=[
-            f"https://ror.org/{claim.mainsnak.datavalue.value.text}"
-            for claim in wikidata_location.claims.ror_id
-        ],
+        name=labels,
+        geoNamesId=wikidata_location.claims.geonames_id,
         identifierInPrimarySource=wikidata_location.identifier,
         hadPrimarySource=wikidata_primary_source_id,
-        alternativeName=_get_alternative_names(
-            wikidata_location.claims.native_label, wikidata_location.aliases
-        ),
     )
 
 
