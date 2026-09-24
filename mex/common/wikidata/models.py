@@ -98,3 +98,12 @@ class WikidataOrganization(BaseModel):
     labels: Labels
     claims: Claims
     aliases: Aliases
+
+
+class WikidataLocation(BaseModel):
+    """Model class for Wikidata sources."""
+
+    identifier: Annotated[str, Field(alias="id")]
+    labels: Labels
+    claims: Claims
+    aliases: Aliases

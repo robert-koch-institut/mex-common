@@ -1,8 +1,14 @@
 from collections.abc import Generator, Iterable, Sequence
 
-from mex.common.models import ExtractedOrganization
+from mex.common.models import ExtractedLocation, ExtractedOrganization
 from mex.common.types import MergedPrimarySourceIdentifier, Text, TextLanguage
-from mex.common.wikidata.models import Aliases, Claim, Labels, WikidataOrganization
+from mex.common.wikidata.models import (
+    Aliases,
+    Claim,
+    Labels,
+    WikidataLocation,
+    WikidataOrganization,
+)
 
 
 def transform_wikidata_organizations_to_extracted_organizations(
@@ -74,6 +80,55 @@ def transform_wikidata_organization_to_extracted_organization(
         hadPrimarySource=wikidata_primary_source_id,
         alternativeName=_get_alternative_names(
             wikidata_organization.claims.native_label, wikidata_organization.aliases
+        ),
+    )
+
+
+def transform_wikidata_location_to_extracted_location(
+    wikidata_location: WikidataLocation,
+    wikidata_primary_source_id: MergedPrimarySourceIdentifier,
+) -> ExtractedLocation | None:
+    """Transform one wikidata organization into ExtractedOrganizations.
+
+    If no labels are found on the wikidata organization, `None` is returned instead.
+
+    Args:
+        wikidata_location: wikidata organization to be transformed
+        wikidata_primary_source_id: Extracted primary source id for wikidata
+
+    Returns:
+        ExtractedOrganization or None
+    """
+    labels = get_official_name_label(wikidata_location.labels)
+    if not labels:
+        return None
+    return ExtractedLocation(
+        wikidataId=f"http://www.wikidata.org/entity/{wikidata_location.identifier}",
+        officialName=labels,
+        shortName=_get_clean_short_names(wikidata_location.claims.short_name),
+        geprisId=[],
+        isniId=[
+            f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
+                " ", ""
+            )
+            for claim in wikidata_location.claims.isni_id
+        ],
+        gndId=[
+            f"https://d-nb.info/gnd/{claim.mainsnak.datavalue.value.text}"
+            for claim in wikidata_location.claims.gnd_id
+        ],
+        viafId=[
+            f"https://viaf.org/viaf/{claim.mainsnak.datavalue.value.text}"
+            for claim in wikidata_location.claims.viaf_id
+        ],
+        rorId=[
+            f"https://ror.org/{claim.mainsnak.datavalue.value.text}"
+            for claim in wikidata_location.claims.ror_id
+        ],
+        identifierInPrimarySource=wikidata_location.identifier,
+        hadPrimarySource=wikidata_primary_source_id,
+        alternativeName=_get_alternative_names(
+            wikidata_location.claims.native_label, wikidata_location.aliases
         ),
     )
 
