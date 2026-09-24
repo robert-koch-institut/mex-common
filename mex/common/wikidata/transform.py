@@ -1,4 +1,5 @@
-from collections.abc import Generator, Iterable, Sequence
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import TypeVar
 
 from mex.common.models import ExtractedLocation, ExtractedOrganization
 from mex.common.types import MergedPrimarySourceIdentifier, Text, TextLanguage
@@ -10,11 +11,31 @@ from mex.common.wikidata.models import (
     WikidataOrganization,
 )
 
+SourceT = TypeVar("SourceT")
+TargetT = TypeVar("TargetT")
+
+
+def _transform_wikidata_items(
+    items: Iterable[SourceT],
+    wikidata_primary_source_id: MergedPrimarySourceIdentifier,
+    transform: Callable[
+        [SourceT, MergedPrimarySourceIdentifier],
+        TargetT | None,
+    ],
+) -> Iterator[TargetT]:
+    """Transform Wikidata items and skip unsuccessful transformations."""
+    for item in items:
+        if transformed_item := transform(
+            item,
+            wikidata_primary_source_id,
+        ):
+            yield transformed_item
+
 
 def transform_wikidata_organizations_to_extracted_organizations(
     wikidata_organizations: Iterable[WikidataOrganization],
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
-) -> Generator[ExtractedOrganization, None, None]:
+) -> Iterator[ExtractedOrganization]:
     """Transform wikidata organizations into ExtractedOrganizations.
 
     Wikidata organizations without labels are skipped.
@@ -24,22 +45,20 @@ def transform_wikidata_organizations_to_extracted_organizations(
         wikidata_primary_source_id: Extracted primary source id for wikidata
 
     Returns:
-        Generator of ExtractedOrganizations
+        Iterable of ExtractedOrganizations
     """
-    for wikidata_organization in wikidata_organizations:
-        if extracted_organization := (
-            transform_wikidata_organization_to_extracted_organization(
-                wikidata_organization, wikidata_primary_source_id
-            )
-        ):
-            yield extracted_organization
+    yield from _transform_wikidata_items(
+        wikidata_organizations,
+        wikidata_primary_source_id,
+        transform_wikidata_organization_to_extracted_organization,
+    )
 
 
 def transform_wikidata_organization_to_extracted_organization(
     wikidata_organization: WikidataOrganization,
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
 ) -> ExtractedOrganization | None:
-    """Transform one wikidata organization into ExtractedOrganizations.
+    """Transform one wikidata organization into an ExtractedOrganizations.
 
     If no labels are found on the wikidata organization, `None` is returned instead.
 
@@ -50,14 +69,18 @@ def transform_wikidata_organization_to_extracted_organization(
     Returns:
         ExtractedOrganization or None
     """
-    labels = get_official_name_label(wikidata_organization.labels)
-    if not labels:
+    label = _get_preferred_label(wikidata_organization.labels)
+    if not label:
         return None
     return ExtractedOrganization(
-        wikidataId=f"http://www.wikidata.org/entity/{wikidata_organization.identifier}",
-        officialName=labels,
+        wikidataId=_get_wikidata_entity_url(wikidata_organization.identifier),
+        officialName=label,
         shortName=_get_clean_short_names(wikidata_organization.claims.short_name),
-        geprisId=[],
+        geprisId=[
+            f"https://gepris.dfg.de/gepris/institution/{value}"
+            for claim in wikidata_organization.claims.gepris_id
+            if (value := claim.mainsnak.datavalue.value.text)
+        ],
         isniId=[
             f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
                 " ", ""
@@ -87,8 +110,8 @@ def transform_wikidata_organization_to_extracted_organization(
 def transform_wikidata_locations_to_extracted_locations(
     wikidata_locations: Iterable[WikidataLocation],
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
-) -> Generator[ExtractedLocation, None, None]:
-    """Transform wikidata locations into ExtractedLocations.
+) -> Iterator[ExtractedLocation]:
+    """Transform Wikidata locations into ExtractedLocations.
 
     Wikidata locations without labels are skipped.
 
@@ -97,39 +120,41 @@ def transform_wikidata_locations_to_extracted_locations(
         wikidata_primary_source_id: Extracted primary source id for wikidata
 
     Returns:
-        Generator of ExtractedLocations
+        Iterable of ExtractedLocation
     """
-    for wikidata_location in wikidata_locations:
-        if extracted_location := (
-            transform_wikidata_location_to_extracted_location(
-                wikidata_location, wikidata_primary_source_id
-            )
-        ):
-            yield extracted_location
+    yield from _transform_wikidata_items(
+        wikidata_locations,
+        wikidata_primary_source_id,
+        transform_wikidata_location_to_extracted_location,
+    )
 
 
 def transform_wikidata_location_to_extracted_location(
     wikidata_location: WikidataLocation,
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
 ) -> ExtractedLocation | None:
-    """Transform one wikidata organization into ExtractedOrganizations.
+    """Transform one wikidata location into an ExtractedLocation.
 
-    If no labels are found on the wikidata organization, `None` is returned instead.
+    If no labels are found on the wikidata location, `None` is returned instead.
 
     Args:
-        wikidata_location: wikidata organization to be transformed
+        wikidata_location: wikidata location to be transformed
         wikidata_primary_source_id: Extracted primary source id for wikidata
 
     Returns:
-        ExtractedOrganization or None
+        ExtractedLocation or None
     """
-    labels = get_official_name_label(wikidata_location.labels)
-    if not labels:
+    label = _get_preferred_label(wikidata_location.labels)
+    if not label:
         return None
     return ExtractedLocation(
-        wikidataId=f"http://www.wikidata.org/entity/{wikidata_location.identifier}",
-        name=labels,
-        geoNamesId=wikidata_location.claims.geonames_id,
+        wikidataId=_get_wikidata_entity_url(wikidata_location.identifier),
+        name=label,
+        geoNamesId=[
+            f"http://www.geonames.org/{value}"
+            for claim in wikidata_location.claims.geonames_id
+            if (value := claim.mainsnak.datavalue.value.text)
+        ],
         identifierInPrimarySource=wikidata_location.identifier,
         hadPrimarySource=wikidata_primary_source_id,
     )
@@ -205,7 +230,7 @@ def _get_clean_short_names(short_names: Sequence[Claim]) -> list[Text]:
     return clean_short_names
 
 
-def get_official_name_label(labels: Labels) -> Text | None:
+def _get_preferred_label(labels: Labels) -> Text | None:
     """Get if DE label is available and return a list of EN and DE labels.
 
     Args:
@@ -221,3 +246,7 @@ def get_official_name_label(labels: Labels) -> Text | None:
     if labels.multiple:
         return Text(value=labels.multiple.value, language=None)
     return None
+
+
+def _get_wikidata_entity_url(identifier: str) -> str:
+    return f"http://www.wikidata.org/entity/{identifier}"
