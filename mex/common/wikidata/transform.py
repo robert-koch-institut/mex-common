@@ -84,6 +84,30 @@ def transform_wikidata_organization_to_extracted_organization(
     )
 
 
+def transform_wikidata_locations_to_extracted_locations(
+    wikidata_locations: Iterable[WikidataLocation],
+    wikidata_primary_source_id: MergedPrimarySourceIdentifier,
+) -> Generator[ExtractedLocation, None, None]:
+    """Transform wikidata locations into ExtractedLocations.
+
+    Wikidata locations without labels are skipped.
+
+    Args:
+        wikidata_locations: Iterable of wikidata location to be transformed
+        wikidata_primary_source_id: Extracted primary source id for wikidata
+
+    Returns:
+        Generator of ExtractedLocations
+    """
+    for wikidata_location in wikidata_locations:
+        if extracted_location := (
+            transform_wikidata_location_to_extracted_location(
+                wikidata_location, wikidata_primary_source_id
+            )
+        ):
+            yield extracted_location
+
+
 def transform_wikidata_location_to_extracted_location(
     wikidata_location: WikidataLocation,
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
