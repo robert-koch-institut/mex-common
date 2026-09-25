@@ -16,7 +16,7 @@ from mex.common.wikidata.models import (
 from mex.common.wikidata.transform import (
     _get_alternative_names,
     _get_clean_short_names,
-    get_official_name_label,
+    _get_preferred_label,
     transform_wikidata_organization_to_extracted_organization,
     transform_wikidata_organizations_to_extracted_organizations,
 )
@@ -253,5 +253,5 @@ def test_get_clean_short_names() -> None:
         ),
     ],
 )
-def test_get_official_name_label(labels: Labels, expected: Text | None) -> None:
-    assert get_official_name_label(labels) == expected
+def test_get_preferred_label(labels: Labels, expected: Text | None) -> None:
+    assert _get_preferred_label(labels) == expected
