@@ -2,12 +2,12 @@ import re
 from unittest.mock import MagicMock
 from uuid import UUID
 
+import ldap
 import pytest
-from ldap3.core.exceptions import LDAPSocketSendError
 from pytest import MonkeyPatch
 
 from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
-from mex.common.ldap.connector import LDAPConnector
+from mex.common.ldap.connector import LDAPConnector, _decode_attributes
 
 # expected results derived from `assets/raw-data/ldap/data.ldif.TEMPLATE`
 FRIEDA_FICTITIOUS = {
@@ -40,6 +40,31 @@ ALL_PERSON_ACCOUNTS = {"ResolvedR", "FelicitasJ", "FictitiousF"}
 )
 def test_sanitize_value(value: str, expected: str) -> None:
     assert LDAPConnector._sanitize(value) == expected
+
+
+def test_decode_attributes_handles_ad_binary_object_guid() -> None:
+    # Active Directory returns objectGUID as a raw 16-byte binary value in
+    # Windows' mixed-endian GUID byte order, not as UTF-8 text.
+    guid = UUID("99fedb10-a334-4a0e-a66e-d3bf35b4e2ff")
+    decoded = _decode_attributes(
+        {
+            "objectGUID": [guid.bytes_le],
+            "sAMAccountName": [b"foo"],
+        }
+    )
+    assert decoded == {
+        "objectGUID": [str(guid)],
+        "sAMAccountName": ["foo"],
+    }
+
+
+def test_decode_attributes_handles_text_object_guid() -> None:
+    # some LDAP servers (e.g. the mock server used in tests) return
+    # objectGUID as an already-formatted UUID string instead of raw bytes.
+    decoded = _decode_attributes(
+        {"objectGUID": [b"00000000-0000-4000-8000-000000000003"]}
+    )
+    assert decoded == {"objectGUID": ["00000000-0000-4000-8000-000000000003"]}
 
 
 @pytest.mark.usefixtures("mocked_ldap")
@@ -124,21 +149,28 @@ def test_get_functional_account() -> None:
 def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     # first connection raises ldap error
     first_connection = MagicMock(name="conn1")
-    first_connection.extend.standard.paged_search = MagicMock(
-        side_effect=LDAPSocketSendError("Simulated error")
+    first_connection.search_ext = MagicMock(
+        side_effect=ldap.SERVER_DOWN("Simulated error")
     )
     # second connection returns valid content
     second_connection: MagicMock = MagicMock(name="conn2")
-    second_connection.extend.standard.paged_search = MagicMock(
-        return_value=[
-            {
-                "attributes": {
-                    "sAMAccountName": "foo",
-                    "objectGUID": "00000000-0000-4000-8000-000000000000",
-                    "ou": ["Funktion"],
-                }
-            }
-        ]
+    second_connection.search_ext = MagicMock(return_value="msgid")
+    second_connection.result3 = MagicMock(
+        return_value=(
+            None,
+            [
+                (
+                    "sAMAccountName=foo",
+                    {
+                        "sAMAccountName": [b"foo"],
+                        "objectGUID": [b"00000000-0000-4000-8000-000000000000"],
+                        "ou": [b"Funktion"],
+                    },
+                )
+            ],
+            None,
+            [],
+        )
     )
 
     monkeypatch.setattr(
@@ -150,8 +182,8 @@ def test_fetch_backoff_reconnect(monkeypatch: MonkeyPatch) -> None:
     assert connector._connection is first_connection
     result = connector._fetch("(objectCategory=Person)", 1)
     assert result.raw_items[0] == {
-        "sAMAccountName": "foo",
-        "objectGUID": "00000000-0000-4000-8000-000000000000",
+        "sAMAccountName": ["foo"],
+        "objectGUID": ["00000000-0000-4000-8000-000000000000"],
         "ou": ["Funktion"],
     }
     assert connector._connection is second_connection

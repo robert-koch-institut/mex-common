@@ -1,8 +1,3 @@
-import pytest
-from ldap3.core.exceptions import LDAPSocketOpenError
-
-from mex.common.ldap.connector import LDAPConnector
-
 SAMPLE_PERSON_ATTRS = {
     "company": ["RKI"],
     "department": ["XY"],
@@ -16,14 +11,3 @@ SAMPLE_PERSON_ATTRS = {
     "sAMAccountName": ["SampleS"],
     "sn": ["Sample"],
 }
-
-
-@pytest.fixture(autouse=True)
-def skip_ldap_integration_tests_on_connection_error(
-    is_integration_test: bool,  # noqa: FBT001
-) -> None:
-    if is_integration_test:
-        try:
-            LDAPConnector.get()
-        except LDAPSocketOpenError:
-            pytest.skip("LDAP unavailable")
