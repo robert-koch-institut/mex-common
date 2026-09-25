@@ -8,6 +8,7 @@ The current set of entity types includes:
 - Consent
 - ContactPoint
 - Distribution
+- Location
 - Organization
 - OrganizationalUnit
 - Person
@@ -189,6 +190,20 @@ from mex.common.models.distribution import (
     SubtractiveDistribution,
     WorkflowDistribution,
 )
+from mex.common.models.location import (
+    AdditiveLocation,
+    BaseLocation,
+    ExtractedLocation,
+    LocationFilter,
+    LocationMapping,
+    LocationRuleSetRequest,
+    LocationRuleSetResponse,
+    MergedLocation,
+    PreventiveLocation,
+    PreviewLocation,
+    SubtractiveLocation,
+    WorkflowLocation,
+)
 from mex.common.models.organization import (
     AdditiveOrganization,
     BaseOrganization,
@@ -350,6 +365,7 @@ __all__ = (
     "AdditiveConsent",
     "AdditiveContactPoint",
     "AdditiveDistribution",
+    "AdditiveLocation",
     "AdditiveModelTypeAdapter",
     "AdditiveOrganization",
     "AdditiveOrganizationalUnit",
@@ -379,6 +395,7 @@ __all__ = (
     "BaseContactPoint",
     "BaseDistribution",
     "BaseFilter",
+    "BaseLocation",
     "BaseMapping",
     "BaseModel",
     "BaseOrganization",
@@ -410,6 +427,7 @@ __all__ = (
     "ExtractedContactPoint",
     "ExtractedData",
     "ExtractedDistribution",
+    "ExtractedLocation",
     "ExtractedModelTypeAdapter",
     "ExtractedOrganization",
     "ExtractedOrganizationalUnit",
@@ -423,6 +441,10 @@ __all__ = (
     "FilterModelTypeAdapter",
     "FilterRule",
     "ItemsContainer",
+    "LocationFilter",
+    "LocationMapping",
+    "LocationRuleSetRequest",
+    "LocationRuleSetResponse",
     "MappingField",
     "MappingModelTypeAdapter",
     "MappingRule",
@@ -433,6 +455,7 @@ __all__ = (
     "MergedContactPoint",
     "MergedDistribution",
     "MergedItem",
+    "MergedLocation",
     "MergedModelTypeAdapter",
     "MergedOrganization",
     "MergedOrganizationalUnit",
@@ -461,6 +484,7 @@ __all__ = (
     "PreventiveConsent",
     "PreventiveContactPoint",
     "PreventiveDistribution",
+    "PreventiveLocation",
     "PreventiveModelTypeAdapter",
     "PreventiveOrganization",
     "PreventiveOrganizationalUnit",
@@ -477,6 +501,7 @@ __all__ = (
     "PreviewConsent",
     "PreviewContactPoint",
     "PreviewDistribution",
+    "PreviewLocation",
     "PreviewModelTypeAdapter",
     "PreviewOrganization",
     "PreviewOrganizationalUnit",
@@ -508,6 +533,7 @@ __all__ = (
     "SubtractiveConsent",
     "SubtractiveContactPoint",
     "SubtractiveDistribution",
+    "SubtractiveLocation",
     "SubtractiveModelTypeAdapter",
     "SubtractiveOrganization",
     "SubtractiveOrganizationalUnit",
@@ -533,6 +559,7 @@ __all__ = (
     "WorkflowConsent",
     "WorkflowContactPoint",
     "WorkflowDistribution",
+    "WorkflowLocation",
     "WorkflowModelTypeAdapter",
     "WorkflowOrganization",
     "WorkflowOrganizationalUnit",
@@ -564,6 +591,7 @@ AnyBaseModel = (
     | BaseConsent
     | BaseContactPoint
     | BaseDistribution
+    | BaseLocation
     | BaseOrganization
     | BaseOrganizationalUnit
     | BasePerson
@@ -585,6 +613,7 @@ AnyExtractedModel = (
     | ExtractedConsent
     | ExtractedContactPoint
     | ExtractedDistribution
+    | ExtractedLocation
     | ExtractedOrganization
     | ExtractedOrganizationalUnit
     | ExtractedPerson
@@ -611,6 +640,7 @@ AnyMergedModel = (
     | MergedConsent
     | MergedContactPoint
     | MergedDistribution
+    | MergedLocation
     | MergedOrganization
     | MergedOrganizationalUnit
     | MergedPerson
@@ -635,6 +665,7 @@ AnyPreviewModel = (
     | PreviewConsent
     | PreviewContactPoint
     | PreviewDistribution
+    | PreviewLocation
     | PreviewOrganization
     | PreviewOrganizationalUnit
     | PreviewPerson
@@ -661,6 +692,7 @@ AnyAdditiveModel = (
     | AdditiveConsent
     | AdditiveContactPoint
     | AdditiveDistribution
+    | AdditiveLocation
     | AdditiveOrganization
     | AdditiveOrganizationalUnit
     | AdditivePerson
@@ -687,6 +719,7 @@ AnySubtractiveModel = (
     | SubtractiveConsent
     | SubtractiveContactPoint
     | SubtractiveDistribution
+    | SubtractiveLocation
     | SubtractiveOrganization
     | SubtractiveOrganizationalUnit
     | SubtractivePerson
@@ -713,6 +746,7 @@ AnyPreventiveModel = (
     | PreventiveConsent
     | PreventiveContactPoint
     | PreventiveDistribution
+    | PreventiveLocation
     | PreventiveOrganization
     | PreventiveOrganizationalUnit
     | PreventivePerson
@@ -739,6 +773,7 @@ AnyWorkflowModel = (
     | WorkflowConsent
     | WorkflowContactPoint
     | WorkflowDistribution
+    | WorkflowLocation
     | WorkflowOrganization
     | WorkflowOrganizationalUnit
     | WorkflowPerson
@@ -785,6 +820,7 @@ AnyRuleSetRequest = (
     | ConsentRuleSetRequest
     | ContactPointRuleSetRequest
     | DistributionRuleSetRequest
+    | LocationRuleSetRequest
     | OrganizationRuleSetRequest
     | OrganizationalUnitRuleSetRequest
     | PersonRuleSetRequest
@@ -811,6 +847,7 @@ AnyRuleSetResponse = (
     | ConsentRuleSetResponse
     | ContactPointRuleSetResponse
     | DistributionRuleSetResponse
+    | LocationRuleSetResponse
     | OrganizationRuleSetResponse
     | OrganizationalUnitRuleSetResponse
     | PersonRuleSetResponse
@@ -837,6 +874,7 @@ AnyMappingModel = (
     | ConsentMapping
     | ContactPointMapping
     | DistributionMapping
+    | LocationMapping
     | OrganizationMapping
     | OrganizationalUnitMapping
     | PersonMapping
@@ -867,6 +905,7 @@ AnyFilterModel = (
     | ConsentFilter
     | ContactPointFilter
     | DistributionFilter
+    | LocationFilter
     | OrganizationFilter
     | OrganizationalUnitFilter
     | PersonFilter
