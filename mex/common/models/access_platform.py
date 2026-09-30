@@ -75,16 +75,7 @@ class _OptionalLists(_Stem):
                 "access to the catalog, a dataset, its distributions and/or "
                 "additional information."
             ),
-            json_schema_extra={
-                "closeMatch": ["https://www.w3.org/ns/dcat#landingPage"]
-            },
-        ),
-    ] = []
-    title: Annotated[
-        list[Text],
-        Field(
-            description="The name of the access platform.",
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#landingPage"]},
         ),
     ] = []
     unitInCharge: Annotated[
@@ -133,6 +124,17 @@ class _OptionalValues(_Stem):
     ] = None
 
 
+class _RequiredLists(_Stem):
+    title: Annotated[
+        list[Text],
+        Field(
+            description="The name of the access platform.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+            min_length=1,
+        ),
+    ]
+
+
 class _RequiredValues(_Stem):
     technicalAccessibility: Annotated[
         TechnicalAccessibility,
@@ -145,6 +147,16 @@ class _RequiredValues(_Stem):
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ]
+
+
+class _SparseLists(_Stem):
+    title: Annotated[
+        list[Text],
+        Field(
+            description="The name of the access platform.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+        ),
+    ] = []
 
 
 class _SparseValues(_Stem):
@@ -419,6 +431,7 @@ class AccessPlatformMapping(_Stem, BaseMapping):
     technicalAccessibility: Annotated[
         list[MappingField[TechnicalAccessibility]], Field(min_length=1)
     ]
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     endpointDescription: list[MappingField[Link | None]] = []
     endpointType: list[MappingField[APIType | None]] = []
     endpointURL: list[MappingField[Link | None]] = []
@@ -426,7 +439,6 @@ class AccessPlatformMapping(_Stem, BaseMapping):
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
     landingPage: list[MappingField[list[Link]]] = []
-    title: list[MappingField[list[Text]]] = []
     unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
 
 
