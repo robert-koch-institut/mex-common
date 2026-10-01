@@ -1,12 +1,13 @@
 import re
-import ssl
+import uuid
 from functools import lru_cache
 from typing import Any, cast
 from urllib.parse import urlsplit
 
 import backoff
-from ldap3 import Connection, Server, Tls
-from ldap3.core.exceptions import LDAPExceptionError, LDAPSocketSendError
+import ldap
+from ldap.controls import SimplePagedResultsControl
+from ldap.ldapobject import LDAPObject
 
 from mex.common.connector import BaseConnector
 from mex.common.exceptions import (
@@ -29,6 +30,34 @@ from mex.common.models.base.container import PaginatedItemsContainer
 from mex.common.settings import BaseSettings
 
 LDAP_FETCH_CACHE_SIZE = 5000
+LDAP_PAGE_SIZE = 1000
+
+
+AD_BINARY_GUID_LENGTH = 16
+
+
+def _decode_object_guid(value: bytes) -> str:
+    """Decode an objectGUID value.
+
+    Active Directory returns objectGUID as a raw 16-byte binary GUID (not
+    UTF-8 text), encoded in the mixed-endian byte order Windows uses for
+    GUIDs. Other LDAP servers (e.g. the mock server used for testing) may
+    instead return the already-formatted UUID string as plain text.
+    """
+    if len(value) == AD_BINARY_GUID_LENGTH:
+        return str(uuid.UUID(bytes_le=value))
+    return value.decode("utf-8")
+
+
+def _decode_attributes(attributes: dict[str, list[bytes]]) -> dict[str, list[str]]:
+    """Decode the raw byte attribute values returned by python-ldap into strings."""
+    return {
+        key: [
+            _decode_object_guid(value) if key == "objectGUID" else value.decode()
+            for value in values
+        ]
+        for key, values in attributes.items()
+    }
 
 
 class LDAPConnector(BaseConnector):
@@ -41,42 +70,37 @@ class LDAPConnector(BaseConnector):
         self._connection = self._setup_connection()
         self._cached_fetch_all = lru_cache(LDAP_FETCH_CACHE_SIZE)(self._fetch_all)
 
-    def _setup_connection(self) -> Connection:
-        """Set up a new LDAP connection."""
+    def _setup_connection(self) -> LDAPObject:
+        """Set up a new LDAP connection.
+
+        Note:
+            `OPT_X_TLS_NEWCTX` must be set after any `OPT_X_TLS_*` options, or
+            libldap silently ignores them (it caches an internal TLS context
+            that only picks up new settings once rebuilt). See the
+            python-ldap FAQ: https://www.python-ldap.org/en/latest/faq.html
+        """
         settings = BaseSettings.get()
         url = urlsplit(settings.ldap_url.get_secret_value())
         host = str(url.hostname)
-        port = int(url.port) if url.port else None
+        port = int(url.port) if url.port else 636
+        connection = ldap.initialize(f"ldaps://{host}:{port}")
         if isinstance(settings.verify_session, bool):
-            tls_validate = (
-                ssl.CERT_REQUIRED if settings.verify_session else ssl.CERT_NONE
+            connection.set_option(
+                ldap.OPT_X_TLS_REQUIRE_CERT,
+                ldap.OPT_X_TLS_DEMAND
+                if settings.verify_session
+                else ldap.OPT_X_TLS_NEVER,
             )
-            ca_certs_file = None
         else:
-            tls_validate = ssl.CERT_REQUIRED
-            ca_certs_file = settings.verify_session
-        tls_configuration = Tls(
-            validate=tls_validate,
-            version=ssl.PROTOCOL_SSLv23,
-            ca_certs_file=ca_certs_file,
-        )
-        server = Server(
-            host,
-            port,
-            use_ssl=True,
-            tls=tls_configuration,
-        )
-        connection = Connection(
-            server,
-            user=url.username,
-            password=url.password,
-            auto_bind=True,
-            read_only=True,
-        )
-        connection.__enter__()
+            connection.set_option(
+                ldap.OPT_X_TLS_CACERTFILE, str(settings.verify_session)
+            )
+            connection.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_DEMAND)
+        # commits the OPT_X_TLS_* options set above, see docstring note
+        connection.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
         try:
-            connection.server.check_availability()
-        except LDAPExceptionError as error:
+            connection.simple_bind_s(url.username, url.password)
+        except ldap.LDAPError as error:
             msg = f"LDAP service not available at url: {host}:{port}"
             raise MExError(msg) from error
         return connection
@@ -84,7 +108,7 @@ class LDAPConnector(BaseConnector):
     def close(self) -> None:
         """Close the connector's underlying LDAP connection."""
         if self._connection:
-            self._connection.__exit__(None, None, None)
+            self._connection.unbind_s()
 
     def reconnect(self) -> None:
         """Close current ldap connection and initiate a new one."""
@@ -93,7 +117,7 @@ class LDAPConnector(BaseConnector):
 
     @backoff.on_exception(
         wait_gen=backoff.fibo,
-        exception=(LDAPSocketSendError,),
+        exception=(ldap.SERVER_DOWN,),
         max_tries=2,
         logger=logger,
         on_backoff=lambda details: cast(
@@ -102,15 +126,36 @@ class LDAPConnector(BaseConnector):
     )
     def _fetch_all(self, search_filter: str) -> list[dict[str, Any]]:
         """DON'T USE THIS METHOD DIRECTLY! Call _cached_fetch_all instead."""
-        return list(
-            self._connection.extend.standard.paged_search(
-                search_base=self._search_base,
-                search_filter=search_filter.strip(),
-                attributes=tuple(
-                    sorted({f for m in LDAP_MODEL_CLASSES for f in m.model_fields})
-                ),
-            )
+        attributes = sorted({f for m in LDAP_MODEL_CLASSES for f in m.model_fields})
+        page_control = SimplePagedResultsControl(
+            criticality=True, size=LDAP_PAGE_SIZE, cookie=b""
         )
+        items: list[dict[str, Any]] = []
+        while True:
+            msgid = self._connection.search_ext(
+                self._search_base,
+                ldap.SCOPE_SUBTREE,
+                search_filter.strip(),
+                attrlist=attributes,
+                serverctrls=[page_control],
+            )
+            _res_type, res_data, _res_msgid, res_controls = self._connection.result3(
+                msgid
+            )
+            items.extend(
+                {"attributes": _decode_attributes(attrs)}
+                for dn, attrs in res_data
+                if dn is not None
+            )
+            controls = [
+                control
+                for control in res_controls
+                if control.controlType == SimplePagedResultsControl.controlType
+            ]
+            if not controls or not controls[0].cookie:
+                break
+            page_control.cookie = controls[0].cookie
+        return items
 
     def _fetch(
         self, search_filter: str, limit: int, offset: int = 0
