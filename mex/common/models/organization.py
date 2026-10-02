@@ -17,11 +17,11 @@ from mex.common.models.base.rules import (
 )
 from mex.common.types import (
     ExtractedOrganizationIdentifier,
+    MergedLocationIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
 )
-from mex.common.types.vocabulary import Country
 
 GeprisIdStr = Annotated[
     str,
@@ -112,7 +112,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     country: Annotated[
-        list[Country],
+        list[MergedLocationIdentifier],
         Field(
             description="Country or territory that this organization is in.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P17"]},
@@ -414,7 +414,7 @@ class OrganizationMapping(_Stem, BaseMapping):
     ] = "OrganizationMapping"
     officialName: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeName: list[MappingField[list[Text]]] = []
-    country: list[MappingField[list[Country]]] = []
+    country: list[MappingField[list[MergedLocationIdentifier]]] = []
     geprisId: list[MappingField[list[GeprisIdStr]]] = []
     gndId: list[MappingField[list[GndIdStr]]] = []
     isniId: list[MappingField[list[IsniIdStr]]] = []
