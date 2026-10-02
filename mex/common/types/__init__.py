@@ -10,6 +10,7 @@ from mex.common.types.identifier import (
     ExtractedContactPointIdentifier,
     ExtractedDistributionIdentifier,
     ExtractedIdentifier,
+    ExtractedLocationIdentifier,
     ExtractedOrganizationalUnitIdentifier,
     ExtractedOrganizationIdentifier,
     ExtractedPersonIdentifier,
@@ -26,6 +27,7 @@ from mex.common.types.identifier import (
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedIdentifier,
+    MergedLocationIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -120,6 +122,7 @@ __all__ = (
     "ExtractedContactPointIdentifier",
     "ExtractedDistributionIdentifier",
     "ExtractedIdentifier",
+    "ExtractedLocationIdentifier",
     "ExtractedOrganizationIdentifier",
     "ExtractedOrganizationalUnitIdentifier",
     "ExtractedPersonIdentifier",
@@ -145,6 +148,7 @@ __all__ = (
     "MergedContactPointIdentifier",
     "MergedDistributionIdentifier",
     "MergedIdentifier",
+    "MergedLocationIdentifier",
     "MergedOrganizationIdentifier",
     "MergedOrganizationalUnitIdentifier",
     "MergedPersonIdentifier",
@@ -227,6 +231,7 @@ AnyMergedIdentifier = (
     | MergedConsentIdentifier
     | MergedContactPointIdentifier
     | MergedDistributionIdentifier
+    | MergedLocationIdentifier
     | MergedOrganizationalUnitIdentifier
     | MergedOrganizationIdentifier
     | MergedPersonIdentifier
@@ -250,6 +255,7 @@ AnyExtractedIdentifier = (
     | ExtractedConsentIdentifier
     | ExtractedContactPointIdentifier
     | ExtractedDistributionIdentifier
+    | ExtractedLocationIdentifier
     | ExtractedOrganizationalUnitIdentifier
     | ExtractedOrganizationIdentifier
     | ExtractedPersonIdentifier
