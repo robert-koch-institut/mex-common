@@ -35,10 +35,6 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 
-AnyExternalAssociateIdentifier = Annotated[
-    MergedOrganizationIdentifier | MergedPersonIdentifier,
-    AfterValidator(Identifier),
-]
 AnyContactIdentifier = Annotated[
     MergedOrganizationalUnitIdentifier
     | MergedPersonIdentifier
@@ -92,7 +88,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     externalAssociate: Annotated[
-        list[AnyExternalAssociateIdentifier],
+        list[MergedOrganizationIdentifier],
         Field(
             description=(
                 "An external institution or person that is associated with the "
@@ -493,7 +489,7 @@ class ActivityMapping(_Stem, BaseMapping):
     end: list[
         MappingField[list[YearMonthDayTime | YearMonthDay | YearMonth | Year]]
     ] = []
-    externalAssociate: list[MappingField[list[AnyExternalAssociateIdentifier]]] = []
+    externalAssociate: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     funderOrCommissioner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     fundingProgram: list[MappingField[list[str]]] = []
     involvedPerson: list[MappingField[list[MergedPersonIdentifier]]] = []
