@@ -60,6 +60,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     MergedResourceIdentifier,
     PublishingTarget,
+    ResourceCreationMethod,
     Text,
     TextLanguage,
     Theme,
@@ -290,6 +291,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                     hadPrimarySource=Identifier.generate(seed=42),
                     accessRestriction=AccessRestriction.OPEN,
                     contact=[Identifier.generate(seed=999)],
+                    resourceCreationMethod=ResourceCreationMethod.OTHER,
                     unitInCharge=[Identifier.generate(seed=999)],
                     theme=[Theme.PUBLIC_HEALTH],
                     title=[Text(value="Dummy resource")],
@@ -543,6 +545,7 @@ def test_ensure_rule_set_returns_existing() -> None:
                     sizeOfDataBasis="enormous",
                     accessRestriction=AccessRestriction.OPEN,
                     contact=[Identifier.generate(seed=999)],
+                    resourceCreationMethod=ResourceCreationMethod.OTHER,
                     unitInCharge=[Identifier.generate(seed=999)],
                     theme=[Theme.PUBLIC_HEALTH],
                     title=[Text(value="Dummy resource")],
@@ -559,6 +562,9 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "contact": ["bFQoRhcVH5DIax"],
                 "entityType": "PreviewResource",
                 "identifier": "bFQoRhcVH5DHU6",
+                "resourceCreationMethod": [
+                    "https://mex.rki.de/item/resource-creation-method-1"
+                ],
                 "sizeOfDataBasis": ["enormous", "gigantic"],
                 "theme": ["https://mex.rki.de/item/theme-1"],
                 "title": [{"language": TextLanguage.EN, "value": "Dummy resource"}],
