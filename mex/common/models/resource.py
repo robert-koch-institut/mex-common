@@ -575,8 +575,8 @@ class _RequiredLists(_Stem):
         list[ResourceCreationMethod],
         Field(
             description="Method how the resource was created.",
-            min_length=1,
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
+            min_length=1,
         ),
     ]
     theme: Annotated[
@@ -620,6 +620,13 @@ class _SparseLists(_Stem):
             json_schema_extra={
                 "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
             },
+        ),
+    ] = []
+    resourceCreationMethod: Annotated[
+        list[ResourceCreationMethod],
+        Field(
+            description="Method how the resource was created.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     theme: Annotated[

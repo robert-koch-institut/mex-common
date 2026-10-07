@@ -52,7 +52,7 @@ class _OptionalLists(_Stem):
         list[GeoNamesIdStr],
         Field(
             description="Identifier in the GeoNames geographical database.",
-            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1566"]},
+            json_schema_extra={"exactMatch": ["http://www.wikidata.org/entity/P1566"]},
         ),
     ] = []
     wikidataId: Annotated[
@@ -67,7 +67,7 @@ class _RequiredLists(_Stem):
         Field(
             description="Name of the location.",
             min_length=1,
-            json_schema_extra={"closeMatch": ["http://www.wikidata.org/name"]},
+            json_schema_extra={"closeMatch": ["https://schema.org/name"]},
         ),
     ]
 
@@ -77,7 +77,7 @@ class _SparseLists(_Stem):
         list[Text],
         Field(
             description="Name of the location.",
-            json_schema_extra={"closeMatch": ["http://www.wikidata.org/name"]},
+            json_schema_extra={"closeMatch": ["https://schema.org/name"]},
         ),
     ] = []
 

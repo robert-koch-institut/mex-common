@@ -306,6 +306,9 @@ def test_ensure_rule_set_returns_existing() -> None:
             {
                 "accessRestriction": "https://mex.rki.de/item/access-restriction-1",
                 "contact": ["bFQoRhcVH5DIax"],
+                "resourceCreationMethod": [
+                    "https://mex.rki.de/item/resource-creation-method-1"
+                ],
                 "theme": ["https://mex.rki.de/item/theme-1"],
                 "title": [{"value": "Dummy resource", "language": TextLanguage.EN}],
                 "unitInCharge": ["bFQoRhcVH5DIax"],
@@ -371,6 +374,7 @@ def test_ensure_rule_set_returns_existing() -> None:
             PersonRuleSetRequest(
                 additive=AdditivePerson(
                     givenName=["Eugene", "Harold", "John"],
+                    fullName=["Example, E., H., J."],
                     memberOf=[Identifier.generate(seed=500)],
                 ),
                 subtractive=SubtractivePerson(
@@ -385,6 +389,7 @@ def test_ensure_rule_set_returns_existing() -> None:
             Validation.STRICT,
             {
                 "givenName": ["Eugene", "Harold"],
+                "fullName": ["Example, E., H., J."],
                 "memberOf": [
                     Identifier.generate(seed=500),
                 ],
