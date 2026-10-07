@@ -198,23 +198,25 @@ class HealthCategory(VocabularyEnum):
     DATA_ON_HEALTH_DETERMINANTS = "https://mex.rki.de/item/health-category-6"
     DATA_FROM_RESEARCH_COHORTS_AND_SURVEYS = "https://mex.rki.de/item/health-category-7"
     OTHER_DATA_FROM_MEDICAL_DEVICES = "https://mex.rki.de/item/health-category-8"
-    DATA_FROM_REGULATED_CLINICAL_RESEARCH = "https://mex.rki.de/item/health-category-9"
-    AGGREGATED_DATA_ON_HEALTHCARE_NEEDS_PROVISION_AND_RESOURCES = (
+    DATA_FROM_CLINICAL_TRIALS_AND_STUDIES_REGULATED_BY_THE_EU = (
+        "https://mex.rki.de/item/health-category-9"
+    )
+    DATA_ON_HEALTHCARE_HEALTHCARE_RESOURCES_AND_HEALTHCARE_FUNDING = (
         "https://mex.rki.de/item/health-category-10"
     )
-    AUTOMATICALLY_GENERATED_PERSONAL_ELECTRONIC_HEALTH_DATA = (
+    AUTOMATICALLY_GENERATED_PERSONAL_HEALTH_DATA_FROM_MEDICAL_DEVICES = (
         "https://mex.rki.de/item/health-category-11"
     )
     HUMAN_GENETIC_EPIGENOMIC_AND_GENOMIC_DATA = (
         "https://mex.rki.de/item/health-category-12"
     )
-    ADMINISTRATIVE_DATA = "https://mex.rki.de/item/health-category-13"
+    HEALTHCARE_ADMINISTRATIVE_DATA = "https://mex.rki.de/item/health-category-13"
     DATA_ON_PATHOGENS = "https://mex.rki.de/item/health-category-14"
     HEALTH_DATA_FROM_BIOBANKS = "https://mex.rki.de/item/health-category-15"
     DATA_FROM_POPULATION_BASED_HEALTH_DATA_REGISTRIES = (
         "https://mex.rki.de/item/health-category-16"
     )
-    WELLNESS_APPLICATION_DATA = "https://mex.rki.de/item/health-category-17"
+    DATA_FROM_WELLNESS_APPLICATIONS = "https://mex.rki.de/item/health-category-17"
 
 
 class Language(VocabularyEnum):
@@ -227,6 +229,30 @@ class Language(VocabularyEnum):
     FRENCH = "https://mex.rki.de/item/language-3"
     SPANISH = "https://mex.rki.de/item/language-4"
     RUSSIAN = "https://mex.rki.de/item/language-5"
+    BULGARIAN = "https://mex.rki.de/item/language-6"
+    DANISH = "https://mex.rki.de/item/language-7"
+    ESTONIAN = "https://mex.rki.de/item/language-8"
+    FINNISH = "https://mex.rki.de/item/language-9"
+    GREEK = "https://mex.rki.de/item/language-10"
+    IRISH = "https://mex.rki.de/item/language-11"
+    ITALIAN = "https://mex.rki.de/item/language-12"
+    CROATIAN = "https://mex.rki.de/item/language-13"
+    LATVIAN = "https://mex.rki.de/item/language-14"
+    LITHUANIAN = "https://mex.rki.de/item/language-15"
+    MALTESE = "https://mex.rki.de/item/language-16"
+    DUTCH = "https://mex.rki.de/item/language-17"
+    POLISH = "https://mex.rki.de/item/language-18"
+    PORTUGUESE = "https://mex.rki.de/item/language-19"
+    ROMANIAN = "https://mex.rki.de/item/language-20"
+    SWEDISH = "https://mex.rki.de/item/language-21"
+    SLOVAK = "https://mex.rki.de/item/language-22"
+    SLOVENE = "https://mex.rki.de/item/language-23"
+    CZECH = "https://mex.rki.de/item/language-24"
+    HUNGARIAN = "https://mex.rki.de/item/language-25"
+    CHINESE = "https://mex.rki.de/item/language-26"
+    ARABIC = "https://mex.rki.de/item/language-27"
+    JAPANESE = "https://mex.rki.de/item/language-28"
+    TURKISH = "https://mex.rki.de/item/language-29"
 
 
 class License(VocabularyEnum):
@@ -302,14 +328,25 @@ class ResourceCreationMethod(VocabularyEnum):
     __scheme__ = "https://mex.rki.de/item/resource-creation-method"
 
     OTHER = "https://mex.rki.de/item/resource-creation-method-1"
-    STUDIES_SURVEYS_AND_INTERVIEWS = (
-        "https://mex.rki.de/item/resource-creation-method-2"
+    HEALTH_SURVEY_INTERVIEW = "https://mex.rki.de/item/resource-creation-method-2"
+    OBSERVATIONAL_STUDY = "https://mex.rki.de/item/resource-creation-method-21"
+    COHORT = "https://mex.rki.de/item/resource-creation-method-22"
+    PANEL = "https://mex.rki.de/item/resource-creation-method-23"
+    PROBABILITY_SURVEY = "https://mex.rki.de/item/resource-creation-method-24"
+    SURVEILLANCE_OF_PUBLIC_HEALTH_INDICATORS = (
+        "https://mex.rki.de/item/resource-creation-method-3"
     )
-    SURVEILLANCE = "https://mex.rki.de/item/resource-creation-method-3"
+    DISEASE_SURVEILLANCE = "https://mex.rki.de/item/resource-creation-method-31"
     LABORATORY_TESTS = "https://mex.rki.de/item/resource-creation-method-4"
     SEQUENCING = "https://mex.rki.de/item/resource-creation-method-5"
-    REGISTRY = "https://mex.rki.de/item/resource-creation-method-6"
+    NATIONAL_HEALTH_REGISTRIES = "https://mex.rki.de/item/resource-creation-method-6"
     MODELS_AND_SIMULATIONS = "https://mex.rki.de/item/resource-creation-method-7"
+    SAMPLE_COLLECTIONS = "https://mex.rki.de/item/resource-creation-method-8"
+    BIOBANK_COLLECTION = "https://mex.rki.de/item/resource-creation-method-9"
+    GEOGRAPHICAL_MONITORING_OF_HEALTH_OR_ENVIRONMENTAL_EXPOSURES = (
+        "https://mex.rki.de/item/resource-creation-method-10"
+    )
+    CENSUS_DATA = "https://mex.rki.de/item/resource-creation-method-11"
 
 
 class ResourceTypeGeneral(VocabularyEnum):
