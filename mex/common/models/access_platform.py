@@ -215,6 +215,7 @@ class _VariadicValues(_Stem):
 class BaseAccessPlatform(
     _OptionalLists,
     _OptionalValues,
+    _RequiredLists,
     _RequiredValues,
     json_schema_extra={
         "description": (
