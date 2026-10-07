@@ -215,6 +215,7 @@ class _VariadicValues(_Stem):
 class BaseAccessPlatform(
     _OptionalLists,
     _OptionalValues,
+    _RequiredLists,
     _RequiredValues,
     json_schema_extra={
         "description": (
@@ -304,7 +305,7 @@ class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
 
 
 class PreviewAccessPlatform(
-    _OptionalLists, _VariadicValues, _SparseValues, PreviewItem
+    _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 ):
     """Preview for merging all extracted items and rules for an access platform."""
 
@@ -341,7 +342,7 @@ class PreviewAccessPlatform(
 
 
 class AdditiveAccessPlatform(
-    _OptionalLists, _OptionalValues, _SparseValues, AdditiveRule
+    _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 ):
     """Rule to add values to merged access platform items."""
 
@@ -362,7 +363,9 @@ class AdditiveAccessPlatform(
     ] = None
 
 
-class SubtractiveAccessPlatform(_OptionalLists, _VariadicValues, SubtractiveRule):
+class SubtractiveAccessPlatform(
+    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
+):
     """Rule to subtract values from merged access platform items."""
 
     entityType: Annotated[

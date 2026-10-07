@@ -66,7 +66,6 @@ from mex.common.types.vocabulary import (
     CodingSystem,
     ConsentStatus,
     ConsentType,
-    Country,
     DataProcessingState,
     Frequency,
     HealthCategory,
@@ -113,7 +112,6 @@ __all__ = (
     "CodingSystem",
     "ConsentStatus",
     "ConsentType",
-    "Country",
     "DataProcessingState",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
@@ -189,7 +187,6 @@ AnyVocabularyEnum = (
     | CodingSystem
     | ConsentStatus
     | ConsentType
-    | Country
     | DataProcessingState
     | Frequency
     | HealthCategory
