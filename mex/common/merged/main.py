@@ -15,7 +15,7 @@ from mex.common.merged.types import (
 )
 from mex.common.models import (
     MERGED_MODEL_CLASSES_BY_NAME,
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     PREVENTIVE_MODEL_CLASSES_BY_NAME,
     PREVIEW_MODEL_CLASSES_BY_NAME,
     RULE_MODEL_CLASSES_BY_NAME,
@@ -79,7 +79,7 @@ def _collect_additive_values(
         List of (source, value) tuples from the additive rules
     """
     return [
-        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value)
+        (MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID, value)
         for value in cast("ValueList", ensure_list(getattr(rule_set.additive, field)))
         if field in MERGEABLE_FIELDS_BY_CLASS_NAME[rule_set.additive.entityType]
     ]
@@ -167,7 +167,8 @@ def _apply_lenient_fallback(
         List containing the first available value, or empty list if none found
     """
     subtractive_rule_sources_and_values: SourceAndValueIter = (
-        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, value) for value in subtracted_values
+        (MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID, value)
+        for value in subtracted_values
     )
     for _, value in chain(
         extracted_sources_and_values,
