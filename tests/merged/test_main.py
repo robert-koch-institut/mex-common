@@ -24,7 +24,7 @@ from mex.common.merged.main import (
 )
 from mex.common.merged.types import SourceAndValueList, SourceList, ValueList
 from mex.common.models import (
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
     AdditivePerson,
     AdditiveResource,
@@ -88,8 +88,8 @@ def test_collect_additive_values() -> None:
     result = _collect_additive_values("givenName", rule_set)
 
     assert result == [
-        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Bubbles"),
-        (MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, "Barnacle"),
+        (MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID, "Bubbles"),
+        (MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID, "Barnacle"),
     ]
 
 
