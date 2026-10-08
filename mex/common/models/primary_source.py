@@ -94,13 +94,6 @@ class _OptionalLists(_Stem):
             )
         ),
     ] = []
-    title: Annotated[
-        list[Text],
-        Field(
-            description="The name of the primary source.",
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
-        ),
-    ] = []
     unitInCharge: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
@@ -112,6 +105,27 @@ class _OptionalLists(_Stem):
             json_schema_extra={
                 "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
             },
+        ),
+    ] = []
+
+
+class _RequiredLists(_Stem):
+    title: Annotated[
+        list[Text],
+        Field(
+            description="The name of the primary source.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+            min_length=1,
+        ),
+    ]
+
+
+class _SparseLists(_Stem):
+    title: Annotated[
+        list[Text],
+        Field(
+            description="The name of the primary source.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
 
@@ -142,6 +156,7 @@ class _VariadicValues(_Stem):
 
 class BasePrimarySource(
     _OptionalLists,
+    _RequiredLists,
     _OptionalValues,
     json_schema_extra={
         "description": (
@@ -233,7 +248,7 @@ class MergedPrimarySource(BasePrimarySource, MergedItem):
     ] = None
 
 
-class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
+class PreviewPrimarySource(_OptionalLists, _SparseLists, _VariadicValues, PreviewItem):
     """Preview for merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[
@@ -268,7 +283,9 @@ class PreviewPrimarySource(_OptionalLists, _VariadicValues, PreviewItem):
     ] = None
 
 
-class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
+class AdditivePrimarySource(
+    _OptionalLists, _SparseLists, _OptionalValues, AdditiveRule
+):
     """Rule to add values to merged primary source items."""
 
     entityType: Annotated[
@@ -288,7 +305,9 @@ class AdditivePrimarySource(_OptionalLists, _OptionalValues, AdditiveRule):
     ] = None
 
 
-class SubtractivePrimarySource(_OptionalLists, _VariadicValues, SubtractiveRule):
+class SubtractivePrimarySource(
+    _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
+):
     """Rule to subtract values from merged primary source items."""
 
     entityType: Annotated[
@@ -353,15 +372,15 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PrimarySourceMapping"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceMapping"
-    version: list[MappingField[VersionStr | None]] = []
+    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     alternativeTitle: list[MappingField[list[Text]]] = []
     contact: list[MappingField[list[AnyContactIdentifier]]] = []
     contributor: list[MappingField[list[MergedPersonIdentifier]]] = []
     description: list[MappingField[list[Text]]] = []
     documentation: list[MappingField[list[Link]]] = []
     locatedAt: list[MappingField[list[Link]]] = []
-    title: list[MappingField[list[Text]]] = []
     unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    version: list[MappingField[VersionStr | None]] = []
 
 
 class PrimarySourceFilter(_Stem, BaseFilter):
