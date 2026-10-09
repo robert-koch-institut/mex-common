@@ -1,15 +1,15 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.11, <3.15"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -758,7 +758,7 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "3.4.1"
+version = "3.4.2"
 source = { editable = "." }
 dependencies = [
     { name = "backoff" },
@@ -831,7 +831,7 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 [[package]]
 name = "mex-model"
 version = "5.1.4"
-source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=refs%2Fpull%2F445%2Fhead#d4d376d52931f7fed4fbab2d4396116c08cd0c4d" }
+source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=refs%2Fpull%2F445%2Fhead#f6c81efd9de7cbec00153fd8e0ad71d5502d8605" }
 
 [[package]]
 name = "mypy"

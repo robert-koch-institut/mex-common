@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [3.4.2] - 2026-10-08
+
+### Fixed
+
+- use correct primary source identifier (MEx Editor) for merging rules
+
 ## [3.4.1] - 2026-09-14
 
 ### Changes

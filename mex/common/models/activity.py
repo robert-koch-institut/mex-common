@@ -91,8 +91,7 @@ class _OptionalLists(_Stem):
         list[MergedOrganizationIdentifier],
         Field(
             description=(
-                "An external institution that is associated with the "
-                "activity."
+                "An external institution that is associated with the activity."
             ),
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
