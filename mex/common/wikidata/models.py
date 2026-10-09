@@ -58,8 +58,8 @@ class ClaimsOrganizations(BaseModel):
     official_name: Annotated[list[Claim], Field(alias="P1448")] = []
     ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
     short_name: Annotated[list[Claim], Field(alias="P1813")] = []
-    website: Annotated[list[Claim], Field(alias="P856")] = []
     viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
+    website: Annotated[list[Claim], Field(alias="P856")] = []
 
 
 class ClaimsLocations(BaseModel):
