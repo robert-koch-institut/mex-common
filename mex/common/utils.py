@@ -19,6 +19,7 @@ from typing import (
 )
 
 from pydantic import BaseModel, TypeAdapter, ValidationError
+from typing_extensions import TypeForm
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -30,7 +31,7 @@ class GenericFieldInfo:
     """Abstraction class for unifying `FieldInfo` and `ComputedFieldInfo` objects."""
 
     alias: str | None
-    annotation: type[Any] | None
+    annotation: TypeForm[Any] | None
     frozen: bool
 
 
@@ -234,7 +235,11 @@ def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
     """
     field_names: list[str] = []
     for field_name, field_info in get_all_fields(model).items():
-        validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
+        annotation = field_info.annotation
+        if annotation is None:
+            msg = f"Field {model.__name__}.{field_name} has no annotation"
+            raise TypeError(msg)
+        validator: TypeAdapter[Any] = TypeAdapter(annotation)
         try:
             validator.validate_python(None)
         except ValidationError:

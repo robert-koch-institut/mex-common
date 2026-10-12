@@ -1,4 +1,5 @@
 import json
+import re
 import time
 from collections.abc import Iterable
 from types import NoneType
@@ -259,6 +260,29 @@ def test_get_field_names_allowing_none() -> None:
         "optional_str",
         "optional_list",
     ]
+
+
+def test_get_field_names_allowing_none_raises_for_missing_annotation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "mex.common.utils.get_all_fields",
+        lambda _: {
+            "field_without_annotation": GenericFieldInfo(
+                alias=None,
+                annotation=None,
+                frozen=False,
+            )
+        },
+    )
+
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            "Field ComplexDummyModel.field_without_annotation has no annotation"
+        ),
+    ):
+        get_field_names_allowing_none(ComplexDummyModel)
 
 
 class DummyModel(BaseModel):
