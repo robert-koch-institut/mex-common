@@ -265,6 +265,9 @@ def test_get_field_names_allowing_none() -> None:
 def test_get_field_names_allowing_none_raises_for_missing_annotation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    class ModelWithoutAnnotation(ComplexDummyModel):
+        pass
+
     monkeypatch.setattr(
         "mex.common.utils.get_all_fields",
         lambda _: {
@@ -279,10 +282,10 @@ def test_get_field_names_allowing_none_raises_for_missing_annotation(
     with pytest.raises(
         TypeError,
         match=re.escape(
-            "Field ComplexDummyModel.field_without_annotation has no annotation"
+            "Field ModelWithoutAnnotation.field_without_annotation has no annotation"
         ),
     ):
-        get_field_names_allowing_none(ComplexDummyModel)
+        get_field_names_allowing_none(ModelWithoutAnnotation)
 
 
 class DummyModel(BaseModel):
