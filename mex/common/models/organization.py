@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -412,16 +412,16 @@ class OrganizationMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationMapping"
-    officialName: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
-    alternativeName: list[MappingField[list[Text]]] = []
-    country: list[MappingField[list[Country]]] = []
-    geprisId: list[MappingField[list[GeprisIdStr]]] = []
-    gndId: list[MappingField[list[GndIdStr]]] = []
-    isniId: list[MappingField[list[IsniIdStr]]] = []
-    rorId: list[MappingField[list[RorIdStr]]] = []
-    shortName: list[MappingField[list[Text]]] = []
-    viafId: list[MappingField[list[ViafIdStr]]] = []
-    wikidataId: list[MappingField[list[WikidataIdStr]]] = []
+    officialName: Annotated[MappingList[list[Text]], Field(min_length=1)]
+    alternativeName: MappingList[list[Text]] = MappingList()
+    country: MappingList[list[Country]] = MappingList()
+    geprisId: MappingList[list[GeprisIdStr]] = MappingList()
+    gndId: MappingList[list[GndIdStr]] = MappingList()
+    isniId: MappingList[list[IsniIdStr]] = MappingList()
+    rorId: MappingList[list[RorIdStr]] = MappingList()
+    shortName: MappingList[list[Text]] = MappingList()
+    viafId: MappingList[list[ViafIdStr]] = MappingList()
+    wikidataId: MappingList[list[WikidataIdStr]] = MappingList()
 
 
 class OrganizationFilter(_Stem, BaseFilter):

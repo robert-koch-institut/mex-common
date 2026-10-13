@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -266,7 +266,7 @@ class ContactPointMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ContactPointMapping"], Field(alias="$type", frozen=True)
     ] = "ContactPointMapping"
-    email: Annotated[list[MappingField[list[EmailStr]]], Field(min_length=1)]
+    email: Annotated[MappingList[list[EmailStr]], Field(min_length=1)]
 
 
 class ContactPointFilter(_Stem, BaseFilter):

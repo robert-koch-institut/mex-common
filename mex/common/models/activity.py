@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -477,32 +477,34 @@ class ActivityMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ActivityMapping"], Field(alias="$type", frozen=True)
     ] = "ActivityMapping"
-    contact: Annotated[
-        list[MappingField[list[AnyContactIdentifier]]], Field(min_length=1)
-    ]
+    contact: Annotated[MappingList[list[AnyContactIdentifier]], Field(min_length=1)]
     responsibleUnit: Annotated[
-        list[MappingField[list[MergedOrganizationalUnitIdentifier]]],
+        MappingList[list[MergedOrganizationalUnitIdentifier]],
         Field(min_length=1),
     ]
-    title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
-    abstract: list[MappingField[list[Text]]] = []
-    activityType: list[MappingField[list[ActivityType]]] = []
-    alternativeTitle: list[MappingField[list[Text]]] = []
-    documentation: list[MappingField[list[Link]]] = []
-    end: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
-    externalAssociate: list[MappingField[list[AnyExternalAssociateIdentifier]]] = []
-    funderOrCommissioner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
-    fundingProgram: list[MappingField[list[str]]] = []
-    involvedPerson: list[MappingField[list[MergedPersonIdentifier]]] = []
-    involvedUnit: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
-    isPartOfActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
-    publication: list[MappingField[list[MergedBibliographicResourceIdentifier]]] = []
-    relatedActivity: list[MappingField[list[MergedActivityIdentifier]]] = []
-    shortName: list[MappingField[list[Text]]] = []
-    start: list[MappingField[list[YearMonthDay | YearMonth | Year]]] = []
-    succeeds: list[MappingField[list[MergedActivityIdentifier]]] = []
-    theme: list[MappingField[list[Theme]]] = []
-    website: list[MappingField[list[Link]]] = []
+    title: Annotated[MappingList[list[Text]], Field(min_length=1)]
+    abstract: MappingList[list[Text]] = MappingList()
+    activityType: MappingList[list[ActivityType]] = MappingList()
+    alternativeTitle: MappingList[list[Text]] = MappingList()
+    documentation: MappingList[list[Link]] = MappingList()
+    end: MappingList[list[YearMonthDay | YearMonth | Year]] = MappingList()
+    externalAssociate: MappingList[list[AnyExternalAssociateIdentifier]] = MappingList()
+    funderOrCommissioner: MappingList[list[MergedOrganizationIdentifier]] = (
+        MappingList()
+    )
+    fundingProgram: MappingList[list[str]] = MappingList()
+    involvedPerson: MappingList[list[MergedPersonIdentifier]] = MappingList()
+    involvedUnit: MappingList[list[MergedOrganizationalUnitIdentifier]] = MappingList()
+    isPartOfActivity: MappingList[list[MergedActivityIdentifier]] = MappingList()
+    publication: MappingList[list[MergedBibliographicResourceIdentifier]] = (
+        MappingList()
+    )
+    relatedActivity: MappingList[list[MergedActivityIdentifier]] = MappingList()
+    shortName: MappingList[list[Text]] = MappingList()
+    start: MappingList[list[YearMonthDay | YearMonth | Year]] = MappingList()
+    succeeds: MappingList[list[MergedActivityIdentifier]] = MappingList()
+    theme: MappingList[list[Theme]] = MappingList()
+    website: MappingList[list[Link]] = MappingList()
 
 
 class ActivityFilter(_Stem, BaseFilter):

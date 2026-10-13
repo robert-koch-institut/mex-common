@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -362,13 +362,13 @@ class OrganizationalUnitMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationalUnitMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitMapping"
-    parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
-    name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
-    alternativeName: list[MappingField[list[Text]]] = []
-    email: list[MappingField[list[EmailStr]]] = []
-    shortName: list[MappingField[list[Text]]] = []
-    unitOf: list[MappingField[list[MergedOrganizationIdentifier]]] = []
-    website: list[MappingField[list[Link]]] = []
+    parentUnit: MappingList[MergedOrganizationalUnitIdentifier | None] = MappingList()
+    name: Annotated[MappingList[list[Text]], Field(min_length=1)]
+    alternativeName: MappingList[list[Text]] = MappingList()
+    email: MappingList[list[EmailStr]] = MappingList()
+    shortName: MappingList[list[Text]] = MappingList()
+    unitOf: MappingList[list[MergedOrganizationIdentifier]] = MappingList()
+    website: MappingList[list[Link]] = MappingList()
 
 
 class OrganizationalUnitFilter(_Stem, BaseFilter):

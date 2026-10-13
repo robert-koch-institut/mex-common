@@ -1,12 +1,16 @@
 from typing import get_origin
 
+import pytest
 from pydantic_core import PydanticUndefined
 
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES,
     EXTRACTED_MODEL_CLASSES_BY_NAME,
     MAPPING_MODEL_CLASSES,
+    ContactPointMapping,
     MappingField,
+    MappingList,
+    MappingRule,
     VariableGroupMapping,
 )
 
@@ -29,8 +33,7 @@ def test_all_mapping_fields_are_defined() -> None:
         }
         assert all(
             annotation is not None
-            and get_origin(annotation) is list
-            and annotation.__args__[0].__bases__[0] is MappingField
+            and get_origin(annotation) is MappingList
             and default in (PydanticUndefined, [])
             for annotation, default in field_defs.values()
         )
@@ -378,3 +381,165 @@ def test_mapping_model_schema() -> None:
         "title": "VariableGroupMapping",
         "type": "object",
     }
+
+
+@pytest.mark.parametrize(
+    ("rule", "input_value", "expected"),
+    [
+        (MappingRule[str](forValues=["a", "b"], setValues="foo"), "b", "foo"),
+        (MappingRule[str](forValues=["a", "b"], setValues="foo"), "c", None),
+        (MappingRule[str](forValues=["a"], setValues="foo"), "", None),
+        (MappingRule[str](forValues=["a"]), "a", None),
+        (MappingRule[str](setValues="foo"), "a", None),
+        (MappingRule[str](forValues=[], setValues="foo"), "a", None),
+        (MappingRule[str](), "a", None),
+    ],
+    ids=[
+        "input in forValues",
+        "input not in forValues",
+        "empty input not in forValues",
+        "matching rule without setValues",
+        "static rule is ignored",
+        "empty forValues is ignored",
+        "empty rule",
+    ],
+)
+def test_mapping_rule_get_mapped_values(
+    rule: MappingRule[str], input_value: str, expected: str | None
+) -> None:
+    assert rule.get_mapped_values(input_value) == expected
+
+
+@pytest.mark.parametrize(
+    ("rule", "expected"),
+    [
+        (MappingRule[str](setValues="foo"), "foo"),
+        (MappingRule[str](forValues=[], setValues="foo"), "foo"),
+        (MappingRule[str](forValues=["a"], setValues="foo"), None),
+        (MappingRule[str](), None),
+    ],
+    ids=[
+        "no forValues",
+        "empty forValues",
+        "rule with forValues is ignored",
+        "empty rule",
+    ],
+)
+def test_mapping_rule_get_static_values(
+    rule: MappingRule[str], expected: str | None
+) -> None:
+    assert rule.get_static_values() == expected
+
+
+@pytest.fixture
+def mapping_field() -> MappingField[str]:
+    return MappingField[str](
+        mappingRules=[
+            {"forValues": ["a"], "setValues": "first"},
+            {"forValues": ["a", "b"], "setValues": "second"},
+            {"forValues": ["c"]},
+            {"forValues": ["c", "d"], "setValues": "fourth"},
+            {},
+            {"setValues": "static"},
+        ]
+    )
+
+
+@pytest.mark.parametrize(
+    ("input_value", "expected"),
+    [
+        ("a", "first"),
+        ("b", "second"),
+        ("c", "fourth"),
+        ("x", None),
+        ("", None),
+    ],
+    ids=[
+        "first matching rule wins",
+        "falls through to later rule",
+        "skips matching rule without setValues",
+        "no matching rule ignores static rule",
+        "empty input",
+    ],
+)
+def test_mapping_field_get_mapped_values(
+    mapping_field: MappingField[str], input_value: str, expected: str | None
+) -> None:
+    assert mapping_field.get_mapped_values(input_value) == expected
+
+
+def test_mapping_field_get_static_values(mapping_field: MappingField[str]) -> None:
+    assert mapping_field.get_static_values() == "static"
+
+
+def test_mapping_field_get_static_value_without_static_rule() -> None:
+    field = MappingField[str](mappingRules=[{"forValues": ["a"], "setValues": "a"}])
+    assert field.get_static_values() is None
+
+
+@pytest.fixture
+def mapping_list() -> MappingList[str]:
+    return MappingList(
+        [
+            MappingField[str](
+                mappingRules=[{"forValues": ["a"], "setValues": "first"}]
+            ),
+            MappingField[str](mappingRules=[{"forValues": ["b"]}, {}]),
+            MappingField[str](
+                mappingRules=[
+                    {"forValues": ["a", "b"], "setValues": "third"},
+                    {"setValues": "static"},
+                ]
+            ),
+        ]
+    )
+
+
+@pytest.mark.parametrize(
+    ("input_value", "expected"),
+    [
+        ("a", "first"),
+        ("b", "third"),
+        ("x", None),
+        ("", None),
+    ],
+    ids=[
+        "first matching field wins",
+        "skips field without mapped value",
+        "no matching field ignores static rule",
+        "empty input",
+    ],
+)
+def test_mapping_list_get_mapped_values(
+    mapping_list: MappingList[str], input_value: str, expected: str | None
+) -> None:
+    assert mapping_list.get_mapped_values(input_value) == expected
+
+
+def test_mapping_list_get_static_values(mapping_list: MappingList[str]) -> None:
+    assert mapping_list.get_static_values() == "static"
+
+
+def test_mapping_list_empty() -> None:
+    assert MappingList[str]().get_mapped_values("a") is None
+    assert MappingList[str]().get_static_values() is None
+
+
+def test_mapping_list_on_mapping_model() -> None:
+    mapping = ContactPointMapping(
+        hadPrimarySource=[{"mappingRules": [{"setValues": "bFQoRhcVH5DHU6"}]}],
+        identifierInPrimarySource=[{"mappingRules": [{"setValues": "cp-1"}]}],
+        email=[
+            {
+                "mappingRules": [
+                    {"forValues": ["work"], "setValues": ["work@example.com"]},
+                    {"setValues": ["info@example.com"]},
+                ]
+            }
+        ],
+    )
+    assert isinstance(mapping.email, MappingList)
+    assert mapping.email.get_mapped_values("work") == ["work@example.com"]
+    assert mapping.email.get_mapped_values("home") is None
+    assert mapping.email.get_static_values() == ["info@example.com"]
+    assert mapping.identifierInPrimarySource.get_static_values() == "cp-1"

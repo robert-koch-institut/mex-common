@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -417,17 +417,17 @@ class AccessPlatformMapping(_Stem, BaseMapping):
         Literal["AccessPlatformMapping"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformMapping"
     technicalAccessibility: Annotated[
-        list[MappingField[TechnicalAccessibility]], Field(min_length=1)
+        MappingList[TechnicalAccessibility], Field(min_length=1)
     ]
-    endpointDescription: list[MappingField[Link | None]] = []
-    endpointType: list[MappingField[APIType | None]] = []
-    endpointURL: list[MappingField[Link | None]] = []
-    alternativeTitle: list[MappingField[list[Text]]] = []
-    contact: list[MappingField[list[AnyContactIdentifier]]] = []
-    description: list[MappingField[list[Text]]] = []
-    landingPage: list[MappingField[list[Link]]] = []
-    title: list[MappingField[list[Text]]] = []
-    unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    endpointDescription: MappingList[Link | None] = MappingList()
+    endpointType: MappingList[APIType | None] = MappingList()
+    endpointURL: MappingList[Link | None] = MappingList()
+    alternativeTitle: MappingList[list[Text]] = MappingList()
+    contact: MappingList[list[AnyContactIdentifier]] = MappingList()
+    description: MappingList[list[Text]] = MappingList()
+    landingPage: MappingList[list[Link]] = MappingList()
+    title: MappingList[list[Text]] = MappingList()
+    unitInCharge: MappingList[list[MergedOrganizationalUnitIdentifier]] = MappingList()
 
 
 class AccessPlatformFilter(_Stem, BaseFilter):
