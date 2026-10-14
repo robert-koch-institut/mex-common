@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -353,15 +353,17 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PrimarySourceMapping"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceMapping"
-    version: MappingList[VersionStr | None] = MappingList()
-    alternativeTitle: MappingList[list[Text]] = MappingList()
-    contact: MappingList[list[AnyContactIdentifier]] = MappingList()
-    contributor: MappingList[list[MergedPersonIdentifier]] = MappingList()
-    description: MappingList[list[Text]] = MappingList()
-    documentation: MappingList[list[Link]] = MappingList()
-    locatedAt: MappingList[list[Link]] = MappingList()
-    title: MappingList[list[Text]] = MappingList()
-    unitInCharge: MappingList[list[MergedOrganizationalUnitIdentifier]] = MappingList()
+    version: MappingFieldList[VersionStr | None] = MappingFieldList()
+    alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
+    contact: MappingFieldList[list[AnyContactIdentifier]] = MappingFieldList()
+    contributor: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
+    description: MappingFieldList[list[Text]] = MappingFieldList()
+    documentation: MappingFieldList[list[Link]] = MappingFieldList()
+    locatedAt: MappingFieldList[list[Link]] = MappingFieldList()
+    title: MappingFieldList[list[Text]] = MappingFieldList()
+    unitInCharge: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
+        MappingFieldList()
+    )
 
 
 class PrimarySourceFilter(_Stem, BaseFilter):

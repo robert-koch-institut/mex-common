@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -473,20 +473,24 @@ class DistributionMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["DistributionMapping"], Field(alias="$type", frozen=True)
     ] = "DistributionMapping"
-    accessRestriction: Annotated[MappingList[AccessRestriction], Field(min_length=1)]
+    accessRestriction: Annotated[
+        MappingFieldList[AccessRestriction], Field(min_length=1)
+    ]
     issued: Annotated[
-        MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(min_length=1),
     ]
-    accessService: MappingList[MergedAccessPlatformIdentifier | None] = MappingList()
-    license: MappingList[License | None] = MappingList()
-    mediaType: MappingList[MIMEType | None] = MappingList()
-    modified: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year | None] = (
-        MappingList()
+    accessService: MappingFieldList[MergedAccessPlatformIdentifier | None] = (
+        MappingFieldList()
     )
-    title: Annotated[MappingList[list[Text]], Field(min_length=1)]
-    accessURL: MappingList[list[Link]] = MappingList()
-    downloadURL: MappingList[list[Link]] = MappingList()
+    license: MappingFieldList[License | None] = MappingFieldList()
+    mediaType: MappingFieldList[MIMEType | None] = MappingFieldList()
+    modified: MappingFieldList[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
+    ] = MappingFieldList()
+    title: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    accessURL: MappingFieldList[list[Link]] = MappingFieldList()
+    downloadURL: MappingFieldList[list[Link]] = MappingFieldList()
 
 
 class DistributionFilter(_Stem, BaseFilter):

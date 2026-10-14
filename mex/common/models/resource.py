@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -1197,96 +1197,118 @@ class ResourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ResourceMapping"], Field(alias="$type", frozen=True)
     ] = "ResourceMapping"
-    accessRestriction: Annotated[MappingList[AccessRestriction], Field(min_length=1)]
-    accrualPeriodicity: MappingList[Frequency | None] = MappingList()
-    created: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year | None] = (
-        MappingList()
-    )
-    doi: MappingList[DoiStr | None] = MappingList()
-    hasPersonalData: MappingList[PersonalData | None] = MappingList()
-    license: MappingList[License | None] = MappingList()
-    maxTypicalAge: MappingList[MaxTypicalAgeInt | None] = MappingList()
-    minTypicalAge: MappingList[MinTypicalAgeInt | None] = MappingList()
-    modified: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year | None] = (
-        MappingList()
-    )
-    numberOfRecords: MappingList[int | None] = MappingList()
-    numberOfUniqueIndividuals: MappingList[int | None] = MappingList()
-    sizeOfDataBasis: MappingList[str | None] = MappingList()
-    temporal: MappingList[
+    accessRestriction: Annotated[
+        MappingFieldList[AccessRestriction], Field(min_length=1)
+    ]
+    accrualPeriodicity: MappingFieldList[Frequency | None] = MappingFieldList()
+    created: MappingFieldList[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
+    ] = MappingFieldList()
+    doi: MappingFieldList[DoiStr | None] = MappingFieldList()
+    hasPersonalData: MappingFieldList[PersonalData | None] = MappingFieldList()
+    license: MappingFieldList[License | None] = MappingFieldList()
+    maxTypicalAge: MappingFieldList[MaxTypicalAgeInt | None] = MappingFieldList()
+    minTypicalAge: MappingFieldList[MinTypicalAgeInt | None] = MappingFieldList()
+    modified: MappingFieldList[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
+    ] = MappingFieldList()
+    numberOfRecords: MappingFieldList[int | None] = MappingFieldList()
+    numberOfUniqueIndividuals: MappingFieldList[int | None] = MappingFieldList()
+    sizeOfDataBasis: MappingFieldList[str | None] = MappingFieldList()
+    temporal: MappingFieldList[
         YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
-    ] = MappingList()
-    version: MappingList[VersionStr | None] = MappingList()
-    wasGeneratedBy: MappingList[MergedActivityIdentifier | None] = MappingList()
+    ] = MappingFieldList()
+    version: MappingFieldList[VersionStr | None] = MappingFieldList()
+    wasGeneratedBy: MappingFieldList[MergedActivityIdentifier | None] = (
+        MappingFieldList()
+    )
     contact: Annotated[
-        MappingList[list[AnyContactIdentifier]],
+        MappingFieldList[list[AnyContactIdentifier]],
         Field(min_length=1),
     ]
-    theme: Annotated[MappingList[list[Theme]], Field(min_length=1)]
-    title: Annotated[MappingList[list[Text]], Field(min_length=1)]
+    theme: Annotated[MappingFieldList[list[Theme]], Field(min_length=1)]
+    title: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
     unitInCharge: Annotated[
-        MappingList[list[MergedOrganizationalUnitIdentifier]],
+        MappingFieldList[list[MergedOrganizationalUnitIdentifier]],
         Field(min_length=1),
     ]
-    accessPlatform: MappingList[list[MergedAccessPlatformIdentifier]] = MappingList()
-    alternativeTitle: MappingList[list[Text]] = MappingList()
-    analytics: MappingList[list[MergedDistributionIdentifier]] = MappingList()
-    anonymizationPseudonymization: MappingList[list[AnonymizationPseudonymization]] = (
-        MappingList()
+    accessPlatform: MappingFieldList[list[MergedAccessPlatformIdentifier]] = (
+        MappingFieldList()
     )
-    conformsTo: MappingList[list[ConformsToStr]] = MappingList()
-    contributingUnit: MappingList[list[MergedOrganizationalUnitIdentifier]] = (
-        MappingList()
+    alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
+    analytics: MappingFieldList[list[MergedDistributionIdentifier]] = MappingFieldList()
+    anonymizationPseudonymization: MappingFieldList[
+        list[AnonymizationPseudonymization]
+    ] = MappingFieldList()
+    conformsTo: MappingFieldList[list[ConformsToStr]] = MappingFieldList()
+    contributingUnit: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
+        MappingFieldList()
     )
-    contributor: MappingList[list[MergedPersonIdentifier]] = MappingList()
-    creator: MappingList[list[MergedPersonIdentifier]] = MappingList()
-    description: MappingList[list[Text]] = MappingList()
-    distribution: MappingList[list[MergedDistributionIdentifier]] = MappingList()
-    documentation: MappingList[list[Link]] = MappingList()
-    end: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = MappingList()
-    externalPartner: MappingList[list[MergedOrganizationIdentifier]] = MappingList()
-    hasCodeValues: MappingList[list[Text]] = MappingList()
-    hasCodingSystem: MappingList[list[Concept]] = MappingList()
-    hasLegalBasis: MappingList[list[Text]] = MappingList()
-    hasPurpose: MappingList[list[Text]] = MappingList()
-    hasPurposeDescription: MappingList[list[Text]] = MappingList()
-    healthCategory: MappingList[list[HealthCategory]] = MappingList()
-    icd10code: MappingList[list[str]] = MappingList()
-    instrumentToolOrApparatus: MappingList[list[Text]] = MappingList()
-    inSeries: MappingList[list[MergedResourceSeriesIdentifier]] = MappingList()
-    inSeriesFirstResource: MappingList[list[MergedResourceSeriesIdentifier]] = (
-        MappingList()
+    contributor: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
+    creator: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
+    description: MappingFieldList[list[Text]] = MappingFieldList()
+    distribution: MappingFieldList[list[MergedDistributionIdentifier]] = (
+        MappingFieldList()
     )
-    inSeriesLastResource: MappingList[list[MergedResourceSeriesIdentifier]] = (
-        MappingList()
+    documentation: MappingFieldList[list[Link]] = MappingFieldList()
+    end: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
+        MappingFieldList()
     )
-    isPartOf: MappingList[list[MergedResourceIdentifier]] = MappingList()
-    keyword: MappingList[list[Text]] = MappingList()
-    landingPage: MappingList[list[Link]] = MappingList()
-    language: MappingList[list[Language]] = MappingList()
-    loincId: MappingList[list[LoincIdStr]] = MappingList()
-    meshId: MappingList[list[MeshIdStr]] = MappingList()
-    method: MappingList[list[Text]] = MappingList()
-    methodDescription: MappingList[list[Text]] = MappingList()
-    populationCoverage: MappingList[list[Text]] = MappingList()
-    provenance: MappingList[list[Text]] = MappingList()
-    publication: MappingList[list[MergedBibliographicResourceIdentifier]] = (
-        MappingList()
+    externalPartner: MappingFieldList[list[MergedOrganizationIdentifier]] = (
+        MappingFieldList()
     )
-    publisher: MappingList[list[MergedOrganizationIdentifier]] = MappingList()
-    qualityInformation: MappingList[list[Text]] = MappingList()
-    relatedResource: MappingList[list[MergedResourceIdentifier]] = MappingList()
-    resourceCreationMethod: MappingList[list[ResourceCreationMethod]] = MappingList()
-    resourceTypeGeneral: MappingList[list[ResourceTypeGeneral]] = MappingList()
-    resourceTypeSpecific: MappingList[list[Text]] = MappingList()
-    rights: MappingList[list[Text]] = MappingList()
-    sample: MappingList[list[MergedDistributionIdentifier]] = MappingList()
-    source: MappingList[list[MergedResourceIdentifier]] = MappingList()
-    spatial: MappingList[list[Text]] = MappingList()
-    start: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
-        MappingList()
+    hasCodeValues: MappingFieldList[list[Text]] = MappingFieldList()
+    hasCodingSystem: MappingFieldList[list[Concept]] = MappingFieldList()
+    hasLegalBasis: MappingFieldList[list[Text]] = MappingFieldList()
+    hasPurpose: MappingFieldList[list[Text]] = MappingFieldList()
+    hasPurposeDescription: MappingFieldList[list[Text]] = MappingFieldList()
+    healthCategory: MappingFieldList[list[HealthCategory]] = MappingFieldList()
+    icd10code: MappingFieldList[list[str]] = MappingFieldList()
+    instrumentToolOrApparatus: MappingFieldList[list[Text]] = MappingFieldList()
+    inSeries: MappingFieldList[list[MergedResourceSeriesIdentifier]] = (
+        MappingFieldList()
     )
-    stateOfDataProcessing: MappingList[list[DataProcessingState]] = MappingList()
+    inSeriesFirstResource: MappingFieldList[list[MergedResourceSeriesIdentifier]] = (
+        MappingFieldList()
+    )
+    inSeriesLastResource: MappingFieldList[list[MergedResourceSeriesIdentifier]] = (
+        MappingFieldList()
+    )
+    isPartOf: MappingFieldList[list[MergedResourceIdentifier]] = MappingFieldList()
+    keyword: MappingFieldList[list[Text]] = MappingFieldList()
+    landingPage: MappingFieldList[list[Link]] = MappingFieldList()
+    language: MappingFieldList[list[Language]] = MappingFieldList()
+    loincId: MappingFieldList[list[LoincIdStr]] = MappingFieldList()
+    meshId: MappingFieldList[list[MeshIdStr]] = MappingFieldList()
+    method: MappingFieldList[list[Text]] = MappingFieldList()
+    methodDescription: MappingFieldList[list[Text]] = MappingFieldList()
+    populationCoverage: MappingFieldList[list[Text]] = MappingFieldList()
+    provenance: MappingFieldList[list[Text]] = MappingFieldList()
+    publication: MappingFieldList[list[MergedBibliographicResourceIdentifier]] = (
+        MappingFieldList()
+    )
+    publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
+    qualityInformation: MappingFieldList[list[Text]] = MappingFieldList()
+    relatedResource: MappingFieldList[list[MergedResourceIdentifier]] = (
+        MappingFieldList()
+    )
+    resourceCreationMethod: MappingFieldList[list[ResourceCreationMethod]] = (
+        MappingFieldList()
+    )
+    resourceTypeGeneral: MappingFieldList[list[ResourceTypeGeneral]] = (
+        MappingFieldList()
+    )
+    resourceTypeSpecific: MappingFieldList[list[Text]] = MappingFieldList()
+    rights: MappingFieldList[list[Text]] = MappingFieldList()
+    sample: MappingFieldList[list[MergedDistributionIdentifier]] = MappingFieldList()
+    source: MappingFieldList[list[MergedResourceIdentifier]] = MappingFieldList()
+    spatial: MappingFieldList[list[Text]] = MappingFieldList()
+    start: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
+        MappingFieldList()
+    )
+    stateOfDataProcessing: MappingFieldList[list[DataProcessingState]] = (
+        MappingFieldList()
+    )
 
 
 class ResourceFilter(_Stem, BaseFilter):

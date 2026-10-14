@@ -9,8 +9,9 @@ from mex.common.models import (
     MAPPING_MODEL_CLASSES,
     ContactPointMapping,
     MappingField,
-    MappingList,
+    MappingFieldList,
     MappingRule,
+    MappingRuleList,
     VariableGroupMapping,
 )
 
@@ -33,7 +34,7 @@ def test_all_mapping_fields_are_defined() -> None:
         }
         assert all(
             annotation is not None
-            and get_origin(annotation) is MappingList
+            and get_origin(annotation) is MappingFieldList
             and default in (PydanticUndefined, [])
             for annotation, default in field_defs.values()
         )
@@ -468,6 +469,17 @@ def test_mapping_field_get_mapped_values(
     assert mapping_field.get_mapped_values(input_value) == expected
 
 
+def test_mapping_rule_list_on_mapping_field(mapping_field: MappingField[str]) -> None:
+    assert isinstance(mapping_field.mappingRules, MappingRuleList)
+    assert mapping_field.mappingRules.get_mapped_values("a") == "first"
+    assert mapping_field.mappingRules.get_static_values() == "static"
+
+
+def test_mapping_rule_list_empty() -> None:
+    assert MappingRuleList[str]().get_mapped_values("a") is None
+    assert MappingRuleList[str]().get_static_values() is None
+
+
 def test_mapping_field_get_static_values(mapping_field: MappingField[str]) -> None:
     assert mapping_field.get_static_values() == "static"
 
@@ -478,8 +490,8 @@ def test_mapping_field_get_static_value_without_static_rule() -> None:
 
 
 @pytest.fixture
-def mapping_list() -> MappingList[str]:
-    return MappingList(
+def mapping_list() -> MappingFieldList[str]:
+    return MappingFieldList(
         [
             MappingField[str](
                 mappingRules=[{"forValues": ["a"], "setValues": "first"}]
@@ -511,18 +523,18 @@ def mapping_list() -> MappingList[str]:
     ],
 )
 def test_mapping_list_get_mapped_values(
-    mapping_list: MappingList[str], input_value: str, expected: str | None
+    mapping_list: MappingFieldList[str], input_value: str, expected: str | None
 ) -> None:
     assert mapping_list.get_mapped_values(input_value) == expected
 
 
-def test_mapping_list_get_static_values(mapping_list: MappingList[str]) -> None:
+def test_mapping_list_get_static_values(mapping_list: MappingFieldList[str]) -> None:
     assert mapping_list.get_static_values() == "static"
 
 
 def test_mapping_list_empty() -> None:
-    assert MappingList[str]().get_mapped_values("a") is None
-    assert MappingList[str]().get_static_values() is None
+    assert MappingFieldList[str]().get_mapped_values("a") is None
+    assert MappingFieldList[str]().get_static_values() is None
 
 
 def test_mapping_list_on_mapping_model() -> None:
@@ -538,7 +550,7 @@ def test_mapping_list_on_mapping_model() -> None:
             }
         ],
     )
-    assert isinstance(mapping.email, MappingList)
+    assert isinstance(mapping.email, MappingFieldList)
     assert mapping.email.get_mapped_values("work") == ["work@example.com"]
     assert mapping.email.get_mapped_values("home") is None
     assert mapping.email.get_static_values() == ["info@example.com"]

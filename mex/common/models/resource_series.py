@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -414,20 +414,24 @@ class ResourceSeriesMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ResourceSeriesMapping"], Field(alias="$type", frozen=True)
     ] = "ResourceSeriesMapping"
-    accrualPeriodicity: MappingList[Frequency | None] = MappingList()
-    contact: MappingList[list[AnyContactIdentifier]] = MappingList()
-    title: Annotated[MappingList[list[Text]], Field(min_length=1)]
-    accessPlatform: MappingList[list[MergedAccessPlatformIdentifier]] = MappingList()
-    alternativeTitle: MappingList[list[Text]] = MappingList()
-    description: Annotated[MappingList[list[Text]], Field(min_length=1)]
-    documentation: MappingList[list[Link]] = MappingList()
-    end: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = MappingList()
-    hasLegalBasis: MappingList[list[Text]] = MappingList()
-    keyword: MappingList[list[Text]] = MappingList()
-    publisher: MappingList[list[MergedOrganizationIdentifier]] = MappingList()
-    spatial: MappingList[list[Text]] = MappingList()
-    start: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
-        MappingList()
+    accrualPeriodicity: MappingFieldList[Frequency | None] = MappingFieldList()
+    contact: MappingFieldList[list[AnyContactIdentifier]] = MappingFieldList()
+    title: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    accessPlatform: MappingFieldList[list[MergedAccessPlatformIdentifier]] = (
+        MappingFieldList()
+    )
+    alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
+    description: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    documentation: MappingFieldList[list[Link]] = MappingFieldList()
+    end: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
+        MappingFieldList()
+    )
+    hasLegalBasis: MappingFieldList[list[Text]] = MappingFieldList()
+    keyword: MappingFieldList[list[Text]] = MappingFieldList()
+    publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
+    spatial: MappingFieldList[list[Text]] = MappingFieldList()
+    start: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
+        MappingFieldList()
     )
 
 

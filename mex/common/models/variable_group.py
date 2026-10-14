@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -278,9 +278,9 @@ class VariableGroupMapping(_Stem, BaseMapping):
         Literal["VariableGroupMapping"], Field(alias="$type", frozen=True)
     ] = "VariableGroupMapping"
     containedBy: Annotated[
-        MappingList[list[MergedResourceIdentifier]], Field(min_length=1)
+        MappingFieldList[list[MergedResourceIdentifier]], Field(min_length=1)
     ]
-    label: Annotated[MappingList[list[Text]], Field(min_length=1)]
+    label: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
 
 
 class VariableGroupFilter(_Stem, BaseFilter):

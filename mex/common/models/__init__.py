@@ -126,8 +126,9 @@ from mex.common.models.base.filter import BaseFilter, FilterField, FilterRule
 from mex.common.models.base.mapping import (
     BaseMapping,
     MappingField,
-    MappingList,
+    MappingFieldList,
     MappingRule,
+    MappingRuleList,
 )
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
@@ -429,9 +430,10 @@ __all__ = (
     "FilterRule",
     "ItemsContainer",
     "MappingField",
-    "MappingList",
+    "MappingFieldList",
     "MappingModelTypeAdapter",
     "MappingRule",
+    "MappingRuleList",
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedBibliographicResource",

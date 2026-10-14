@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -711,43 +711,49 @@ class BibliographicResourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["BibliographicResourceMapping"], Field(alias="$type", frozen=True)
     ] = "BibliographicResourceMapping"
-    accessRestriction: Annotated[MappingList[AccessRestriction], Field(min_length=1)]
-    doi: MappingList[DoiStr | None] = MappingList()
-    edition: MappingList[EditionStr | None] = MappingList()
-    issue: MappingList[VolumeOrIssueStr | None] = MappingList()
-    issued: MappingList[YearMonthDayTime | YearMonthDay | YearMonth | Year | None] = (
-        MappingList()
+    accessRestriction: Annotated[
+        MappingFieldList[AccessRestriction], Field(min_length=1)
+    ]
+    doi: MappingFieldList[DoiStr | None] = MappingFieldList()
+    edition: MappingFieldList[EditionStr | None] = MappingFieldList()
+    issue: MappingFieldList[VolumeOrIssueStr | None] = MappingFieldList()
+    issued: MappingFieldList[
+        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
+    ] = MappingFieldList()
+    license: MappingFieldList[License | None] = MappingFieldList()
+    pages: MappingFieldList[PagesStr | None] = MappingFieldList()
+    publicationPlace: MappingFieldList[PublicationPlaceStr | None] = MappingFieldList()
+    publicationYear: MappingFieldList[Year | None] = MappingFieldList()
+    repositoryURL: MappingFieldList[Link | None] = MappingFieldList()
+    section: MappingFieldList[SectionStr | None] = MappingFieldList()
+    volume: MappingFieldList[VolumeOrIssueStr | None] = MappingFieldList()
+    volumeOfSeries: MappingFieldList[VolumeOrIssueStr | None] = MappingFieldList()
+    creator: Annotated[
+        MappingFieldList[list[MergedPersonIdentifier]], Field(min_length=1)
+    ]
+    title: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    abstract: MappingFieldList[list[Text]] = MappingFieldList()
+    alternateIdentifier: MappingFieldList[list[str]] = MappingFieldList()
+    alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
+    bibliographicResourceType: MappingFieldList[list[BibliographicResourceType]] = (
+        MappingFieldList()
     )
-    license: MappingList[License | None] = MappingList()
-    pages: MappingList[PagesStr | None] = MappingList()
-    publicationPlace: MappingList[PublicationPlaceStr | None] = MappingList()
-    publicationYear: MappingList[Year | None] = MappingList()
-    repositoryURL: MappingList[Link | None] = MappingList()
-    section: MappingList[SectionStr | None] = MappingList()
-    volume: MappingList[VolumeOrIssueStr | None] = MappingList()
-    volumeOfSeries: MappingList[VolumeOrIssueStr | None] = MappingList()
-    creator: Annotated[MappingList[list[MergedPersonIdentifier]], Field(min_length=1)]
-    title: Annotated[MappingList[list[Text]], Field(min_length=1)]
-    abstract: MappingList[list[Text]] = MappingList()
-    alternateIdentifier: MappingList[list[str]] = MappingList()
-    alternativeTitle: MappingList[list[Text]] = MappingList()
-    bibliographicResourceType: MappingList[list[BibliographicResourceType]] = (
-        MappingList()
+    contributingUnit: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
+        MappingFieldList()
     )
-    contributingUnit: MappingList[list[MergedOrganizationalUnitIdentifier]] = (
-        MappingList()
+    distribution: MappingFieldList[list[MergedDistributionIdentifier]] = (
+        MappingFieldList()
     )
-    distribution: MappingList[list[MergedDistributionIdentifier]] = MappingList()
-    editor: MappingList[list[MergedPersonIdentifier]] = MappingList()
-    editorOfSeries: MappingList[list[MergedPersonIdentifier]] = MappingList()
-    isbnIssn: MappingList[list[IsbnIssnStr]] = MappingList()
-    journal: MappingList[list[Text]] = MappingList()
-    keyword: MappingList[list[Text]] = MappingList()
-    language: MappingList[list[Language]] = MappingList()
-    publisher: MappingList[list[MergedOrganizationIdentifier]] = MappingList()
-    subtitle: MappingList[list[Text]] = MappingList()
-    titleOfBook: MappingList[list[Text]] = MappingList()
-    titleOfSeries: MappingList[list[Text]] = MappingList()
+    editor: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
+    editorOfSeries: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
+    isbnIssn: MappingFieldList[list[IsbnIssnStr]] = MappingFieldList()
+    journal: MappingFieldList[list[Text]] = MappingFieldList()
+    keyword: MappingFieldList[list[Text]] = MappingFieldList()
+    language: MappingFieldList[list[Language]] = MappingFieldList()
+    publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
+    subtitle: MappingFieldList[list[Text]] = MappingFieldList()
+    titleOfBook: MappingFieldList[list[Text]] = MappingFieldList()
+    titleOfSeries: MappingFieldList[list[Text]] = MappingFieldList()
 
 
 class BibliographicResourceFilter(_Stem, BaseFilter):

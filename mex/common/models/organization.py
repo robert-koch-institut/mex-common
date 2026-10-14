@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -412,16 +412,16 @@ class OrganizationMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationMapping"
-    officialName: Annotated[MappingList[list[Text]], Field(min_length=1)]
-    alternativeName: MappingList[list[Text]] = MappingList()
-    country: MappingList[list[Country]] = MappingList()
-    geprisId: MappingList[list[GeprisIdStr]] = MappingList()
-    gndId: MappingList[list[GndIdStr]] = MappingList()
-    isniId: MappingList[list[IsniIdStr]] = MappingList()
-    rorId: MappingList[list[RorIdStr]] = MappingList()
-    shortName: MappingList[list[Text]] = MappingList()
-    viafId: MappingList[list[ViafIdStr]] = MappingList()
-    wikidataId: MappingList[list[WikidataIdStr]] = MappingList()
+    officialName: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    alternativeName: MappingFieldList[list[Text]] = MappingFieldList()
+    country: MappingFieldList[list[Country]] = MappingFieldList()
+    geprisId: MappingFieldList[list[GeprisIdStr]] = MappingFieldList()
+    gndId: MappingFieldList[list[GndIdStr]] = MappingFieldList()
+    isniId: MappingFieldList[list[IsniIdStr]] = MappingFieldList()
+    rorId: MappingFieldList[list[RorIdStr]] = MappingFieldList()
+    shortName: MappingFieldList[list[Text]] = MappingFieldList()
+    viafId: MappingFieldList[list[ViafIdStr]] = MappingFieldList()
+    wikidataId: MappingFieldList[list[WikidataIdStr]] = MappingFieldList()
 
 
 class OrganizationFilter(_Stem, BaseFilter):

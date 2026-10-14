@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingList
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -397,13 +397,17 @@ class VariableMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["VariableMapping"], Field(alias="$type", frozen=True)
     ] = "VariableMapping"
-    codingSystem: MappingList[CodingSystemStr | None] = MappingList()
-    dataType: MappingList[DataTypeStr | None] = MappingList()
-    label: Annotated[MappingList[list[LabelText]], Field(min_length=1)]
-    usedIn: Annotated[MappingList[list[MergedResourceIdentifier]], Field(min_length=1)]
-    belongsTo: MappingList[list[MergedVariableGroupIdentifier]] = MappingList()
-    description: MappingList[list[Text]] = MappingList()
-    valueSet: MappingList[list[ValueSetStr]] = MappingList()
+    codingSystem: MappingFieldList[CodingSystemStr | None] = MappingFieldList()
+    dataType: MappingFieldList[DataTypeStr | None] = MappingFieldList()
+    label: Annotated[MappingFieldList[list[LabelText]], Field(min_length=1)]
+    usedIn: Annotated[
+        MappingFieldList[list[MergedResourceIdentifier]], Field(min_length=1)
+    ]
+    belongsTo: MappingFieldList[list[MergedVariableGroupIdentifier]] = (
+        MappingFieldList()
+    )
+    description: MappingFieldList[list[Text]] = MappingFieldList()
+    valueSet: MappingFieldList[list[ValueSetStr]] = MappingFieldList()
 
 
 class VariableFilter(_Stem, BaseFilter):
