@@ -385,7 +385,7 @@ def test_mapping_model_schema() -> None:
 
 
 @pytest.mark.parametrize(
-    ("rule", "input_value", "expected"),
+    ("rule", "value_in_primary_source", "expected"),
     [
         (MappingRule[str](forValues=["a", "b"], setValues="foo"), "b", "foo"),
         (MappingRule[str](forValues=["a", "b"], setValues="foo"), "c", None),
@@ -396,9 +396,9 @@ def test_mapping_model_schema() -> None:
         (MappingRule[str](), "a", None),
     ],
     ids=[
-        "input in forValues",
-        "input not in forValues",
-        "empty input not in forValues",
+        "value in forValues",
+        "value not in forValues",
+        "empty value not in forValues",
         "matching rule without setValues",
         "static rule is ignored",
         "empty forValues is ignored",
@@ -406,9 +406,9 @@ def test_mapping_model_schema() -> None:
     ],
 )
 def test_mapping_rule_get_mapped_values(
-    rule: MappingRule[str], input_value: str, expected: str | None
+    rule: MappingRule[str], value_in_primary_source: str, expected: str | None
 ) -> None:
-    assert rule.get_mapped_values(input_value) == expected
+    assert rule.get_mapped_values(value_in_primary_source) == expected
 
 
 @pytest.mark.parametrize(
@@ -447,36 +447,91 @@ def mapping_field() -> MappingField[str]:
 
 
 @pytest.mark.parametrize(
-    ("input_value", "expected"),
+    ("value_in_primary_source", "expected"),
     [
-        ("a", "first"),
-        ("b", "second"),
-        ("c", "fourth"),
-        ("x", None),
-        ("", None),
+        ("a", ["first", "second"]),
+        ("b", ["second"]),
+        ("c", ["fourth"]),
+        ("x", []),
+        ("", []),
     ],
     ids=[
-        "first matching rule wins",
-        "falls through to later rule",
+        "all matching rules",
+        "single matching rule",
         "skips matching rule without setValues",
         "no matching rule ignores static rule",
-        "empty input",
+        "empty value",
     ],
 )
 def test_mapping_field_get_mapped_values(
-    mapping_field: MappingField[str], input_value: str, expected: str | None
+    mapping_field: MappingField[str],
+    value_in_primary_source: str,
+    expected: list[str],
 ) -> None:
-    assert mapping_field.get_mapped_values(input_value) == expected
+    assert mapping_field.get_mapped_values(value_in_primary_source) == expected
+
+
+@pytest.mark.parametrize(
+    ("field_in_primary_source", "location_in_primary_source", "expected"),
+    [
+        (None, None, ["first"]),
+        ("kind", None, ["first"]),
+        ("other", None, []),
+        (None, "table", ["first"]),
+        (None, "other", []),
+        ("kind", "table", ["first"]),
+        ("kind", "other", []),
+    ],
+    ids=[
+        "no filters",
+        "matching field",
+        "non-matching field",
+        "matching location",
+        "non-matching location",
+        "matching field and location",
+        "matching field but non-matching location",
+    ],
+)
+def test_mapping_field_get_mapped_values_filtered(
+    field_in_primary_source: str | None,
+    location_in_primary_source: str | None,
+    expected: list[str],
+) -> None:
+    field = MappingField[str](
+        fieldInPrimarySource="kind",
+        locationInPrimarySource="table",
+        mappingRules=[{"forValues": ["a"], "setValues": "first"}],
+    )
+    assert (
+        field.get_mapped_values(
+            "a",
+            field_in_primary_source=field_in_primary_source,
+            location_in_primary_source=location_in_primary_source,
+        )
+        == expected
+    )
 
 
 def test_mapping_rule_list_on_mapping_field(mapping_field: MappingField[str]) -> None:
     assert isinstance(mapping_field.mappingRules, MappingRuleList)
-    assert mapping_field.mappingRules.get_mapped_values("a") == "first"
+    assert mapping_field.mappingRules.get_mapped_values("a") == ["first", "second"]
     assert mapping_field.mappingRules.get_static_values() == "static"
 
 
+def test_mapping_rule_list_flattens_list_values() -> None:
+    rules = MappingRuleList[list[str]](
+        [
+            MappingRule[list[str]](forValues=["a"], setValues=["x", "y"]),
+            MappingRule[list[str]](forValues=["a"]),
+            MappingRule[list[str]](forValues=["a", "b"], setValues=["z"]),
+        ]
+    )
+    assert rules.get_mapped_values("a") == ["x", "y", "z"]
+    assert rules.get_mapped_values("b") == ["z"]
+
+
 def test_mapping_rule_list_empty() -> None:
-    assert MappingRuleList[str]().get_mapped_values("a") is None
+    assert MappingRuleList[str]().get_mapped_values("a") == []
     assert MappingRuleList[str]().get_static_values() is None
 
 
@@ -494,38 +549,70 @@ def mapping_list() -> MappingFieldList[str]:
     return MappingFieldList(
         [
             MappingField[str](
-                mappingRules=[{"forValues": ["a"], "setValues": "first"}]
+                fieldInPrimarySource="kind",
+                locationInPrimarySource="table",
+                mappingRules=[{"forValues": ["a"], "setValues": "first"}],
             ),
             MappingField[str](mappingRules=[{"forValues": ["b"]}, {}]),
             MappingField[str](
+                fieldInPrimarySource="type",
+                locationInPrimarySource="table",
                 mappingRules=[
                     {"forValues": ["a", "b"], "setValues": "third"},
                     {"setValues": "static"},
-                ]
+                ],
             ),
         ]
     )
 
 
 @pytest.mark.parametrize(
-    ("input_value", "expected"),
+    (
+        "value_in_primary_source",
+        "field_in_primary_source",
+        "location_in_primary_source",
+        "expected",
+    ),
     [
-        ("a", "first"),
-        ("b", "third"),
-        ("x", None),
-        ("", None),
+        ("a", None, None, ["first", "third"]),
+        ("b", None, None, ["third"]),
+        ("x", None, None, []),
+        ("", None, None, []),
+        ("a", "kind", None, ["first"]),
+        ("a", "type", None, ["third"]),
+        ("a", None, "table", ["first", "third"]),
+        ("a", "type", "table", ["third"]),
+        ("a", "kind", "other", []),
+        ("a", "missing", None, []),
     ],
     ids=[
-        "first matching field wins",
+        "all matching fields",
         "skips field without mapped value",
         "no matching field ignores static rule",
-        "empty input",
+        "empty value",
+        "filter by first field",
+        "filter by last field",
+        "filter by shared location",
+        "filter by field and location",
+        "non-matching location",
+        "non-matching field",
     ],
 )
 def test_mapping_list_get_mapped_values(
-    mapping_list: MappingFieldList[str], input_value: str, expected: str | None
+    mapping_list: MappingFieldList[str],
+    value_in_primary_source: str,
+    field_in_primary_source: str | None,
+    location_in_primary_source: str | None,
+    expected: list[str],
 ) -> None:
-    assert mapping_list.get_mapped_values(input_value) == expected
+    assert (
+        mapping_list.get_mapped_values(
+            value_in_primary_source,
+            field_in_primary_source=field_in_primary_source,
+            location_in_primary_source=location_in_primary_source,
+        )
+        == expected
+    )
 
 
 def test_mapping_list_get_static_values(mapping_list: MappingFieldList[str]) -> None:
@@ -533,7 +620,7 @@ def test_mapping_list_get_static_values(mapping_list: MappingFieldList[str]) -> 
 
 
 def test_mapping_list_empty() -> None:
-    assert MappingFieldList[str]().get_mapped_values("a") is None
+    assert MappingFieldList[str]().get_mapped_values("a") == []
     assert MappingFieldList[str]().get_static_values() is None
 
 
@@ -552,6 +639,112 @@ def test_mapping_list_on_mapping_model() -> None:
     )
     assert isinstance(mapping.email, MappingFieldList)
     assert mapping.email.get_mapped_values("work") == ["work@example.com"]
-    assert mapping.email.get_mapped_values("home") is None
+    assert mapping.email.get_mapped_values("home") == []
     assert mapping.email.get_static_values() == ["info@example.com"]
     assert mapping.identifierInPrimarySource.get_static_values() == "cp-1"
+
+
+@pytest.mark.parametrize(
+    ("rule", "expected"),
+    [
+        (MappingRule[str](forValues=["a", "b"], setValues="foo"), ["a", "b"]),
+        (MappingRule[str](forValues=["a"]), ["a"]),
+        (MappingRule[str](forValues=[], setValues="foo"), []),
+        (MappingRule[str](setValues="foo"), []),
+    ],
+    ids=[
+        "rule with forValues",
+        "rule without setValues",
+        "empty forValues",
+        "static rule",
+    ],
+)
+def test_mapping_rule_get_mappable_values(
+    rule: MappingRule[str], expected: list[str]
+) -> None:
+    assert rule.get_mappable_values() == expected
+
+
+def test_mapping_rule_list_get_mappable_values(
+    mapping_field: MappingField[str],
+) -> None:
+    assert mapping_field.mappingRules.get_mappable_values() == [
+        "a",
+        "a",
+        "b",
+        "c",
+        "c",
+        "d",
+    ]
+    assert MappingRuleList[str]().get_mappable_values() == []
+
+
+@pytest.mark.parametrize(
+    ("field_in_primary_source", "location_in_primary_source", "expected"),
+    [
+        (None, None, ["a", "b"]),
+        ("kind", "table", ["a", "b"]),
+        ("other", None, []),
+        (None, "other", []),
+    ],
+    ids=[
+        "no filters",
+        "matching field and location",
+        "non-matching field",
+        "non-matching location",
+    ],
+)
+def test_mapping_field_get_mappable_values(
+    field_in_primary_source: str | None,
+    location_in_primary_source: str | None,
+    expected: list[str],
+) -> None:
+    field = MappingField[str](
+        fieldInPrimarySource="kind",
+        locationInPrimarySource="table",
+        mappingRules=[
+            {"forValues": ["a"], "setValues": "first"},
+            {"forValues": ["b"]},
+            {"setValues": "static"},
+        ],
+    )
+    assert (
+        field.get_mappable_values(
+            field_in_primary_source=field_in_primary_source,
+            location_in_primary_source=location_in_primary_source,
+        )
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    ("field_in_primary_source", "location_in_primary_source", "expected"),
+    [
+        (None, None, ["a", "b", "a", "b"]),
+        ("kind", None, ["a"]),
+        ("type", "table", ["a", "b"]),
+        (None, "table", ["a", "a", "b"]),
+        ("missing", None, []),
+    ],
+    ids=[
+        "no filters",
+        "filter by first field",
+        "filter by field and location",
+        "filter by shared location",
+        "non-matching field",
+    ],
+)
+def test_mapping_list_get_mappable_values(
+    mapping_list: MappingFieldList[str],
+    field_in_primary_source: str | None,
+    location_in_primary_source: str | None,
+    expected: list[str],
+) -> None:
+    assert (
+        mapping_list.get_mappable_values(
+            field_in_primary_source=field_in_primary_source,
+            location_in_primary_source=location_in_primary_source,
+        )
+        == expected
+    )
+    assert MappingFieldList[str]().get_mappable_values() == []
