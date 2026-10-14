@@ -1,5 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "dependencyDashboard": true,
     "enabledManagers": [
         "docker-compose",
         "dockerfile",
@@ -16,12 +17,12 @@
             "on monday"
         ]
     },
+    "osvVulnerabilityAlerts": true,
     "packageRules": [
         {
             "description": "Apply all updates after cooldown of 7 days, hopefully avoiding malicious updates which are yanked in the meantime",
             "matchUpdateTypes": [
                 "digest",
-                "lockFileMaintenance",
                 "major",
                 "minor",
                 "patch",
@@ -31,9 +32,17 @@
             "minimumReleaseAgeBehaviour": "timestamp-optional"
         },
         {
-            "description": "Pin GitHub Actions and compose images to SHA digests for supply chain security",
+            "description": "Renovate cannot enforce a cooldown on lock file maintenance, because uv resolves the lock file itself (renovatebot/renovate#41654); set explicitly so the rule above does not override renovate's own default and leave the stability check pending forever",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "minimumReleaseAge": null
+        },
+        {
+            "description": "Pin GitHub Actions, compose images and base images to SHA digests for supply chain security",
             "matchManagers": [
                 "docker-compose",
+                "dockerfile",
                 "github-actions"
             ],
             "pinDigests": true
@@ -61,7 +70,39 @@
             ]
         },
         {
-            "description": "Immediately apply updates of mex packages in dedicated PR",
+            "description": "Group meta-requirements and pre-commit hooks into a single PR, keeping tools in sync with their hooks",
+            "groupName": "tooling",
+            "matchManagers": [
+                "pip_requirements",
+                "pre-commit"
+            ]
+        },
+        {
+            "description": "Keep both python base image stages moving together in one PR",
+            "groupName": "python base image",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchDepNames": [
+                "python"
+            ]
+        },
+        {
+            "description": "Python major and minor upgrades are done by hand, because the version comes from the python_version_max cookiecutter variable recorded in .cruft.json, and is rendered from there into .python-version, pyproject.toml, the CI matrices and the Dockerfile, so it cannot be bumped by editing a single file",
+            "enabled": false,
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchDepNames": [
+                "python"
+            ],
+            "matchUpdateTypes": [
+                "major",
+                "minor"
+            ]
+        },
+        {
+            "description": "Immediately apply updates of mex packages, in dedicated PR",
             "groupName": null,
             "matchPackageNames": [
                 "mex-*"
@@ -73,6 +114,10 @@
     "pre-commit": {
         "enabled": true
     },
+    "schedule": [
+        "on monday and wednesday"
+    ],
+    "timezone": "Europe/Berlin",
     "vulnerabilityAlerts": {
         "enabled": true
     }

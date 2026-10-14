@@ -32,6 +32,7 @@ from mex.common.types import (
     Year,
     YearMonth,
     YearMonthDay,
+    YearMonthDayTime,
 )
 
 AnyExternalAssociateIdentifier = Annotated[
@@ -84,7 +85,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDay | YearMonth | Year],
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="(Planned) end of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P582"]},
@@ -165,7 +166,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDay | YearMonth | Year],
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="The start of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P580"]},
@@ -222,7 +223,7 @@ class _RequiredLists(_Stem):
         Field(
             description="A unit that is responsible for the activity.",
             min_length=1,
-            json_schema_extra={"closeMatch": "http.//dcat-ap.de/def/dcatde/maintainer"},
+            json_schema_extra={"closeMatch": "http://dcat-ap.de/def/dcatde/maintainer"},
         ),
     ]
     title: Annotated[
@@ -489,7 +490,9 @@ class ActivityMapping(_Stem, BaseMapping):
     activityType: MappingFieldList[list[ActivityType]] = MappingFieldList()
     alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
     documentation: MappingFieldList[list[Link]] = MappingFieldList()
-    end: MappingFieldList[list[YearMonthDay | YearMonth | Year]] = MappingFieldList()
+    end: MappingFieldList[list[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = (
+        MappingFieldList()
+    )
     externalAssociate: MappingFieldList[list[AnyExternalAssociateIdentifier]] = (
         MappingFieldList()
     )
@@ -511,7 +514,9 @@ class ActivityMapping(_Stem, BaseMapping):
         MappingFieldList()
     )
     shortName: MappingFieldList[list[Text]] = MappingFieldList()
-    start: MappingFieldList[list[YearMonthDay | YearMonth | Year]] = MappingFieldList()
+    start: MappingFieldList[
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year]
+    ] = MappingFieldList()
     succeeds: MappingFieldList[list[MergedActivityIdentifier]] = MappingFieldList()
     theme: MappingFieldList[list[Theme]] = MappingFieldList()
     website: MappingFieldList[list[Link]] = MappingFieldList()

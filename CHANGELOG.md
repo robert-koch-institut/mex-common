@@ -21,12 +21,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [3.4.2] - 2026-10-08
+
+### Fixed
+
+- use correct primary source identifier (MEx Editor) for merging rules
+
+## [3.4.1] - 2026-09-14
+
+### Changes
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
+- updated mex-model to 5.1.4
+
+## [3.4.0] - 2026-08-24
+
+### Changes
+
+- hardcode all vocabulary enum members in `mex.common.types.vocabulary`
+- BREAKING: replace the `__vocabulary__` slug on vocabulary enums with `__scheme__`,
+  which holds the full scheme url, e.g. `https://mex.rki.de/item/access-restriction`
+- BREAKING: rename `License.CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL` to
+  `License.CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL` and
+  `Theme.ANIMAL_EXPERIMENTAL_RESEARCH_AND_R` to
+  `Theme.ANIMAL_EXPERIMENTAL_RESEARCH_AND_3R`, because digits in concept labels are
+  no longer dropped from member names
+
+### Removed
+
+- BREAKING: remove `VocabularyEnum.find`, because concept labels are no longer loaded
+  at runtime; look concepts up via `mex.model.VOCABULARY_JSON_BY_NAME` instead
+- BREAKING: remove the `VocabularyLoader` metaclass as well as the `Concept` and
+  `BilingualText` models, vocabulary enums are now `Enum` subclasses
+- BREAKING: remove the custom `VocabularyEnum.__repr__`
+- removed now unused `split_to_caps` string transformer
+- removed unused type hints for `RuleSet` base class properties
+
 ## [3.3.0] - 2026-08-19
 
 ### Changes
 
 - load langdetect profiles lazily to save ~150ms on every initial mex-common import
-- BREAKING: update mex-model depedency to v5.1
+- BREAKING: update mex-model dependency to v5.1
 
 ### Fixed
 

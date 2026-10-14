@@ -22,7 +22,6 @@ from mex.common.transform import (
     normalize,
     snake_to_dromedary,
     split_to_camel,
-    split_to_caps,
     to_key_and_values,
 )
 from mex.common.types import Identifier, PathWrapper, TemporalEntity
@@ -240,17 +239,6 @@ def test_normalize(string: str, expected: str) -> None:
 def test_split_to_camel(string: str, expected: str) -> None:
     result = split_to_camel(string)
     assert result == expected
-
-
-@pytest.mark.parametrize(
-    ("string", "expected"),
-    [
-        ("", ""),
-        ("Foo(Bar) 99 - Batz", "FOO_BAR_99_BATZ"),
-    ],
-)
-def test_split_to_caps(string: str, expected: str) -> None:
-    assert split_to_caps(string) == expected
 
 
 @pytest.mark.parametrize(

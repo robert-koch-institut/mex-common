@@ -5,11 +5,12 @@ on:
     branches: ["main"]
   schedule:
     - cron: "14 3 * * 1-5"
+      timezone: "Europe/Berlin"
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   renovate:
@@ -25,7 +26,7 @@ jobs:
           fetch-depth: 1
 
       - name: Run renovatebot
-        uses: renovatebot/github-action@e09d604f8f803bb527bd8321ed5be06c460b8682 # v46.2.2
+        uses: renovatebot/github-action@230ce922b08968d0a4f6f70f295601daff09ef1d # v46.3.7
         env:
           RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.MEX_PLAIN_SIGNING_KEY }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
