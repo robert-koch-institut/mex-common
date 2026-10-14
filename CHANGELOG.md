@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- parse boolean strings like `false` or `0` in `MEX_VERIFY_SESSION` as booleans instead of paths
+
 ### Security
 
 ## [3.4.2] - 2026-10-08

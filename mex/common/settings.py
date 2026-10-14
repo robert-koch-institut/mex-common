@@ -173,6 +173,7 @@ class BaseSettings(PydanticBaseSettings):
             "be either absolute or relative to the `ops_dir`. Defaults to True."
         ),
         validation_alias="MEX_VERIFY_SESSION",
+        union_mode="left_to_right",
     )
     organigram_path: str = Field(
         "raw-data/organigram/organizational_units.json",
