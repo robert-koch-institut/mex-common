@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `get_mapped_values`, `get_mappable_values`, `get_static_values` mapping model helpers
+
 ### Changes
 
 ### Deprecated
@@ -51,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: remove `search_preview_items` from `BackendApiConnector`, use
   `fetch_preview_items(reference_filters=...)` instead
 - BREAKING: drop the deprecated `referenced_identifier`, `reference_field` and
-  `stable_target_id` search arguments, use `reference_filters` instead
+  `stable_tar`get_id`` search arguments, use `reference_filters` instead
 - BREAKING: removed `mex.common.extract`, use `parse_csv` to mex-extractors
 - BREAKING: removed `mex.common.sorters`, use `topological_sort` from mex-extractors
 
@@ -140,7 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add get_preview_item by stableTargetId to BackendAPIConnector
+- add `get_preview_item` by stableTargetId to BackendAPIConnector
 - **BREAKING** add configuration parameter `ops_dir`. Settings are now read from
   `ops_dir/config/.env` and `ops_dir/config/secrets/*`. Make sure your environment
   variable `MEX_OPS_DIR` points to your local mex-ops directory. For dependent
@@ -363,8 +365,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: expects primary source id instead of primary source in:
-    - get_merged_ids_by_employee_ids
-    - get_merged_ids_by_query_string
+    - `get_merged_ids_by_employee_ids`
+    - `get_merged_ids_by_query_string`
     - transform_ldap_persons_to_extracted_persons
     - transform_ldap_functional_accounts_to_extracted_contact_points
     - transform_ldap_persons_with_query_to_extracted_persons
@@ -372,7 +374,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - transform_ldap_functional_account_to_extracted_contact_point
     - transform_any_ldap_actor_to_extracted_persons_or_contact_points
     - transform_orcid_person_to_mex_person
-    - get_extracted_organizational_unit_with_parents
+    - `get_extracted_organizational_unit_with_parents`
     - transform_organigram_unit_to_extracted_organizational_unit
     - transform_organigram_units_to_organizational_units
     - transform_wikidata_organizations_to_extracted_organizations
@@ -383,7 +385,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- BREAKING: get_primary_sources_by_name
+- BREAKING: `get_primary_sources_by_name`
 - BREAKING: EMAIL_PATTERN and Email removed from mex.common.types
 - BREAKING: EMAIL_FIELDS_BY_CLASS_NAME removed from mex.common.fields
 
@@ -453,8 +455,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- remove redundant function `get_ldap_persons` to use connector directly instead
-- remove unused functions `get_merged_ids_by_email` and `get_ldap_fields`
+- remove redundant function ``get_ldap_persons`` to use connector directly instead
+- remove unused functions ``get_merged_ids_by_email`` and ``get_ldap_fields``
 
 ## [1.2.0] - 2025-08-28
 
@@ -493,7 +495,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add identifier filter to merged and preview fetch endpoints in BackendApiConnector
-- add `fetch_all_merged_items` and `get_extracted_item` methods to BackendApiConnector
+- add `fetch_all_merged_items` and ``get_extracted_item`` methods to BackendApiConnector
 
 ### Changes
 
@@ -616,7 +618,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added pre-configured type adapters to all models with an `entityType`
 - added `MEX_LDAP_SEARCH_BASE` setting to configure the search domain
 - added `metrics` method to connectors to collect cache hits and misses
-- added `get_extracted_organizational_unit_with_parents` organigram helper
+- added ``get_extracted_organizational_unit_with_parents`` organigram helper
 - added `transform_organigram_unit_to_extracted_organizational_unit` transformer
 
 ### Changes
@@ -626,21 +628,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - moved memory and backend identity provider registration to package init file
 - BREAKING: convert ldap connector and related functions from generator to list returns
 - reconfigure all cached functions to have a `maxsize` setting
-- moved `get_alias_lookup`, `get_list_field_names` and `get_field_names_allowing_none`
+- moved ``get_alias_lookup``, ``get_list_field_names`` and ``get_field_names_allowing_none``
   from `BaseModel` class to utils module
 - BREAKING: convert organigram functions from generator to list returns
 - BREAKING: convert primary-source functions from generator to list return
 - BREAKING: moved `split_to_caps` from types to transform module
 - BREAKING: moved `normalize` from utils to transform module
-- BREAKING: renamed `get_persons_by_name` to `get_ldap_persons`
+- BREAKING: renamed ``get_persons_by_name`` to ``get_ldap_persons``
 
 ### Removed
 
 - BREAKING: remove return value from `BackendApiConnector.ingest`
-- BREAKING: remove unused `LDAPConnector.get_unit` and `get_units` methods
-- BREAKING: remove `get_count_of_found_persons_by_name` to avoid duplicate queries
+- BREAKING: remove unused `LDAPConnector.`get_unit`` and ``get_units`` methods
+- BREAKING: remove ``get_count_of_found_persons_by_name`` to avoid duplicate queries
 - BREAKING: removed `member_of` validation for ldap persons
-- BREAKING: removed `get_all_extracted_primary_sources` helper
+- BREAKING: removed ``get_all_extracted_primary_sources`` helper
 
 ## [0.58.3] - 2025-04-24
 
@@ -683,7 +685,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: clean-up orcid connector method and extract function names
 - BREAKING: require orcid primary source as parameter to transform function
 - make orcid family and given names optional to validate all data
-- rename private _get_organization_details to public get_wikidata_organization
+- rename private _`get_organization_details` to public `get_wikidata_organization`
 
 ### Removed
 
@@ -692,9 +694,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: removed unused MEX_WIKI_QUERY_SERVICE_URL setting
 - BREAKING: removed unused WikidataQueryServiceConnector class
 - BREAKING: removed unused search_organization_by_label extract function
-- BREAKING: removed unused get_count_of_found_organizations_by_label extract function
+- BREAKING: removed unused `get_count_of_found_organizations_by_label` extract function
 - BREAKING: removed unused search_organizations_by_label extract function
-- BREAKING: removed unused get_extracted_organization_from_wikidata helper function
+- BREAKING: removed unused `get_extracted_organization_from_wikidata` helper function
 
 ## [0.56.1] - 2025-03-31
 
@@ -841,7 +843,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add a sink registry with `register_sink` and `get_sink` functions
+- add a sink registry with `register_sink` and ``get_sink`` functions
 - add a multi-sink implementation, akin to `mex.extractors.load`
 
 ### Changes
@@ -876,7 +878,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - BREAKING: move `GenericFieldInfo` from `models.base.field_info` to `utils`
-- BREAKING: move `get_all_fields` from `BaseModel` to `utils` to support all base models
+- BREAKING: move ``get_all_fields`` from `BaseModel` to `utils` to support all base models
 
 ## [0.45.0] - 2024-12-18
 
@@ -1015,7 +1017,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added methods for extracting persons by name or ID from ldap
 - `contains_only_types` to check if fields are annotated as desired
 - `group_fields_by_class_name` utility to simplify filtered model/field lookups
-- new parameters to `get_inner_types` to customize what to unpack
+- new parameters to ``get_inner_types`` to customize what to unpack
 
 ## [0.36.1] - 2024-09-16
 
@@ -1028,8 +1030,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - added `BackendApiConnector` methods to cover all current (and near future) endpoints:
-  `fetch_extracted_items`, `fetch_merged_items`, `get_merged_item`,
-  `preview_merged_item` and `get_rule_set`
+  `fetch_extracted_items`, `fetch_merged_items`, ``get_merged_item``,
+  `preview_merged_item` and ``get_rule_set``
 - complete the list of exported names in `models` and `types` modules
 
 ### Deprecated
@@ -1063,7 +1065,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - wikidata fixtures to pytest plugin: wikidata_organization_raw, wikidata_organization,
   mocked_wikidata
 - convenience function
-  `get_merged_organization_id_by_query_with_extract_transform_and_load`
+  ``get_merged_organization_id_by_query_with_extract_transform_and_load``
   for getting the stableTargetId of an organization, while transforming and loading the
   organization using the provided load function
 - models for rule-set requests and responses along with typing and lookups
@@ -1186,7 +1188,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: move `FILTER_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
 - BREAKING: move `MAPPING_MODEL_BY_EXTRACTED_CLASS_NAME` to `mex.common.models`
 - BREAKING: change `MEX_PRIMARY_SOURCE_IDENTIFIER` to end in `1`, so that it differs
-  from `MEX_PRIMARY_SOURCE_STABLE_TARGET_ID`
+  from `MEX_PRIMARY_SOURCE_STABLE_TAR`GET_ID``
 
 ## [0.25.1] - 2024-05-21
 
@@ -1207,7 +1209,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix ldap.extract.get_merged_ids_by_email
+- fix ldap.extract.`get_merged_ids_by_email`
 
 ## [0.24.0] - 2024-04-12
 
@@ -1242,14 +1244,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- port `get_inner_types` from `mex-backend` to `mex.common.utils`
+- port ``get_inner_types`` from `mex-backend` to `mex.common.utils`
 
 ### Changes
 
 - rename Timestamp class to TemporalEntity
 - added subclasses with specific resolution YearMonth, YearMonthDay, YearMonthDayTime
 - modernize typing with syntactic sugar
-- simplify `BaseModel._get_list_field_names` using `get_inner_types`
+- simplify `BaseModel._`get_list_field_names`` using ``get_inner_types``
 - switch from poetry to pdm
 - use vocabulary JSON files from mex-model
 
@@ -1392,7 +1394,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
-- deprecate `MExModel.get_entity_type`, use `cls.__name__` instead
+- deprecate `MExModel.`get_entity_type``, use `cls.__name__` instead
 - deprecate `mex.common.models.MODEL_CLASSES[_BY_ENTITY_TYPE]`, use the more precise
   lists or dicts like `EXTRACTED_MODEL_CLASSES_BY_NAME` instead
 
