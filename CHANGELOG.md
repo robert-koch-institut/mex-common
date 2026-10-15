@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix type annotation of Field Annotations, raise error if Field Annotation is missing
+    and temporarily fix tests by ignoring default str min/max length boundaries
 - parse boolean strings like `false` or `0` in `MEX_VERIFY_SESSION` as booleans instead of paths
 
 ### Security

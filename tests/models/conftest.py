@@ -64,9 +64,20 @@ def _sub_only_text(repl: Callable[[str], str], string: str) -> str:
     return re.sub(r"([a-zA-Z_-]+)", lambda m: repl(m.group(0)), string)
 
 
-def prepare_generated_field(field: str, obj: dict[str, Any]) -> None:
+def prepare_generated_field(
+    field: str,
+    obj: dict[str, Any],
+    specified: dict[str, Any],
+) -> None:
     # discard title but save value for later
     title = obj.pop("title", field)  # field title is only in generated
+
+    # TODO(MX-1725): remove popping of min/maxLength and parameter 'specified'
+    # see changes in https://github.com/robert-koch-institut/mex-common/pull/875
+    if "minLength" not in specified:
+        obj.pop("minLength", None)
+    if "maxLength" not in specified:
+        obj.pop("maxLength", None)
 
     # the generated schema does not use $ref for identifiers and vocabulary fields
     # so we convert the generated fields to look like the specified schema
@@ -91,12 +102,16 @@ def prepare_generated_field(field: str, obj: dict[str, Any]) -> None:
 
     # recurse into the field definitions for array items
     if obj.get("type") == "array":
-        prepare_generated_field(field, obj["items"])
+        prepare_generated_field(field, obj["items"], specified["items"])
 
     # recurse into choices if multiple types are allowed
     for quantifier in {"anyOf", "allOf"} & set(obj):
-        for item in obj[quantifier]:
-            prepare_generated_field(field, item)
+        for generated_item, specified_item in zip(
+            obj[quantifier],
+            specified[quantifier],
+            strict=True,
+        ):
+            prepare_generated_field(field, generated_item, specified_item)
 
 
 def prepare_specified_field(field: str, obj: dict[str, Any]) -> None:
