@@ -80,7 +80,9 @@ def test_field_defs_match_spec(entity_type: str, field_name: str) -> None:
     generated = deepcopy(generated_properties[field_name])
 
     prepare_specified_field(field_name, specified)
-    prepare_generated_field(field_name, generated)
+    prepare_generated_field(
+        field_name, generated, specified
+    )  # TODO(MX-1725): remove 'specified'
 
     assert generated == specified, f"""
 {split_to_camel(entity_type)}.{field_name}

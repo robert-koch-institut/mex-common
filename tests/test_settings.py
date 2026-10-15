@@ -116,6 +116,29 @@ def test_resolve_paths() -> None:
     assert settings.sub_model.sub_model_path == WorkPath(settings.work_dir / relative)
 
 
+@pytest.mark.parametrize(
+    ("env_value", "expected"),
+    [
+        ("false", False),
+        ("0", False),
+        ("true", True),
+        ("1", True),
+        ("/absolute/ca.pem", OpsPath("/absolute/ca.pem")),
+    ],
+    ids=["false", "zero", "true", "one", "path"],
+)
+def test_verify_session_from_env(
+    monkeypatch: pytest.MonkeyPatch,
+    env_value: str,
+    expected: bool | OpsPath,  # noqa: FBT001
+) -> None:
+    monkeypatch.setenv("MEX_VERIFY_SESSION", env_value)
+
+    settings = BaseSettings()
+
+    assert settings.verify_session == expected
+
+
 def test_no_settings_as_attributes() -> None:
     # regular settings instantiation passes
     FooSettings()
