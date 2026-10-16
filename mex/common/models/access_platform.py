@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -417,17 +417,19 @@ class AccessPlatformMapping(_Stem, BaseMapping):
         Literal["AccessPlatformMapping"], Field(alias="$type", frozen=True)
     ] = "AccessPlatformMapping"
     technicalAccessibility: Annotated[
-        list[MappingField[TechnicalAccessibility]], Field(min_length=1)
+        MappingFieldList[TechnicalAccessibility], Field(min_length=1)
     ]
-    endpointDescription: list[MappingField[Link | None]] = []
-    endpointType: list[MappingField[APIType | None]] = []
-    endpointURL: list[MappingField[Link | None]] = []
-    alternativeTitle: list[MappingField[list[Text]]] = []
-    contact: list[MappingField[list[AnyContactIdentifier]]] = []
-    description: list[MappingField[list[Text]]] = []
-    landingPage: list[MappingField[list[Link]]] = []
-    title: list[MappingField[list[Text]]] = []
-    unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    endpointDescription: MappingFieldList[Link | None] = MappingFieldList()
+    endpointType: MappingFieldList[APIType | None] = MappingFieldList()
+    endpointURL: MappingFieldList[Link | None] = MappingFieldList()
+    alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
+    contact: MappingFieldList[list[AnyContactIdentifier]] = MappingFieldList()
+    description: MappingFieldList[list[Text]] = MappingFieldList()
+    landingPage: MappingFieldList[list[Link]] = MappingFieldList()
+    title: MappingFieldList[list[Text]] = MappingFieldList()
+    unitInCharge: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
+        MappingFieldList()
+    )
 
 
 class AccessPlatformFilter(_Stem, BaseFilter):

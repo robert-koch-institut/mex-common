@@ -4,7 +4,7 @@ from pydantic import AfterValidator, Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -353,15 +353,17 @@ class PrimarySourceMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PrimarySourceMapping"], Field(alias="$type", frozen=True)
     ] = "PrimarySourceMapping"
-    version: list[MappingField[VersionStr | None]] = []
-    alternativeTitle: list[MappingField[list[Text]]] = []
-    contact: list[MappingField[list[AnyContactIdentifier]]] = []
-    contributor: list[MappingField[list[MergedPersonIdentifier]]] = []
-    description: list[MappingField[list[Text]]] = []
-    documentation: list[MappingField[list[Link]]] = []
-    locatedAt: list[MappingField[list[Link]]] = []
-    title: list[MappingField[list[Text]]] = []
-    unitInCharge: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
+    version: MappingFieldList[VersionStr | None] = MappingFieldList()
+    alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
+    contact: MappingFieldList[list[AnyContactIdentifier]] = MappingFieldList()
+    contributor: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
+    description: MappingFieldList[list[Text]] = MappingFieldList()
+    documentation: MappingFieldList[list[Link]] = MappingFieldList()
+    locatedAt: MappingFieldList[list[Link]] = MappingFieldList()
+    title: MappingFieldList[list[Text]] = MappingFieldList()
+    unitInCharge: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
+        MappingFieldList()
+    )
 
 
 class PrimarySourceFilter(_Stem, BaseFilter):
