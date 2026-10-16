@@ -10,6 +10,7 @@ from mex.common.types.identifier import (
     ExtractedContactPointIdentifier,
     ExtractedDistributionIdentifier,
     ExtractedIdentifier,
+    ExtractedLocationIdentifier,
     ExtractedOrganizationalUnitIdentifier,
     ExtractedOrganizationIdentifier,
     ExtractedPersonIdentifier,
@@ -26,6 +27,7 @@ from mex.common.types.identifier import (
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
     MergedIdentifier,
+    MergedLocationIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -64,7 +66,6 @@ from mex.common.types.vocabulary import (
     CodingSystem,
     ConsentStatus,
     ConsentType,
-    Country,
     DataProcessingState,
     Frequency,
     HealthCategory,
@@ -111,7 +112,6 @@ __all__ = (
     "CodingSystem",
     "ConsentStatus",
     "ConsentType",
-    "Country",
     "DataProcessingState",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
@@ -120,6 +120,7 @@ __all__ = (
     "ExtractedContactPointIdentifier",
     "ExtractedDistributionIdentifier",
     "ExtractedIdentifier",
+    "ExtractedLocationIdentifier",
     "ExtractedOrganizationIdentifier",
     "ExtractedOrganizationalUnitIdentifier",
     "ExtractedPersonIdentifier",
@@ -145,6 +146,7 @@ __all__ = (
     "MergedContactPointIdentifier",
     "MergedDistributionIdentifier",
     "MergedIdentifier",
+    "MergedLocationIdentifier",
     "MergedOrganizationIdentifier",
     "MergedOrganizationalUnitIdentifier",
     "MergedPersonIdentifier",
@@ -185,7 +187,6 @@ AnyVocabularyEnum = (
     | CodingSystem
     | ConsentStatus
     | ConsentType
-    | Country
     | DataProcessingState
     | Frequency
     | HealthCategory
@@ -227,6 +228,7 @@ AnyMergedIdentifier = (
     | MergedConsentIdentifier
     | MergedContactPointIdentifier
     | MergedDistributionIdentifier
+    | MergedLocationIdentifier
     | MergedOrganizationalUnitIdentifier
     | MergedOrganizationIdentifier
     | MergedPersonIdentifier
@@ -250,6 +252,7 @@ AnyExtractedIdentifier = (
     | ExtractedConsentIdentifier
     | ExtractedContactPointIdentifier
     | ExtractedDistributionIdentifier
+    | ExtractedLocationIdentifier
     | ExtractedOrganizationalUnitIdentifier
     | ExtractedOrganizationIdentifier
     | ExtractedPersonIdentifier

@@ -47,7 +47,7 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.common.types.identifier import MergedResourceSeriesIdentifier
-from mex.common.types.vocabulary import CodingSystem
+from mex.common.types.vocabulary import CodingSystem, Purpose
 
 ConformsToStr = Annotated[
     str,
@@ -269,7 +269,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasLegalBasis: Annotated[
-        list[Text],
+        list[Text | Link],
         Field(
             description=(
                 "The legal basis used to justify processing of personal data. "
@@ -285,11 +285,11 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasPurpose: Annotated[
-        list[Text],
+        list[Purpose],
         Field(
             description=(
-                "A free text statement of the purpose of the processing of data "
-                "or personal data."
+                "A controlled list of types of purposes for which the data was "
+                "originally collected."
             ),
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPurpose"]},
         ),
@@ -302,6 +302,16 @@ class _OptionalLists(_Stem):
                 "or personal data."
             ),
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasPurpose"]},
+        ),
+    ] = []
+    hasVersion: Annotated[
+        list[MergedResourceIdentifier],
+        Field(
+            description=(
+                "A related Resource that is a version, edition, or adaptation of the "
+                "described Resource."
+            ),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#hasVersion"]},
         ),
     ] = []
     healthCategory: Annotated[
@@ -424,6 +434,11 @@ class _OptionalLists(_Stem):
             description=(
                 "The type of population common to all subjects of the data collection."
             ),
+            json_schema_extra={
+                "closeMatch": [
+                    "http://healthdataportal.eu/ns/health#populationcoverage"
+                ]
+            },
         ),
     ] = []
     provenance: Annotated[
@@ -434,7 +449,12 @@ class _OptionalLists(_Stem):
                 "how the data was collected, including methodologies, tools, and "
                 "protocols used."
             ),
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/provenance"]},
+            json_schema_extra={
+                "closeMatch": [
+                    "http://purl.org/dc/terms/provenance",
+                    "http://healthdataportal.eu/ns/health#provenance",
+                ]
+            },
         ),
     ] = []
     publication: Annotated[
@@ -459,9 +479,9 @@ class _OptionalLists(_Stem):
     qualityInformation: Annotated[
         list[Text],
         Field(
-            description="Some information about the quality of the resource.",
+            description="Any additional information about the resource",
             json_schema_extra={
-                "closeMatch": ["http://www.w3.org/ns/dqv#hasQualityAnnotation"]
+                "closeMatch": ["http://www.w3.org/2004/02/skos/core#note"]
             },
         ),
     ] = []
@@ -470,13 +490,6 @@ class _OptionalLists(_Stem):
         Field(
             description="A related Resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/relation"]},
-        ),
-    ] = []
-    resourceCreationMethod: Annotated[
-        list[ResourceCreationMethod],
-        Field(
-            description="Method how the resource was created.",
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     resourceTypeGeneral: Annotated[
@@ -558,6 +571,14 @@ class _RequiredLists(_Stem):
             },
         ),
     ]
+    resourceCreationMethod: Annotated[
+        list[ResourceCreationMethod],
+        Field(
+            description="Method how the resource was created.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
+            min_length=1,
+        ),
+    ]
     theme: Annotated[
         list[Theme],
         Field(
@@ -599,6 +620,13 @@ class _SparseLists(_Stem):
             json_schema_extra={
                 "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
             },
+        ),
+    ] = []
+    resourceCreationMethod: Annotated[
+        list[ResourceCreationMethod],
+        Field(
+            description="Method how the resource was created.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     theme: Annotated[
@@ -678,7 +706,10 @@ class _OptionalValues(_Stem):
             description=(
                 "Specifies the maximum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#maxtypicalage"]
+            },
         ),
     ] = None
     minTypicalAge: Annotated[
@@ -687,7 +718,10 @@ class _OptionalValues(_Stem):
             description=(
                 "Specifies the minimum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#mintypicalage"]
+            },
         ),
     ] = None
     modified: Annotated[
@@ -1112,6 +1146,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
     hasPurpose: list[MergedPrimarySourceIdentifier] = []
     hasPurposeDescription: list[MergedPrimarySourceIdentifier] = []
+    hasVersion: list[MergedPrimarySourceIdentifier] = []
     hasPersonalData: list[MergedPrimarySourceIdentifier] = []
     healthCategory: list[MergedPrimarySourceIdentifier] = []
     icd10code: list[MergedPrimarySourceIdentifier] = []
@@ -1249,9 +1284,10 @@ class ResourceMapping(_Stem, BaseMapping):
     externalPartner: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     hasCodeValues: list[MappingField[list[Text]]] = []
     hasCodingSystem: list[MappingField[list[CodingSystem]]] = []
-    hasLegalBasis: list[MappingField[list[Text]]] = []
-    hasPurpose: list[MappingField[list[Text]]] = []
+    hasLegalBasis: list[MappingField[list[Text | Link]]] = []
+    hasPurpose: list[MappingField[list[Purpose]]] = []
     hasPurposeDescription: list[MappingField[list[Text]]] = []
+    hasVersion: list[MappingField[list[MergedResourceIdentifier]]] = []
     healthCategory: list[MappingField[list[HealthCategory]]] = []
     icd10code: list[MappingField[list[str]]] = []
     instrumentToolOrApparatus: list[MappingField[list[Text]]] = []

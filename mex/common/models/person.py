@@ -116,16 +116,6 @@ class _OptionalLists(_Stem):
             },
         ),
     ] = []
-    fullName: Annotated[
-        list[FullNameStr],
-        Field(
-            description=(
-                "The full name of a person. Also used if the naming schema "
-                "(given name and family name) does not apply to the name."
-            ),
-            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
-        ),
-    ] = []
     givenName: Annotated[
         list[GivenNameStr],
         Field(
@@ -167,8 +157,36 @@ class _OptionalLists(_Stem):
     ] = []
 
 
+class _RequiredLists(_Stem):
+    fullName: Annotated[
+        list[FullNameStr],
+        Field(
+            description=(
+                "The full name of a person. Also used if the naming schema "
+                "(given name and family name) does not apply to the name."
+            ),
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
+            min_length=1,
+        ),
+    ]
+
+
+class _SparseLists(_Stem):
+    fullName: Annotated[
+        list[FullNameStr],
+        Field(
+            description=(
+                "The full name of a person. Also used if the naming schema "
+                "(given name and family name) does not apply to the name."
+            ),
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
+        ),
+    ] = []
+
+
 class BasePerson(
     _OptionalLists,
+    _RequiredLists,
     json_schema_extra={
         "description": (
             "A person ([FOAF, 2004-05-01](http://xmlns.com/foaf/0.1/)). This class "
@@ -261,7 +279,7 @@ class MergedPerson(BasePerson, MergedItem):
     ] = None
 
 
-class PreviewPerson(_OptionalLists, PreviewItem):
+class PreviewPerson(_OptionalLists, _SparseLists, PreviewItem):
     """Preview for merging all extracted items and rules for a person."""
 
     entityType: Annotated[
@@ -296,7 +314,7 @@ class PreviewPerson(_OptionalLists, PreviewItem):
     ] = None
 
 
-class AdditivePerson(_OptionalLists, AdditiveRule):
+class AdditivePerson(_OptionalLists, _SparseLists, AdditiveRule):
     """Rule to add values to merged person items."""
 
     entityType: Annotated[
@@ -316,7 +334,7 @@ class AdditivePerson(_OptionalLists, AdditiveRule):
     ] = None
 
 
-class SubtractivePerson(_OptionalLists, SubtractiveRule):
+class SubtractivePerson(_OptionalLists, _SparseLists, SubtractiveRule):
     """Rule to subtract values from merged person items."""
 
     entityType: Annotated[
@@ -380,10 +398,10 @@ class PersonMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PersonMapping"], Field(alias="$type", frozen=True)
     ] = "PersonMapping"
+    fullName: Annotated[list[MappingField[list[FullNameStr]]], Field(min_length=1)]
     affiliation: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     email: list[MappingField[list[EmailStr]]] = []
     familyName: list[MappingField[list[FamilyNameStr]]] = []
-    fullName: list[MappingField[list[FullNameStr]]] = []
     givenName: list[MappingField[list[GivenNameStr]]] = []
     isniId: list[MappingField[list[IsniIdStr]]] = []
     memberOf: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
