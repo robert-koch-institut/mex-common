@@ -38,7 +38,7 @@ dev = [
     "types-tabulate",
 ]
 fuzzing = [
-    "mex-artificial>=2",
+    "mex-artificial>=3",
 ]
 
 [tool.cruft]
