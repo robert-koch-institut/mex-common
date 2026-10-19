@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - wikidata helper to extract location from wikidata
+- support for python 3.15 (fuzzing stays at 3.14 because of artificial)
 
 ### Changes
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix test for verify_session_from_env
 - fix type annotation of Field Annotations, raise error if Field Annotation is missing
     and temporarily fix tests by ignoring default str min/max length boundaries
 - parse boolean strings like `false` or `0` in `MEX_VERIFY_SESSION` as booleans instead of paths

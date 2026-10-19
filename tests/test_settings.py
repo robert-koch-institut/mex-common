@@ -123,11 +123,10 @@ def test_resolve_paths() -> None:
         ("0", False),
         ("true", True),
         ("1", True),
-        ("/absolute/ca.pem", OpsPath("/absolute/ca.pem")),
     ],
-    ids=["false", "zero", "true", "one", "path"],
+    ids=["false", "zero", "true", "one"],
 )
-def test_verify_session_from_env(
+def test_verify_session_from_env_bool(
     monkeypatch: pytest.MonkeyPatch,
     env_value: str,
     expected: bool | OpsPath,  # noqa: FBT001
@@ -136,7 +135,19 @@ def test_verify_session_from_env(
 
     settings = BaseSettings()
 
-    assert settings.verify_session == expected
+    assert settings.verify_session is expected
+
+
+def test_verify_session_from_env_path(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    ca_path = tmp_path / "ca.pem"
+    monkeypatch.setenv("MEX_VERIFY_SESSION", str(ca_path))
+
+    settings = BaseSettings()
+
+    assert settings.verify_session == OpsPath(ca_path)
 
 
 def test_no_settings_as_attributes() -> None:
