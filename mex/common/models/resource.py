@@ -790,7 +790,7 @@ class _OptionalValues(_Stem):
                 "becomes available for usage after this generation."
             ),
             json_schema_extra={
-                "closeMatch": "http://www.w3.org/ns/prov#wasGeneratedBy"
+                "closeMatch": ["http://www.w3.org/ns/prov#wasGeneratedBy"]
             },
         ),
     ] = None
@@ -948,7 +948,7 @@ class _VariadicValues(_Stem):
                 "becomes available for usage after this generation."
             ),
             json_schema_extra={
-                "closeMatch": "http://www.w3.org/ns/prov#wasGeneratedBy"
+                "closeMatch": ["http://www.w3.org/ns/prov#wasGeneratedBy"]
             },
         ),
     ] = []
