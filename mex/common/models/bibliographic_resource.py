@@ -242,7 +242,7 @@ class _OptionalLists(_Stem):
                 "([DCT, 2020-01-20](http://dublincore.org/specifications/"
                 "dublin-core/dcmi-terms/2020-01-20/))."
             ),
-            json_schema_extra={"closeMatch": "http://purl.org/dc/terms/publisher"},
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/publisher"]},
         ),
     ] = []
     repositoryURL: Annotated[
@@ -351,7 +351,7 @@ class _OptionalValues(_Stem):
         Field(
             description="The year in which the publication was issued.",
             json_schema_extra={
-                "closeMatch": "http://datacite.org/schema/kernel-4/publicationYear"
+                "closeMatch": ["http://datacite.org/schema/kernel-4/publicationYear"]
             },
         ),
     ] = None
