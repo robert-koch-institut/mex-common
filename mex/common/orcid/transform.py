@@ -1,3 +1,4 @@
+from mex.common.exceptions import MExError
 from mex.common.models import ExtractedPerson
 from mex.common.orcid.models import OrcidRecord
 from mex.common.types import MergedPrimarySourceIdentifier
@@ -32,6 +33,9 @@ def transform_orcid_person_to_mex_person(
         full_name = f"{family_name}, {given_names}"
     else:
         full_name = family_name or given_names
+    if not full_name:
+        msg = f"Person {orcid_record.orcid_identifier.uri} has no name provided."
+        raise MExError(msg)
 
     return ExtractedPerson(
         identifierInPrimarySource=id_in_primary_source,
