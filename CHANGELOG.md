@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- support for python 3.15 (fuzzing stays at 3.14 because of artificial)
+
 ### Changes
 
 - BREAKING: update mex-model dependency to v5.2 and introduce the location entity type

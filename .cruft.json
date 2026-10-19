@@ -9,7 +9,7 @@
       "containerize": false,
       "publish_to_pypi": true,
       "python_version_min": "3.11",
-      "python_version_max": "3.14",
+      "python_version_max": "3.15",
       "_template": "https://github.com/robert-koch-institut/mex-template",
       "_commit": "a69d69ab02ed1ed7cb7554fb32a1877b9d437dc2"
     }
