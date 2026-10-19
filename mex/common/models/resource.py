@@ -1261,6 +1261,9 @@ class ResourceMapping(_Stem, BaseMapping):
         list[MappingField[list[AnyContactIdentifier]]],
         Field(min_length=1),
     ]
+    resourceCreationMethod: Annotated[
+        list[MappingField[list[ResourceCreationMethod]]], Field(min_length=1)
+    ]
     theme: Annotated[list[MappingField[list[Theme]]], Field(min_length=1)]
     title: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
     unitInCharge: Annotated[
@@ -1308,7 +1311,6 @@ class ResourceMapping(_Stem, BaseMapping):
     publisher: list[MappingField[list[MergedOrganizationIdentifier]]] = []
     qualityInformation: list[MappingField[list[Text]]] = []
     relatedResource: list[MappingField[list[MergedResourceIdentifier]]] = []
-    resourceCreationMethod: list[MappingField[list[ResourceCreationMethod]]] = []
     resourceTypeGeneral: list[MappingField[list[ResourceTypeGeneral]]] = []
     resourceTypeSpecific: list[MappingField[list[Text]]] = []
     rights: list[MappingField[list[Text]]] = []
