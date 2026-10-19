@@ -11,16 +11,6 @@ from mex.common.models import (
     MergedPerson,
 )
 from mex.common.models.base.merged_item import UNGATED_FIELD_NAMES
-from mex.common.types import Identifier
-
-PROVENANCE_FIELD_NAMES = {"hadPrimarySource", "identifierInPrimarySource"}
-
-
-def generate_identifier(model: type[AnyMergedModel], seed: int) -> Identifier:
-    identifier_class = model.model_fields["identifier"].annotation
-    assert isinstance(identifier_class, type)
-    assert issubclass(identifier_class, Identifier)
-    return identifier_class.generate(seed=seed)
 
 
 def get_error_types_by_field(error: ValidationError) -> dict[str, str]:
@@ -40,7 +30,7 @@ def test_required_unless_superseded_matches_extracted_model(
             for name, field_info in extracted_model.model_fields.items()
             if field_info.is_required()
         }
-        - PROVENANCE_FIELD_NAMES
+        - {"hadPrimarySource", "identifierInPrimarySource"}
     )
     assert expected  # every entity has at least one required field
     assert list(model.requiredUnlessSuperseded) == expected
@@ -60,7 +50,7 @@ def test_active_item_without_required_fields_is_invalid(
     model: type[AnyMergedModel],
 ) -> None:
     with pytest.raises(ValidationError) as error:
-        model.model_validate({"identifier": generate_identifier(model, 1)})
+        model.model_validate({"identifier": "someIdentifier1234567"})
 
     assert get_error_types_by_field(error.value) == {
         name: "too_short" if model.model_fields[name].default == [] else "missing"
@@ -72,12 +62,14 @@ def test_active_item_without_required_fields_is_invalid(
 def test_superseded_item_without_other_fields_is_valid(
     model: type[AnyMergedModel],
 ) -> None:
-    superseded_by = generate_identifier(model, 2)
     item = model.model_validate(
-        {"identifier": generate_identifier(model, 1), "supersededBy": superseded_by}
+        {
+            "identifier": "someIdentifier1234567",
+            "supersededBy": "supersededBy8901234567",
+        }
     )
 
-    assert item.supersededBy == superseded_by
+    assert item.supersededBy == "supersededBy8901234567"
     for name in model.requiredUnlessSuperseded:
         assert getattr(item, name) == model.model_fields[name].default
     # serialized superseded items, including their defaults, validate again
@@ -89,7 +81,7 @@ def test_superseded_item_with_leftover_values_is_invalid(
 ) -> None:
     data: dict[str, Any] = {
         **merged_person.model_dump(),
-        "supersededBy": generate_identifier(MergedPerson, 2),
+        "supersededBy": "supersededBy8901234567",
     }
 
     with pytest.raises(ValidationError) as error:
