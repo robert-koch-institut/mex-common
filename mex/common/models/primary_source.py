@@ -213,7 +213,7 @@ class ExtractedPrimarySource(BasePrimarySource, ExtractedData):
         return self._get_stable_target_id(MergedPrimarySourceIdentifier)
 
 
-class MergedPrimarySource(BasePrimarySource, MergedItem):
+class MergedPrimarySource(_SparseLists, BasePrimarySource, MergedItem):
     """The result of merging all extracted items and rules for a primary source."""
 
     entityType: Annotated[

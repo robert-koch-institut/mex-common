@@ -526,7 +526,9 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
         return self._get_stable_target_id(MergedBibliographicResourceIdentifier)
 
 
-class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
+class MergedBibliographicResource(
+    _SparseLists, _SparseValues, BaseBibliographicResource, MergedItem
+):
     """The result of merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
     entityType: Annotated[

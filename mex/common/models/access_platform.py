@@ -269,7 +269,7 @@ class ExtractedAccessPlatform(BaseAccessPlatform, ExtractedData):
         return self._get_stable_target_id(MergedAccessPlatformIdentifier)
 
 
-class MergedAccessPlatform(BaseAccessPlatform, MergedItem):
+class MergedAccessPlatform(_SparseLists, _SparseValues, BaseAccessPlatform, MergedItem):
     """The result of merging all extracted items and rules for an access platform."""
 
     entityType: Annotated[

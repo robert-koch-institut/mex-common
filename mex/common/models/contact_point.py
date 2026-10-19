@@ -119,7 +119,7 @@ class ExtractedContactPoint(BaseContactPoint, ExtractedData):
         return self._get_stable_target_id(MergedContactPointIdentifier)
 
 
-class MergedContactPoint(BaseContactPoint, MergedItem):
+class MergedContactPoint(_SparseLists, BaseContactPoint, MergedItem):
     """The result of merging all extracted items and rules for a contact point."""
 
     entityType: Annotated[

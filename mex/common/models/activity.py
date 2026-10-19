@@ -306,7 +306,7 @@ class ExtractedActivity(BaseActivity, ExtractedData):
         return self._get_stable_target_id(MergedActivityIdentifier)
 
 
-class MergedActivity(BaseActivity, MergedItem):
+class MergedActivity(_SparseLists, BaseActivity, MergedItem):
     """The result of merging all extracted items and rules for an activity."""
 
     entityType: Annotated[

@@ -133,7 +133,7 @@ class ExtractedLocation(BaseLocation, ExtractedData):
         return self._get_stable_target_id(MergedLocationIdentifier)
 
 
-class MergedLocation(BaseLocation, MergedItem):
+class MergedLocation(_SparseLists, BaseLocation, MergedItem):
     """The result of merging all extracted items and rules for a location."""
 
     entityType: Annotated[

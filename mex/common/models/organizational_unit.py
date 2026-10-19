@@ -203,7 +203,7 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
         return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
-class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
+class MergedOrganizationalUnit(_SparseLists, BaseOrganizationalUnit, MergedItem):
     """The result of merging all extracted items and rules for an organizational unit."""  # noqa: E501
 
     entityType: Annotated[

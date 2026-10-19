@@ -312,7 +312,7 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
         return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
-class MergedDistribution(BaseDistribution, MergedItem):
+class MergedDistribution(_SparseLists, _SparseValues, BaseDistribution, MergedItem):
     """The result of merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[

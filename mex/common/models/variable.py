@@ -242,7 +242,7 @@ class ExtractedVariable(BaseVariable, ExtractedData):
         return self._get_stable_target_id(MergedVariableIdentifier)
 
 
-class MergedVariable(BaseVariable, MergedItem):
+class MergedVariable(_SparseLists, BaseVariable, MergedItem):
     """The result of merging all extracted items and rules for a variable."""
 
     entityType: Annotated[

@@ -129,7 +129,7 @@ class ExtractedVariableGroup(BaseVariableGroup, ExtractedData):
         return self._get_stable_target_id(MergedVariableGroupIdentifier)
 
 
-class MergedVariableGroup(BaseVariableGroup, MergedItem):
+class MergedVariableGroup(_SparseLists, BaseVariableGroup, MergedItem):
     """The result of merging all extracted items and rules for a variable group."""
 
     entityType: Annotated[

@@ -168,4 +168,4 @@ packages = ["mex"]
 packages = ["mex"]
 
 [tool.uv.sources]
-mex-model = { git = "https://github.com/robert-koch-institut/mex-model.git", rev = "refs/pull/445/head" }
+mex-model = { path = "../mex-model", editable = true }  # TODO: revert to refs/pull/565/head once pushed

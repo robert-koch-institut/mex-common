@@ -251,7 +251,7 @@ class ExtractedResourceSeries(BaseResourceSeries, ExtractedData):
         return self._get_stable_target_id(MergedResourceSeriesIdentifier)
 
 
-class MergedResourceSeries(BaseResourceSeries, MergedItem):
+class MergedResourceSeries(_SparseLists, BaseResourceSeries, MergedItem):
     """The result of merging all extracted items and rules for a resource series."""
 
     entityType: Annotated[

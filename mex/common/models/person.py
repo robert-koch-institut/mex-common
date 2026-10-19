@@ -244,7 +244,7 @@ class ExtractedPerson(BasePerson, ExtractedData):
         return self._get_stable_target_id(MergedPersonIdentifier)
 
 
-class MergedPerson(BasePerson, MergedItem):
+class MergedPerson(_SparseLists, BasePerson, MergedItem):
     """The result of merging all extracted items and rules for a person."""
 
     entityType: Annotated[

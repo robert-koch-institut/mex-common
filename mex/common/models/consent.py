@@ -200,7 +200,7 @@ class ExtractedConsent(BaseConsent, ExtractedData):
         return self._get_stable_target_id(MergedConsentIdentifier)
 
 
-class MergedConsent(BaseConsent, MergedItem):
+class MergedConsent(_SparseValues, BaseConsent, MergedItem):
     """The result of merging all extracted items and rules for a consent."""
 
     entityType: Annotated[

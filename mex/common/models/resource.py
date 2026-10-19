@@ -1013,7 +1013,7 @@ class ExtractedResource(BaseResource, ExtractedData):
         return self._get_stable_target_id(MergedResourceIdentifier)
 
 
-class MergedResource(BaseResource, MergedItem):
+class MergedResource(_SparseLists, _SparseValues, BaseResource, MergedItem):
     """The result of merging all extracted items and rules for a resource."""
 
     entityType: Annotated[

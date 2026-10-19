@@ -256,7 +256,7 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
         return self._get_stable_target_id(MergedOrganizationIdentifier)
 
 
-class MergedOrganization(BaseOrganization, MergedItem):
+class MergedOrganization(_SparseLists, BaseOrganization, MergedItem):
     """The result of merging all extracted items and rules for an organization."""
 
     entityType: Annotated[
