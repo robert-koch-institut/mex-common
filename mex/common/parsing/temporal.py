@@ -42,8 +42,8 @@
 """Parsing of temporal entity strings into timezone-aware datetimes and resolutions.
 
 Behaves like pandas' `parse_datetime_string_with_reso` with `freq=None,
-dayfirst=False, yearfirst=True` (as of pandas 3.0.6) followed by assigning "CET" to
-naive results. The vendored numpy ISO 8601 parser and pandas' `xstrtod` are ported
+dayfirst=False, yearfirst=True` (as of pandas 3.0.6) followed by localizing naive
+results to "CET". The vendored numpy ISO 8601 parser and pandas' `xstrtod` are ported
 byte-by-byte to keep their exact quirks; branches unreachable with these arguments
 and resolutions that are no valid `TemporalEntityPrecision` are pruned.
 """
@@ -57,6 +57,7 @@ from typing import Literal
 
 from dateutil.parser import DEFAULTPARSER
 from dateutil.tz import tzoffset, tzutc
+from pytz import BaseTzInfo
 from pytz import timezone as pytz_timezone
 
 Resolution = Literal["year", "month", "day", "hour", "minute", "second", "microsecond"]
@@ -284,13 +285,24 @@ def _parse_iso_8601(  # noqa: C901, PLR0911, PLR0912, PLR0915
     return (parts, unit, offset) if i == n else None
 
 
-def _localize_timestamp(plain: datetime, nanosecond: int) -> datetime:
-    """Mimic `pandas.Timestamp.replace(tzinfo=CET)`, which localizes pytz zones.
+def localize(value: datetime, tz: tzinfo) -> datetime:
+    """Attach the given timezone to a naive datetime.
 
-    Unlike `datetime.replace`, which would pick the zone's first offset (LMT), this
-    resolves the actual offset and raises if the result underflows int64 nanoseconds.
+    For pytz zones, `datetime.replace(tzinfo=tz)` would pick the zone's first offset
+    in history (e.g. LMT +00:18 for "CET"), so we let pytz resolve the actual offset.
+    Ambiguous and non-existent times are resolved to daylight saving time.
     """
-    localized = CET.localize(plain, is_dst=True)
+    if isinstance(tz, BaseTzInfo):
+        return tz.localize(value, is_dst=True)
+    return value.replace(tzinfo=tz)
+
+
+def _localize_timestamp(plain: datetime, nanosecond: int) -> datetime:
+    """Mimic `pandas.Timestamp.replace(tzinfo=CET)` for nanosecond timestamps.
+
+    Pandas raises if the localized result underflows int64 nanoseconds.
+    """
+    localized = localize(plain, CET)
     utc = (localized.astimezone(UTC).replace(tzinfo=None), nanosecond)
     if utc < INT64_NANOSECOND_MINIMUM:  # CET offsets are positive, so no maximum
         msg = "Python int too large to convert to C long"
@@ -470,7 +482,7 @@ def parse_datetime_string_with_resolution(
     """Parse a datetime string and detect its resolution, pandas-style.
 
     Equivalent to pandas' `parse_datetime_string_with_reso` with `freq=None,
-    dayfirst=False, yearfirst=True`, followed by assigning "CET" to naive results.
+    dayfirst=False, yearfirst=True`, followed by localizing naive results to "CET".
     Except that pandas' `DateParseError`s are plain `ValueError`s, nanosecond
     timestamps are truncated to microseconds and resolutions are coarsened to valid
     `TemporalEntityPrecision` values: quarters raise, milli- and nanoseconds are
@@ -488,9 +500,7 @@ def parse_datetime_string_with_resolution(
     """
     parsed, resolution = _parse_datetime_string(value)
     if parsed.tzinfo is None:
-        # NOTE: `replace` with a pytz zone picks its first offset, i.e. LMT +00:18,
-        # this has always been the case and is kept for backwards compatibility
-        parsed = parsed.replace(tzinfo=CET)
+        parsed = localize(parsed, CET)
     return parsed, resolution
 
 

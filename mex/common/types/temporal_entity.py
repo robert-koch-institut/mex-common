@@ -11,6 +11,7 @@ from pytz import timezone
 
 from mex.common.parsing.temporal import (
     CET,
+    localize,
     parse_datetime_string_with_resolution,
 )
 
@@ -119,7 +120,7 @@ class TemporalEntity:
             TemporalEntity("2002-04-01T23:59")
             TemporalEntity(2009, 1)
             TemporalEntity(date(2009, 9, 30))
-            TemporalEntity(datetime(2009, 9, 30, 23, 59, 5, tzinfo=timezone("CET")))
+            TemporalEntity(timezone("CET").localize(datetime(2009, 9, 30, 23, 59, 5)))
             TemporalEntity(2009, 9, 30, 23, 59, 5, tzinfo=timezone("CET"))
             TemporalEntity(TemporalEntity(2000))
         """
@@ -231,7 +232,7 @@ class TemporalEntity:
         if tzinfo is None:
             tzinfo = CET
         padded = tuple(a or d for a, d in zip_longest(args, (1970, 1, 1, 0, 0, 0, 0)))
-        date_time = datetime(*padded, tzinfo=tzinfo)  # type: ignore[arg-type,misc]
+        date_time = localize(datetime(*padded), tzinfo)  # type: ignore[arg-type]  # noqa: DTZ001
         precision = TEMPORAL_ENTITY_PRECISIONS_BY_ARG_LENGTH[len(args)]
         return date_time, precision
 
@@ -254,7 +255,7 @@ class TemporalEntity:
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a datetime and assume the precision is microseconds."""
         if value.tzinfo is None:
-            value = value.replace(tzinfo=CET)
+            value = localize(value, CET)
         return deepcopy(value), TemporalEntityPrecision.MICROSECOND
 
     @staticmethod
@@ -263,7 +264,7 @@ class TemporalEntity:
     ) -> tuple[datetime, TemporalEntityPrecision]:
         """Parse a date and assume the precision is days."""
         return (
-            datetime(value.year, value.month, value.day, tzinfo=CET),
+            localize(datetime(value.year, value.month, value.day), CET),  # noqa: DTZ001
             TemporalEntityPrecision.DAY,
         )
 

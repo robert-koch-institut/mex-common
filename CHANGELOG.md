@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- temporal entities without explicit timezone were off by 18 minutes: naive strings,
+  integers and datetimes got CET's historic local mean time offset (+00:18) instead
+  of CET/CEST, e.g. `TemporalEntity("2020-01-01T10:00")` gave a misleading `09:42:00Z`
+  instead of `09:00:00Z`
+
 ### Security
 
 ## [3.5.0] - 2026-10-20
