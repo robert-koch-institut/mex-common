@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -282,9 +282,9 @@ class LocationMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["LocationMapping"], Field(alias="$type", frozen=True)
     ] = "LocationMapping"
-    name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
-    geoNamesId: list[MappingField[list[GeoNamesIdStr]]] = []
-    wikidataId: list[MappingField[list[WikidataIdStr]]] = []
+    name: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    geoNamesId: MappingFieldList[list[GeoNamesIdStr]] = MappingFieldList()
+    wikidataId: MappingFieldList[list[WikidataIdStr]] = MappingFieldList()
 
 
 class LocationFilter(_Stem, BaseFilter):

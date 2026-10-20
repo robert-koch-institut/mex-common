@@ -124,7 +124,13 @@ from mex.common.models.base.container import (
 )
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField, FilterRule
-from mex.common.models.base.mapping import BaseMapping, MappingField, MappingRule
+from mex.common.models.base.mapping import (
+    BaseMapping,
+    MappingField,
+    MappingFieldList,
+    MappingRule,
+    MappingRuleList,
+)
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.rules import (
@@ -446,8 +452,10 @@ __all__ = (
     "LocationRuleSetRequest",
     "LocationRuleSetResponse",
     "MappingField",
+    "MappingFieldList",
     "MappingModelTypeAdapter",
     "MappingRule",
+    "MappingRuleList",
     "MergedAccessPlatform",
     "MergedActivity",
     "MergedBibliographicResource",
