@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `get_mapped_values`, `get_mappable_values`, `get_static_values` mapping model helpers
 - support for python 3.15 (fuzzing stays at 3.14 because of artificial)
 
 ### Changes
