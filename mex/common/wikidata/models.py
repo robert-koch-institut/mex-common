@@ -98,7 +98,7 @@ class Aliases(BaseModel):
 
 
 class WikidataOrganization(BaseModel):
-    """Model class for Wikidata sources."""
+    """Model class for Wikidata organization sources."""
 
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels
@@ -107,7 +107,7 @@ class WikidataOrganization(BaseModel):
 
 
 class WikidataLocation(BaseModel):
-    """Model class for Wikidata sources."""
+    """Model class for Wikidata location sources."""
 
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels

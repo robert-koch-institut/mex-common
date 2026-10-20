@@ -54,7 +54,7 @@ def transform_wikidata_organization_to_extracted_organization(
     if not label:
         return None
     return ExtractedOrganization(
-        wikidataId=_get_wikidata_entity_url(wikidata_organization.identifier),
+        wikidataId=_get_wikidata_entity_uri(wikidata_organization.identifier),
         officialName=label,
         shortName=_get_clean_short_names(wikidata_organization.claims.short_name),
         geprisId=[
@@ -131,7 +131,7 @@ def transform_wikidata_location_to_extracted_location(
     if not label:
         return None
     return ExtractedLocation(
-        wikidataId=_get_wikidata_entity_url(wikidata_location.identifier),
+        wikidataId=_get_wikidata_entity_uri(wikidata_location.identifier),
         name=label,
         geoNamesId=[
             f"http://www.geonames.org/{value}"
@@ -231,5 +231,5 @@ def _get_preferred_label(labels: Labels) -> Text | None:
     return None
 
 
-def _get_wikidata_entity_url(identifier: str) -> str:
+def _get_wikidata_entity_uri(identifier: str) -> str:
     return f"http://www.wikidata.org/entity/{identifier}"
