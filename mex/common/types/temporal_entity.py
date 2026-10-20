@@ -5,10 +5,14 @@ from functools import total_ordering
 from itertools import zip_longest
 from typing import Any, Union, cast, overload
 
-from pandas._libs.tslibs import parsing
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, json_schema
 from pydantic_core import core_schema
 from pytz import timezone
+
+from mex.common.parsing.temporal import (
+    CET,
+    parse_datetime_string_with_resolution,
+)
 
 
 class TemporalEntityPrecision(Enum):
@@ -51,7 +55,6 @@ TIME_PRECISIONS = [
     TemporalEntityPrecision.MICROSECOND,
 ]
 
-CET = timezone("CET")  # default assumed timezone
 UTC = timezone("UTC")  # required output timezone
 YEAR_MONTH_DAY_TIME_REGEX = r"^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"  # noqa: E501
 YEAR_MONTH_DAY_REGEX = r"^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$"
@@ -241,18 +244,9 @@ class TemporalEntity:
 
     @staticmethod
     def _parse_string(value: str) -> tuple[datetime, TemporalEntityPrecision]:
-        """Parse a string containing a temporal entity using pandas' tslibs."""
-        try:
-            parsed, precision = parsing.parse_datetime_string_with_reso(  # type: ignore[attr-defined]
-                str(value), freq=None, dayfirst=False, yearfirst=True
-            )
-        except parsing.DateParseError as error:
-            raise ValueError(*error.args) from error
-        if parsed.tzinfo is None:
-            parsed = parsed.replace(tzinfo=CET)
-        if precision in ("millisecond", "nanosecond"):
-            precision = TemporalEntityPrecision.MICROSECOND.value
-        return parsed, TemporalEntityPrecision(precision)
+        """Parse a string containing a temporal entity."""
+        parsed, resolution = parse_datetime_string_with_resolution(str(value))
+        return parsed, TemporalEntityPrecision(resolution)
 
     @staticmethod
     def _parse_datetime(

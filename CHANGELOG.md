@@ -9,11 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `mex.common.parsing.temporal` with a pure-python port of pandas' datetime parsing
+
 ### Changes
+
+- parse temporal entity strings without pandas, behavior stays the same except:
+  `NaT`/`nan` strings raise right away, nanoseconds are truncated to microseconds
+  and pandas-specific parse errors are raised as plain `ValueError`s
+- `python-dateutil` is now a direct dependency (was transitive via pandas)
 
 ### Deprecated
 
 ### Removed
+
+- dependency on `pandas` (and thereby `numpy`)
 
 ### Fixed
 
