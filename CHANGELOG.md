@@ -20,11 +20,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [3.6.0] - 2026-10-21
+
+### Changes
+
+- BREAKING: update mex-model dependency to v5.2 and introduce the location entity type
+- upgrade mex-artificial to 3.2
+
+### Fixed
+
+- fix test for verify_session_from_env
+
+## [3.5.0] - 2026-10-20
+
+### Added
+
+- `get_mapped_values`, `get_mappable_values`, `get_static_values` mapping model helpers
+- support for python 3.15 (fuzzing stays at 3.14 because of artificial)
+
+### Fixed
+
 - fix type annotation of Field Annotations, raise error if Field Annotation is missing
     and temporarily fix tests by ignoring default str min/max length boundaries
 - parse boolean strings like `false` or `0` in `MEX_VERIFY_SESSION` as booleans instead of paths
-
-### Security
 
 ## [3.4.2] - 2026-10-08
 

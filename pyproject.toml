@@ -1,23 +1,23 @@
 [project]
 name = "mex-common"
-version = "3.4.2"
+version = "3.6.0"
 description = "Common library for MEx python projects."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"
 urls = { Repository = "https://github.com/robert-koch-institut/mex-common" }
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.11,<3.16"
 dependencies = [
     "backoff>=2,<3",
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model>=5.1.2,<6",
+    "mex-model>=5.2.1,<6",
     "pandas>=3,<4",
     "pydantic-settings>=2,<3",
     "pydantic>=2,<3",
     "tabulate>=0.10,<1",
-    "pytz>=2026,<2027",
+    "pytz>=2026",
     "requests>=2,<3",
 ]
 
@@ -30,7 +30,7 @@ dev = [
     "pytest-random-order>=1",
     "pytest-xdist>=3",
     "pytest>=9",
-    "ruff>=0.16",
+    "ruff>=0.17",
     "sphinx>=9",
     "types-ldap3",
     "types-pytz",
@@ -38,7 +38,7 @@ dev = [
     "types-tabulate",
 ]
 fuzzing = [
-    "mex-artificial>=3",
+    "mex-artificial>=3.2,<4",
 ]
 
 [tool.cruft]

@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -104,7 +104,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The official name of the organizational unit.",
             min_length=1,
-            json_schema_extra={"closeMatch": "http://xmlns.com/foaf/0.1/name"},
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ]
 
@@ -114,7 +114,7 @@ class _SparseLists(_Stem):
         list[Text],
         Field(
             description="The official name of the organizational unit.",
-            json_schema_extra={"closeMatch": "http://xmlns.com/foaf/0.1/name"},
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ] = []
 
@@ -362,13 +362,15 @@ class OrganizationalUnitMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["OrganizationalUnitMapping"], Field(alias="$type", frozen=True)
     ] = "OrganizationalUnitMapping"
-    parentUnit: list[MappingField[MergedOrganizationalUnitIdentifier | None]] = []
-    name: Annotated[list[MappingField[list[Text]]], Field(min_length=1)]
-    alternativeName: list[MappingField[list[Text]]] = []
-    email: list[MappingField[list[EmailStr]]] = []
-    shortName: list[MappingField[list[Text]]] = []
-    unitOf: list[MappingField[list[MergedOrganizationIdentifier]]] = []
-    website: list[MappingField[list[Link]]] = []
+    parentUnit: MappingFieldList[MergedOrganizationalUnitIdentifier | None] = (
+        MappingFieldList()
+    )
+    name: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    alternativeName: MappingFieldList[list[Text]] = MappingFieldList()
+    email: MappingFieldList[list[EmailStr]] = MappingFieldList()
+    shortName: MappingFieldList[list[Text]] = MappingFieldList()
+    unitOf: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
+    website: MappingFieldList[list[Link]] = MappingFieldList()
 
 
 class OrganizationalUnitFilter(_Stem, BaseFilter):

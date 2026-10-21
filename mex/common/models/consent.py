@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -350,14 +350,14 @@ class ConsentMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["ConsentMapping"], Field(alias="$type", frozen=True)
     ] = "ConsentMapping"
-    hasConsentStatus: Annotated[list[MappingField[ConsentStatus]], Field(min_length=1)]
+    hasConsentStatus: Annotated[MappingFieldList[ConsentStatus], Field(min_length=1)]
     hasDataSubject: Annotated[
-        list[MappingField[MergedPersonIdentifier]], Field(min_length=1)
+        MappingFieldList[MergedPersonIdentifier], Field(min_length=1)
     ]
     isIndicatedAtTime: Annotated[
-        list[MappingField[YearMonthDayTime]], Field(min_length=1)
+        MappingFieldList[YearMonthDayTime], Field(min_length=1)
     ]
-    hasConsentType: list[MappingField[ConsentType | None]] = []
+    hasConsentType: MappingFieldList[ConsentType | None] = MappingFieldList()
 
 
 class ConsentFilter(_Stem, BaseFilter):

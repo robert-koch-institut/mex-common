@@ -4,7 +4,7 @@ from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
-from mex.common.models.base.mapping import BaseMapping, MappingField
+from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
 from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
@@ -398,14 +398,18 @@ class PersonMapping(_Stem, BaseMapping):
     entityType: Annotated[
         Literal["PersonMapping"], Field(alias="$type", frozen=True)
     ] = "PersonMapping"
-    fullName: Annotated[list[MappingField[list[FullNameStr]]], Field(min_length=1)]
-    affiliation: list[MappingField[list[MergedOrganizationIdentifier]]] = []
-    email: list[MappingField[list[EmailStr]]] = []
-    familyName: list[MappingField[list[FamilyNameStr]]] = []
-    givenName: list[MappingField[list[GivenNameStr]]] = []
-    isniId: list[MappingField[list[IsniIdStr]]] = []
-    memberOf: list[MappingField[list[MergedOrganizationalUnitIdentifier]]] = []
-    orcidId: list[MappingField[list[OrcidIdStr]]] = []
+    fullName: Annotated[MappingFieldList[list[FullNameStr]], Field(min_length=1)]
+    affiliation: MappingFieldList[list[MergedOrganizationIdentifier]] = (
+        MappingFieldList()
+    )
+    email: MappingFieldList[list[EmailStr]] = MappingFieldList()
+    familyName: MappingFieldList[list[FamilyNameStr]] = MappingFieldList()
+    givenName: MappingFieldList[list[GivenNameStr]] = MappingFieldList()
+    isniId: MappingFieldList[list[IsniIdStr]] = MappingFieldList()
+    memberOf: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
+        MappingFieldList()
+    )
+    orcidId: MappingFieldList[list[OrcidIdStr]] = MappingFieldList()
 
 
 class PersonFilter(_Stem, BaseFilter):
