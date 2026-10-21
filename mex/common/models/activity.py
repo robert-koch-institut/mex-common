@@ -35,10 +35,6 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 
-AnyExternalAssociateIdentifier = Annotated[
-    MergedOrganizationIdentifier | MergedPersonIdentifier,
-    AfterValidator(Identifier),
-]
 AnyContactIdentifier = Annotated[
     MergedOrganizationalUnitIdentifier
     | MergedPersonIdentifier
@@ -92,11 +88,10 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     externalAssociate: Annotated[
-        list[AnyExternalAssociateIdentifier],
+        list[MergedOrganizationIdentifier],
         Field(
             description=(
-                "An external institution or person that is associated with the "
-                "activity."
+                "An external institution that is associated with the activity."
             ),
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
@@ -107,7 +102,7 @@ class _OptionalLists(_Stem):
             description=(
                 "An agent that has either funded or commissioned the activity."
             ),
-            json_schema_extra={"closeMatch": "http://www.wikidata.org/entity/P8324"},
+            json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P8324"]},
         ),
     ] = []
     fundingProgram: Annotated[
@@ -223,7 +218,9 @@ class _RequiredLists(_Stem):
         Field(
             description="A unit that is responsible for the activity.",
             min_length=1,
-            json_schema_extra={"closeMatch": "http://dcat-ap.de/def/dcatde/maintainer"},
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
         ),
     ]
     title: Annotated[
@@ -493,7 +490,7 @@ class ActivityMapping(_Stem, BaseMapping):
     end: MappingFieldList[list[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = (
         MappingFieldList()
     )
-    externalAssociate: MappingFieldList[list[AnyExternalAssociateIdentifier]] = (
+    externalAssociate: MappingFieldList[list[MergedOrganizationIdentifier]] = (
         MappingFieldList()
     )
     funderOrCommissioner: MappingFieldList[list[MergedOrganizationIdentifier]] = (

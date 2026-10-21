@@ -104,7 +104,7 @@ class _RequiredLists(_Stem):
         Field(
             description="The official name of the organizational unit.",
             min_length=1,
-            json_schema_extra={"closeMatch": "http://xmlns.com/foaf/0.1/name"},
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ]
 
@@ -114,7 +114,7 @@ class _SparseLists(_Stem):
         list[Text],
         Field(
             description="The official name of the organizational unit.",
-            json_schema_extra={"closeMatch": "http://xmlns.com/foaf/0.1/name"},
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
         ),
     ] = []
 

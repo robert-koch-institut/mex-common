@@ -157,7 +157,9 @@ def transform_ldap_person_and_unit_ids_to_extracted_person(
         affiliation=[rki_organization_id],
         email=ldap_person.mail,
         familyName=[ldap_person.sn],
-        fullName=[ldap_person.displayName] if ldap_person.displayName else [],
+        fullName=[ldap_person.displayName]
+        if ldap_person.displayName
+        else [f"{ldap_person.sn}, {ldap_person.givenName}"],
         givenName=ldap_person.givenName,
         isniId=[],
         memberOf=person_unit_ids,
