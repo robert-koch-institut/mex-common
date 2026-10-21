@@ -904,7 +904,7 @@ wheels = [
 
 [[package]]
 name = "mex-artificial"
-version = "3.1.0"
+version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
@@ -914,9 +914,9 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5e/22/6097203486b574a14b658775a5d958b703c6c8db45d00ee4f4c9b929d40b/mex_artificial-3.1.0.tar.gz", hash = "sha256:1edf7a92e7733564715cb4f63fc4daaa85678285b7047da2fb08fb43d60ee763", size = 12471, upload-time = "2026-10-16T13:57:02.435Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d1/68/8223ff87509836c4d1c4882becc47a7ea69807334371834f4cfd80ad7691/mex_artificial-3.2.0.tar.gz", hash = "sha256:758be5c5198ec3c43a7d4173fc01b7da41b571c549c753372d2d51b85bbe8b6a", size = 12555, upload-time = "2026-10-21T11:55:41.857Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/cd/24dbefc0460894704692e67ecef6bdda4cef8326f0481027b1a97d483ec7/mex_artificial-3.1.0-py3-none-any.whl", hash = "sha256:31d1f29f71f02af4081bde6bac417d3a9f8ba262d7965951cb7d082a7ff8d4e6", size = 13474, upload-time = "2026-10-16T13:57:01.341Z" },
+    { url = "https://files.pythonhosted.org/packages/03/e9/2487b6151ab2161f9c965ad43f155e1f4f297009bb017faa05a532203fae/mex_artificial-3.2.0-py3-none-any.whl", hash = "sha256:f802ef5220a9dafc07f647f938a21f4ad819bdb344ba06b40d677f067fc6c352", size = 13474, upload-time = "2026-10-21T11:55:40.719Z" },
 ]
 
 [[package]]
@@ -956,7 +956,7 @@ dev = [
     { name = "types-tabulate" },
 ]
 fuzzing = [
-    { name = "mex-artificial", marker = "python_full_version < '3.15'" },
+    { name = "mex-artificial" },
 ]
 
 [package.metadata]
@@ -969,7 +969,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=3,<4" },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pydantic-settings", specifier = ">=2,<3" },
-    { name = "pytz", specifier = ">=2026,<2027" },
+    { name = "pytz", specifier = ">=2026" },
     { name = "requests", specifier = ">=2,<3" },
     { name = "tabulate", specifier = ">=0.10,<1" },
 ]
@@ -983,14 +983,14 @@ dev = [
     { name = "pytest-cov", specifier = ">=7" },
     { name = "pytest-random-order", specifier = ">=1" },
     { name = "pytest-xdist", specifier = ">=3" },
-    { name = "ruff", specifier = ">=0.16" },
+    { name = "ruff", specifier = ">=0.17" },
     { name = "sphinx", specifier = ">=9" },
     { name = "types-ldap3" },
     { name = "types-pytz" },
     { name = "types-requests" },
     { name = "types-tabulate" },
 ]
-fuzzing = [{ name = "mex-artificial", marker = "python_full_version < '3.15'", specifier = ">=2" }]
+fuzzing = [{ name = "mex-artificial", specifier = ">=3.2,<4" }]
 
 [[package]]
 name = "mex-model"

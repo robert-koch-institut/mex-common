@@ -17,7 +17,7 @@ dependencies = [
     "pydantic-settings>=2,<3",
     "pydantic>=2,<3",
     "tabulate>=0.10,<1",
-    "pytz>=2026,<2027",
+    "pytz>=2026",
     "requests>=2,<3",
 ]
 
@@ -30,7 +30,7 @@ dev = [
     "pytest-random-order>=1",
     "pytest-xdist>=3",
     "pytest>=9",
-    "ruff>=0.16",
+    "ruff>=0.17",
     "sphinx>=9",
     "types-ldap3",
     "types-pytz",
@@ -38,7 +38,7 @@ dev = [
     "types-tabulate",
 ]
 fuzzing = [
-    "mex-artificial>=2; python_version < '3.15'",
+    "mex-artificial>=3.2,<4",
 ]
 
 [tool.cruft]
