@@ -152,7 +152,7 @@ def test_temporal_entity_value_errors(
             TemporalEntity,
             ("1999-01-20T22",),
             {},
-            'TemporalEntity("1999-01-20T21:42:00Z")',
+            'TemporalEntity("1999-01-20T21:00:00Z")',
         ),
         (
             TemporalEntity,
@@ -256,7 +256,7 @@ def test_temporal_entity_str() -> None:
     assert str(TemporalEntity(2004, 11, 26)) == "2004-11-26"
     assert str(YearMonth(2004, 11)) == "2004-11"
     assert str(YearMonthDay(2004, 11, 26)) == "2004-11-26"
-    assert str(YearMonthDayTime(2018, 3, 2, 13, 0, 1)) == "2018-03-02T12:42:01Z"
+    assert str(YearMonthDayTime(2018, 3, 2, 13, 0, 1)) == "2018-03-02T12:00:01Z"
 
 
 def test_temporal_entity_repr() -> None:
@@ -300,3 +300,30 @@ def test_temporal_entity_serialization() -> None:
     person = DummyModel.model_validate({"birthday": "24th July 1999"})
 
     assert person.model_dump_json() == '{"birthday":"1999-07-24"}'
+
+
+@pytest.mark.parametrize(
+    ("args", "kwargs", "expected"),
+    [
+        (("2020-01-07T10:00",), {}, "2020-01-07T09:00:00Z"),
+        (("2020-07-07T10:00",), {}, "2020-07-07T08:00:00Z"),
+        ((2020, 1, 7, 10, 0), {}, "2020-01-07T09:00:00Z"),
+        ((2020, 7, 7, 10, 0), {}, "2020-07-07T08:00:00Z"),
+        ((2020, 7, 7, 10, 0), {"tzinfo": timezone("CET")}, "2020-07-07T08:00:00Z"),
+        ((datetime(2020, 1, 7, 10, 0),), {}, "2020-01-07T09:00:00Z"),  # noqa: DTZ001
+        ((datetime(2020, 7, 7, 10, 0),), {}, "2020-07-07T08:00:00Z"),  # noqa: DTZ001
+    ],
+    ids=[
+        "winter string",
+        "summer string",
+        "winter integers",
+        "summer integers",
+        "summer integers with pytz tzinfo",
+        "winter datetime",
+        "summer datetime",
+    ],
+)
+def test_temporal_entity_localizes_to_cet(
+    args: tuple[Any, ...], kwargs: dict[str, Any], expected: str
+) -> None:
+    assert str(TemporalEntity(*args, **kwargs)) == expected

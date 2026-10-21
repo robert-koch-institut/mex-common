@@ -9,13 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `mex.common.parsing.temporal` with a pure-python port of pandas' datetime parsing
+
 ### Changes
+
+- parse temporal entity strings without pandas, behavior stays the same except:
+  `NaT`/`nan` strings raise right away, nanoseconds are truncated to microseconds
+  and pandas-specific parse errors are raised as plain `ValueError`s
+- `python-dateutil` is now a direct dependency (was transitive via pandas)
 
 ### Deprecated
 
 ### Removed
 
+- dependency on `pandas` (and thereby `numpy`)
+
 ### Fixed
+
+- temporal entities without explicit timezone were off by 18 minutes: naive strings,
+  integers and datetimes got CET's historic local mean time offset (+00:18) instead
+  of CET/CEST, e.g. `TemporalEntity("2020-01-01T10:00")` gave a misleading `09:42:00Z`
+  instead of `09:00:00Z`
 
 ### Security
 
