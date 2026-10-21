@@ -13,15 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: update mex-model dependency to v5.2 and introduce the location entity type
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-
-- fix test for verify_session_from_env
 
 ### Security
 
