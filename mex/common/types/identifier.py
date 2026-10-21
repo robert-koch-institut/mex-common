@@ -109,6 +109,10 @@ class ExtractedDistributionIdentifier(ExtractedIdentifier):
     """Identifier for extracted distributions."""
 
 
+class ExtractedLocationIdentifier(ExtractedIdentifier):
+    """Identifier for extracted locations."""
+
+
 class ExtractedOrganizationIdentifier(ExtractedIdentifier):
     """Identifier for extracted organizations."""
 
@@ -167,6 +171,10 @@ class MergedContactPointIdentifier(MergedIdentifier):
 
 class MergedDistributionIdentifier(MergedIdentifier):
     """Identifier for merged distributions."""
+
+
+class MergedLocationIdentifier(MergedIdentifier):
+    """Identifier for merged locations."""
 
 
 class MergedOrganizationIdentifier(MergedIdentifier):

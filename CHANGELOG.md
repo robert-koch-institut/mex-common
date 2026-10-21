@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `NaT`/`nan` strings raise right away, nanoseconds are truncated to microseconds
   and pandas-specific parse errors are raised as plain `ValueError`s
 - `python-dateutil` is now a direct dependency (was transitive via pandas)
+- BREAKING: update mex-model dependency to v5.2 and introduce the location entity type
+- upgrade mex-artificial to 3.2
 
 ### Deprecated
 
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   integers and datetimes got CET's historic local mean time offset (+00:18) instead
   of CET/CEST, e.g. `TemporalEntity("2020-01-01T10:00")` gave a misleading `09:42:00Z`
   instead of `09:00:00Z`
+- fix test for verify_session_from_env
 
 ### Security
 
