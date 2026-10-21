@@ -91,7 +91,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasLegalBasis: Annotated[
-        list[Text],
+        list[Text | Link],
         Field(
             description=(
                 "The legal basis used to justify processing of personal data. "
@@ -426,7 +426,7 @@ class ResourceSeriesMapping(_Stem, BaseMapping):
     end: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
         MappingFieldList()
     )
-    hasLegalBasis: MappingFieldList[list[Text]] = MappingFieldList()
+    hasLegalBasis: MappingFieldList[list[Text | Link]] = MappingFieldList()
     keyword: MappingFieldList[list[Text]] = MappingFieldList()
     publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
     spatial: MappingFieldList[list[Text]] = MappingFieldList()
