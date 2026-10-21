@@ -11,18 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: update mex-model dependency to v5.2 and introduce the location entity type
-- upgrade mex-artificial to 3.2
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- fix test for verify_session_from_env
-
 ### Security
+
+## [3.6.0] - 2026-10-21
+
+### Changes
+
+- BREAKING: update mex-model dependency to v5.2 and introduce the location entity type
+- upgrade mex-artificial to 3.2
+
+### Fixed
+
+- fix test for verify_session_from_env
 
 ## [3.5.0] - 2026-10-20
 
