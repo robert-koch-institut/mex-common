@@ -21,11 +21,22 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
 )
+from mex.common.wikidata.extract import (
+    get_wikidata_location,
+    get_wikidata_organization,
+)
 
 pytest_plugins = (
     "mex.common.testing.plugin",
     "mex.common.testing.mocked_ldap",
 )
+
+
+@pytest.fixture(autouse=True)
+def isolate_caches() -> None:
+    # clear the cache to be able to test it.
+    get_wikidata_organization.cache_clear()
+    get_wikidata_location.cache_clear()
 
 
 @pytest.fixture
