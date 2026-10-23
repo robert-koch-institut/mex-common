@@ -178,7 +178,13 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
                     }
                 }
             ],
-            "short_name": [],
+            "short_name": [
+                {
+                    "mainsnak": {
+                        "datavalue": {"value": {"language": "de", "text": "BMW"}}
+                    }
+                }
+            ],
             "native_label": [
                 {
                     "mainsnak": {
@@ -188,7 +194,13 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
                     }
                 }
             ],
-            "gepris_id": [],
+            "gepris_id": [
+                {
+                    "mainsnak": {
+                        "datavalue": {"value": {"text": "42424242", "language": "de"}}
+                    }
+                }
+            ],
             "gnd_id": [
                 {
                     "mainsnak": {

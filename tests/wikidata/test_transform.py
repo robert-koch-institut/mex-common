@@ -45,7 +45,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
             {"value": "alias_de_3", "language": None},
             {"value": "alias_en_4", "language": None},
         ],
-        "geprisId": [],
+        "geprisId": ["https://gepris.dfg.de/gepris/institution/42424242"],
         "gndId": ["https://d-nb.info/gnd/2005475-0"],
         "isniId": ["https://isni.org/isni/000000012308257X"],
         "officialName": [
@@ -101,7 +101,7 @@ def test_transform_wikidata_organizations_to_extracted_organizations(
             {"value": "alias_de_3", "language": None},
             {"value": "alias_en_4", "language": None},
         ],
-        "geprisId": [],
+        "geprisId": ["https://gepris.dfg.de/gepris/institution/42424242"],
         "gndId": ["https://d-nb.info/gnd/2005475-0"],
         "isniId": ["https://isni.org/isni/000000012308257X"],
         "officialName": [
@@ -140,6 +140,7 @@ def test_transform_wikidata_organizations_to_extracted_organizations(
     )
     assert extracted_organization_dict["rorId"] == expected["rorId"]
     assert extracted_organization_dict["wikidataId"] == expected["wikidataId"]
+    assert extracted_organization_dict["geprisId"] == expected["geprisId"]
     assert extracted_organization_dict["gndId"] == expected["gndId"]
     assert extracted_organization_dict["isniId"] == expected["isniId"]
     assert extracted_organization_dict["viafId"] == expected["viafId"]
@@ -179,11 +180,11 @@ def test_transform_wikidata_location_to_extracted_location(
     assert extracted_location.model_dump() == {
         "entityType": "ExtractedLocation",
         "geoNamesId": ["http://www.geonames.org/2921044"],
-        "hadPrimarySource": "djbNGb5fLgYHFyMh3fZE2g",
-        "identifier": "ciqO3CbUTH05vQrgLfvBHE",
+        "hadPrimarySource": Joker(),
+        "identifier": Joker(),
         "identifierInPrimarySource": "Q183",
         "name": [{"language": "de", "value": "Deutschland"}],
-        "stableTargetId": "gqP5foiwctLyB9zQbGxj5j",
+        "stableTargetId": Joker(),
         "wikidataId": ["http://www.wikidata.org/entity/Q183"],
     }
 

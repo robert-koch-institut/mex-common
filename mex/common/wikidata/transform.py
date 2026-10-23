@@ -214,7 +214,7 @@ def _get_clean_short_names(short_names: Sequence[Claim]) -> list[Text]:
 
 
 def _get_preferred_label(labels: Labels) -> Text | None:
-    """Get if DE label is available and return a list of EN and DE labels.
+    """If DE label is available return it, otherwise EN label, otherwise w/o language.
 
     Args:
         labels: Wikidata labels object

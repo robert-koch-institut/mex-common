@@ -1,3 +1,4 @@
+from collections.abc import Generator
 from uuid import UUID
 
 import pytest
@@ -33,8 +34,11 @@ pytest_plugins = (
 
 
 @pytest.fixture(autouse=True)
-def isolate_caches() -> None:
+def isolate_caches() -> Generator[None]:
     # clear the cache to be able to test it.
+    get_wikidata_organization.cache_clear()
+    get_wikidata_location.cache_clear()
+    yield
     get_wikidata_organization.cache_clear()
     get_wikidata_location.cache_clear()
 

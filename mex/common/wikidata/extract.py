@@ -6,7 +6,7 @@ from mex.common.wikidata.models import WikidataLocation, WikidataOrganization
 
 _WIKIDATA_ID_PATTERN = re.compile(
     r"(?:(?:https?://)?(?:www\.)?wikidata\.org/entity/)?"
-    r"([A-Z0-9]{2,64})/?"
+    r"(Q[0-9]{2,64})/?"
 )
 
 
