@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 
+from mex.common.identity import get_provider
 from mex.common.logging import logger
 from mex.common.models import (
     ExtractedOrganizationalUnit,
@@ -16,6 +17,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
     organigram_unit: OrganigramUnit,
     primary_source_id: MergedPrimarySourceIdentifier,
     rki_organization_id: MergedOrganizationIdentifier,
+    parent_unit: MergedOrganizationalUnitIdentifier | None = None,
 ) -> ExtractedOrganizationalUnit:
     """Transform an organigram unit into an ExtractedOrganizationalUnit.
 
@@ -23,6 +25,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
         organigram_unit: Iterable of organigram units coming from the JSON file
         primary_source_id: Primary source identifier for organigram
         rki_organization_id: identifier of RKI organization to which the unit belongs
+        parent_unit: stable target id of the parent unit, if any
 
     Returns:
         ExtractedOrganizationalUnit
@@ -34,6 +37,7 @@ def transform_organigram_unit_to_extracted_organizational_unit(
         unitOf=[rki_organization_id],
         email=organigram_unit.email,
         name=organigram_unit.name,
+        parentUnit=parent_unit,
         shortName=organigram_unit.shortName,
         website=[organigram_unit.website] if organigram_unit.website else [],
     )
@@ -56,35 +60,24 @@ def transform_organigram_units_to_organizational_units(
     Returns:
         List of ExtractedOrganizationalUnit
     """
-    extracted_unit_by_id_in_primary_source: dict[str, ExtractedOrganizationalUnit] = {}
-    parent_id_in_primary_source_by_id_in_primary_source: dict[str, str] = {}
-
-    for unit in organigram_units:
-        extracted_unit = transform_organigram_unit_to_extracted_organizational_unit(
-            unit, primary_source_id, rki_organization_id
+    organigram_unit_by_id_in_primary_source = {
+        unit.identifier: unit for unit in organigram_units
+    }
+    identity_provider = get_provider()
+    extracted_units = [
+        transform_organigram_unit_to_extracted_organizational_unit(
+            unit,
+            primary_source_id,
+            rki_organization_id,
+            parent_unit=MergedOrganizationalUnitIdentifier(
+                identity_provider.assign(
+                    primary_source_id, unit.parentUnit
+                ).stableTargetId
+            )
+            if unit.parentUnit in organigram_unit_by_id_in_primary_source
+            else None,
         )
-        extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit
-        if parent_identifier_in_primary_source := unit.parentUnit:
-            parent_id_in_primary_source_by_id_in_primary_source[unit.identifier] = (
-                parent_identifier_in_primary_source
-            )
-
-    for extracted_unit in extracted_unit_by_id_in_primary_source.values():
-        identifier_in_primary_source = extracted_unit.identifierInPrimarySource
-        if (  # noqa: SIM102
-            parent_identifier_in_primary_source
-            := parent_id_in_primary_source_by_id_in_primary_source.get(
-                identifier_in_primary_source
-            )
-        ):
-            if parent_unit := extracted_unit_by_id_in_primary_source.get(
-                parent_identifier_in_primary_source
-            ):
-                extracted_unit.parentUnit = MergedOrganizationalUnitIdentifier(
-                    parent_unit.stableTargetId
-                )
-    logger.info(
-        "transformed %s organizational units",
-        len(extracted_unit_by_id_in_primary_source),
-    )
-    return list(extracted_unit_by_id_in_primary_source.values())
+        for unit in organigram_unit_by_id_in_primary_source.values()
+    ]
+    logger.info("transformed %s organizational units", len(extracted_units))
+    return extracted_units
