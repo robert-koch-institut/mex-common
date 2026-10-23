@@ -11,12 +11,16 @@ from mex.common.wikidata.models import (
     Claim,
     Label,
     Labels,
+    WikidataLocation,
     WikidataOrganization,
 )
 from mex.common.wikidata.transform import (
     _get_alternative_names,
     _get_clean_short_names,
-    get_official_name_label,
+    _get_preferred_label,
+    _get_wikidata_entity_uri,
+    transform_wikidata_location_to_extracted_location,
+    transform_wikidata_locations_to_extracted_locations,
     transform_wikidata_organization_to_extracted_organization,
     transform_wikidata_organizations_to_extracted_organizations,
 )
@@ -41,7 +45,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
             {"value": "alias_de_3", "language": None},
             {"value": "alias_en_4", "language": None},
         ],
-        "geprisId": [],
+        "geprisId": ["https://gepris.dfg.de/gepris/institution/42424242"],
         "gndId": ["https://d-nb.info/gnd/2005475-0"],
         "isniId": ["https://isni.org/isni/000000012308257X"],
         "officialName": [
@@ -78,7 +82,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
     assert extracted_organization.model_dump()["viafId"] == expected["viafId"]
 
 
-def test_transform_wikidata_organization_to_organization(
+def test_transform_wikidata_organizations_to_extracted_organizations(
     extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
 ) -> None:
     """Test wikidata organization transformation to extracted organization."""
@@ -97,7 +101,7 @@ def test_transform_wikidata_organization_to_organization(
             {"value": "alias_de_3", "language": None},
             {"value": "alias_en_4", "language": None},
         ],
-        "geprisId": [],
+        "geprisId": ["https://gepris.dfg.de/gepris/institution/42424242"],
         "gndId": ["https://d-nb.info/gnd/2005475-0"],
         "isniId": ["https://isni.org/isni/000000012308257X"],
         "officialName": [
@@ -136,9 +140,100 @@ def test_transform_wikidata_organization_to_organization(
     )
     assert extracted_organization_dict["rorId"] == expected["rorId"]
     assert extracted_organization_dict["wikidataId"] == expected["wikidataId"]
+    assert extracted_organization_dict["geprisId"] == expected["geprisId"]
     assert extracted_organization_dict["gndId"] == expected["gndId"]
     assert extracted_organization_dict["isniId"] == expected["isniId"]
     assert extracted_organization_dict["viafId"] == expected["viafId"]
+
+
+def test_transform_wikidata_location_to_extracted_location(
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
+) -> None:
+    wikidata_location = WikidataLocation.model_validate(
+        {
+            "id": "Q183",
+            "labels": {
+                "de": {"language": "de", "value": "Deutschland"},
+                "en": {"language": "en", "value": "Germany"},
+            },
+            "claims": {
+                "P1566": [
+                    {
+                        "mainsnak": {
+                            "datavalue": {
+                                "value": "2921044",
+                            }
+                        }
+                    }
+                ]
+            },
+            "aliases": {},
+        }
+    )
+
+    extracted_location = transform_wikidata_location_to_extracted_location(
+        wikidata_location,
+        extracted_primary_source_ids["wikidata"],
+    )
+
+    assert extracted_location
+    assert extracted_location.model_dump() == {
+        "entityType": "ExtractedLocation",
+        "geoNamesId": ["http://www.geonames.org/2921044"],
+        "hadPrimarySource": Joker(),
+        "identifier": Joker(),
+        "identifierInPrimarySource": "Q183",
+        "name": [{"language": "de", "value": "Deutschland"}],
+        "stableTargetId": Joker(),
+        "wikidataId": ["http://www.wikidata.org/entity/Q183"],
+    }
+
+
+def test_transform_wikidata_locations_to_extracted_locations(
+    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
+) -> None:
+    wikidata_locations = [
+        WikidataLocation.model_validate(
+            {
+                "id": "Q183",
+                "labels": {
+                    "de": {"language": "de", "value": "Deutschland"},
+                },
+                "claims": {},
+                "aliases": {},
+            }
+        ),
+        WikidataLocation.model_validate(
+            {
+                "id": "Q142",
+                "labels": {},  # should be skipped because of missing labels
+                "claims": {},
+                "aliases": {},
+            }
+        ),
+        WikidataLocation.model_validate(
+            {
+                "id": "Q145",
+                "labels": {
+                    "en": {"language": "en", "value": "United Kingdom"},
+                },
+                "claims": {},
+                "aliases": {},
+            }
+        ),
+    ]
+
+    extracted_locations = list(
+        transform_wikidata_locations_to_extracted_locations(
+            wikidata_locations,
+            extracted_primary_source_ids["wikidata"],
+        )
+    )
+
+    assert [location.identifierInPrimarySource for location in extracted_locations] == [
+        "Q183",
+        "Q145",
+    ]
 
 
 def test_get_alternative_names() -> None:
@@ -253,5 +348,9 @@ def test_get_clean_short_names() -> None:
         ),
     ],
 )
-def test_get_official_name_label(labels: Labels, expected: Text | None) -> None:
-    assert get_official_name_label(labels) == expected
+def test_get_preferred_label(labels: Labels, expected: Text | None) -> None:
+    assert _get_preferred_label(labels) == expected
+
+
+def test_get_wikidata_entity_uri() -> None:
+    assert _get_wikidata_entity_uri("test") == "http://www.wikidata.org/entity/test"
