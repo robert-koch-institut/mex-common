@@ -166,6 +166,3 @@ packages = ["mex"]
 
 [tool.hatch.build.targets.sdist]
 packages = ["mex"]
-
-[tool.uv.sources]
-mex-model = { path = "../mex-model", editable = true }  # TODO: revert to refs/pull/565/head once pushed
