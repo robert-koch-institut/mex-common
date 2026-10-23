@@ -9,6 +9,7 @@ from mex.common.models import (
     PREVIEW_MODEL_CLASSES_BY_NAME,
     SUBTRACTIVE_MODEL_CLASSES_BY_NAME,
     WORKFLOW_MODEL_CLASSES_BY_NAME,
+    MergedItem,
 )
 from mex.common.types import (
     MERGED_IDENTIFIER_CLASSES,
@@ -199,7 +200,7 @@ REQUIRED_FIELDS_BY_CLASS_NAME = {
                 for field_name, field_info in cls.model_fields.items()
                 if field_info.is_required()
             ),
-            *getattr(cls, "requiredUnlessSuperseded", ()),
+            *(cls.requiredUnlessSuperseded if issubclass(cls, MergedItem) else ()),
         }
     )
     for name, cls in ALL_MODEL_CLASSES_BY_NAME.items()
