@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -54,11 +54,15 @@ LabelText = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a variable item."""
+
     stemType: ClassVar[Annotated[Literal["Variable"], Field(frozen=True)]] = "Variable"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a variable item with an arity of 0-n."""
+
     belongsTo: Annotated[
         list[MergedVariableGroupIdentifier],
         Field(
@@ -87,6 +91,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a variable item with an arity of 1-n."""
+
     label: Annotated[
         list[LabelText],
         Field(
@@ -111,6 +117,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a variable item relaxed to an arity of 0-n."""
+
     label: Annotated[
         list[LabelText],
         Field(
@@ -133,6 +141,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a variable item with an arity of 0-1."""
+
     codingSystem: Annotated[
         CodingSystemStr | None,
         Field(
@@ -159,6 +169,8 @@ class _OptionalValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a variable item as lists with an arity of 0-n."""
+
     codingSystem: Annotated[
         list[CodingSystemStr],
         Field(
@@ -242,7 +254,7 @@ class ExtractedVariable(BaseVariable, ExtractedData):
         return self._get_stable_target_id(MergedVariableIdentifier)
 
 
-class MergedVariable(BaseVariable, MergedItem):
+class MergedVariable(_SparseLists, BaseVariable, MergedItem):
     """The result of merging all extracted items and rules for a variable."""
 
     entityType: Annotated[

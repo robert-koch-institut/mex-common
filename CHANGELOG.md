@@ -9,13 +9,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `BaseModel.model_copy_validated` to derive changed copies of frozen models, unlike
+  `model_copy` this runs all validators on the result
+- optional `parent_unit` argument for
+  `transform_organigram_unit_to_extracted_organizational_unit`
+
 ### Changes
+
+- BREAKING: required fields of merged items are only enforced if `supersededBy` is unset
+- BREAKING: all models based on `BaseModel` are now frozen, field assignment raises a
+  `ValidationError`, use `model_copy_validated` instead
+- BREAKING: required single-value fields of `MergedAccessPlatform`,
+  `MergedBibliographicResource`, `MergedConsent`, `MergedDistribution` and
+  `MergedResource` are now typed as optional, they are only `None` on superseded items
+- BREAKING: rule set requests and responses are now mutable containers based on plain
+  pydantic models, so they are no longer hashable and use pydantic's default `str`
+- BREAKING: `Base*` entity classes and the private `_Stem` mixins are now plain
+  pydantic models, `BaseModel` is pulled in by `ExtractedData`, `MergedItem`,
+  `PreviewItem`, the rule base classes, `BaseFilter` and `BaseMapping`
+- active merged items validate their gated fields against the original required field
+  definition, including all of its constraints
+- `NdjsonSink.load` accepts any pydantic model
+- organigram units get their parent unit assigned when they are created and
+  `get_extracted_organizational_unit_with_parents` reuses the organigram transform
+- temporarily pin mex-model to the commit introducing the conditional `supersededBy`
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- merged items can no longer be superseded by themselves
+- restore `closeMatch` annotations on the relaxed required fields of merged, preview
+  and additive models
+- add missing `closeMatch` annotations to list-typed fields of preview and subtractive
+  models and fix the malformed one on `version` of resources
+- fix the description of `hasConsentStatus` on preview and subtractive consents
+- use `https` links in the descriptions of `accessService` and `mediaType` on preview
+  and subtractive distributions
+- remove redundant field definitions, so the field order of additive and preview
+  consents and of preview and subtractive bibliographic resources matches the base
 
 ### Security
 

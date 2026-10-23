@@ -189,13 +189,19 @@ FINAL_FIELDS_BY_CLASS_NAME = {
     for name, cls in ALL_MODEL_CLASSES_BY_NAME.items()
 }
 
-# list of fields by class name that are not allowed to be null or an empty list
+# list of fields by class name that are not allowed to be null or an empty list,
+# for merged classes this describes active items: it includes the fields that are
+# only required while not superseded, because consumers like the editor and the
+# publisher work on active items, superseded items must leave all of them empty
 REQUIRED_FIELDS_BY_CLASS_NAME = {
     name: sorted(
         {
-            field_name
-            for field_name, field_info in cls.model_fields.items()
-            if field_info.is_required()
+            *(
+                field_name
+                for field_name, field_info in cls.model_fields.items()
+                if field_info.is_required()
+            ),
+            *getattr(cls, "requiredUnlessSuperseded", ()),
         }
     )
     for name, cls in ALL_MODEL_CLASSES_BY_NAME.items()

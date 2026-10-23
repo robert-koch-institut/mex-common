@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -126,13 +126,17 @@ VolumeOrIssueStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a bibliographic resource item."""
+
     stemType: ClassVar[
         Annotated[Literal["BibliographicResource"], Field(frozen=True)]
     ] = "BibliographicResource"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a bibliographic resource item with an arity of 0-n."""
+
     abstract: Annotated[
         list[Text],
         Field(
@@ -278,6 +282,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a bibliographic resource item with an arity of 1-n."""
+
     creator: Annotated[
         list[MergedPersonIdentifier],
         Field(
@@ -297,16 +303,27 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a bibliographic resource item relaxed to an arity of 0-n."""
+
     creator: Annotated[
         list[MergedPersonIdentifier],
-        Field(description="The author of the publication."),
+        Field(
+            description="The author of the publication.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
+        ),
     ] = []
     title: Annotated[
-        list[Text], Field(description="The full title of the publication.")
+        list[Text],
+        Field(
+            description="The full title of the publication.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a bibliographic resource item with an arity of 0-1."""
+
     doi: Annotated[
         DoiStr | None,
         Field(description="The Digital Object Identifier (DOI) of the publication."),
@@ -375,6 +392,8 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
+    """Required values of a bibliographic resource item with an arity of 1."""
+
     accessRestriction: Annotated[
         AccessRestriction,
         Field(
@@ -385,6 +404,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
+    """Required values of a bibliographic resource item relaxed to an arity of 0-1."""
+
     accessRestriction: Annotated[
         AccessRestriction | None,
         Field(
@@ -395,6 +416,8 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a bibliographic resource item as lists with an arity of 0-n."""
+
     accessRestriction: Annotated[
         list[AccessRestriction],
         Field(
@@ -420,6 +443,7 @@ class _VariadicValues(_Stem):
                 "Date of formal issuance of the publication ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
         ),
     ] = []
     license: Annotated[
@@ -430,6 +454,7 @@ class _VariadicValues(_Stem):
                 "the publication ([DCT, 2020-01-20](http://dublincore.org/"
                 "specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = []
     pages: Annotated[
@@ -442,15 +467,11 @@ class _VariadicValues(_Stem):
     ] = []
     publicationYear: Annotated[
         list[Year],
-        Field(description="The year in which the publication was issued."),
-    ] = []
-    repositoryURL: Annotated[
-        list[Link],
         Field(
-            description=(
-                "The handle of the publication in the repository, where the "
-                "publication is stored."
-            )
+            description="The year in which the publication was issued.",
+            json_schema_extra={
+                "closeMatch": ["http://datacite.org/schema/kernel-4/publicationYear"]
+            },
         ),
     ] = []
     section: Annotated[
@@ -526,7 +547,9 @@ class ExtractedBibliographicResource(BaseBibliographicResource, ExtractedData):
         return self._get_stable_target_id(MergedBibliographicResourceIdentifier)
 
 
-class MergedBibliographicResource(BaseBibliographicResource, MergedItem):
+class MergedBibliographicResource(
+    _SparseLists, _SparseValues, BaseBibliographicResource, MergedItem
+):
     """The result of merging all extracted items and rules for a bibliographic resource."""  # noqa: E501
 
     entityType: Annotated[

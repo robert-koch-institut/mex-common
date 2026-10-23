@@ -965,7 +965,7 @@ requires-dist = [
     { name = "click", specifier = ">=8,<9" },
     { name = "langdetect", specifier = ">=1,<2" },
     { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", specifier = ">=5.2.1,<6" },
+    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=f111cee037ad50a917f7901e7cc55def4e02b4e0" },
     { name = "pandas", specifier = ">=3,<4" },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pydantic-settings", specifier = ">=2,<3" },
@@ -995,11 +995,7 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=3.2,<4" }]
 [[package]]
 name = "mex-model"
 version = "5.2.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5f/ff/37e4000caf2f756711352305f3a693b171e72ab4d615c9d58f301b7609c1/mex_model-5.2.1.tar.gz", hash = "sha256:5a1047c73ee59ce96a79f26447ff9684671312c1ff97cae757220c0651f78a08", size = 69846, upload-time = "2026-10-20T09:36:40.886Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/bb/825b806540e9e1176ec298b82d5c16dbf34b387e44b9e50e8f826ec1f0bf/mex_model-5.2.1-py3-none-any.whl", hash = "sha256:2752f0ce4f605a4c4172dd0def6e30ffe55d85965a279559fbdb1251b27235b6", size = 113859, upload-time = "2026-10-20T09:36:39.442Z" },
-]
+source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=f111cee037ad50a917f7901e7cc55def4e02b4e0#f111cee037ad50a917f7901e7cc55def4e02b4e0" }
 
 [[package]]
 name = "mypy"

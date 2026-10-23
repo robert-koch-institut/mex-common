@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -34,13 +34,17 @@ EmailStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of an organizational unit item."""
+
     stemType: ClassVar[Annotated[Literal["OrganizationalUnit"], Field(frozen=True)]] = (
         "OrganizationalUnit"
     )
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of an organizational unit item with an arity of 0-n."""
+
     alternativeName: Annotated[
         list[Text],
         Field(
@@ -99,6 +103,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of an organizational unit item with an arity of 1-n."""
+
     name: Annotated[
         list[Text],
         Field(
@@ -110,6 +116,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of an organizational unit item relaxed to an arity of 0-n."""
+
     name: Annotated[
         list[Text],
         Field(
@@ -120,6 +128,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of an organizational unit item with an arity of 0-1."""
+
     parentUnit: Annotated[
         MergedOrganizationalUnitIdentifier | None,
         Field(
@@ -131,6 +141,8 @@ class _OptionalValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of an organizational unit item as lists with an arity of 0-n."""
+
     parentUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
         Field(
@@ -203,7 +215,7 @@ class ExtractedOrganizationalUnit(BaseOrganizationalUnit, ExtractedData):
         return self._get_stable_target_id(MergedOrganizationalUnitIdentifier)
 
 
-class MergedOrganizationalUnit(BaseOrganizationalUnit, MergedItem):
+class MergedOrganizationalUnit(_SparseLists, BaseOrganizationalUnit, MergedItem):
     """The result of merging all extracted items and rules for an organizational unit."""  # noqa: E501
 
     entityType: Annotated[
