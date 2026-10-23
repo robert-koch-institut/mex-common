@@ -1,6 +1,8 @@
-from typing import Any, ClassVar, Self
+from typing import Annotated, Any, ClassVar, Self, cast
 
-from pydantic import GetJsonSchemaHandler, model_validator
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import GetJsonSchemaHandler, TypeAdapter, model_validator
+from pydantic.fields import FieldInfo
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import (
     CoreSchema,
@@ -32,32 +34,42 @@ class MergedItem(
     Subclasses relax their entity's required fields by listing its `_Sparse*` mixins
     before its `Base*` class, e.g. `MergedFoo(_SparseLists, BaseFoo, MergedItem)`.
     Every field that is required on a base class but relaxed this way is collected
-    in `requiredUnlessSuperseded`, and is validated and documented accordingly.
+    in `requiredUnlessSuperseded`. Active items validate these fields against their
+    original, required definition, including all of its constraints.
     """
 
     requiredUnlessSuperseded: ClassVar[tuple[str, ...]] = ()
+    _required_field_adapters: ClassVar[dict[str, TypeAdapter[Any]]] = {}
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:  # noqa: ANN401
         """Collect the fields that are only required while not superseded."""
         super().__pydantic_init_subclass__(**kwargs)
-        cls.requiredUnlessSuperseded = tuple(
-            sorted(
-                field_name
-                for field_name, field_info in cls.model_fields.items()
-                if not field_info.is_required()
-                and any(
-                    (
-                        inherited := vars(base)
-                        .get("__pydantic_fields__", {})
-                        .get(field_name)
-                    )
-                    is not None
-                    and inherited.is_required()
-                    for base in cls.__mro__[1:]
-                )
+        required_field_infos = {
+            field_name: required_field_info
+            for field_name, field_info in sorted(cls.model_fields.items())
+            if not field_info.is_required()
+            and (required_field_info := cls._get_required_field_info(field_name))
+        }
+        cls.requiredUnlessSuperseded = tuple(required_field_infos)
+        cls._required_field_adapters = {
+            field_name: TypeAdapter(
+                cast("Any", Annotated[field_info.annotation, field_info])
             )
-        )
+            for field_name, field_info in required_field_infos.items()
+        }
+
+    @classmethod
+    def _get_required_field_info(cls, field_name: str) -> FieldInfo | None:
+        """Return the first required definition of a field on any base model."""
+        for base in cls.__mro__[1:]:
+            if (
+                issubclass(base, PydanticBaseModel)
+                and (field_info := base.model_fields.get(field_name))
+                and field_info.is_required()
+            ):
+                return field_info
+        return None
 
     @model_validator(mode="after")
     def validate_supersession(self) -> Self:
@@ -71,28 +83,46 @@ class MergedItem(
         return self
 
     def _get_active_item_errors(self) -> list[InitErrorDetails]:
-        """Return errors for required fields that are not set on an active item."""
+        """Return errors for required fields that are not valid on an active item."""
         errors: list[InitErrorDetails] = []
-        for field_name in self.requiredUnlessSuperseded:
+        for field_name, adapter in self._required_field_adapters.items():
             value = getattr(self, field_name)
             if value is None:
                 errors.append(
                     InitErrorDetails(type="missing", loc=(field_name,), input=value)
                 )
-            elif value == []:
-                errors.append(
-                    InitErrorDetails(
-                        type="too_short",
-                        loc=(field_name,),
-                        input=value,
-                        ctx={"field_type": "List", "min_length": 1, "actual_length": 0},
+                continue
+            try:
+                adapter.validate_python(value)
+            except ValidationError as error:
+                for details in error.errors():
+                    init_details = InitErrorDetails(
+                        type=details["type"],
+                        loc=(field_name, *details["loc"]),
+                        input=details["input"],
                     )
-                )
+                    if "ctx" in details:
+                        init_details["ctx"] = details["ctx"]
+                    errors.append(init_details)
         return errors
 
     def _get_superseded_item_errors(self) -> list[InitErrorDetails]:
         """Return errors for fields with non-default values on a superseded item."""
-        return [
+        errors: list[InitErrorDetails] = []
+        if (superseded_by := getattr(self, "supersededBy", None)) == getattr(
+            self, "identifier", None
+        ):
+            errors.append(
+                InitErrorDetails(
+                    type=PydanticCustomError(
+                        "superseded_by_self",
+                        "Items cannot be superseded by themselves",
+                    ),
+                    loc=("supersededBy",),
+                    input=superseded_by,
+                )
+            )
+        return errors + [
             InitErrorDetails(
                 type=PydanticCustomError(
                     "superseded_value",

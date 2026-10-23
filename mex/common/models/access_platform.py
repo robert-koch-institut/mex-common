@@ -197,6 +197,9 @@ class _VariadicValues(_Stem):
                 "A description of the services available via the end-points, "
                 "including their operations, parameters etc."
             ),
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#endpointDescription"]
+            },
         ),
     ] = []
     endpointType: Annotated[
@@ -213,6 +216,7 @@ class _VariadicValues(_Stem):
                 "The root location or primary endpoint of the service "
                 "(a Web-resolvable IRI)."
             ),
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endpointURL"]},
         ),
     ] = []
     technicalAccessibility: Annotated[

@@ -109,8 +109,12 @@ def test_get_unit_merged_ids_by_emails_multiple_units_same_email(
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
     """Test that multiple units with the same email are all included in the list."""
-    extracted_child_unit.email = ["shared@example.com"]
-    extracted_parent_unit.email = ["shared@example.com", "parent@example.com"]
+    extracted_child_unit = extracted_child_unit.model_copy_validated(
+        update={"email": ["shared@example.com"]}
+    )
+    extracted_parent_unit = extracted_parent_unit.model_copy_validated(
+        update={"email": ["shared@example.com", "parent@example.com"]}
+    )
 
     mapping = get_unit_merged_ids_by_emails(
         [extracted_child_unit, extracted_parent_unit]

@@ -209,7 +209,7 @@ class _VariadicValues(_Stem):
         Field(
             description=(
                 "A data service that gives access to the distribution of the "
-                "dataset ([DCAT, 2020-02-04](http://www.w3.org/TR/2020/"
+                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
             json_schema_extra={
@@ -244,7 +244,7 @@ class _VariadicValues(_Stem):
             description=(
                 "The media type of the distribution as defined by "
                 "[IANA media types](https://www.iana.org/assignments/media-types/) "
-                "([DCAT, 2020-02-04](http://www.w3.org/TR/2020/"
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
             json_schema_extra={

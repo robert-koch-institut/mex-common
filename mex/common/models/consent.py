@@ -92,13 +92,6 @@ class _SparseValues(_Stem):
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasDataSubject"]},
         ),
     ] = None
-    hasConsentType: Annotated[
-        ConsentType | None,
-        Field(
-            description="The type of consent.",
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
-        ),
-    ] = None
     isIndicatedAtTime: Annotated[
         YearMonthDayTime | None,
         Field(
@@ -126,14 +119,7 @@ class _VariadicValues(_Stem):
     hasConsentStatus: Annotated[
         list[ConsentStatus],
         Field(
-            description=(
-                "In DPV there is no property for the type of consent. In DPV, the "
-                "types are subclasses of dpv:Consent. In order to align with our "
-                "modelling approach, we model types of consent as a concept "
-                "(skos:Concept). Since dpv:Consent is also defined as a "
-                "skos:Concept, this is no conflict, just another way of "
-                "implementing it."
-            ),
+            description="Specifies the state or status of consent.",
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ] = []

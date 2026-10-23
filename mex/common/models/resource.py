@@ -886,7 +886,10 @@ class _VariadicValues(_Stem):
             description=(
                 "Specifies the maximum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#maxtypicalage"]
+            },
         ),
     ] = []
     minTypicalAge: Annotated[
@@ -895,7 +898,10 @@ class _VariadicValues(_Stem):
             description=(
                 "Specifies the minimum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#mintypicalage"]
+            },
         ),
     ] = []
     modified: Annotated[
@@ -952,7 +958,7 @@ class _VariadicValues(_Stem):
         list[VersionStr],
         Field(
             description=("The version indicator (name or identifier) of a resource."),
-            json_schema_extra="http://www.w3.org/ns/dcat#version",
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#version"]},
         ),
     ] = []
     wasGeneratedBy: Annotated[

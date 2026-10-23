@@ -443,6 +443,7 @@ class _VariadicValues(_Stem):
                 "Date of formal issuance of the publication ([DCT, 2020-01-20]"
                 "(http://dublincore.org/specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
         ),
     ] = []
     license: Annotated[
@@ -453,6 +454,7 @@ class _VariadicValues(_Stem):
                 "the publication ([DCT, 2020-01-20](http://dublincore.org/"
                 "specifications/dublin-core/dcmi-terms/2020-01-20/))."
             ),
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/license"]},
         ),
     ] = []
     pages: Annotated[
@@ -465,15 +467,11 @@ class _VariadicValues(_Stem):
     ] = []
     publicationYear: Annotated[
         list[Year],
-        Field(description="The year in which the publication was issued."),
-    ] = []
-    repositoryURL: Annotated[
-        list[Link],
         Field(
-            description=(
-                "The handle of the publication in the repository, where the "
-                "publication is stored."
-            )
+            description="The year in which the publication was issued.",
+            json_schema_extra={
+                "closeMatch": ["http://datacite.org/schema/kernel-4/publicationYear"]
+            },
         ),
     ] = []
     section: Annotated[
