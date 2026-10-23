@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -24,13 +24,17 @@ from mex.common.types import (
 )
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a variable group item."""
+
     stemType: ClassVar[Annotated[Literal["VariableGroup"], Field(frozen=True)]] = (
         "VariableGroup"
     )
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a variable group item with an arity of 1-n."""
+
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(
@@ -55,6 +59,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a variable group item relaxed to an arity of 0-n."""
+
     containedBy: Annotated[
         list[MergedResourceIdentifier],
         Field(

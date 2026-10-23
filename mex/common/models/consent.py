@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -26,11 +26,15 @@ from mex.common.types import (
 )
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a consent item."""
+
     stemType: ClassVar[Annotated[Literal["Consent"], Field(frozen=True)]] = "Consent"
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a consent item with an arity of 0-1."""
+
     hasConsentType: Annotated[
         ConsentType | None,
         Field(
@@ -41,6 +45,8 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
+    """Required values of a consent item with an arity of 1."""
+
     hasConsentStatus: Annotated[
         ConsentStatus,
         Field(
@@ -70,6 +76,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
+    """Required values of a consent item relaxed to an arity of 0-1."""
+
     hasConsentStatus: Annotated[
         ConsentStatus | None,
         Field(
@@ -106,6 +114,8 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a consent item as lists with an arity of 0-n."""
+
     hasConsentType: Annotated[
         list[ConsentType],
         Field(

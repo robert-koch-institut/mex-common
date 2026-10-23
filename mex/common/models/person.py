@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -75,11 +75,15 @@ OrcidIdStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a person item."""
+
     stemType: ClassVar[Annotated[Literal["Person"], Field(frozen=True)]] = "Person"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a person item with an arity of 0-n."""
+
     affiliation: Annotated[
         list[MergedOrganizationIdentifier],
         Field(
@@ -158,6 +162,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a person item with an arity of 1-n."""
+
     fullName: Annotated[
         list[FullNameStr],
         Field(
@@ -172,6 +178,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a person item relaxed to an arity of 0-n."""
+
     fullName: Annotated[
         list[FullNameStr],
         Field(

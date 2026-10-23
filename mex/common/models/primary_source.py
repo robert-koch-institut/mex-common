@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -38,13 +38,17 @@ AnyContactIdentifier = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a primary source item."""
+
     stemType: ClassVar[Annotated[Literal["PrimarySource"], Field(frozen=True)]] = (
         "PrimarySource"
     )
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a primary source item with an arity of 0-n."""
+
     alternativeTitle: Annotated[
         list[Text],
         Field(
@@ -110,6 +114,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a primary source item with an arity of 1-n."""
+
     title: Annotated[
         list[Text],
         Field(
@@ -121,6 +127,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a primary source item relaxed to an arity of 0-n."""
+
     title: Annotated[
         list[Text],
         Field(
@@ -131,6 +139,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a primary source item with an arity of 0-1."""
+
     version: Annotated[
         VersionStr | None,
         Field(
@@ -143,6 +153,8 @@ class _OptionalValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a primary source item as lists with an arity of 0-n."""
+
     version: Annotated[
         list[VersionStr],
         Field(
