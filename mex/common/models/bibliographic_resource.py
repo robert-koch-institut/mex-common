@@ -307,10 +307,17 @@ class _SparseLists(_Stem):
 
     creator: Annotated[
         list[MergedPersonIdentifier],
-        Field(description="The author of the publication."),
+        Field(
+            description="The author of the publication.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
+        ),
     ] = []
     title: Annotated[
-        list[Text], Field(description="The full title of the publication.")
+        list[Text],
+        Field(
+            description="The full title of the publication.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 

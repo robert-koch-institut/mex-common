@@ -244,15 +244,28 @@ class _SparseLists(_Stem):
 
     contact: Annotated[
         list[AnyContactIdentifier],
-        Field(description="An agent serving as a contact for the activity."),
+        Field(
+            description="An agent serving as a contact for the activity.",
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
+        ),
     ] = []
     responsibleUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
-        Field(description="A unit that is responsible for the activity."),
+        Field(
+            description="A unit that is responsible for the activity.",
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
+        ),
     ] = []
     title: Annotated[
         list[Text],
-        Field(description="The official title of the activity."),
+        Field(
+            description="The official title of the activity.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 
