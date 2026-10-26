@@ -24,40 +24,10 @@ def test_get_wikidata_organization() -> None:
             "multiple": {"language": "mul", "value": "Robert Koch-Institut"},
         },
         "claims": {
-            "website": [
-                {"mainsnak": {"datavalue": {"value": {"text": "https://www.rki.de/"}}}},
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.rki.de/DE/Home/homepage_node.html"
-                            }
-                        }
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.rki.de/EN/Home/homepage_node.html"
-                            }
-                        }
-                    }
-                },
-            ],
             "isni_id": [
                 {"mainsnak": {"datavalue": {"value": {"text": "0000000109403744"}}}}
             ],
             "ror_id": [{"mainsnak": {"datavalue": {"value": {"text": "01k5qnb77"}}}}],
-            "official_name": [
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {"text": "Robert-Koch-Institut", "language": "de"}
-                        }
-                    }
-                }
-            ],
             "short_name": [
                 {
                     "mainsnak": {
@@ -126,25 +96,6 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
             "multiple": None,
         },
         "claims": {
-            "website": [
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.testgroup.com/",
-                                "language": None,
-                            }
-                        }
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {"text": "https://www.test.com", "language": None}
-                        }
-                    }
-                },
-            ],
             "isni_id": [
                 {
                     "mainsnak": {
@@ -165,18 +116,6 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
                         "datavalue": {"value": {"text": "044kkbh92", "language": None}}
                     }
                 },
-            ],
-            "official_name": [
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "Bayerische Motoren Werke AG",
-                                "language": "de",
-                            }
-                        }
-                    }
-                }
             ],
             "short_name": [
                 {

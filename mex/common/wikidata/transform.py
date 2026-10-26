@@ -57,11 +57,7 @@ def transform_wikidata_organization_to_extracted_organization(
         wikidataId=_get_wikidata_entity_uri(wikidata_organization.identifier),
         officialName=label,
         shortName=_get_clean_short_names(wikidata_organization.claims.short_name),
-        geprisId=[
-            f"https://gepris.dfg.de/gepris/institution/{value}"
-            for claim in wikidata_organization.claims.gepris_id
-            if (value := claim.mainsnak.datavalue.value.text)
-        ],
+        geprisId=[],
         isniId=[
             f"https://isni.org/isni/{claim.mainsnak.datavalue.value.text}".replace(
                 " ", ""

@@ -51,16 +51,13 @@ class Claim(BaseModel):
 class ClaimsOrganizations(BaseModel):
     """model class for Claims for Wikidata Organizations."""
 
-    official_name: Annotated[list[Claim], Field(alias="P1448")] = []  ###?
-    # P17 (added 19.08.2026)
-    native_label: Annotated[list[Claim], Field(alias="P1705")] = []  ###?
-    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
     isni_id: Annotated[list[Claim], Field(alias="P213")] = []
-    viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
-    gnd_id: Annotated[list[Claim], Field(alias="P227")] = []
-    gepris_id: Annotated[list[Claim], Field(alias="P4871")] = []
     ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
-    website: Annotated[list[Claim], Field(alias="P856")] = []
+    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
+    native_label: Annotated[list[Claim], Field(alias="P1705")] = []
+    gepris_id: Annotated[list[Claim], Field(alias="P4871")] = []
+    gnd_id: Annotated[list[Claim], Field(alias="P227")] = []
+    viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
 
 
 class ClaimsLocations(BaseModel):

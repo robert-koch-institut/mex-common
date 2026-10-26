@@ -101,7 +101,7 @@ def test_transform_wikidata_organizations_to_extracted_organizations(
             {"value": "alias_de_3", "language": None},
             {"value": "alias_en_4", "language": None},
         ],
-        "geprisId": ["https://gepris.dfg.de/gepris/institution/42424242"],
+        "geprisId": [],
         "gndId": ["https://d-nb.info/gnd/2005475-0"],
         "isniId": ["https://isni.org/isni/000000012308257X"],
         "officialName": [
