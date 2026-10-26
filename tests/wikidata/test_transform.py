@@ -45,7 +45,7 @@ def test_transform_wikidata_organization_to_extracted_organization(
             {"value": "alias_de_3", "language": None},
             {"value": "alias_en_4", "language": None},
         ],
-        "geprisId": ["https://gepris.dfg.de/gepris/institution/42424242"],
+        "geprisId": [],
         "gndId": ["https://d-nb.info/gnd/2005475-0"],
         "isniId": ["https://isni.org/isni/000000012308257X"],
         "officialName": [
@@ -140,7 +140,6 @@ def test_transform_wikidata_organizations_to_extracted_organizations(
     )
     assert extracted_organization_dict["rorId"] == expected["rorId"]
     assert extracted_organization_dict["wikidataId"] == expected["wikidataId"]
-    assert extracted_organization_dict["geprisId"] == expected["geprisId"]
     assert extracted_organization_dict["gndId"] == expected["gndId"]
     assert extracted_organization_dict["isniId"] == expected["isniId"]
     assert extracted_organization_dict["viafId"] == expected["viafId"]

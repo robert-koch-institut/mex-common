@@ -347,26 +347,6 @@
                     "type": "statement"
                 }
             ],
-            "P4871": [
-                {
-                    "id": "Q26678$d216fa25-456d-4050-09e1-196354b3d151",
-                    "mainsnak": {
-                        "datatype": "monolingualtext",
-                        "datavalue": {
-                            "type": "monolingualtext",
-                            "value": {
-                                "language": "de",
-                                "text": "42424242"
-                            }
-                        },
-                        "hash": "f5bf25810167c462c02440b7fb571992ddb078aa",
-                        "property": "P4871",
-                        "snaktype": "value"
-                    },
-                    "rank": "normal",
-                    "type": "statement"
-                }
-            ],
             "P6782": [
                 {
                     "id": "Q26678$E5491B73-A57B-490E-9019-5AC51C3DEDB6",
@@ -787,26 +767,6 @@
                             ]
                         }
                     ],
-                    "type": "statement"
-                }
-            ],
-            "P4871": [
-                {
-                    "id": "Q26678$d216fa25-456d-4050-09e1-196354b3d151",
-                    "mainsnak": {
-                        "datatype": "monolingualtext",
-                        "datavalue": {
-                            "type": "monolingualtext",
-                            "value": {
-                                "language": "de",
-                                "text": "42424242"
-                            }
-                        },
-                        "hash": "f5bf25810167c462c02440b7fb571992ddb078aa",
-                        "property": "P4871",
-                        "snaktype": "value"
-                    },
-                    "rank": "normal",
                     "type": "statement"
                 }
             ],

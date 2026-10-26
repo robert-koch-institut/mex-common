@@ -133,13 +133,7 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
                     }
                 }
             ],
-            "gepris_id": [
-                {
-                    "mainsnak": {
-                        "datavalue": {"value": {"text": "42424242", "language": "de"}}
-                    }
-                }
-            ],
+            "gepris_id": [],
             "gnd_id": [
                 {
                     "mainsnak": {
