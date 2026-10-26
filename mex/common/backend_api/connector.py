@@ -638,7 +638,7 @@ class BackendApiConnector(HTTPConnector):
     ) -> PaginatedItemsContainer[ExtractedPerson]:
         """Get LDAP persons via the backend that match the provided filters.
 
-        This is a structured, exact-match lookup for deterministic ETL identity
+        This is a structured, exact-match lookup for deterministic identity
         resolution. For interactive fuzzy search across persons and functional
         accounts, see `search_person_or_contact_point_in_ldap`.
 
@@ -729,7 +729,7 @@ class BackendApiConnector(HTTPConnector):
     ) -> PaginatedItemsContainer[ExtractedContactPoint]:
         """Get LDAP functional accounts via the backend that match the filters.
 
-        This is a structured, exact-match lookup for deterministic ETL identity
+        This is a structured, exact-match lookup for deterministic identity
         resolution. For interactive fuzzy search across persons and functional
         accounts, see `search_person_or_contact_point_in_ldap`.
 
