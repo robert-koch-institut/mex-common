@@ -800,12 +800,8 @@ def test_get_person_mocked_multiple_results(
 
 def test_get_functional_accounts_mocked(
     mocked_backend: MagicMock,
+    contact_point: ExtractedContactPoint,
 ) -> None:
-    contact_point = ExtractedContactPoint(
-        identifierInPrimarySource="contactc",
-        hadPrimarySource=MergedOrganizationIdentifier.generate(seed=201),
-        email=["contactc@rki.de"],
-    )
     mocked_return = {"items": [contact_point.model_dump()], "total": 1}
     mocked_backend.return_value.json.return_value = mocked_return
 
@@ -833,12 +829,10 @@ def test_get_functional_accounts_mocked(
     )
 
 
-def test_get_functional_account_mocked(mocked_backend: MagicMock) -> None:
-    contact_point = ExtractedContactPoint(
-        identifierInPrimarySource="contactc",
-        hadPrimarySource=MergedOrganizationIdentifier.generate(seed=201),
-        email=["contactc@rki.de"],
-    )
+def test_get_functional_account_mocked(
+    mocked_backend: MagicMock,
+    contact_point: ExtractedContactPoint,
+) -> None:
     mocked_return = {"items": [contact_point.model_dump()], "total": 1}
     mocked_backend.return_value.json.return_value = mocked_return
 
@@ -876,12 +870,8 @@ def test_get_functional_account_mocked_empty_result(mocked_backend: MagicMock) -
 
 def test_get_functional_account_mocked_multiple_results(
     mocked_backend: MagicMock,
+    contact_point: ExtractedContactPoint,
 ) -> None:
-    contact_point = ExtractedContactPoint(
-        identifierInPrimarySource="contactc",
-        hadPrimarySource=MergedOrganizationIdentifier.generate(seed=201),
-        email=["contactc@rki.de"],
-    )
     mocked_backend.return_value.json.return_value = {
         "items": [contact_point.model_dump(), contact_point.model_dump()],
         "total": 2,
