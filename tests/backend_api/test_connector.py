@@ -8,9 +8,11 @@ from mex.common.backend_api.connector import (
     LDAPBackendApiConnector,
     ReferenceFilter,
 )
+from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.models import (
     AnyExtractedModel,
     AnyPreviewModel,
+    ExtractedContactPoint,
     ExtractedPerson,
     ItemsContainer,
     MergedPerson,
@@ -663,3 +665,231 @@ def test_merge_items_mocked(mocked_backend: MagicMock) -> None:
         "gonerIdentifier": "e3VhxMhEKyjqN5flzLpiEB",
         "keeperIdentifier": "NGwfzG8ROsrvIiQIVDVy",
     }
+
+
+def test_get_persons_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = {"items": [extracted_person.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_persons(
+        display_name="Meinrad Tintzmann",
+        employee_id="42",
+        given_name="Meinrad",
+        mail="TintzmannM@rki.de",
+        object_guid="guid-42",
+        sam_account_name="TintzmannM",
+        surname="Tintzmann",
+        offset=0,
+        limit=2,
+    )
+
+    assert response.items == [extracted_person]
+    assert response.total == 1
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/ldap/persons",
+        {
+            "display_name": "Meinrad Tintzmann",
+            "employee_id": "42",
+            "given_name": "Meinrad",
+            "mail": "TintzmannM@rki.de",
+            "object_guid": "guid-42",
+            "sam_account_name": "TintzmannM",
+            "surname": "Tintzmann",
+            "offset": "0",
+            "limit": "2",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_persons_mocked_defaults(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = {"items": [extracted_person.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    connector.get_persons()
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/ldap/persons",
+        {
+            "display_name": "*",
+            "employee_id": "*",
+            "given_name": "*",
+            "mail": "*",
+            "object_guid": "*",
+            "sam_account_name": "*",
+            "surname": "*",
+            "offset": "0",
+            "limit": "10",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_person_mocked(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_return = {"items": [extracted_person.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_person(surname="Tintzmann")
+
+    assert response == extracted_person
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/ldap/persons",
+        {
+            "display_name": "*",
+            "employee_id": "*",
+            "given_name": "*",
+            "mail": "*",
+            "object_guid": "*",
+            "sam_account_name": "*",
+            "surname": "Tintzmann",
+            "offset": "0",
+            "limit": "2",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_person_mocked_empty_result(mocked_backend: MagicMock) -> None:
+    mocked_backend.return_value.json.return_value = {"items": [], "total": 0}
+
+    connector = BackendApiConnector.get()
+
+    with pytest.raises(EmptySearchResultError, match="Cannot find AD person"):
+        connector.get_person(surname="does-not-exist")
+
+
+def test_get_person_mocked_multiple_results(
+    mocked_backend: MagicMock, extracted_person: ExtractedPerson
+) -> None:
+    mocked_backend.return_value.json.return_value = {
+        "items": [extracted_person.model_dump(), extracted_person.model_dump()],
+        "total": 2,
+    }
+
+    connector = BackendApiConnector.get()
+
+    with pytest.raises(FoundMoreThanOneError, match="Found multiple AD persons"):
+        connector.get_person()
+
+
+def test_get_functional_accounts_mocked(
+    mocked_backend: MagicMock,
+) -> None:
+    contact_point = ExtractedContactPoint(
+        identifierInPrimarySource="contactc",
+        hadPrimarySource=MergedOrganizationIdentifier.generate(seed=201),
+        email=["contactc@rki.de"],
+    )
+    mocked_return = {"items": [contact_point.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_functional_accounts(
+        mail="contactc@rki.de", offset=0, limit=2
+    )
+
+    assert response.items == [contact_point]
+    assert response.total == 1
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/ldap/functional-accounts",
+        {
+            "mail": "contactc@rki.de",
+            "offset": "0",
+            "limit": "2",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_functional_account_mocked(mocked_backend: MagicMock) -> None:
+    contact_point = ExtractedContactPoint(
+        identifierInPrimarySource="contactc",
+        hadPrimarySource=MergedOrganizationIdentifier.generate(seed=201),
+        email=["contactc@rki.de"],
+    )
+    mocked_return = {"items": [contact_point.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    response = connector.get_functional_account(mail="contactc@rki.de")
+
+    assert response == contact_point
+
+    assert mocked_backend.call_args == call(
+        "GET",
+        "http://localhost:8080/v0/ldap/functional-accounts",
+        {
+            "mail": "contactc@rki.de",
+            "offset": "0",
+            "limit": "2",
+        },
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+    )
+
+
+def test_get_functional_account_mocked_empty_result(mocked_backend: MagicMock) -> None:
+    mocked_backend.return_value.json.return_value = {"items": [], "total": 0}
+
+    connector = BackendApiConnector.get()
+
+    with pytest.raises(
+        EmptySearchResultError, match="Cannot find AD functional account"
+    ):
+        connector.get_functional_account(mail="does-not-exist@rki.de")
+
+
+def test_get_functional_account_mocked_multiple_results(
+    mocked_backend: MagicMock,
+) -> None:
+    contact_point = ExtractedContactPoint(
+        identifierInPrimarySource="contactc",
+        hadPrimarySource=MergedOrganizationIdentifier.generate(seed=201),
+        email=["contactc@rki.de"],
+    )
+    mocked_backend.return_value.json.return_value = {
+        "items": [contact_point.model_dump(), contact_point.model_dump()],
+        "total": 2,
+    }
+
+    connector = BackendApiConnector.get()
+
+    with pytest.raises(
+        FoundMoreThanOneError, match="Found multiple AD functional accounts"
+    ):
+        connector.get_functional_account(mail="contactc@rki.de")
