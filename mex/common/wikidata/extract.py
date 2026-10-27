@@ -74,10 +74,12 @@ def get_wikidata_locations(
     counter = 1
 
     for batch in batched(item_ids, batch_size):
-        logger.info(
-            f"getting wikidata locations for "
-            f"{counter * batch_size}/{len(item_ids)} items"
-        )
+        if counter % 1000 == 0:
+            logger.info(
+                f"getting wikidata locations for "
+                f"{counter * batch_size}/{len(item_ids)} items"
+            )
+        counter += 1
         entities = connector.get_wikidata_item_details_by_ids(batch)
 
         for item_id in batch:
