@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- wikidata helper to extract location from wikidata
+- wikidata helper to extract location from wikidata, for single IDs and for batches
 
 ### Changes
 
