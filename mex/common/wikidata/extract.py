@@ -1,7 +1,9 @@
 import re
+from collections.abc import Iterator
 from functools import lru_cache
+from itertools import batched
 
-from mex.common.wikidata.connector import WikidataAPIConnector
+from mex.common.wikidata.connector import WIKIDATA_MAX_BATCH_SIZE, WikidataAPIConnector
 from mex.common.wikidata.models import WikidataLocation, WikidataOrganization
 
 _WIKIDATA_ID_PATTERN = re.compile(
@@ -56,3 +58,21 @@ def get_wikidata_location(item_id_or_url: str) -> WikidataLocation:
     """
     item = _get_wikidata_raw_item(item_id_or_url)
     return WikidataLocation.model_validate(item)
+
+
+def get_wikidata_locations(
+    item_ids: list[str],
+    batch_size: int = WIKIDATA_MAX_BATCH_SIZE,
+) -> Iterator[WikidataLocation]:
+    """Get Wikidata locations using batched API requests."""
+    if not 1 <= batch_size <= WIKIDATA_MAX_BATCH_SIZE:
+        msg = f"batch_size can't be more than {WIKIDATA_MAX_BATCH_SIZE}."
+        raise ValueError(msg)
+
+    connector = WikidataAPIConnector.get()
+
+    for batch in batched(item_ids, batch_size):
+        entities = connector.get_wikidata_item_details_by_ids(batch)
+
+        for item_id in batch:
+            yield WikidataLocation.model_validate(entities[item_id])

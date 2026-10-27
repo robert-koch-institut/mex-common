@@ -110,4 +110,3 @@ class WikidataLocation(BaseModel):
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels
     claims: ClaimsLocations
-    aliases: Aliases
