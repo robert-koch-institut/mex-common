@@ -1,6 +1,6 @@
 import json
 from typing import Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from pytest import MonkeyPatch
@@ -9,6 +9,7 @@ from mex.common.wikidata.connector import WikidataAPIConnector
 from mex.common.wikidata.extract import (
     _get_wikidata_raw_item,
     get_wikidata_location,
+    get_wikidata_locations,
     get_wikidata_organization,
 )
 from tests.wikidata.conftest import TESTDATA_DIR
@@ -301,3 +302,39 @@ def test_get_wikidata_location_is_cached(monkeypatch: MonkeyPatch) -> None:
 
     assert first_result is second_result
     connector.get_wikidata_item_details_by_id.assert_called_once_with("Q183")
+
+
+def test_get_wikidata_locations_uses_batches() -> None:
+    item_ids = [f"Q{i}" for i in range(100, 220)]
+
+    connector = Mock()
+
+    def get_items(ids: tuple[str, ...]) -> dict[str, Any]:
+        return {
+            item_id: {
+                "id": item_id,
+                "labels": {},
+                "claims": {},
+                "aliases": {},
+            }
+            for item_id in ids
+        }
+
+    connector.get_wikidata_item_details_by_ids.side_effect = get_items
+
+    with patch(
+        "mex.common.wikidata.extract.WikidataAPIConnector.get",
+        return_value=connector,
+    ):
+        locations = list(get_wikidata_locations(item_ids))
+
+    assert len(locations) == 120
+    assert connector.get_wikidata_item_details_by_ids.call_count == 3
+
+    batches = [
+        call.args[0]
+        for call in connector.get_wikidata_item_details_by_ids.call_args_list
+    ]
+
+    assert [len(batch) for batch in batches] == [50, 50, 20]
+    assert [location.identifier for location in locations] == item_ids
