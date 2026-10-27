@@ -3,6 +3,7 @@ from collections.abc import Iterator
 from functools import lru_cache
 from itertools import batched
 
+from mex.common.logging import logger
 from mex.common.wikidata.connector import WIKIDATA_MAX_BATCH_SIZE, WikidataAPIConnector
 from mex.common.wikidata.models import WikidataLocation, WikidataOrganization
 
@@ -70,8 +71,13 @@ def get_wikidata_locations(
         raise ValueError(msg)
 
     connector = WikidataAPIConnector.get()
+    counter = 1
 
     for batch in batched(item_ids, batch_size):
+        logger.info(
+            f"getting wikidata locations for "
+            f"{counter * batch_size}/{len(item_ids)} items"
+        )
         entities = connector.get_wikidata_item_details_by_ids(batch)
 
         for item_id in batch:
