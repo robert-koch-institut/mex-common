@@ -1,5 +1,6 @@
 import re
 import ssl
+import warnings
 from functools import lru_cache
 from typing import Any, cast
 from urllib.parse import urlsplit
@@ -36,6 +37,18 @@ class LDAPConnector(BaseConnector):
 
     def __init__(self) -> None:
         """Create a new LDAP connection."""
+        # stacklevel=4 attributes the warning to the real caller of `.get()`
+        # (caller -> BaseConnector.get -> SingletonStore.load -> here), the only way
+        # any production code actually constructs this class.
+        warnings.warn(
+            "LDAPConnector is deprecated and will be removed from mex-common once "
+            "mex-extractors migrates off it. Use "
+            "mex.common.backend_api.connector.BackendApiConnector's get_persons/"
+            "get_person/get_functional_accounts/get_functional_account methods "
+            "instead, which resolve LDAP data via mex-backend's HTTP API.",
+            DeprecationWarning,
+            stacklevel=4,
+        )
         settings = BaseSettings.get()
         self._search_base = settings.ldap_search_base
         self._connection = self._setup_connection()

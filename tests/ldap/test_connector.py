@@ -42,6 +42,12 @@ def test_sanitize_value(value: str, expected: str) -> None:
     assert LDAPConnector._sanitize(value) == expected
 
 
+def test_ldap_connector_init_is_deprecated(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(LDAPConnector, "_setup_connection", lambda self: MagicMock())
+    with pytest.warns(DeprecationWarning, match="LDAPConnector is deprecated"):
+        LDAPConnector()
+
+
 @pytest.mark.usefixtures("mocked_ldap")
 def test_get_persons() -> None:
     connector = LDAPConnector.get()

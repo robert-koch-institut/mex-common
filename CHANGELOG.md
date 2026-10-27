@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
+- `mex.common.ldap.connector.LDAPConnector` is deprecated: a copy now lives in
+  `mex-backend` (`mex.backend.ldap.connector`), which will carry the upcoming
+  `ldap3` -> `python-ldap` migration. Instantiating `LDAPConnector` now emits a
+  `DeprecationWarning` pointing callers at `mex.common.backend_api.connector.
+  BackendApiConnector`'s `get_persons`/`get_person`/`get_functional_accounts`/
+  `get_functional_account` methods, which resolve LDAP data via mex-backend's HTTP
+  API instead. `mex.common.ldap.models` and `mex.common.ldap.transform` are
+  unaffected and remain mex-common's modules to own, imported by mex-backend
+  directly. The deprecated `LDAPConnector` will be removed once mex-extractors
+  migrates off it (tracked separately, blocked by MX-2359).
+
 ### Removed
 
 ### Fixed
