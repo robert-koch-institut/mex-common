@@ -71,15 +71,13 @@ def get_wikidata_locations(
         raise ValueError(msg)
 
     connector = WikidataAPIConnector.get()
-    counter = 1
 
-    for batch in batched(item_ids, batch_size):
-        if counter % 1000 == 0:
+    for batch_index, batch in enumerate(batched(item_ids, batch_size)):
+        if batch_index % 20 == 0:
             logger.info(
                 f"getting wikidata locations for "
-                f"{counter * batch_size}/{len(item_ids)} items"
+                f"{batch_index * batch_size}/{len(item_ids)} items"
             )
-        counter += 1
         entities = connector.get_wikidata_item_details_by_ids(batch)
 
         for item_id in batch:
