@@ -1,7 +1,6 @@
 import re
 from collections.abc import Iterator
 from functools import lru_cache
-from itertools import batched
 
 from mex.common.logging import logger
 from mex.common.wikidata.connector import WIKIDATA_MAX_BATCH_SIZE, WikidataAPIConnector
@@ -67,12 +66,13 @@ def get_wikidata_locations(
 ) -> Iterator[WikidataLocation]:
     """Get Wikidata locations using batched API requests."""
     if not 1 <= batch_size <= WIKIDATA_MAX_BATCH_SIZE:
-        msg = f"batch_size can't be more than {WIKIDATA_MAX_BATCH_SIZE}."
+        msg = f"batch_size musst be between 1 and {WIKIDATA_MAX_BATCH_SIZE}."
         raise ValueError(msg)
 
     connector = WikidataAPIConnector.get()
 
-    for batch_index, batch in enumerate(batched(item_ids, batch_size)):
+    for batch_index, start in enumerate(range(0, len(item_ids), batch_size)):
+        batch = item_ids[start : start + batch_size]
         if batch_index % 20 == 0:
             logger.info(
                 f"getting wikidata locations for "

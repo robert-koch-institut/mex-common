@@ -265,7 +265,6 @@ def test_get_wikidata_location(monkeypatch: MonkeyPatch) -> None:
     location = get_wikidata_location("Q183")
 
     assert location.model_dump() == {
-        "aliases": {"de": [], "en": []},
         "claims": {
             "geonames_id": [
                 {

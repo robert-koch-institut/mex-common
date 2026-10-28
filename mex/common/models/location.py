@@ -25,7 +25,7 @@ from mex.common.types import (
 GeoNamesIdStr = Annotated[
     str,
     Field(
-        pattern="^https://www\\.geonames\\.org/[0-9]+$",
+        pattern="^http://www\\.geonames\\.org/[0-9]{7}$",
         json_schema_extra={"format": "uri"},
     ),
 ]
