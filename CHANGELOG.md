@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bump mex-model version to 5.2.2
+- bump mex-model version to 5.2.2 featuring the conditional `supersededBy`
 - BREAKING: required fields of merged items are only enforced if `supersededBy` is unset
 - BREAKING: all models based on `BaseModel` are now frozen, field assignment raises a
   `ValidationError`, use `model_copy_validated` instead
@@ -33,7 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NdjsonSink.load` accepts any pydantic model
 - organigram units get their parent unit assigned when they are created and
   `get_extracted_organizational_unit_with_parents` reuses the organigram transform
-- temporarily pin mex-model to the commit introducing the conditional `supersededBy`
 
 ### Deprecated
 
@@ -51,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and subtractive distributions
 - remove redundant field definitions, so the field order of additive and preview
   consents and of preview and subtractive bibliographic resources matches the base
+- fixed geonames regex pattern
 
 ### Security
 
