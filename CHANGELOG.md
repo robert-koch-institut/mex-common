@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- bump mex-model version to 5.2.2
 - BREAKING: required fields of merged items are only enforced if `supersededBy` is unset
 - BREAKING: all models based on `BaseModel` are now frozen, field assignment raises a
   `ValidationError`, use `model_copy_validated` instead
@@ -52,6 +53,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   consents and of preview and subtractive bibliographic resources matches the base
 
 ### Security
+
+## [3.6.1] - 2026-10-28
+
+### Fixed
+
+- temporarily pin the mex-model version to 5.2.1
 
 ## [3.6.0] - 2026-10-21
 
