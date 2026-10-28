@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -26,11 +26,15 @@ from mex.common.types import (
 )
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a consent item."""
+
     stemType: ClassVar[Annotated[Literal["Consent"], Field(frozen=True)]] = "Consent"
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a consent item with an arity of 0-1."""
+
     hasConsentType: Annotated[
         ConsentType | None,
         Field(
@@ -41,6 +45,8 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
+    """Required values of a consent item with an arity of 1."""
+
     hasConsentStatus: Annotated[
         ConsentStatus,
         Field(
@@ -70,6 +76,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
+    """Required values of a consent item relaxed to an arity of 0-1."""
+
     hasConsentStatus: Annotated[
         ConsentStatus | None,
         Field(
@@ -82,13 +90,6 @@ class _SparseValues(_Stem):
         Field(
             description="Indicates association with Data Subject.",
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasDataSubject"]},
-        ),
-    ] = None
-    hasConsentType: Annotated[
-        ConsentType | None,
-        Field(
-            description="The type of consent.",
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = None
     isIndicatedAtTime: Annotated[
@@ -106,6 +107,8 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a consent item as lists with an arity of 0-n."""
+
     hasConsentType: Annotated[
         list[ConsentType],
         Field(
@@ -116,14 +119,7 @@ class _VariadicValues(_Stem):
     hasConsentStatus: Annotated[
         list[ConsentStatus],
         Field(
-            description=(
-                "In DPV there is no property for the type of consent. In DPV, the "
-                "types are subclasses of dpv:Consent. In order to align with our "
-                "modelling approach, we model types of consent as a concept "
-                "(skos:Concept). Since dpv:Consent is also defined as a "
-                "skos:Concept, this is no conflict, just another way of "
-                "implementing it."
-            ),
+            description="Specifies the state or status of consent.",
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ] = []
@@ -200,7 +196,7 @@ class ExtractedConsent(BaseConsent, ExtractedData):
         return self._get_stable_target_id(MergedConsentIdentifier)
 
 
-class MergedConsent(BaseConsent, MergedItem):
+class MergedConsent(_SparseValues, BaseConsent, MergedItem):
     """The result of merging all extracted items and rules for a consent."""
 
     entityType: Annotated[

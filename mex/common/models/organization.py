@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -97,13 +97,17 @@ WikidataIdStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of an organization item."""
+
     stemType: ClassVar[Annotated[Literal["Organization"], Field(frozen=True)]] = (
         "Organization"
     )
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of an organization item with an arity of 0-n."""
+
     alternativeName: Annotated[
         list[Text],
         Field(
@@ -172,6 +176,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of an organization item with an arity of 1-n."""
+
     officialName: Annotated[
         list[Text],
         Field(
@@ -183,6 +189,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of an organization item relaxed to an arity of 0-n."""
+
     officialName: Annotated[
         list[Text],
         Field(
@@ -256,7 +264,7 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
         return self._get_stable_target_id(MergedOrganizationIdentifier)
 
 
-class MergedOrganization(BaseOrganization, MergedItem):
+class MergedOrganization(_SparseLists, BaseOrganization, MergedItem):
     """The result of merging all extracted items and rules for an organization."""
 
     entityType: Annotated[

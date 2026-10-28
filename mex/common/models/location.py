@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -25,7 +25,7 @@ from mex.common.types import (
 GeoNamesIdStr = Annotated[
     str,
     Field(
-        pattern="^http://www\\.geonames\\.org/[0-9]{7}$",
+        pattern="^https://www\\.geonames\\.org/[0-9]+$",
         json_schema_extra={"format": "uri"},
     ),
 ]
@@ -43,11 +43,15 @@ WikidataIdStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a location item."""
+
     stemType: ClassVar[Annotated[Literal["Location"], Field(frozen=True)]] = "Location"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a location item with an arity of 0-n."""
+
     geoNamesId: Annotated[
         list[GeoNamesIdStr],
         Field(
@@ -62,6 +66,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a location item with an arity of 1-n."""
+
     name: Annotated[
         list[Text],
         Field(
@@ -73,6 +79,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a location item relaxed to an arity of 0-n."""
+
     name: Annotated[
         list[Text],
         Field(
@@ -133,7 +141,7 @@ class ExtractedLocation(BaseLocation, ExtractedData):
         return self._get_stable_target_id(MergedLocationIdentifier)
 
 
-class MergedLocation(BaseLocation, MergedItem):
+class MergedLocation(_SparseLists, BaseLocation, MergedItem):
     """The result of merging all extracted items and rules for a location."""
 
     entityType: Annotated[

@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -138,11 +138,15 @@ MinTypicalAgeInt = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a resource item."""
+
     stemType: ClassVar[Annotated[Literal["Resource"], Field(frozen=True)]] = "Resource"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a resource item with an arity of 0-n."""
+
     accessPlatform: Annotated[
         list[MergedAccessPlatformIdentifier],
         Field(
@@ -561,6 +565,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a resource item with an arity of 1-n."""
+
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
@@ -613,6 +619,8 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a resource item relaxed to an arity of 0-n."""
+
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
@@ -660,6 +668,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a resource item with an arity of 0-1."""
+
     accrualPeriodicity: Annotated[
         Frequency | None,
         Field(
@@ -797,6 +807,8 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
+    """Required values of a resource item with an arity of 1."""
+
     accessRestriction: Annotated[
         AccessRestriction,
         Field(
@@ -807,6 +819,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
+    """Required values of a resource item relaxed to an arity of 0-1."""
+
     accessRestriction: Annotated[
         AccessRestriction | None,
         Field(
@@ -817,6 +831,8 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a resource item as lists with an arity of 0-n."""
+
     accessRestriction: Annotated[
         list[AccessRestriction],
         Field(
@@ -870,7 +886,10 @@ class _VariadicValues(_Stem):
             description=(
                 "Specifies the maximum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#maxtypicalage"]
+            },
         ),
     ] = []
     minTypicalAge: Annotated[
@@ -879,7 +898,10 @@ class _VariadicValues(_Stem):
             description=(
                 "Specifies the minimum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#mintypicalage"]
+            },
         ),
     ] = []
     modified: Annotated[
@@ -936,7 +958,7 @@ class _VariadicValues(_Stem):
         list[VersionStr],
         Field(
             description=("The version indicator (name or identifier) of a resource."),
-            json_schema_extra="http://www.w3.org/ns/dcat#version",
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#version"]},
         ),
     ] = []
     wasGeneratedBy: Annotated[
@@ -1013,7 +1035,7 @@ class ExtractedResource(BaseResource, ExtractedData):
         return self._get_stable_target_id(MergedResourceIdentifier)
 
 
-class MergedResource(BaseResource, MergedItem):
+class MergedResource(_SparseLists, _SparseValues, BaseResource, MergedItem):
     """The result of merging all extracted items and rules for a resource."""
 
     entityType: Annotated[

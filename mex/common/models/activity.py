@@ -1,12 +1,12 @@
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -43,11 +43,15 @@ AnyContactIdentifier = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of an activity item."""
+
     stemType: ClassVar[Annotated[Literal["Activity"], Field(frozen=True)]] = "Activity"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of an activity item with an arity of 0-n."""
+
     abstract: Annotated[
         list[Text],
         Field(
@@ -203,6 +207,8 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of an activity item with an arity of 1-n."""
+
     contact: Annotated[
         list[AnyContactIdentifier],
         Field(
@@ -234,17 +240,32 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of an activity item relaxed to an arity of 0-n."""
+
     contact: Annotated[
         list[AnyContactIdentifier],
-        Field(description="An agent serving as a contact for the activity."),
+        Field(
+            description="An agent serving as a contact for the activity.",
+            json_schema_extra={
+                "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
+            },
+        ),
     ] = []
     responsibleUnit: Annotated[
         list[MergedOrganizationalUnitIdentifier],
-        Field(description="A unit that is responsible for the activity."),
+        Field(
+            description="A unit that is responsible for the activity.",
+            json_schema_extra={
+                "closeMatch": ["http://dcat-ap.de/def/dcatde/maintainer"]
+            },
+        ),
     ] = []
     title: Annotated[
         list[Text],
-        Field(description="The official title of the activity."),
+        Field(
+            description="The official title of the activity.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
+        ),
     ] = []
 
 
@@ -308,7 +329,7 @@ class ExtractedActivity(BaseActivity, ExtractedData):
         return self._get_stable_target_id(MergedActivityIdentifier)
 
 
-class MergedActivity(BaseActivity, MergedItem):
+class MergedActivity(_SparseLists, BaseActivity, MergedItem):
     """The result of merging all extracted items and rules for an activity."""
 
     entityType: Annotated[

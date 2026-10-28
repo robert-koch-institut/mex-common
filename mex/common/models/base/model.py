@@ -1,7 +1,7 @@
 import hashlib
 import pickle
-from collections.abc import MutableMapping
-from typing import Any, Literal
+from collections.abc import Mapping, MutableMapping
+from typing import Any, Literal, Self
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ValidatorFunctionWrapHandler, model_validator
@@ -26,9 +26,12 @@ class BaseModel(
     str_min_length=1,
     use_enum_values=True,
     validate_default=True,
-    validate_assignment=True,
+    frozen=True,
 ):
-    """Common base class for all MEx model classes."""
+    """Common base class for all MEx model classes.
+
+    Models are immutable, use `model_copy_validated` to derive changed instances.
+    """
 
     @classmethod
     def model_json_schema(
@@ -177,6 +180,21 @@ class BaseModel(
                 if field_name in get_all_fields(cls):
                     data[name] = cls._fix_value_listyness_for_field(field_name, value)
         return handler(data)
+
+    def model_copy_validated(self, update: Mapping[str, Any]) -> Self:
+        """Return a validated copy of this model with some fields updated.
+
+        Unlike `model_copy`, this runs all field and model validators on the result,
+        so the copy is guaranteed to be as valid as a freshly constructed instance.
+
+        Args:
+            update: Values to change in the copy, keyed by field name
+
+        Returns:
+            New validated instance of the same model class
+        """
+        data = {name: getattr(self, name) for name in self.model_fields_set}
+        return self.model_validate({**data, **update})
 
     def __str__(self) -> str:
         """Format this model as a string with its hash for identification."""
