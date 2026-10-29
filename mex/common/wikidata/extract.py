@@ -13,7 +13,7 @@ _WIKIDATA_ID_PATTERN = re.compile(
 
 
 def _get_wikidata_raw_item(item_id_or_url: str) -> dict[str, str]:
-    """Get a wikidata item details by its ID.
+    """Get a wikidata item as dictionary from wikidata by its id or url.
 
     Args:
         item_id_or_url: Wikidata item ID or full URL
