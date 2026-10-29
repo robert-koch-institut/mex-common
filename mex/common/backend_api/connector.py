@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 from pydantic import Field
 
 from mex.common.connector import HTTPConnector
+from mex.common.exceptions import EmptySearchResultError, FoundMoreThanOneError
 from mex.common.identity.models import Identity
 from mex.common.models import (
     AnyExtractedModel,
@@ -600,6 +601,11 @@ class BackendApiConnector(HTTPConnector):
     ) -> PaginatedItemsContainer[ExtractedPerson | ExtractedContactPoint]:
         """Search for persons or contact points in LDAP.
 
+        This is an interactive, fuzzy, free-text search across both persons and
+        functional accounts in a single call. For structured, exact-match lookups
+        of a specific person or functional account by attribute, see `get_persons`/
+        `get_person` and `get_functional_accounts`/`get_functional_account` instead.
+
         Args:
             q: The name of the person or contact point
             offset: The starting index for pagination
@@ -616,6 +622,161 @@ class BackendApiConnector(HTTPConnector):
         return PaginatedItemsContainer[
             ExtractedPerson | ExtractedContactPoint
         ].model_validate(response)
+
+    def get_persons(  # noqa: PLR0913
+        self,
+        *,
+        display_name: str = "*",
+        employee_id: str = "*",
+        given_name: str = "*",
+        mail: str = "*",
+        object_guid: str = "*",
+        sam_account_name: str = "*",
+        surname: str = "*",
+        limit: int = 10,
+        offset: int = 0,
+    ) -> PaginatedItemsContainer[ExtractedPerson]:
+        """Get LDAP persons via the backend that match the provided filters.
+
+        This is a structured, exact-match lookup for deterministic identity
+        resolution. For interactive fuzzy search across persons and functional
+        accounts, see `search_person_or_contact_point_in_ldap`.
+
+        Args:
+            display_name: Display name of the person
+            employee_id: Employee identifier
+            given_name: Given name of a person, defaults to non-null
+            mail: Email address, defaults to non-null
+            object_guid: Internal LDAP identifier
+            sam_account_name: Account name
+            surname: Surname of a person, defaults to non-null
+            limit: How many items to return
+            offset: How many items to skip before return
+
+        Returns:
+            Paginated list of ExtractedPersons
+        """
+        response = self.request(
+            method="GET",
+            endpoint="ldap/persons",
+            params={
+                "display_name": display_name,
+                "employee_id": employee_id,
+                "given_name": given_name,
+                "mail": mail,
+                "object_guid": object_guid,
+                "sam_account_name": sam_account_name,
+                "surname": surname,
+                "offset": str(offset),
+                "limit": str(limit),
+            },
+        )
+        return PaginatedItemsContainer[ExtractedPerson].model_validate(response)
+
+    def get_person(  # noqa: PLR0913
+        self,
+        *,
+        display_name: str = "*",
+        employee_id: str = "*",
+        given_name: str = "*",
+        mail: str = "*",
+        object_guid: str = "*",
+        sam_account_name: str = "*",
+        surname: str = "*",
+    ) -> ExtractedPerson:
+        """Get a single LDAP person via the backend for the given filters.
+
+        Args:
+            display_name: Display name of the person
+            employee_id: Employee identifier
+            given_name: Given name of a person, defaults to non-null
+            mail: Email address, defaults to non-null
+            object_guid: Internal LDAP identifier
+            sam_account_name: Account name
+            surname: Surname of a person, defaults to non-null
+
+        Raises:
+            EmptySearchResultError: If no LDAP entry matching filters was found
+            FoundMoreThanOneError: If more than one LDAP entry was found
+
+        Returns:
+            Single ExtractedPerson matching the filters
+        """
+        persons = self.get_persons(
+            display_name=display_name,
+            employee_id=employee_id,
+            given_name=given_name,
+            mail=mail,
+            object_guid=object_guid,
+            sam_account_name=sam_account_name,
+            surname=surname,
+            limit=2,
+        )
+        if not persons.items:
+            msg = "Cannot find AD person for filters"
+            raise EmptySearchResultError(msg)
+        if persons.total > 1:
+            msg = "Found multiple AD persons for filters"
+            raise FoundMoreThanOneError(msg)
+        return persons.items[0]
+
+    def get_functional_accounts(
+        self,
+        *,
+        mail: str = "*",
+        limit: int = 10,
+        offset: int = 0,
+    ) -> PaginatedItemsContainer[ExtractedContactPoint]:
+        """Get LDAP functional accounts via the backend that match the filters.
+
+        This is a structured, exact-match lookup for deterministic identity
+        resolution. For interactive fuzzy search across persons and functional
+        accounts, see `search_person_or_contact_point_in_ldap`.
+
+        Args:
+            mail: Email address of the functional account
+            limit: How many items to return
+            offset: How many items to skip before return
+
+        Returns:
+            Paginated list of ExtractedContactPoints
+        """
+        response = self.request(
+            method="GET",
+            endpoint="ldap/functional-accounts",
+            params={
+                "mail": mail,
+                "offset": str(offset),
+                "limit": str(limit),
+            },
+        )
+        return PaginatedItemsContainer[ExtractedContactPoint].model_validate(response)
+
+    def get_functional_account(
+        self,
+        *,
+        mail: str = "*",
+    ) -> ExtractedContactPoint:
+        """Get a single LDAP functional account via the backend for the given mail.
+
+        Args:
+            mail: Email address of the functional account
+
+        Raises:
+            EmptySearchResultError: If no LDAP entry matching filters was found
+            FoundMoreThanOneError: If more than one LDAP entry was found
+
+        Returns:
+            Single ExtractedContactPoint
+        """
+        functional_accounts = self.get_functional_accounts(mail=mail, limit=2)
+        if not functional_accounts.items:
+            msg = f"Cannot find AD functional account for filters mail: {mail}"
+            raise EmptySearchResultError(msg)
+        if functional_accounts.total > 1:
+            msg = f"Found multiple AD functional accounts for mail: {mail}"
+            raise FoundMoreThanOneError(msg)
+        return functional_accounts.items[0]
 
     def search_person_in_orcid(
         self,
