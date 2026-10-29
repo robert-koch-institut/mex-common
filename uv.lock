@@ -928,7 +928,7 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "3.6.0"
+version = "3.6.1"
 source = { editable = "." }
 dependencies = [
     { name = "backoff" },
