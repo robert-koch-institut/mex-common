@@ -48,18 +48,22 @@ class Claim(BaseModel):
     mainsnak: Mainsnak
 
 
-class Claims(BaseModel):
-    """model class for Claims."""
+class ClaimsOrganizations(BaseModel):
+    """model class for Claims for Wikidata Organizations."""
 
-    website: Annotated[list[Claim], Field(alias="P856")] = []
     isni_id: Annotated[list[Claim], Field(alias="P213")] = []
     ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
-    official_name: Annotated[list[Claim], Field(alias="P1448")] = []
     short_name: Annotated[list[Claim], Field(alias="P1813")] = []
     native_label: Annotated[list[Claim], Field(alias="P1705")] = []
     gepris_id: Annotated[list[Claim], Field(alias="P4871")] = []
     gnd_id: Annotated[list[Claim], Field(alias="P227")] = []
     viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
+
+
+class ClaimsLocations(BaseModel):
+    """model class for Claims for Wikidata Locations."""
+
+    geonames_id: Annotated[list[Claim], Field(alias="P1566")] = []
 
 
 class Label(BaseModel):
@@ -92,9 +96,17 @@ class Aliases(BaseModel):
 
 
 class WikidataOrganization(BaseModel):
-    """Model class for Wikidata sources."""
+    """Model class for Wikidata organization sources."""
 
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels
-    claims: Claims
+    claims: ClaimsOrganizations
     aliases: Aliases
+
+
+class WikidataLocation(BaseModel):
+    """Model class for Wikidata location sources."""
+
+    identifier: Annotated[str, Field(alias="id")]
+    labels: Labels
+    claims: ClaimsLocations
