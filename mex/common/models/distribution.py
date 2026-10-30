@@ -24,11 +24,8 @@ from mex.common.types import (
     MergedDistributionIdentifier,
     MergedPrimarySourceIdentifier,
     MIMEType,
+    TemporalEntityUnion,
     Text,
-    Year,
-    YearMonth,
-    YearMonthDay,
-    YearMonthDayTime,
 )
 
 
@@ -129,7 +126,7 @@ class _OptionalValues(_Stem):
         ),
     ] = None
     modified: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        TemporalEntityUnion | None,
         Field(
             description=(
                 "Date on which the resource was changed ([DCT, 2020-01-20]"
@@ -149,7 +146,7 @@ class _RequiredValues(_Stem):
         ),
     ]
     issued: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year,
+        TemporalEntityUnion,
         Field(
             description=(
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
@@ -169,7 +166,7 @@ class _SparseValues(_Stem):
         ),
     ] = None
     issued: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        TemporalEntityUnion | None,
         Field(
             description=(
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
@@ -202,7 +199,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     issued: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description=(
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
@@ -240,7 +237,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     modified: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description=(
                 "Date on which the resource was changed ([DCT, 2020-01-20]"
@@ -477,7 +474,7 @@ class DistributionMapping(_Stem, BaseMapping):
         MappingFieldList[AccessRestriction], Field(min_length=1)
     ]
     issued: Annotated[
-        MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        MappingFieldList[TemporalEntityUnion],
         Field(min_length=1),
     ]
     accessService: MappingFieldList[MergedAccessPlatformIdentifier | None] = (
@@ -485,9 +482,7 @@ class DistributionMapping(_Stem, BaseMapping):
     )
     license: MappingFieldList[License | None] = MappingFieldList()
     mediaType: MappingFieldList[MIMEType | None] = MappingFieldList()
-    modified: MappingFieldList[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
-    ] = MappingFieldList()
+    modified: MappingFieldList[TemporalEntityUnion | None] = MappingFieldList()
     title: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
     accessURL: MappingFieldList[list[Link]] = MappingFieldList()
     downloadURL: MappingFieldList[list[Link]] = MappingFieldList()

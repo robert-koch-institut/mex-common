@@ -9,14 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `mex.common.parsing.temporal` with a pure-python port of pandas' datetime parsing
+- temporal entities parse German numeric dates (day-first) and free-form dates with
+  English or German month names, e.g. `4. März '08`
 - wikidata helper to extract location from wikidata, for single IDs and for batches
+- `TemporalEntityUnion` for fields accepting any temporal entity, which parses python
+  input once instead of once per union member and raises a single error
 
 ### Changes
 
+- BREAKING: `TemporalEntity(...)` returns an instance of the subclass matching the
+  detected precision, e.g. `TemporalEntity("2020")` is `Year("2020")`
+- BREAKING: temporal entities with a time have `second` precision, microseconds are
+  discarded, so values survive a round-trip through their string representation
+- BREAKING: temporal entities are immutable and truncated to their precision, e.g.
+  `YearMonthDay(datetime(2020, 1, 1, 23, 30), precision=DAY)` now equals
+  `YearMonthDay("2020-01-01")`
+- BREAKING: temporal entities only equal and compare to other temporal entities,
+  entities of mixed precision can be ordered by their start
+- models use `TemporalEntityUnion` instead of spelling out the union of all four
+  temporal entity types, their JSON schema is unchanged
+
 - parse temporal entity strings without pandas, behavior stays the same except:
-  `NaT`/`nan` strings raise right away, nanoseconds are truncated to microseconds
-  and pandas-specific parse errors are raised as plain `ValueError`s
+  strings without a four-digit year (e.g. `10:30`), with a leading sign, quarters
+  (e.g. `2Q2005`), `NaT`/`nan` and `2020\05\07` are rejected, digits past
+  microseconds are truncated instead of range-checked, ambiguous free-form dates
+  are no longer read year-first (`7 May 08` is 2008) and error messages changed
 - `python-dateutil` is now a direct dependency (was transitive via pandas)
 
 ### Deprecated
@@ -24,13 +41,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - dependency on `pandas` (and thereby `numpy`)
+- `TemporalEntityPrecision.HOUR`, `MINUTE` and `MICROSECOND` and `TIME_PRECISIONS`
+- comparing temporal entities with strings or datetimes, e.g. `Year(2004) == "2004"`
 
 ### Fixed
 
+- German numeric dates are read day-first: `01.12.2020` was January 12th and
+  `12.2020` was rejected, now they are December 1st 2020 and December 2020
 - temporal entities without explicit timezone were off by 18 minutes: naive strings,
   integers and datetimes got CET's historic local mean time offset (+00:18) instead
   of CET/CEST, e.g. `TemporalEntity("2020-01-01T10:00")` gave a misleading `09:42:00Z`
   instead of `09:00:00Z`
+- comparing date and time entities like `Year(2020) < YearMonthDayTime(...)` raised
+  a `TypeError` for comparing naive and aware datetimes
 
 ### Security
 

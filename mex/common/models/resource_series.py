@@ -27,11 +27,8 @@ from mex.common.types import (
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceSeriesIdentifier,
+    TemporalEntityUnion,
     Text,
-    Year,
-    YearMonth,
-    YearMonthDay,
-    YearMonthDayTime,
 )
 
 AnyContactIdentifier = Annotated[
@@ -84,7 +81,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="End date of the temporal coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
@@ -127,7 +124,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="Start date of the temporal coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
@@ -423,16 +420,12 @@ class ResourceSeriesMapping(_Stem, BaseMapping):
     alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
     description: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
     documentation: MappingFieldList[list[Link]] = MappingFieldList()
-    end: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
-        MappingFieldList()
-    )
+    end: MappingFieldList[TemporalEntityUnion] = MappingFieldList()
     hasLegalBasis: MappingFieldList[list[Text | Link]] = MappingFieldList()
     keyword: MappingFieldList[list[Text]] = MappingFieldList()
     publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
     spatial: MappingFieldList[list[Text]] = MappingFieldList()
-    start: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
-        MappingFieldList()
-    )
+    start: MappingFieldList[TemporalEntityUnion] = MappingFieldList()
 
 
 class ResourceSeriesFilter(_Stem, BaseFilter):

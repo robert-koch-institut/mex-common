@@ -28,11 +28,9 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    TemporalEntityUnion,
     Text,
     Year,
-    YearMonth,
-    YearMonthDay,
-    YearMonthDayTime,
 )
 
 DoiStr = Annotated[
@@ -318,7 +316,7 @@ class _OptionalValues(_Stem):
         VolumeOrIssueStr | None, Field(description="The issue of the periodical.")
     ] = None
     issued: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        TemporalEntityUnion | None,
         Field(
             description=(
                 "Date of formal issuance of the publication ([DCT, 2020-01-20]"
@@ -414,7 +412,7 @@ class _VariadicValues(_Stem):
         Field(description="The issue of the periodical."),
     ] = []
     issued: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description=(
                 "Date of formal issuance of the publication ([DCT, 2020-01-20]"
@@ -717,9 +715,7 @@ class BibliographicResourceMapping(_Stem, BaseMapping):
     doi: MappingFieldList[DoiStr | None] = MappingFieldList()
     edition: MappingFieldList[EditionStr | None] = MappingFieldList()
     issue: MappingFieldList[VolumeOrIssueStr | None] = MappingFieldList()
-    issued: MappingFieldList[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
-    ] = MappingFieldList()
+    issued: MappingFieldList[TemporalEntityUnion | None] = MappingFieldList()
     license: MappingFieldList[License | None] = MappingFieldList()
     pages: MappingFieldList[PagesStr | None] = MappingFieldList()
     publicationPlace: MappingFieldList[PublicationPlaceStr | None] = MappingFieldList()

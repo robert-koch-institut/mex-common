@@ -27,12 +27,9 @@ from mex.common.types import (
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    TemporalEntityUnion,
     Text,
     Theme,
-    Year,
-    YearMonth,
-    YearMonthDay,
-    YearMonthDayTime,
 )
 
 AnyContactIdentifier = Annotated[
@@ -81,7 +78,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="(Planned) end of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P582"]},
@@ -161,7 +158,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="The start of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P580"]},
@@ -487,9 +484,7 @@ class ActivityMapping(_Stem, BaseMapping):
     activityType: MappingFieldList[list[ActivityType]] = MappingFieldList()
     alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
     documentation: MappingFieldList[list[Link]] = MappingFieldList()
-    end: MappingFieldList[list[YearMonthDayTime | YearMonthDay | YearMonth | Year]] = (
-        MappingFieldList()
-    )
+    end: MappingFieldList[list[TemporalEntityUnion]] = MappingFieldList()
     externalAssociate: MappingFieldList[list[MergedOrganizationIdentifier]] = (
         MappingFieldList()
     )
@@ -511,9 +506,7 @@ class ActivityMapping(_Stem, BaseMapping):
         MappingFieldList()
     )
     shortName: MappingFieldList[list[Text]] = MappingFieldList()
-    start: MappingFieldList[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year]
-    ] = MappingFieldList()
+    start: MappingFieldList[list[TemporalEntityUnion]] = MappingFieldList()
     succeeds: MappingFieldList[list[MergedActivityIdentifier]] = MappingFieldList()
     theme: MappingFieldList[list[Theme]] = MappingFieldList()
     website: MappingFieldList[list[Link]] = MappingFieldList()

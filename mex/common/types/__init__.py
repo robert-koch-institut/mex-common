@@ -1,6 +1,5 @@
 from typing import Final, Literal, get_args
 
-from mex.common.parsing.temporal import CET
 from mex.common.types.assets import AssetsConnectorType
 from mex.common.types.identifier import (
     IDENTIFIER_PATTERN,
@@ -44,11 +43,13 @@ from mex.common.types.path import AssetsPath, OpsPath, PathWrapper, WorkPath
 from mex.common.types.publishing_target import PublishingTarget
 from mex.common.types.sink import Sink
 from mex.common.types.temporal_entity import (
+    CET,
     TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
     TEMPORAL_ENTITY_FORMATS_BY_PRECISION,
     UTC,
     TemporalEntity,
     TemporalEntityPrecision,
+    TemporalEntityUnion,
     Year,
     YearMonth,
     YearMonthDay,
@@ -166,6 +167,7 @@ __all__ = (
     "TechnicalAccessibility",
     "TemporalEntity",
     "TemporalEntityPrecision",
+    "TemporalEntityUnion",
     "Text",
     "TextLanguage",
     "Theme",

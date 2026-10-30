@@ -39,12 +39,9 @@ from mex.common.types import (
     PersonalData,
     ResourceCreationMethod,
     ResourceTypeGeneral,
+    TemporalEntityUnion,
     Text,
     Theme,
-    Year,
-    YearMonth,
-    YearMonthDay,
-    YearMonthDayTime,
 )
 from mex.common.types.identifier import MergedResourceSeriesIdentifier
 from mex.common.types.vocabulary import CodingSystem, Purpose
@@ -230,7 +227,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="End date of the temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
@@ -546,7 +543,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="Start date of the temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
@@ -670,7 +667,7 @@ class _OptionalValues(_Stem):
         ),
     ] = None
     created: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        TemporalEntityUnion | None,
         Field(
             description="Date of creation of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
@@ -725,7 +722,7 @@ class _OptionalValues(_Stem):
         ),
     ] = None
     modified: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None,
+        TemporalEntityUnion | None,
         Field(
             description="Date on which the resource was changed.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
@@ -768,7 +765,7 @@ class _OptionalValues(_Stem):
         ),
     ] = None
     temporal: Annotated[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None,
+        TemporalEntityUnion | TemporalStr | None,
         Field(
             description="Temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/temporal"]},
@@ -834,7 +831,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     created: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="Date of creation of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
@@ -883,7 +880,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     modified: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        list[TemporalEntityUnion],
         Field(
             description="Date on which the resource was changed.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
@@ -926,7 +923,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     temporal: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr],
+        list[TemporalEntityUnion | TemporalStr],
         Field(
             description="Temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/temporal"]},
@@ -1236,23 +1233,19 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingFieldList[AccessRestriction], Field(min_length=1)
     ]
     accrualPeriodicity: MappingFieldList[Frequency | None] = MappingFieldList()
-    created: MappingFieldList[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
-    ] = MappingFieldList()
+    created: MappingFieldList[TemporalEntityUnion | None] = MappingFieldList()
     doi: MappingFieldList[DoiStr | None] = MappingFieldList()
     hasPersonalData: MappingFieldList[PersonalData | None] = MappingFieldList()
     license: MappingFieldList[License | None] = MappingFieldList()
     maxTypicalAge: MappingFieldList[MaxTypicalAgeInt | None] = MappingFieldList()
     minTypicalAge: MappingFieldList[MinTypicalAgeInt | None] = MappingFieldList()
-    modified: MappingFieldList[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | None
-    ] = MappingFieldList()
+    modified: MappingFieldList[TemporalEntityUnion | None] = MappingFieldList()
     numberOfRecords: MappingFieldList[int | None] = MappingFieldList()
     numberOfUniqueIndividuals: MappingFieldList[int | None] = MappingFieldList()
     sizeOfDataBasis: MappingFieldList[str | None] = MappingFieldList()
-    temporal: MappingFieldList[
-        YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr | None
-    ] = MappingFieldList()
+    temporal: MappingFieldList[TemporalEntityUnion | TemporalStr | None] = (
+        MappingFieldList()
+    )
     version: MappingFieldList[VersionStr | None] = MappingFieldList()
     wasGeneratedBy: MappingFieldList[MergedActivityIdentifier | None] = (
         MappingFieldList()
@@ -1289,9 +1282,7 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingFieldList()
     )
     documentation: MappingFieldList[list[Link]] = MappingFieldList()
-    end: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
-        MappingFieldList()
-    )
+    end: MappingFieldList[TemporalEntityUnion] = MappingFieldList()
     externalPartner: MappingFieldList[list[MergedOrganizationIdentifier]] = (
         MappingFieldList()
     )
@@ -1339,9 +1330,7 @@ class ResourceMapping(_Stem, BaseMapping):
     sample: MappingFieldList[list[MergedDistributionIdentifier]] = MappingFieldList()
     source: MappingFieldList[list[MergedResourceIdentifier]] = MappingFieldList()
     spatial: MappingFieldList[list[Text]] = MappingFieldList()
-    start: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
-        MappingFieldList()
-    )
+    start: MappingFieldList[TemporalEntityUnion] = MappingFieldList()
     stateOfDataProcessing: MappingFieldList[list[DataProcessingState]] = (
         MappingFieldList()
     )
