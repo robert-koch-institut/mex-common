@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `mex.common.parsing.temporal` with a pure-python port of pandas' datetime parsing
+- wikidata helper to extract location from wikidata, for single IDs and for batches
 
 ### Changes
 
@@ -32,6 +33,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instead of `09:00:00Z`
 
 ### Security
+
+## [3.6.1] - 2026-10-28
+
+### Fixed
+
+- temporarily pin the mex-model version to 5.2.1
 
 ## [3.6.0] - 2026-10-21
 
