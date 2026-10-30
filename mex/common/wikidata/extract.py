@@ -66,7 +66,7 @@ def get_wikidata_locations(
 ) -> Iterator[WikidataLocation]:
     """Get Wikidata locations using batched API requests."""
     if not 1 <= batch_size <= WIKIDATA_MAX_BATCH_SIZE:
-        msg = f"batch_size musst be between 1 and {WIKIDATA_MAX_BATCH_SIZE}."
+        msg = f"batch_size must be between 1 and {WIKIDATA_MAX_BATCH_SIZE}."
         raise ValueError(msg)
 
     connector = WikidataAPIConnector.get()
