@@ -5,7 +5,7 @@ from mex.common.connector.http import HTTPConnector
 from mex.common.exceptions import EmptySearchResultError
 from mex.common.settings import BaseSettings
 
-WIKIDATA_MAX_BATCH_SIZE = 50  # maximum number of Wikidata ID allowed for wikidata API
+WIKIDATA_MAX_BATCH_SIZE = 50  # maximum number of Wikidata IDs allowed for wikidata API
 
 
 class WikidataAPIConnector(HTTPConnector):
