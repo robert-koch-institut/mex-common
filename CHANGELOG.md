@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix linting for BaseModel model_json_schema
+- remove warn_untyped_fields (not supported anymore and not needed since Pydantic v2)
 
 ### Security
 
