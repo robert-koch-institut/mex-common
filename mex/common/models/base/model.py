@@ -33,7 +33,7 @@ class BaseModel(
     @classmethod
     def model_json_schema(
         cls,
-        by_alias: bool = True,  # noqa: FBT001, FBT002
+        by_alias: bool | None = True,  # noqa: FBT001, FBT002
         ref_template: str = DEFAULT_REF_TEMPLATE,
         schema_generator: type[PydanticJsonSchemaGenerator] = JsonSchemaGenerator,
         mode: JsonSchemaMode = "validation",
