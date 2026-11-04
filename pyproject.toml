@@ -57,9 +57,6 @@ plugins = ["pydantic.mypy"]
 module = ['langdetect.*', 'mex.artificial.helpers']
 ignore_missing_imports = true
 
-[tool.pydantic-mypy]
-warn_untyped_fields = true
-
 [tool.pytest.ini_options]
 addopts = [
     "--verbose",
