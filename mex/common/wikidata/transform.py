@@ -38,6 +38,8 @@ def transform_wikidata_organizations_to_extracted_organizations(
 def transform_wikidata_organization_to_extracted_organization(
     wikidata_organization: WikidataOrganization,
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
+    *,
+    country: Sequence[MergedLocationIdentifier] = (),
 ) -> ExtractedOrganization | None:
     """Transform one wikidata organization into an ExtractedOrganization.
 
@@ -81,6 +83,7 @@ def transform_wikidata_organization_to_extracted_organization(
         alternativeName=_get_alternative_names(
             wikidata_organization.claims.native_label, wikidata_organization.aliases
         ),
+        country=list(country),
     )
 
 
