@@ -1,8 +1,12 @@
 from abc import abstractmethod
 from collections.abc import Generator, Iterable
+from typing import TypeVar
+
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.connector import BaseConnector
-from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
+
+LoadItemT = TypeVar("LoadItemT", bound=PydanticBaseModel)
 
 
 class BaseSink(BaseConnector):
@@ -16,10 +20,7 @@ class BaseSink(BaseConnector):
 
     @abstractmethod
     def load(
-        self,
-        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
-    ) -> Generator[
-        AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None
-    ]:  # pragma: no cover
+        self, items: Iterable[LoadItemT]
+    ) -> Generator[LoadItemT, None, None]:  # pragma: no cover
         """Load the given items to a destination and yield them."""
         ...

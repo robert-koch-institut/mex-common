@@ -10,9 +10,11 @@ from typing import (
     overload,
 )
 
-from pydantic import BaseModel, Field, GetCoreSchemaHandler
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import Field, GetCoreSchemaHandler
 from pydantic_core import core_schema
 
+from mex.common.models.base.model import BaseModel
 from mex.common.types import MergedPrimarySourceIdentifier
 
 _ValueT = TypeVar("_ValueT")
@@ -53,7 +55,7 @@ class _MappingListMixin:
         return None
 
 
-class MappingRule(BaseModel, Generic[_ValueT], extra="forbid"):
+class MappingRule(PydanticBaseModel, Generic[_ValueT], extra="forbid"):
     """Generic mapping rule model."""
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
@@ -112,7 +114,7 @@ class MappingRuleList(_MappingListMixin, list[MappingRule[_ValueT]]):
         ]
 
 
-class MappingField(BaseModel, Generic[_ValueT], extra="forbid"):
+class MappingField(PydanticBaseModel, Generic[_ValueT], extra="forbid"):
     """Generic mapping field model."""
 
     fieldInPrimarySource: Annotated[

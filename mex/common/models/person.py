@@ -1,12 +1,13 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -75,13 +76,17 @@ OrcidIdStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a person item."""
+
     stemType: ClassVar[Annotated[Literal["Person"], Field(frozen=True)]] = "Person"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a person item with an arity of 0-n."""
+
     affiliation: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description="An organization that the described person is affiliated with.",
             json_schema_extra={
@@ -93,7 +98,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     email: Annotated[
-        list[EmailStr],
+        Sequence[EmailStr],
         Field(
             description="The email address through which the person can be contacted.",
             json_schema_extra={
@@ -105,7 +110,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     familyName: Annotated[
-        list[FamilyNameStr],
+        Sequence[FamilyNameStr],
         Field(
             description="The name inherited from the family.",
             json_schema_extra={
@@ -117,7 +122,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     givenName: Annotated[
-        list[GivenNameStr],
+        Sequence[GivenNameStr],
         Field(
             description="The name given to the person e.g. by their parents.",
             json_schema_extra={
@@ -129,7 +134,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     isniId: Annotated[
-        list[IsniIdStr],
+        Sequence[IsniIdStr],
         Field(
             description=(
                 "The ISNI (International Standard Name Identifier) of the person."
@@ -138,7 +143,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     memberOf: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description="Organizational unit at RKI the person is associated with.",
             json_schema_extra={
@@ -149,7 +154,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     orcidId: Annotated[
-        list[OrcidIdStr],
+        Sequence[OrcidIdStr],
         Field(
             description="Identifier of a person from the ORCID authority file.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P496"]},
@@ -158,8 +163,10 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a person item with an arity of 1-n."""
+
     fullName: Annotated[
-        list[FullNameStr],
+        Sequence[FullNameStr],
         Field(
             description=(
                 "The full name of a person. Also used if the naming schema "
@@ -172,8 +179,10 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a person item relaxed to an arity of 0-n."""
+
     fullName: Annotated[
-        list[FullNameStr],
+        Sequence[FullNameStr],
         Field(
             description=(
                 "The full name of a person. Also used if the naming schema "
@@ -244,7 +253,7 @@ class ExtractedPerson(BasePerson, ExtractedData):
         return self._get_stable_target_id(MergedPersonIdentifier)
 
 
-class MergedPerson(BasePerson, MergedItem):
+class MergedPerson(_SparseLists, BasePerson, MergedItem):
     """The result of merging all extracted items and rules for a person."""
 
     entityType: Annotated[
@@ -348,14 +357,14 @@ class PreventivePerson(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventivePerson"], Field(alias="$type", frozen=True)
     ] = "PreventivePerson"
-    affiliation: list[MergedPrimarySourceIdentifier] = []
-    email: list[MergedPrimarySourceIdentifier] = []
-    familyName: list[MergedPrimarySourceIdentifier] = []
-    fullName: list[MergedPrimarySourceIdentifier] = []
-    givenName: list[MergedPrimarySourceIdentifier] = []
-    isniId: list[MergedPrimarySourceIdentifier] = []
-    memberOf: list[MergedPrimarySourceIdentifier] = []
-    orcidId: list[MergedPrimarySourceIdentifier] = []
+    affiliation: Sequence[MergedPrimarySourceIdentifier] = []
+    email: Sequence[MergedPrimarySourceIdentifier] = []
+    familyName: Sequence[MergedPrimarySourceIdentifier] = []
+    fullName: Sequence[MergedPrimarySourceIdentifier] = []
+    givenName: Sequence[MergedPrimarySourceIdentifier] = []
+    isniId: Sequence[MergedPrimarySourceIdentifier] = []
+    memberOf: Sequence[MergedPrimarySourceIdentifier] = []
+    orcidId: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowPerson(_Stem, WorkflowRule):

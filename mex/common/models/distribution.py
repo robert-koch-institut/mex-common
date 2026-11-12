@@ -1,12 +1,13 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -32,15 +33,19 @@ from mex.common.types import (
 )
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a distribution item."""
+
     stemType: ClassVar[Annotated[Literal["Distribution"], Field(frozen=True)]] = (
         "Distribution"
     )
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a distribution item with an arity of 0-n."""
+
     accessURL: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A URL of the resource that gives access to a distribution of the "
@@ -52,7 +57,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     downloadURL: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "The URL of the downloadable file in a given format. E.g. CSV file "
@@ -66,8 +71,10 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a distribution item with an arity of 1-n."""
+
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the distribution.",
             min_length=1,
@@ -77,8 +84,10 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a distribution item relaxed to an arity of 0-n."""
+
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the distribution.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -87,6 +96,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a distribution item with an arity of 0-1."""
+
     accessService: Annotated[
         MergedAccessPlatformIdentifier | None,
         Field(
@@ -141,6 +152,8 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
+    """Required values of a distribution item with an arity of 1."""
+
     accessRestriction: Annotated[
         AccessRestriction,
         Field(
@@ -161,6 +174,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
+    """Required values of a distribution item relaxed to an arity of 0-1."""
+
     accessRestriction: Annotated[
         AccessRestriction | None,
         Field(
@@ -181,19 +196,21 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a distribution item as lists with an arity of 0-n."""
+
     accessRestriction: Annotated[
-        list[AccessRestriction],
+        Sequence[AccessRestriction],
         Field(
             description="Indicates how access to the distribution is restricted.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     accessService: Annotated[
-        list[MergedAccessPlatformIdentifier],
+        Sequence[MergedAccessPlatformIdentifier],
         Field(
             description=(
                 "A data service that gives access to the distribution of the "
-                "dataset ([DCAT, 2020-02-04](http://www.w3.org/TR/2020/"
+                "dataset ([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
             json_schema_extra={
@@ -202,7 +219,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     issued: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description=(
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
@@ -212,7 +229,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     license: Annotated[
-        list[License],
+        Sequence[License],
         Field(
             description=(
                 "A legal document giving official permission to do something with "
@@ -223,12 +240,12 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     mediaType: Annotated[
-        list[MIMEType],
+        Sequence[MIMEType],
         Field(
             description=(
                 "The media type of the distribution as defined by "
                 "[IANA media types](https://www.iana.org/assignments/media-types/) "
-                "([DCAT, 2020-02-04](http://www.w3.org/TR/2020/"
+                "([DCAT, 2020-02-04](https://www.w3.org/TR/2020/"
                 "REC-vocab-dcat-2-20200204/))."
             ),
             json_schema_extra={
@@ -240,7 +257,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     modified: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description=(
                 "Date on which the resource was changed ([DCT, 2020-01-20]"
@@ -312,7 +329,7 @@ class ExtractedDistribution(BaseDistribution, ExtractedData):
         return self._get_stable_target_id(MergedDistributionIdentifier)
 
 
-class MergedDistribution(BaseDistribution, MergedItem):
+class MergedDistribution(_SparseLists, _SparseValues, BaseDistribution, MergedItem):
     """The result of merging all extracted items and rules for a distribution."""
 
     entityType: Annotated[
@@ -422,15 +439,15 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveDistribution"], Field(alias="$type", frozen=True)
     ] = "PreventiveDistribution"
-    accessRestriction: list[MergedPrimarySourceIdentifier] = []
-    accessService: list[MergedPrimarySourceIdentifier] = []
-    accessURL: list[MergedPrimarySourceIdentifier] = []
-    downloadURL: list[MergedPrimarySourceIdentifier] = []
-    issued: list[MergedPrimarySourceIdentifier] = []
-    license: list[MergedPrimarySourceIdentifier] = []
-    mediaType: list[MergedPrimarySourceIdentifier] = []
-    modified: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
+    accessRestriction: Sequence[MergedPrimarySourceIdentifier] = []
+    accessService: Sequence[MergedPrimarySourceIdentifier] = []
+    accessURL: Sequence[MergedPrimarySourceIdentifier] = []
+    downloadURL: Sequence[MergedPrimarySourceIdentifier] = []
+    issued: Sequence[MergedPrimarySourceIdentifier] = []
+    license: Sequence[MergedPrimarySourceIdentifier] = []
+    mediaType: Sequence[MergedPrimarySourceIdentifier] = []
+    modified: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowDistribution(_Stem, WorkflowRule):

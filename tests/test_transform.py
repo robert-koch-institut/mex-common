@@ -7,7 +7,7 @@ from uuid import UUID
 
 import pytest
 from pydantic import AnyUrl, Field, SecretStr
-from pydantic import BaseModel as PydanticModel
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.transform import (
     MExEncoder,
@@ -27,7 +27,7 @@ from mex.common.transform import (
 from mex.common.types import Identifier, PathWrapper, TemporalEntity
 
 
-class DummyModel(PydanticModel):
+class DummyModel(PydanticBaseModel):
     string_field: Annotated[str, Field(alias="strField")] = "bar"
     integer: int = 42
 

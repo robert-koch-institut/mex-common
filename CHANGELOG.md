@@ -9,14 +9,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `BaseModel.model_copy_validated` to derive changed copies of frozen models, unlike
+  `model_copy` this runs all validators on the result
+- optional `parent_unit` argument for
+  `transform_organigram_unit_to_extracted_organizational_unit`
+
 ### Changes
 
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
+- bump mex-model version to 5.2.2 featuring the conditional `supersededBy`
+- BREAKING: required fields of merged items are only enforced if `supersededBy` is unset
+- BREAKING: all models based on `BaseModel` are now frozen, field assignment raises a
+  `ValidationError`, use `model_copy_validated` instead
+- BREAKING: required single-value fields of `MergedAccessPlatform`,
+  `MergedBibliographicResource`, `MergedConsent`, `MergedDistribution` and
+  `MergedResource` are now typed as optional, they are only `None` on superseded items
+- BREAKING: rule set requests and responses are now mutable containers based on plain
+  pydantic models, so they are no longer hashable and use pydantic's default `str`
+- BREAKING: `Base*` entity classes and the private `_Stem` mixins are now plain
+  pydantic models, `BaseModel` is pulled in by `ExtractedData`, `MergedItem`,
+  `PreviewItem`, the rule base classes, `BaseFilter` and `BaseMapping`
+- BREAKING: list fields of entity models and rules are now typed as `Sequence`, so
+  type checkers reject in-place mutation like `append`, `pop` or item assignment; the
+  values are still lists at runtime and the JSON schema is unchanged; use
+  `model_copy_validated` with e.g. `[*model.field, value]` instead
+- BREAKING: the validation error for list fields with `min_length` now reads
+  "Value should have at least ..." instead of "List should have at least ..."
+- `get_inner_types` and `get_list_field_names` support `Sequence` annotations
+- active merged items validate their gated fields against the original required field
+  definition, including all of its constraints
+- all sinks accept any pydantic model in `load` and yield the same type back,
+  `BackendApiSink` still raises `NotImplementedError` for models it cannot ingest
+- BREAKING: the private `_LoadItemT` type variable in `mex.common.sinks.base` is now
+  the public `LoadItemT`, shared by all sinks
+- organigram units get their parent unit assigned when they are created and
+  `get_extracted_organizational_unit_with_parents` reuses the organigram transform
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- merged items can no longer be superseded by themselves
+- restore `closeMatch` annotations on the relaxed required fields of merged, preview
+  and additive models
+- add missing `closeMatch` annotations to list-typed fields of preview and subtractive
+  models and fix the malformed one on `version` of resources
+- fix the description of `hasConsentStatus` on preview and subtractive consents
+- use `https` links in the descriptions of `accessService` and `mediaType` on preview
+  and subtractive distributions
+- remove redundant field definitions, so the field order of additive and preview
+  consents and of preview and subtractive bibliographic resources matches the base
+- fixed geonames regex pattern
 
 ### Security
 

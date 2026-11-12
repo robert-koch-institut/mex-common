@@ -2,16 +2,13 @@ import json
 from collections.abc import Generator, Iterable
 from contextlib import ExitStack
 from pathlib import Path
-from typing import IO, Any, TypeVar
+from typing import IO, Any
 
 from mex.common.logging import logger, watch
-from mex.common.models import BaseModel
 from mex.common.settings import BaseSettings
-from mex.common.sinks.base import BaseSink
+from mex.common.sinks.base import BaseSink, LoadItemT
 from mex.common.transform import MExEncoder
 from mex.common.utils import grouper
-
-_LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
 
 
 class NdjsonSink(BaseSink):
@@ -31,8 +28,8 @@ class NdjsonSink(BaseSink):
     @watch(log_interval=1000)
     def load(
         self,
-        items: Iterable[_LoadItemT],
-    ) -> Generator[_LoadItemT, None, None]:
+        items: Iterable[LoadItemT],
+    ) -> Generator[LoadItemT, None, None]:
         """Write any items into a new-line delimited JSON file.
 
         Args:

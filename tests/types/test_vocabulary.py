@@ -1,7 +1,8 @@
 import re
 
 import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ValidationError
 
 from mex.common.types import VOCABULARY_ENUMS, AnyVocabularyEnum, VocabularyEnum
 from mex.model import VOCABULARY_JSON_BY_NAME
@@ -64,7 +65,7 @@ def test_no_mismatch_between_vocabulary_enums_and_mex_model_vocabularies() -> No
 
 
 def test_vocabulary_enum_model() -> None:
-    class DummyModel(BaseModel):
+    class DummyModel(PydanticBaseModel):
         dummy: DummyEnum
 
     # check wrong type raises error
@@ -97,7 +98,7 @@ def test_vocabulary_enum_model() -> None:
 
 
 def test_vocabulary_enum_schema() -> None:
-    class DummyModel(BaseModel):
+    class DummyModel(PydanticBaseModel):
         dummy: DummyEnum
 
     assert DummyModel.model_json_schema() == {

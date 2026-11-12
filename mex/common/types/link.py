@@ -1,7 +1,8 @@
 from enum import StrEnum
 from typing import Annotated, Any
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import Field, model_validator
 
 URL_PATTERN = (
     "^(?:(?:[^:/?#]+):)?(?://(?:[^/?#]*))?(?:[^?#]*)(?:\\?(?:[^#]*))?(?:#(?:.*))?$"
@@ -28,7 +29,7 @@ class LinkLanguage(StrEnum):
     RU = "ru"
 
 
-class Link(BaseModel):
+class Link(PydanticBaseModel):
     """Type class for Link objects.
 
     Links can be parsed from nested JSON objects or from raw strings.

@@ -620,7 +620,7 @@ def test_create_merged_item(
                     email=["flipper@krusty.ocean", "manager@krusty.ocean"]
                 )
             ),
-            "List should have at least 1 item after validation, not 0",
+            "Value should have at least 1 item after validation, not 0",
             id="merging_raises_cardinality_error",
         ),
     ],

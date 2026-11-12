@@ -1,6 +1,14 @@
 import functools
 import warnings
-from collections.abc import Callable, Container, Generator, Iterable, Iterator, Mapping
+from collections.abc import (
+    Callable,
+    Container,
+    Generator,
+    Iterable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 from dataclasses import dataclass
 from functools import lru_cache
 from itertools import zip_longest
@@ -18,7 +26,8 @@ from typing import (
     get_origin,
 )
 
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import TypeAdapter, ValidationError
 from typing_extensions import TypeForm
 
 T = TypeVar("T")
@@ -104,8 +113,10 @@ def get_inner_types(
     Returns:
         All inner types found within the annotation
     """
-    # Check whether to unpack lists in addition to annotations and unions
-    types_to_unpack = [Annotated, Union, UnionType] + ([list] if unpack_list else [])
+    # Check whether to unpack lists (or sequences) in addition to annotations and unions
+    types_to_unpack = [Annotated, Union, UnionType] + (
+        [list, Sequence] if unpack_list else []
+    )
 
     # Get the unsubscripted version of the given type annotation
     origin_type = get_origin(annotation)
@@ -141,7 +152,7 @@ def get_inner_types(
 
 
 @lru_cache(maxsize=4048)
-def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
+def get_all_fields(model: type[PydanticBaseModel]) -> dict[str, GenericFieldInfo]:
     """Return a combined dict of defined and computed fields of a given model.
 
     This function combines both regular model fields and computed fields into a
@@ -176,7 +187,7 @@ def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
 
 
 @lru_cache(maxsize=4048)
-def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
+def get_alias_lookup(model: type[PydanticBaseModel]) -> dict[str, str]:
     """Build a cached mapping from field alias to field names.
 
     Creates a dictionary that maps field aliases (or field names if no alias exists)
@@ -196,7 +207,7 @@ def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
 
 
 @lru_cache(maxsize=4048)
-def get_list_field_names(model: type[BaseModel]) -> list[str]:
+def get_list_field_names(model: type[PydanticBaseModel]) -> list[str]:
     """Build a cached list of fields that look like lists.
 
     Analyzes the model's field annotations to identify fields that are list types.
@@ -212,7 +223,8 @@ def get_list_field_names(model: type[BaseModel]) -> list[str]:
     for field_name, field_info in get_all_fields(model).items():
         field_types = get_inner_types(field_info.annotation, unpack_list=False)
         if any(
-            isinstance(field_type, type) and issubclass(field_type, list)
+            field_type is Sequence
+            or (isinstance(field_type, type) and issubclass(field_type, list))
             for field_type in field_types
         ):
             field_names.append(field_name)
@@ -220,7 +232,7 @@ def get_list_field_names(model: type[BaseModel]) -> list[str]:
 
 
 @lru_cache(maxsize=4048)
-def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
+def get_field_names_allowing_none(model: type[PydanticBaseModel]) -> list[str]:
     """Build a cached list of fields that can be set to None.
 
     Tests each field's annotation by attempting to validate None against it.
@@ -249,7 +261,7 @@ def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
 
 
 def group_fields_by_class_name(
-    model_classes_by_name: Mapping[str, type[BaseModel]],
+    model_classes_by_name: Mapping[str, type[PydanticBaseModel]],
     predicate: Callable[[GenericFieldInfo], bool],
 ) -> dict[str, list[str]]:
     """Group the field names by model class and filter them by the given predicate.

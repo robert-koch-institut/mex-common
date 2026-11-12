@@ -1,7 +1,7 @@
 import json
 import re
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from types import NoneType
 from typing import Annotated, Any, Literal
 
@@ -175,6 +175,10 @@ def test_contains_any_types(
         (list[str | None], {}, [str, NoneType]),
         (list[int], {"unpack_list": False}, [list]),
         (list[str | int | list[str]], {}, [str, int, str]),
+        (Sequence[str], {}, [str]),
+        (Sequence[str] | None, {}, [str, NoneType]),
+        (Sequence[int], {"unpack_list": False}, [Sequence]),
+        (Sequence[str | list[int]], {}, [str, int]),
         (Annotated[str | int, FieldInfo(description="str or int")], {}, [str, int]),
         (Annotated[str | int, "This is a string or integer"], {}, [str, int]),
         (Literal["okay"] | None, {}, [Literal, NoneType]),
@@ -194,6 +198,10 @@ def test_contains_any_types(
         "list of optional strings",
         "not unpacking list",
         "list nested in list",
+        "sequence of strings",
+        "optional sequence of strings",
+        "not unpacking sequence",
+        "list nested in sequence",
         "annotated string or int with FieldInfo",
         "annotated string or int with plain text",
         "unpacking literal",
@@ -252,6 +260,21 @@ def test_get_list_field_names() -> None:
     assert get_list_field_names(ComplexDummyModel) == [
         "optional_list",
         "required_list",
+    ]
+
+
+class SequenceDummyModel(BaseModel):
+    """Dummy Model with sequence attributes."""
+
+    plain_str: str = "default"
+    optional_sequence: Sequence[str] | None = None
+    required_sequence: Sequence[str] = []
+
+
+def test_get_list_field_names_with_sequences() -> None:
+    assert get_list_field_names(SequenceDummyModel) == [
+        "optional_sequence",
+        "required_sequence",
     ]
 
 

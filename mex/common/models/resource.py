@@ -1,12 +1,13 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -138,13 +139,17 @@ MinTypicalAgeInt = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a resource item."""
+
     stemType: ClassVar[Annotated[Literal["Resource"], Field(frozen=True)]] = "Resource"
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a resource item with an arity of 0-n."""
+
     accessPlatform: Annotated[
-        list[MergedAccessPlatformIdentifier],
+        Sequence[MergedAccessPlatformIdentifier],
         Field(
             description="A platform from which the resource can be accessed.",
             json_schema_extra={
@@ -153,14 +158,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     analytics: Annotated[
-        list[MergedDistributionIdentifier],
+        Sequence[MergedDistributionIdentifier],
         Field(
             description="An analytics distribution of the dataset.",
             json_schema_extra={
@@ -169,7 +174,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     anonymizationPseudonymization: Annotated[
-        list[AnonymizationPseudonymization],
+        Sequence[AnonymizationPseudonymization],
         Field(
             description=(
                 "Indicates whether the data has been anonymized and/or pseudonymized."
@@ -177,7 +182,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     conformsTo: Annotated[
-        list[ConformsToStr],
+        Sequence[ConformsToStr],
         Field(
             description=(
                 "Standards used in the creation, analysis or transmission of the "
@@ -187,7 +192,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     contributingUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "An organizational unit of RKI that is contributing to the resource."
@@ -196,32 +201,32 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     contributor: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="A person involved in the creation of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     creator: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="A person responsible for making the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
         ),
     ] = []
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A text describing the nature of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     distribution: Annotated[
-        list[MergedDistributionIdentifier],
+        Sequence[MergedDistributionIdentifier],
         Field(description="An available distribution of the resource."),
     ] = []
     documentation: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description="A link to a document documenting the resource.",
             json_schema_extra={
@@ -230,14 +235,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="End date of the temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
         ),
     ] = []
     externalPartner: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description=(
                 "An external organization that is somehow involved in the "
@@ -247,7 +252,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasCodeValues: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "The code values of the respective coding systems that are applied to "
@@ -260,7 +265,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasCodingSystem: Annotated[
-        list[CodingSystem],
+        Sequence[CodingSystem],
         Field(
             description=("Coding systems in use (e.g. ICD-10, SNOMED-CT)."),
             json_schema_extra={
@@ -269,7 +274,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasLegalBasis: Annotated[
-        list[Text | Link],
+        Sequence[Text | Link],
         Field(
             description=(
                 "The legal basis used to justify processing of personal data. "
@@ -285,7 +290,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasPurpose: Annotated[
-        list[Purpose],
+        Sequence[Purpose],
         Field(
             description=(
                 "A controlled list of types of purposes for which the data was "
@@ -295,7 +300,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasPurposeDescription: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "A free text statement of the purpose of the processing of data "
@@ -305,7 +310,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     hasVersion: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description=(
                 "A related Resource that is a version, edition, or adaptation of the "
@@ -315,7 +320,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     healthCategory: Annotated[
-        list[HealthCategory],
+        Sequence[HealthCategory],
         Field(
             description=(
                 "The category of electronic data for secondary use to which this "
@@ -328,11 +333,11 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     icd10code: Annotated[
-        list[str],
+        Sequence[str],
         Field(description="A concept from ICD-10."),
     ] = []
     instrumentToolOrApparatus: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "Instrument, tool, or apparatus used in the research, analysis, "
@@ -342,14 +347,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     inSeries: Annotated[
-        list[MergedResourceSeriesIdentifier],
+        Sequence[MergedResourceSeriesIdentifier],
         Field(
             description=("A resource series of which the resource is part."),
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#inSeries"]},
         ),
     ] = []
     inSeriesFirstResource: Annotated[
-        list[MergedResourceSeriesIdentifier],
+        Sequence[MergedResourceSeriesIdentifier],
         Field(
             description=(
                 "The first resource in an ordered collection or series of resources."
@@ -358,7 +363,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     inSeriesLastResource: Annotated[
-        list[MergedResourceSeriesIdentifier],
+        Sequence[MergedResourceSeriesIdentifier],
         Field(
             description=(
                 "The last resource in an ordered collection or series of resources."
@@ -367,7 +372,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     isPartOf: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description=(
                 "A related resource, in which the described resource is "
@@ -377,14 +382,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     keyword: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A keyword or tag describing the resource.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     landingPage: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A web page that provides access to the resource, its distributions "
@@ -394,22 +399,22 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     language: Annotated[
-        list[Language],
+        Sequence[Language],
         Field(
             description="A language of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/language"]},
         ),
     ] = []
     loincId: Annotated[
-        list[LoincIdStr],
+        Sequence[LoincIdStr],
         Field(description="A concept from LOINC."),
     ] = []
     meshId: Annotated[
-        list[MeshIdStr],
+        Sequence[MeshIdStr],
         Field(description="A concept from MeSH."),
     ] = []
     method: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "Method used in the research, analysis, observation or "
@@ -418,7 +423,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     methodDescription: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "The description of the method that was used for the research, "
@@ -429,7 +434,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     populationCoverage: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "The type of population common to all subjects of the data collection."
@@ -442,7 +447,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     provenance: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "A statement about the lineage of a Dataset. Information about "
@@ -458,7 +463,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     publication: Annotated[
-        list[MergedBibliographicResourceIdentifier],
+        Sequence[MergedBibliographicResourceIdentifier],
         Field(
             description=(
                 "A publication that deals with the research, analysis, "
@@ -471,13 +476,13 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     publisher: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description="The entity responsible for making the item available.",
         ),
     ] = []
     qualityInformation: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Any additional information about the resource",
             json_schema_extra={
@@ -486,21 +491,21 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     relatedResource: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description="A related Resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/relation"]},
         ),
     ] = []
     resourceTypeGeneral: Annotated[
-        list[ResourceTypeGeneral],
+        Sequence[ResourceTypeGeneral],
         Field(
             description="General type of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     resourceTypeSpecific: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "A term describing the specific nature of the resource. A more "
@@ -510,7 +515,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     rights: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "Information about rights held in and over the resource as well "
@@ -520,7 +525,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     sample: Annotated[
-        list[MergedDistributionIdentifier],
+        Sequence[MergedDistributionIdentifier],
         Field(
             description=(
                 "A sample distribution of the dataset, which can be anonymized or "
@@ -530,7 +535,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     source: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description=(
                 "A related Resource from which the described Resource is derived."
@@ -539,21 +544,21 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     spatial: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Spatial coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Start date of the temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
         ),
     ] = []
     stateOfDataProcessing: Annotated[
-        list[DataProcessingState],
+        Sequence[DataProcessingState],
         Field(
             description="The processing state of the data, e.g. raw or aggregated.",
         ),
@@ -561,8 +566,10 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a resource item with an arity of 1-n."""
+
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the resource.",
             min_length=1,
@@ -572,7 +579,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     resourceCreationMethod: Annotated[
-        list[ResourceCreationMethod],
+        Sequence[ResourceCreationMethod],
         Field(
             description="Method how the resource was created.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
@@ -580,7 +587,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     theme: Annotated[
-        list[Theme],
+        Sequence[Theme],
         Field(
             description=(
                 "A main category of the resource. A resource can have multiple themes."
@@ -590,7 +597,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the resource.",
             min_length=1,
@@ -598,7 +605,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     unitInCharge: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "This property refers to agents who assume responsibility and "
@@ -613,8 +620,10 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a resource item relaxed to an arity of 0-n."""
+
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the resource.",
             json_schema_extra={
@@ -623,14 +632,14 @@ class _SparseLists(_Stem):
         ),
     ] = []
     resourceCreationMethod: Annotated[
-        list[ResourceCreationMethod],
+        Sequence[ResourceCreationMethod],
         Field(
             description="Method how the resource was created.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     theme: Annotated[
-        list[Theme],
+        Sequence[Theme],
         Field(
             description=(
                 "A main category of the resource. A resource can have multiple themes."
@@ -639,14 +648,14 @@ class _SparseLists(_Stem):
         ),
     ] = []
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     unitInCharge: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "This property refers to agents who assume responsibility and "
@@ -660,6 +669,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a resource item with an arity of 0-1."""
+
     accrualPeriodicity: Annotated[
         Frequency | None,
         Field(
@@ -797,6 +808,8 @@ class _OptionalValues(_Stem):
 
 
 class _RequiredValues(_Stem):
+    """Required values of a resource item with an arity of 1."""
+
     accessRestriction: Annotated[
         AccessRestriction,
         Field(
@@ -807,6 +820,8 @@ class _RequiredValues(_Stem):
 
 
 class _SparseValues(_Stem):
+    """Required values of a resource item relaxed to an arity of 0-1."""
+
     accessRestriction: Annotated[
         AccessRestriction | None,
         Field(
@@ -817,15 +832,17 @@ class _SparseValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a resource item as lists with an arity of 0-n."""
+
     accessRestriction: Annotated[
-        list[AccessRestriction],
+        Sequence[AccessRestriction],
         Field(
             description="Indicates how access to the resource is restricted.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     accrualPeriodicity: Annotated[
-        list[Frequency],
+        Sequence[Frequency],
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
@@ -834,18 +851,18 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     created: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Date of creation of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/created"]},
         ),
     ] = []
     doi: Annotated[
-        list[DoiStr],
+        Sequence[DoiStr],
         Field(description="The Digital Object Identifier (DOI) of the resource."),
     ] = []
     hasPersonalData: Annotated[
-        list[PersonalData],
+        Sequence[PersonalData],
         Field(
             description=(
                 "Indicates, if a resource contains data directly or indirectly "
@@ -855,7 +872,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     license: Annotated[
-        list[License],
+        Sequence[License],
         Field(
             description=(
                 "A legal document giving official permission to do something with "
@@ -865,32 +882,38 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     maxTypicalAge: Annotated[
-        list[MaxTypicalAgeInt],
+        Sequence[MaxTypicalAgeInt],
         Field(
             description=(
                 "Specifies the maximum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#maxtypicalage"]
+            },
         ),
     ] = []
     minTypicalAge: Annotated[
-        list[MinTypicalAgeInt],
+        Sequence[MinTypicalAgeInt],
         Field(
             description=(
                 "Specifies the minimum age of the population within the data "
                 "collection, expressed in years."
-            )
+            ),
+            json_schema_extra={
+                "closeMatch": ["http://healthdataportal.eu/ns/health#mintypicalage"]
+            },
         ),
     ] = []
     modified: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Date on which the resource was changed.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/modified"]},
         ),
     ] = []
     numberOfRecords: Annotated[
-        list[int],
+        Sequence[int],
         Field(
             description=(
                 "The total number of records in the dataset. The number reflects the "
@@ -903,7 +926,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     numberOfUniqueIndividuals: Annotated[
-        list[int],
+        Sequence[int],
         Field(
             description=(
                 "The number of records for unique individuals represented in the "
@@ -917,7 +940,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     sizeOfDataBasis: Annotated[
-        list[str],
+        Sequence[str],
         Field(
             description=(
                 "The size of the underlying data basis, e.g. for studies: the "
@@ -926,21 +949,21 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     temporal: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year | TemporalStr],
         Field(
             description="Temporal coverage of the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/temporal"]},
         ),
     ] = []
     version: Annotated[
-        list[VersionStr],
+        Sequence[VersionStr],
         Field(
             description=("The version indicator (name or identifier) of a resource."),
-            json_schema_extra="http://www.w3.org/ns/dcat#version",
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#version"]},
         ),
     ] = []
     wasGeneratedBy: Annotated[
-        list[MergedActivityIdentifier],
+        Sequence[MergedActivityIdentifier],
         Field(
             description=(
                 "Generation is the completion of production of a new entity by an "
@@ -1013,7 +1036,7 @@ class ExtractedResource(BaseResource, ExtractedData):
         return self._get_stable_target_id(MergedResourceIdentifier)
 
 
-class MergedResource(BaseResource, MergedItem):
+class MergedResource(_SparseLists, _SparseValues, BaseResource, MergedItem):
     """The result of merging all extracted items and rules for a resource."""
 
     entityType: Annotated[
@@ -1123,73 +1146,73 @@ class PreventiveResource(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveResource"], Field(alias="$type", frozen=True)
     ] = "PreventiveResource"
-    accessPlatform: list[MergedPrimarySourceIdentifier] = []
-    accessRestriction: list[MergedPrimarySourceIdentifier] = []
-    accrualPeriodicity: list[MergedPrimarySourceIdentifier] = []
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    analytics: list[MergedPrimarySourceIdentifier] = []
-    anonymizationPseudonymization: list[MergedPrimarySourceIdentifier] = []
-    conformsTo: list[MergedPrimarySourceIdentifier] = []
-    contact: list[MergedPrimarySourceIdentifier] = []
-    contributingUnit: list[MergedPrimarySourceIdentifier] = []
-    contributor: list[MergedPrimarySourceIdentifier] = []
-    created: list[MergedPrimarySourceIdentifier] = []
-    creator: list[MergedPrimarySourceIdentifier] = []
-    description: list[MergedPrimarySourceIdentifier] = []
-    distribution: list[MergedPrimarySourceIdentifier] = []
-    documentation: list[MergedPrimarySourceIdentifier] = []
-    doi: list[MergedPrimarySourceIdentifier] = []
-    end: list[MergedPrimarySourceIdentifier] = []
-    externalPartner: list[MergedPrimarySourceIdentifier] = []
-    hasCodeValues: list[MergedPrimarySourceIdentifier] = []
-    hasCodingSystem: list[MergedPrimarySourceIdentifier] = []
-    hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
-    hasPurpose: list[MergedPrimarySourceIdentifier] = []
-    hasPurposeDescription: list[MergedPrimarySourceIdentifier] = []
-    hasVersion: list[MergedPrimarySourceIdentifier] = []
-    hasPersonalData: list[MergedPrimarySourceIdentifier] = []
-    healthCategory: list[MergedPrimarySourceIdentifier] = []
-    icd10code: list[MergedPrimarySourceIdentifier] = []
-    instrumentToolOrApparatus: list[MergedPrimarySourceIdentifier] = []
-    inSeries: list[MergedPrimarySourceIdentifier] = []
-    inSeriesFirstResource: list[MergedPrimarySourceIdentifier] = []
-    inSeriesLastResource: list[MergedPrimarySourceIdentifier] = []
-    isPartOf: list[MergedPrimarySourceIdentifier] = []
-    keyword: list[MergedPrimarySourceIdentifier] = []
-    landingPage: list[MergedPrimarySourceIdentifier] = []
-    language: list[MergedPrimarySourceIdentifier] = []
-    license: list[MergedPrimarySourceIdentifier] = []
-    loincId: list[MergedPrimarySourceIdentifier] = []
-    maxTypicalAge: list[MergedPrimarySourceIdentifier] = []
-    meshId: list[MergedPrimarySourceIdentifier] = []
-    method: list[MergedPrimarySourceIdentifier] = []
-    methodDescription: list[MergedPrimarySourceIdentifier] = []
-    minTypicalAge: list[MergedPrimarySourceIdentifier] = []
-    modified: list[MergedPrimarySourceIdentifier] = []
-    numberOfRecords: list[MergedPrimarySourceIdentifier] = []
-    numberOfUniqueIndividuals: list[MergedPrimarySourceIdentifier] = []
-    populationCoverage: list[MergedPrimarySourceIdentifier] = []
-    provenance: list[MergedPrimarySourceIdentifier] = []
-    publication: list[MergedPrimarySourceIdentifier] = []
-    publisher: list[MergedPrimarySourceIdentifier] = []
-    qualityInformation: list[MergedPrimarySourceIdentifier] = []
-    relatedResource: list[MergedPrimarySourceIdentifier] = []
-    resourceCreationMethod: list[MergedPrimarySourceIdentifier] = []
-    resourceTypeGeneral: list[MergedPrimarySourceIdentifier] = []
-    resourceTypeSpecific: list[MergedPrimarySourceIdentifier] = []
-    rights: list[MergedPrimarySourceIdentifier] = []
-    sample: list[MergedPrimarySourceIdentifier] = []
-    source: list[MergedPrimarySourceIdentifier] = []
-    sizeOfDataBasis: list[MergedPrimarySourceIdentifier] = []
-    spatial: list[MergedPrimarySourceIdentifier] = []
-    start: list[MergedPrimarySourceIdentifier] = []
-    stateOfDataProcessing: list[MergedPrimarySourceIdentifier] = []
-    temporal: list[MergedPrimarySourceIdentifier] = []
-    theme: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
-    unitInCharge: list[MergedPrimarySourceIdentifier] = []
-    version: list[MergedPrimarySourceIdentifier] = []
-    wasGeneratedBy: list[MergedPrimarySourceIdentifier] = []
+    accessPlatform: Sequence[MergedPrimarySourceIdentifier] = []
+    accessRestriction: Sequence[MergedPrimarySourceIdentifier] = []
+    accrualPeriodicity: Sequence[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    analytics: Sequence[MergedPrimarySourceIdentifier] = []
+    anonymizationPseudonymization: Sequence[MergedPrimarySourceIdentifier] = []
+    conformsTo: Sequence[MergedPrimarySourceIdentifier] = []
+    contact: Sequence[MergedPrimarySourceIdentifier] = []
+    contributingUnit: Sequence[MergedPrimarySourceIdentifier] = []
+    contributor: Sequence[MergedPrimarySourceIdentifier] = []
+    created: Sequence[MergedPrimarySourceIdentifier] = []
+    creator: Sequence[MergedPrimarySourceIdentifier] = []
+    description: Sequence[MergedPrimarySourceIdentifier] = []
+    distribution: Sequence[MergedPrimarySourceIdentifier] = []
+    documentation: Sequence[MergedPrimarySourceIdentifier] = []
+    doi: Sequence[MergedPrimarySourceIdentifier] = []
+    end: Sequence[MergedPrimarySourceIdentifier] = []
+    externalPartner: Sequence[MergedPrimarySourceIdentifier] = []
+    hasCodeValues: Sequence[MergedPrimarySourceIdentifier] = []
+    hasCodingSystem: Sequence[MergedPrimarySourceIdentifier] = []
+    hasLegalBasis: Sequence[MergedPrimarySourceIdentifier] = []
+    hasPurpose: Sequence[MergedPrimarySourceIdentifier] = []
+    hasPurposeDescription: Sequence[MergedPrimarySourceIdentifier] = []
+    hasVersion: Sequence[MergedPrimarySourceIdentifier] = []
+    hasPersonalData: Sequence[MergedPrimarySourceIdentifier] = []
+    healthCategory: Sequence[MergedPrimarySourceIdentifier] = []
+    icd10code: Sequence[MergedPrimarySourceIdentifier] = []
+    instrumentToolOrApparatus: Sequence[MergedPrimarySourceIdentifier] = []
+    inSeries: Sequence[MergedPrimarySourceIdentifier] = []
+    inSeriesFirstResource: Sequence[MergedPrimarySourceIdentifier] = []
+    inSeriesLastResource: Sequence[MergedPrimarySourceIdentifier] = []
+    isPartOf: Sequence[MergedPrimarySourceIdentifier] = []
+    keyword: Sequence[MergedPrimarySourceIdentifier] = []
+    landingPage: Sequence[MergedPrimarySourceIdentifier] = []
+    language: Sequence[MergedPrimarySourceIdentifier] = []
+    license: Sequence[MergedPrimarySourceIdentifier] = []
+    loincId: Sequence[MergedPrimarySourceIdentifier] = []
+    maxTypicalAge: Sequence[MergedPrimarySourceIdentifier] = []
+    meshId: Sequence[MergedPrimarySourceIdentifier] = []
+    method: Sequence[MergedPrimarySourceIdentifier] = []
+    methodDescription: Sequence[MergedPrimarySourceIdentifier] = []
+    minTypicalAge: Sequence[MergedPrimarySourceIdentifier] = []
+    modified: Sequence[MergedPrimarySourceIdentifier] = []
+    numberOfRecords: Sequence[MergedPrimarySourceIdentifier] = []
+    numberOfUniqueIndividuals: Sequence[MergedPrimarySourceIdentifier] = []
+    populationCoverage: Sequence[MergedPrimarySourceIdentifier] = []
+    provenance: Sequence[MergedPrimarySourceIdentifier] = []
+    publication: Sequence[MergedPrimarySourceIdentifier] = []
+    publisher: Sequence[MergedPrimarySourceIdentifier] = []
+    qualityInformation: Sequence[MergedPrimarySourceIdentifier] = []
+    relatedResource: Sequence[MergedPrimarySourceIdentifier] = []
+    resourceCreationMethod: Sequence[MergedPrimarySourceIdentifier] = []
+    resourceTypeGeneral: Sequence[MergedPrimarySourceIdentifier] = []
+    resourceTypeSpecific: Sequence[MergedPrimarySourceIdentifier] = []
+    rights: Sequence[MergedPrimarySourceIdentifier] = []
+    sample: Sequence[MergedPrimarySourceIdentifier] = []
+    source: Sequence[MergedPrimarySourceIdentifier] = []
+    sizeOfDataBasis: Sequence[MergedPrimarySourceIdentifier] = []
+    spatial: Sequence[MergedPrimarySourceIdentifier] = []
+    start: Sequence[MergedPrimarySourceIdentifier] = []
+    stateOfDataProcessing: Sequence[MergedPrimarySourceIdentifier] = []
+    temporal: Sequence[MergedPrimarySourceIdentifier] = []
+    theme: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
+    unitInCharge: Sequence[MergedPrimarySourceIdentifier] = []
+    version: Sequence[MergedPrimarySourceIdentifier] = []
+    wasGeneratedBy: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowResource(_Stem, WorkflowRule):
@@ -1276,7 +1299,7 @@ class ResourceMapping(_Stem, BaseMapping):
     alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
     analytics: MappingFieldList[list[MergedDistributionIdentifier]] = MappingFieldList()
     anonymizationPseudonymization: MappingFieldList[
-        list[AnonymizationPseudonymization]
+        Sequence[AnonymizationPseudonymization]
     ] = MappingFieldList()
     conformsTo: MappingFieldList[list[ConformsToStr]] = MappingFieldList()
     contributingUnit: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
