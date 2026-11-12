@@ -1,10 +1,11 @@
 import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ValidationError
 
 from mex.common.types import Link, LinkLanguage
 
 
-class DummyModel(BaseModel):
+class DummyModel(PydanticBaseModel):
     link: Link
 
 

@@ -18,7 +18,8 @@ from typing import (
     get_origin,
 )
 
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import TypeAdapter, ValidationError
 from typing_extensions import TypeForm
 
 T = TypeVar("T")
@@ -141,7 +142,7 @@ def get_inner_types(
 
 
 @lru_cache(maxsize=4048)
-def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
+def get_all_fields(model: type[PydanticBaseModel]) -> dict[str, GenericFieldInfo]:
     """Return a combined dict of defined and computed fields of a given model.
 
     This function combines both regular model fields and computed fields into a
@@ -176,7 +177,7 @@ def get_all_fields(model: type[BaseModel]) -> dict[str, GenericFieldInfo]:
 
 
 @lru_cache(maxsize=4048)
-def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
+def get_alias_lookup(model: type[PydanticBaseModel]) -> dict[str, str]:
     """Build a cached mapping from field alias to field names.
 
     Creates a dictionary that maps field aliases (or field names if no alias exists)
@@ -196,7 +197,7 @@ def get_alias_lookup(model: type[BaseModel]) -> dict[str, str]:
 
 
 @lru_cache(maxsize=4048)
-def get_list_field_names(model: type[BaseModel]) -> list[str]:
+def get_list_field_names(model: type[PydanticBaseModel]) -> list[str]:
     """Build a cached list of fields that look like lists.
 
     Analyzes the model's field annotations to identify fields that are list types.
@@ -220,7 +221,7 @@ def get_list_field_names(model: type[BaseModel]) -> list[str]:
 
 
 @lru_cache(maxsize=4048)
-def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
+def get_field_names_allowing_none(model: type[PydanticBaseModel]) -> list[str]:
     """Build a cached list of fields that can be set to None.
 
     Tests each field's annotation by attempting to validate None against it.
@@ -249,7 +250,7 @@ def get_field_names_allowing_none(model: type[BaseModel]) -> list[str]:
 
 
 def group_fields_by_class_name(
-    model_classes_by_name: Mapping[str, type[BaseModel]],
+    model_classes_by_name: Mapping[str, type[PydanticBaseModel]],
     predicate: Callable[[GenericFieldInfo], bool],
 ) -> dict[str, list[str]]:
     """Group the field names by model class and filter them by the given predicate.

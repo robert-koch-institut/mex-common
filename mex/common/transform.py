@@ -8,7 +8,7 @@ from typing import Any
 from uuid import UUID
 
 from pydantic import AnyUrl, SecretStr
-from pydantic import BaseModel as PydanticModel
+from pydantic import BaseModel as PydanticBaseModel
 
 
 class MExEncoder(json.JSONEncoder):
@@ -19,7 +19,7 @@ class MExEncoder(json.JSONEncoder):
         # break import cycle, sigh
         from mex.common.types import PathWrapper, TemporalEntity  # noqa: PLC0415
 
-        if isinstance(obj, PydanticModel):
+        if isinstance(obj, PydanticBaseModel):
             return obj.model_dump()
         if isinstance(obj, AnyUrl):
             return str(obj)

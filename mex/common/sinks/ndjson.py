@@ -4,7 +4,7 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import IO, Any, TypeVar
 
-from pydantic import BaseModel
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.logging import logger, watch
 from mex.common.settings import BaseSettings
@@ -12,7 +12,7 @@ from mex.common.sinks.base import BaseSink
 from mex.common.transform import MExEncoder
 from mex.common.utils import grouper
 
-_LoadItemT = TypeVar("_LoadItemT", bound=BaseModel)
+_LoadItemT = TypeVar("_LoadItemT", bound=PydanticBaseModel)
 
 
 class NdjsonSink(BaseSink):
