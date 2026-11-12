@@ -1,8 +1,11 @@
+from collections.abc import Sequence
 from typing import cast
 
 from mex.common.connector.http import HTTPConnector
 from mex.common.exceptions import EmptySearchResultError
 from mex.common.settings import BaseSettings
+
+WIKIDATA_MAX_BATCH_SIZE = 50  # maximum number of Wikidata IDs allowed for wikidata API
 
 
 class WikidataAPIConnector(HTTPConnector):
@@ -56,3 +59,50 @@ class WikidataAPIConnector(HTTPConnector):
             raise EmptySearchResultError(error["info"])
         msg = f"unexpected error getting wikidata item: {item_id}"
         raise RuntimeError(msg)
+
+    def get_wikidata_item_details_by_ids(
+        self,
+        item_ids: Sequence[str],
+    ) -> dict[str, dict[str, str]]:
+        """Get multiple Wikidata items in a single API request."""
+        if not item_ids:
+            return {}
+
+        if len(item_ids) > WIKIDATA_MAX_BATCH_SIZE:
+            msg = (
+                f"A Wikidata batch isn't allowed to contain more than "
+                f"{WIKIDATA_MAX_BATCH_SIZE} IDs."
+            )
+            raise ValueError(msg)
+
+        results = self.request(
+            "GET",
+            params={
+                "action": "wbgetentities",
+                "format": "json",
+                "ids": "|".join(item_ids),
+                "props": "labels|claims",
+                "formatversion": "2",
+            },
+        )
+
+        if error := results.get("error"):
+            msg = f"Wikidata API error: {error}"
+            raise RuntimeError(msg)
+
+        entities = results.get("entities")
+        if not isinstance(entities, dict):
+            msg = "Wikidata API returned no entities mapping."
+            raise TypeError(msg)
+
+        missing_ids = [
+            item_id
+            for item_id in item_ids
+            if item_id not in entities or entities[item_id].get("missing")
+        ]
+
+        if missing_ids:
+            msg = f"Wikidata items not found: {missing_ids}"
+            raise EmptySearchResultError(msg)
+
+        return entities

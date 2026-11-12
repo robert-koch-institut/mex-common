@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - bump mex-model version to 5.2.2 featuring the conditional `supersededBy`
 - BREAKING: required fields of merged items are only enforced if `supersededBy` is unset
 - BREAKING: all models based on `BaseModel` are now frozen, field assignment raises a
@@ -53,6 +54,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed geonames regex pattern
 
 ### Security
+
+## [3.7.0] - 2026-11-09
+
+### Added
+
+- wikidata helper to extract location from wikidata, for single IDs and for batches
+
+### Fixed
+
+- fix linting for BaseModel model_json_schema
+- remove warn_untyped_fields (not supported anymore and not needed since Pydantic v2)
 
 ## [3.6.1] - 2026-10-28
 
