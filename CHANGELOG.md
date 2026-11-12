@@ -29,6 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: `Base*` entity classes and the private `_Stem` mixins are now plain
   pydantic models, `BaseModel` is pulled in by `ExtractedData`, `MergedItem`,
   `PreviewItem`, the rule base classes, `BaseFilter` and `BaseMapping`
+- BREAKING: list fields of entity models and rules are now typed as `Sequence`, so
+  type checkers reject in-place mutation like `append`, `pop` or item assignment; the
+  values are still lists at runtime and the JSON schema is unchanged; use
+  `model_copy_validated` with e.g. `[*model.field, value]` instead
+- BREAKING: the validation error for list fields with `min_length` now reads
+  "Value should have at least ..." instead of "List should have at least ..."
+- `get_inner_types` and `get_list_field_names` support `Sequence` annotations
 - active merged items validate their gated fields against the original required field
   definition, including all of its constraints
 - all sinks accept any pydantic model in `load` and yield the same type back,
