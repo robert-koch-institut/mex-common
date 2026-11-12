@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError, computed_field
 
-from mex.common.models import BaseModel
+from mex.common.models import BaseModel, ExtractedResource
 
 
 class ComplexDummyModel(BaseModel):
@@ -144,19 +144,40 @@ def test_field_assignment_on_model_with_computed_field() -> None:
         computer.ram = 32  # type: ignore[misc]
 
 
-def test_model_copy_validated() -> None:
-    computer = Computer()
+@pytest.fixture
+def extracted_resource() -> ExtractedResource:
+    return ExtractedResource(
+        hadPrimarySource="00000000000000",
+        identifierInPrimarySource="resource-1",
+        accessRestriction="https://mex.rki.de/item/access-restriction-1",
+        contact=["bFQoRhcVH5DHU6"],
+        resourceCreationMethod="https://mex.rki.de/item/resource-creation-method-1",
+        theme=["https://mex.rki.de/item/theme-11"],
+        title=["Resource"],
+        unitInCharge=["bFQoRhcVH5DHU8"],
+    )
 
-    upgraded = computer.model_copy_validated(update={"ram": 32})
 
-    assert upgraded.ram == 32
-    assert upgraded.cpus == 42
-    assert computer.ram == 16  # original is unchanged
-    assert upgraded.model_fields_set == {"ram"}
-    assert computer.model_copy_validated(update={}).model_fields_set == set()
+def test_model_copy_validated(extracted_resource: ExtractedResource) -> None:
+    copied = extracted_resource.model_copy_validated(
+        {"relatedResource": ["bFQoRhcVH5DHU9"]}
+    )
 
-    with pytest.raises(ValidationError, match="Input should be a valid integer"):
-        computer.model_copy_validated(update={"ram": "lots"})
+    assert copied is not extracted_resource
+    assert copied.relatedResource == ["bFQoRhcVH5DHU9"]
+    assert extracted_resource.relatedResource == []
+    assert copied.identifier == extracted_resource.identifier
+    assert copied.stableTargetId == extracted_resource.stableTargetId
+    assert copied.model_dump(
+        exclude={"relatedResource"}
+    ) == extracted_resource.model_dump(exclude={"relatedResource"})
+
+
+def test_model_copy_validated_validates_update(
+    extracted_resource: ExtractedResource,
+) -> None:
+    with pytest.raises(ValidationError, match="theme"):
+        extracted_resource.model_copy_validated({"theme": []})
 
 
 class DummyBaseModel(BaseModel):
