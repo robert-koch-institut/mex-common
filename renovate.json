@@ -70,11 +70,14 @@
             ]
         },
         {
-            "description": "Group meta-requirements and pre-commit hooks into a single PR, keeping tools in sync with their hooks",
+            "description": "Group meta-requirements and pre-commit hooks into a single PR every other week, keeping tools in sync with their hooks",
             "groupName": "tooling",
             "matchManagers": [
                 "pip_requirements",
                 "pre-commit"
+            ],
+            "schedule": [
+                "* 0-5 1-7,15-21 * 3"
             ]
         },
         {
@@ -85,6 +88,20 @@
             ],
             "matchDepNames": [
                 "python"
+            ]
+        },
+        {
+            "description": "Base and compose image digests change on every upstream rebuild; batch them every other week",
+            "groupName": "docker digests",
+            "matchManagers": [
+                "docker-compose",
+                "dockerfile"
+            ],
+            "matchUpdateTypes": [
+                "digest"
+            ],
+            "schedule": [
+                "* 0-5 1-7,15-21 * 3"
             ]
         },
         {
@@ -102,12 +119,27 @@
             ]
         },
         {
-            "description": "Immediately apply updates of mex packages, in dedicated PR",
+            "description": "Renovate's own action and pre-commit hook release almost daily; batch them every other week in their own group",
+            "groupName": "renovate",
+            "matchPackageNames": [
+                "renovatebot/**"
+            ],
+            "schedule": [
+                "* 0-5 1-7,15-21 * 3"
+            ]
+        },
+        {
+            "description": "Immediately apply updates of mex packages, in dedicated PR at any time; matches both bare pip package names (mex-common) and path-qualified docker image names (ghcr.io/robert-koch-institut/mex-backend), since those use different packageName formats",
             "groupName": null,
             "matchPackageNames": [
-                "mex-*"
+                "mex-*",
+                "**/mex-*",
+                "**/mex-*/**"
             ],
-            "minimumReleaseAge": "0 days"
+            "minimumReleaseAge": "0 days",
+            "schedule": [
+                "at any time"
+            ]
         }
     ],
     "prFooter": "",
@@ -115,7 +147,7 @@
         "enabled": true
     },
     "schedule": [
-        "on monday and wednesday"
+        "* 0-5 * * 1"
     ],
     "timezone": "Europe/Berlin",
     "vulnerabilityAlerts": {
