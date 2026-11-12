@@ -6,11 +6,11 @@ from mex.common.logging import logger
 from mex.common.wikidata.connector import WIKIDATA_MAX_BATCH_SIZE, WikidataAPIConnector
 from mex.common.wikidata.models import WikidataLocation, WikidataOrganization
 
-_WIKIDATA_QID = r"Q[1-9][0-9]{2,64}"
+_WIKIDATA_QID = r"Q[1-9][0-9]*"
 
 _WIKIDATA_QID_PATTERN = re.compile(rf"({_WIKIDATA_QID})")
 _WIKIDATA_QID_OR_URL_PATTERN = re.compile(
-    rf"(?:https?://(?:www\.)?wikidata\.org/entity/)?({_WIKIDATA_QID})/?"
+    rf"(?:(?:https?://)?(?:www\.)?wikidata\.org/entity/)?({_WIKIDATA_QID})/?"
 )
 
 
