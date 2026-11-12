@@ -1,8 +1,9 @@
 from typing import Annotated, Any
 
 import pytest
+from pydantic import AfterValidator, Field, ValidationError
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Field, ValidationError
+from pydantic_core import PydanticCustomError
 
 from mex.common.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
@@ -163,3 +164,34 @@ def test_active_item_errors_use_required_field_constraints() -> None:
             {"field_type": "List", "min_length": 2, "actual_length": 1},
         )
     ]
+
+
+def _reject_shouting(value: str) -> str:
+    if value.isupper():
+        error_type, message = "no_shouting", "{value} is too loud"
+        raise PydanticCustomError(error_type, message, {"value": value})
+    return value
+
+
+class _RequiredQuietThingName(PydanticBaseModel):
+    name: Annotated[str, AfterValidator(_reject_shouting)]
+
+
+class _SparseQuietThingName(PydanticBaseModel):
+    name: str | None = None
+
+
+class MergedQuietThing(_SparseQuietThingName, _RequiredQuietThingName, MergedItem):
+    identifier: str
+    supersededBy: str | None = None
+
+
+def test_active_item_errors_preserve_custom_error_types() -> None:
+    assert MergedQuietThing(identifier="thing", name="quiet").name == "quiet"
+
+    with pytest.raises(ValidationError) as error:
+        MergedQuietThing(identifier="thing", name="LOUD")
+
+    assert [
+        (e["loc"], e["type"], e["msg"], e["ctx"]) for e in error.value.errors()
+    ] == [(("name",), "no_shouting", "LOUD is too loud", {"value": "LOUD"})]

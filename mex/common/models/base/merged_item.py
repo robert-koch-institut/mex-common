@@ -1,4 +1,4 @@
-from typing import Annotated, Any, ClassVar, Self, cast
+from typing import Annotated, Any, ClassVar, Self, cast, get_args
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import GetJsonSchemaHandler, TypeAdapter, model_validator
@@ -10,6 +10,7 @@ from pydantic_core import (
     PydanticCustomError,
     ValidationError,
 )
+from pydantic_core.core_schema import ErrorType
 
 from mex.common.models.base.model import BaseModel
 from mex.common.transform import camel_to_split
@@ -17,6 +18,9 @@ from mex.common.utils import get_list_field_names
 
 # fields that are exempt from the supersededBy gate
 UNGATED_FIELD_NAMES = frozenset({"entityType", "identifier", "supersededBy"})
+
+# error types pydantic-core can re-raise by name
+BUILTIN_ERROR_TYPES = frozenset(get_args(ErrorType))
 
 
 class MergedItem(
@@ -96,8 +100,14 @@ class MergedItem(
                 adapter.validate_python(value)
             except ValidationError as error:
                 for details in error.errors():
+                    error_type: str | PydanticCustomError = details["type"]
+                    if error_type not in BUILTIN_ERROR_TYPES:
+                        # custom error types cannot be re-raised by their name
+                        error_type = PydanticCustomError(
+                            details["type"], details["msg"], details.get("ctx")
+                        )
                     init_details = InitErrorDetails(
-                        type=details["type"],
+                        type=error_type,
                         loc=(field_name, *details["loc"]),
                         input=details["input"],
                     )
