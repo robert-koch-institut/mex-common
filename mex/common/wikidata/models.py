@@ -10,6 +10,7 @@ class Value(BaseModel):
 
     text: str | None = None
     language: str | None = None
+    id: str | None = None
 
 
 class DataValue(BaseModel):
@@ -51,12 +52,13 @@ class Claim(BaseModel):
 class ClaimsOrganizations(BaseModel):
     """model class for Claims for Wikidata Organizations."""
 
-    isni_id: Annotated[list[Claim], Field(alias="P213")] = []
-    ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
-    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
-    native_label: Annotated[list[Claim], Field(alias="P1705")] = []
+    country_id: Annotated[list[Claim], Field(alias="P17")] = []
     gepris_id: Annotated[list[Claim], Field(alias="P4871")] = []
     gnd_id: Annotated[list[Claim], Field(alias="P227")] = []
+    isni_id: Annotated[list[Claim], Field(alias="P213")] = []
+    native_label: Annotated[list[Claim], Field(alias="P1705")] = []
+    ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
+    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
     viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
 
 
