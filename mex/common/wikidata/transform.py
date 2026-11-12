@@ -1,7 +1,12 @@
 from collections.abc import Generator, Iterable, Sequence
 
 from mex.common.models import ExtractedLocation, ExtractedOrganization
-from mex.common.types import MergedPrimarySourceIdentifier, Text, TextLanguage
+from mex.common.types import (
+    MergedLocationIdentifier,
+    MergedPrimarySourceIdentifier,
+    Text,
+    TextLanguage,
+)
 from mex.common.wikidata.models import (
     Aliases,
     Claim,
@@ -48,6 +53,7 @@ def transform_wikidata_organization_to_extracted_organization(
     Args:
         wikidata_organization: wikidata organization to be transformed
         wikidata_primary_source_id: Extracted primary source id for wikidata
+        country: optional list of extracted locations referenced by the organization
 
     Returns:
         ExtractedOrganization or None
