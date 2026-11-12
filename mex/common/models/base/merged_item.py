@@ -107,7 +107,7 @@ class MergedItem(
         return errors
 
     def _get_superseded_item_errors(self) -> list[InitErrorDetails]:
-        """Return errors for fields with non-default values on a superseded item."""
+        """Return errors for self-reference or disallowed data in a superseded item."""
         errors: list[InitErrorDetails] = []
         if (superseded_by := getattr(self, "supersededBy", None)) == getattr(
             self, "identifier", None
