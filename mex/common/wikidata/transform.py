@@ -16,30 +16,6 @@ from mex.common.wikidata.models import (
 )
 
 
-def transform_wikidata_organizations_to_extracted_organizations(
-    wikidata_organizations: Iterable[WikidataOrganization],
-    wikidata_primary_source_id: MergedPrimarySourceIdentifier,
-) -> Generator[ExtractedOrganization, None, None]:
-    """Transform wikidata organizations into ExtractedOrganizations.
-
-    Wikidata organizations without labels are skipped.
-
-    Args:
-        wikidata_organizations: Iterable of wikidata organization to be transformed
-        wikidata_primary_source_id: Extracted primary source id for wikidata
-
-    Returns:
-        Generator of ExtractedOrganizations
-    """
-    for wikidata_organization in wikidata_organizations:
-        if extracted_organization := (
-            transform_wikidata_organization_to_extracted_organization(
-                wikidata_organization, wikidata_primary_source_id
-            )
-        ):
-            yield extracted_organization
-
-
 def transform_wikidata_organization_to_extracted_organization(
     wikidata_organization: WikidataOrganization,
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
