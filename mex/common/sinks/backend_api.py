@@ -1,15 +1,15 @@
 import json
-from collections.abc import Generator, Iterable
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import TypeGuard
+from collections.abc import Generator, Iterable, Sequence
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 
+from pydantic import BaseModel as PydanticBaseModel
 from requests import RequestException
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger, watch
-from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
+from mex.common.models import AnyExtractedModel, AnyRuleSetResponse
 from mex.common.settings import BaseSettings
-from mex.common.sinks.base import BaseSink
+from mex.common.sinks.base import BaseSink, LoadItemT
 from mex.common.utils import grouper
 
 
@@ -34,21 +34,22 @@ class BackendApiSink(BaseSink):
     @watch(log_interval=1000)
     def load(
         self,
-        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
-    ) -> Generator[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None]:
+        items: Iterable[LoadItemT],
+    ) -> Generator[LoadItemT, None, None]:
         """Load extracted models or rule-sets to the Backend API using bulk insertion.
 
         Args:
-            items: Iterable of extracted models or merged models or rule-sets
+            items: Iterable of pydantic models, only extracted models and rule-set
+                responses can actually be ingested by the backend
 
         Raises:
-            NotImplementedError: When you try to load merged items into the backend
+            NotImplementedError: When you try to load unsupported models
 
         Returns:
             Generator for posted models
         """
         settings = BaseSettings.get()
-        futures = [
+        futures: list[Future[list[LoadItemT]]] = [
             self._executor.submit(BackendApiSink.load_chunk, chunk)
             for chunk in grouper(settings.backend_api_chunk_size, items)
         ]
@@ -57,13 +58,12 @@ class BackendApiSink(BaseSink):
 
     @staticmethod
     def is_supported(
-        model_list: list[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
-    ) -> TypeGuard[list[AnyExtractedModel | AnyRuleSetResponse]]:
+        model_list: Sequence[PydanticBaseModel],
+    ) -> bool:
         """Return whether the given list only contains models the backend can handle.
 
         The backend API can only handle extracted models and rule-set responses,
-        not merged models. This type guard validates the input and provides
-        type narrowing for downstream processing.
+        not merged models or any other pydantic models.
 
         Args:
             model_list: List of models to check for backend compatibility.
@@ -79,8 +79,8 @@ class BackendApiSink(BaseSink):
 
     @staticmethod
     def load_chunk(
-        chunk: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse | None],
-    ) -> list[AnyExtractedModel | AnyRuleSetResponse]:
+        chunk: Iterable[LoadItemT | None],
+    ) -> list[LoadItemT]:
         """Load a chunk of models into the backend.
 
         Handles the actual bulk insertion of a chunk of models to the backend API.
@@ -98,12 +98,17 @@ class BackendApiSink(BaseSink):
         """
         connector = BackendApiConnector.get()
         model_list = [item for item in chunk if item is not None]
-        if not BackendApiSink.is_supported(model_list):
+        ingestible_models = [
+            m
+            for m in model_list
+            if isinstance(m, AnyExtractedModel | AnyRuleSetResponse)
+        ]
+        if len(ingestible_models) != len(model_list):
             msg = "Backend can only ingest extracted models and rule-set responses."
             raise NotImplementedError(msg)
         try:
             connector.ingest(
-                model_list,
+                ingestible_models,
                 timeout=(BackendApiSink.CONNECT_TIMEOUT, BackendApiSink.READ_TIMEOUT),
             )
         except RequestException as error:
@@ -112,7 +117,7 @@ class BackendApiSink(BaseSink):
                 f"identifierInPrimarySource={m.identifierInPrimarySource}, ...)"
                 if isinstance(m, AnyExtractedModel)
                 else f"{m.entityType}(stableTargetId={m.stableTargetId})"
-                for m in model_list
+                for m in ingestible_models
             ]
             logger.error(f"Error ingesting models: {', '.join(model_info)}")
             if error.response:

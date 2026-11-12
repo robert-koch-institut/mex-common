@@ -31,7 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `PreviewItem`, the rule base classes, `BaseFilter` and `BaseMapping`
 - active merged items validate their gated fields against the original required field
   definition, including all of its constraints
-- `NdjsonSink.load` accepts any pydantic model
+- all sinks accept any pydantic model in `load` and yield the same type back,
+  `BackendApiSink` still raises `NotImplementedError` for models it cannot ingest
+- BREAKING: the private `_LoadItemT` type variable in `mex.common.sinks.base` is now
+  the public `LoadItemT`, shared by all sinks
 - organigram units get their parent unit assigned when they are created and
   `get_extracted_organizational_unit_with_parents` reuses the organigram transform
 
