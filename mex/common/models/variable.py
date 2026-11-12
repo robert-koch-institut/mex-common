@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -64,7 +65,7 @@ class _OptionalLists(_Stem):
     """Optional lists of a variable item with an arity of 0-n."""
 
     belongsTo: Annotated[
-        list[MergedVariableGroupIdentifier],
+        Sequence[MergedVariableGroupIdentifier],
         Field(
             description=(
                 "The variable group that the described variable is part of. Used to "
@@ -75,7 +76,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "A description of the variable. How the variable is defined in "
@@ -85,7 +86,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     valueSet: Annotated[
-        list[ValueSetStr],
+        Sequence[ValueSetStr],
         Field(description="A set of predefined values as given in the primary source."),
     ] = []
 
@@ -94,7 +95,7 @@ class _RequiredLists(_Stem):
     """Required lists of a variable item with an arity of 1-n."""
 
     label: Annotated[
-        list[LabelText],
+        Sequence[LabelText],
         Field(
             description="The name of the variable.",
             min_length=1,
@@ -107,7 +108,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     usedIn: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description="The resource that the variable is used in.",
             min_length=1,
@@ -120,7 +121,7 @@ class _SparseLists(_Stem):
     """Required lists of a variable item relaxed to an arity of 0-n."""
 
     label: Annotated[
-        list[LabelText],
+        Sequence[LabelText],
         Field(
             description="The name of the variable.",
             json_schema_extra={
@@ -132,7 +133,7 @@ class _SparseLists(_Stem):
         ),
     ] = []
     usedIn: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description="The resource that the variable is used in.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
@@ -172,7 +173,7 @@ class _VariadicValues(_Stem):
     """All values of a variable item as lists with an arity of 0-n."""
 
     codingSystem: Annotated[
-        list[CodingSystemStr],
+        Sequence[CodingSystemStr],
         Field(
             description=(
                 "An established standard to which the described resource conforms "
@@ -188,7 +189,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     dataType: Annotated[
-        list[DataTypeStr],
+        Sequence[DataTypeStr],
         Field(
             description="The defined data type of the variable.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/csvw#datatype"]},
@@ -360,13 +361,13 @@ class PreventiveVariable(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveVariable"], Field(alias="$type", frozen=True)
     ] = "PreventiveVariable"
-    belongsTo: list[MergedPrimarySourceIdentifier] = []
-    codingSystem: list[MergedPrimarySourceIdentifier] = []
-    dataType: list[MergedPrimarySourceIdentifier] = []
-    description: list[MergedPrimarySourceIdentifier] = []
-    label: list[MergedPrimarySourceIdentifier] = []
-    usedIn: list[MergedPrimarySourceIdentifier] = []
-    valueSet: list[MergedPrimarySourceIdentifier] = []
+    belongsTo: Sequence[MergedPrimarySourceIdentifier] = []
+    codingSystem: Sequence[MergedPrimarySourceIdentifier] = []
+    dataType: Sequence[MergedPrimarySourceIdentifier] = []
+    description: Sequence[MergedPrimarySourceIdentifier] = []
+    label: Sequence[MergedPrimarySourceIdentifier] = []
+    usedIn: Sequence[MergedPrimarySourceIdentifier] = []
+    valueSet: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowVariable(_Stem, WorkflowRule):

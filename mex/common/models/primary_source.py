@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -50,14 +51,14 @@ class _OptionalLists(_Stem):
     """Optional lists of a primary source item with an arity of 0-n."""
 
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the primary source.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the primary source.",
             json_schema_extra={
@@ -66,7 +67,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     contributor: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="A person responsible for making contributions to the "
             "resource.",
@@ -74,14 +75,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A short description of the primary source.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     documentation: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description="A link to a document documenting the primary source.",
             json_schema_extra={
@@ -90,7 +91,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     locatedAt: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A URL that leads to the primary source or a filepath, where the "
@@ -99,7 +100,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     unitInCharge: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "This property refers to agents who assume responsibility and "
@@ -117,7 +118,7 @@ class _RequiredLists(_Stem):
     """Required lists of a primary source item with an arity of 1-n."""
 
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the primary source.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -130,7 +131,7 @@ class _SparseLists(_Stem):
     """Required lists of a primary source item relaxed to an arity of 0-n."""
 
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the primary source.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -156,7 +157,7 @@ class _VariadicValues(_Stem):
     """All values of a primary source item as lists with an arity of 0-n."""
 
     version: Annotated[
-        list[VersionStr],
+        Sequence[VersionStr],
         Field(
             description=(
                 "The version of the primary source, e.g. the date of the last "
@@ -333,15 +334,15 @@ class PreventivePrimarySource(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventivePrimarySource"], Field(alias="$type", frozen=True)
     ] = "PreventivePrimarySource"
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    contact: list[MergedPrimarySourceIdentifier] = []
-    contributor: list[MergedPrimarySourceIdentifier] = []
-    description: list[MergedPrimarySourceIdentifier] = []
-    documentation: list[MergedPrimarySourceIdentifier] = []
-    locatedAt: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
-    unitInCharge: list[MergedPrimarySourceIdentifier] = []
-    version: list[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    contact: Sequence[MergedPrimarySourceIdentifier] = []
+    contributor: Sequence[MergedPrimarySourceIdentifier] = []
+    description: Sequence[MergedPrimarySourceIdentifier] = []
+    documentation: Sequence[MergedPrimarySourceIdentifier] = []
+    locatedAt: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
+    unitInCharge: Sequence[MergedPrimarySourceIdentifier] = []
+    version: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowPrimarySource(_Stem, WorkflowRule):

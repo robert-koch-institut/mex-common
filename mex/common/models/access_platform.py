@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -49,14 +50,14 @@ class _OptionalLists(_Stem):
     """Optional lists of an access platform item with an arity of 0-n."""
 
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the access platform.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the access platform.",
             json_schema_extra={
@@ -65,14 +66,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A short description of the access platform.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     landingPage: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A Web page that can be navigated to in a Web browser to gain "
@@ -83,7 +84,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     unitInCharge: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "This property refers to agents who assume responsibility and "
@@ -134,7 +135,7 @@ class _RequiredLists(_Stem):
     """Required lists of an access platform item with an arity of 1-n."""
 
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the access platform.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -163,7 +164,7 @@ class _SparseLists(_Stem):
     """Required lists of an access platform item relaxed to an arity of 0-n."""
 
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the access platform.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -191,7 +192,7 @@ class _VariadicValues(_Stem):
     """All values of an access platform item as lists with an arity of 0-n."""
 
     endpointDescription: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A description of the services available via the end-points, "
@@ -203,14 +204,14 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     endpointType: Annotated[
-        list[APIType],
+        Sequence[APIType],
         Field(
             description="The type of endpoint, e.g. REST.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     endpointURL: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "The root location or primary endpoint of the service "
@@ -220,7 +221,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     technicalAccessibility: Annotated[
-        list[TechnicalAccessibility],
+        Sequence[TechnicalAccessibility],
         Field(
             description=(
                 "Indicates if the platform can be accessed only within RKI "
@@ -399,16 +400,16 @@ class PreventiveAccessPlatform(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveAccessPlatform"], Field(alias="$type", frozen=True)
     ] = "PreventiveAccessPlatform"
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    contact: list[MergedPrimarySourceIdentifier] = []
-    description: list[MergedPrimarySourceIdentifier] = []
-    endpointDescription: list[MergedPrimarySourceIdentifier] = []
-    endpointType: list[MergedPrimarySourceIdentifier] = []
-    endpointURL: list[MergedPrimarySourceIdentifier] = []
-    landingPage: list[MergedPrimarySourceIdentifier] = []
-    technicalAccessibility: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
-    unitInCharge: list[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    contact: Sequence[MergedPrimarySourceIdentifier] = []
+    description: Sequence[MergedPrimarySourceIdentifier] = []
+    endpointDescription: Sequence[MergedPrimarySourceIdentifier] = []
+    endpointType: Sequence[MergedPrimarySourceIdentifier] = []
+    endpointURL: Sequence[MergedPrimarySourceIdentifier] = []
+    landingPage: Sequence[MergedPrimarySourceIdentifier] = []
+    technicalAccessibility: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
+    unitInCharge: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowAccessPlatform(_Stem, WorkflowRule):

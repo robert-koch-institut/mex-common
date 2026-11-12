@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -43,7 +44,7 @@ class _RequiredLists(_Stem):
     """Required lists of a contact point item with an arity of 1-n."""
 
     email: Annotated[
-        list[EmailStr],
+        Sequence[EmailStr],
         Field(
             description="The email address associated to the contact point.",
             json_schema_extra={
@@ -61,7 +62,7 @@ class _SparseLists(_Stem):
     """Required lists of a contact point item relaxed to an arity of 0-n."""
 
     email: Annotated[
-        list[EmailStr],
+        Sequence[EmailStr],
         Field(
             description="The email address associated to the contact point.",
             json_schema_extra={
@@ -229,7 +230,7 @@ class PreventiveContactPoint(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveContactPoint"], Field(alias="$type", frozen=True)
     ] = "PreventiveContactPoint"
-    email: list[MergedPrimarySourceIdentifier] = []
+    email: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowContactPoint(_Stem, WorkflowRule):

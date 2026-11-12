@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -110,28 +111,28 @@ class _VariadicValues(_Stem):
     """All values of a consent item as lists with an arity of 0-n."""
 
     hasConsentType: Annotated[
-        list[ConsentType],
+        Sequence[ConsentType],
         Field(
             description="The type of consent.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     hasConsentStatus: Annotated[
-        list[ConsentStatus],
+        Sequence[ConsentStatus],
         Field(
             description="Specifies the state or status of consent.",
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasConsentStatus"]},
         ),
     ] = []
     hasDataSubject: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="Indicates association with Data Subject.",
             json_schema_extra={"closeMatch": ["https://w3id.org/dpv#hasDataSubject"]},
         ),
     ] = []
     isIndicatedAtTime: Annotated[
-        list[YearMonthDayTime],
+        Sequence[YearMonthDayTime],
         Field(
             description=(
                 "Specifies the temporal information for when the entity has "
@@ -300,10 +301,10 @@ class PreventiveConsent(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveConsent"], Field(alias="$type", frozen=True)
     ] = "PreventiveConsent"
-    hasConsentType: list[MergedPrimarySourceIdentifier] = []
-    hasConsentStatus: list[MergedPrimarySourceIdentifier] = []
-    hasDataSubject: list[MergedPrimarySourceIdentifier] = []
-    isIndicatedAtTime: list[MergedPrimarySourceIdentifier] = []
+    hasConsentType: Sequence[MergedPrimarySourceIdentifier] = []
+    hasConsentStatus: Sequence[MergedPrimarySourceIdentifier] = []
+    hasDataSubject: Sequence[MergedPrimarySourceIdentifier] = []
+    isIndicatedAtTime: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowConsent(_Stem, WorkflowRule):

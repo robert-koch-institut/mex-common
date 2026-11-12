@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -54,7 +55,7 @@ class _OptionalLists(_Stem):
     """Optional lists of a resource series item with an arity of 0-n."""
 
     accessPlatform: Annotated[
-        list[MergedAccessPlatformIdentifier],
+        Sequence[MergedAccessPlatformIdentifier],
         Field(
             description="A platform from which the resource series can be accessed.",
             json_schema_extra={
@@ -63,14 +64,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the resource series.",
             json_schema_extra={
@@ -79,7 +80,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     documentation: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description="A link to a document documenting the resource series.",
             json_schema_extra={
@@ -88,14 +89,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="End date of the temporal coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
         ),
     ] = []
     hasLegalBasis: Annotated[
-        list[Text | Link],
+        Sequence[Text | Link],
         Field(
             description=(
                 "The legal basis used to justify processing of personal data. "
@@ -111,27 +112,27 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     keyword: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A keyword or tag describing the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     publisher: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description="The entity responsible for making the item available.",
         ),
     ] = []
     spatial: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Spatial coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Start date of the temporal coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
@@ -143,7 +144,7 @@ class _RequiredLists(_Stem):
     """Required lists of a resource series item with an arity of 1-n."""
 
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A text describing the nature of the resource series.",
             min_length=1,
@@ -151,7 +152,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the resource series.",
             min_length=1,
@@ -164,14 +165,14 @@ class _SparseLists(_Stem):
     """Required lists of a resource series item relaxed to an arity of 0-n."""
 
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A text describing the nature of the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -197,7 +198,7 @@ class _VariadicValues(_Stem):
     """All values of a resource series item as lists with an arity of 0-n."""
 
     accrualPeriodicity: Annotated[
-        list[Frequency],
+        Sequence[Frequency],
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
@@ -371,19 +372,19 @@ class PreventiveResourceSeries(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveResourceSeries"], Field(alias="$type", frozen=True)
     ] = "PreventiveResourceSeries"
-    accessPlatform: list[MergedPrimarySourceIdentifier] = []
-    accrualPeriodicity: list[MergedPrimarySourceIdentifier] = []
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    contact: list[MergedPrimarySourceIdentifier] = []
-    description: list[MergedPrimarySourceIdentifier] = []
-    documentation: list[MergedPrimarySourceIdentifier] = []
-    end: list[MergedPrimarySourceIdentifier] = []
-    hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
-    keyword: list[MergedPrimarySourceIdentifier] = []
-    publisher: list[MergedPrimarySourceIdentifier] = []
-    spatial: list[MergedPrimarySourceIdentifier] = []
-    start: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
+    accessPlatform: Sequence[MergedPrimarySourceIdentifier] = []
+    accrualPeriodicity: Sequence[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    contact: Sequence[MergedPrimarySourceIdentifier] = []
+    description: Sequence[MergedPrimarySourceIdentifier] = []
+    documentation: Sequence[MergedPrimarySourceIdentifier] = []
+    end: Sequence[MergedPrimarySourceIdentifier] = []
+    hasLegalBasis: Sequence[MergedPrimarySourceIdentifier] = []
+    keyword: Sequence[MergedPrimarySourceIdentifier] = []
+    publisher: Sequence[MergedPrimarySourceIdentifier] = []
+    spatial: Sequence[MergedPrimarySourceIdentifier] = []
+    start: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowResourceSeries(_Stem, WorkflowRule):

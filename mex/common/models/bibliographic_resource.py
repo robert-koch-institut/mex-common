@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -138,14 +139,14 @@ class _OptionalLists(_Stem):
     """Optional lists of a bibliographic resource item with an arity of 0-n."""
 
     abstract: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An account of the publication.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/abstract"]},
         ),
     ] = []
     alternateIdentifier: Annotated[
-        list[str],
+        Sequence[str],
         Field(
             description="Another identifier used for the reference.",
             json_schema_extra={
@@ -156,21 +157,21 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Another title for the publication.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     bibliographicResourceType: Annotated[
-        list[BibliographicResourceType],
+        Sequence[BibliographicResourceType],
         Field(
             description="The type of bibliographic resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     contributingUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "An organizational unit of RKI that is contributing to the publication."
@@ -179,7 +180,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     distribution: Annotated[
-        list[MergedDistributionIdentifier],
+        Sequence[MergedDistributionIdentifier],
         Field(
             description=(
                 "An available distribution of the publication ([DCAT, 2020-02-04]"
@@ -188,21 +189,21 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     editor: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="The editor of the publication.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     editorOfSeries: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="The editor of the series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     isbnIssn: Annotated[
-        list[IsbnIssnStr],
+        Sequence[IsbnIssnStr],
         Field(
             description=(
                 "Either the ISBN (for books) or ISSN (for periodicals) of the "
@@ -216,13 +217,13 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     journal: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The periodical in which the article was published.",
         ),
     ] = []
     keyword: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description=(
                 "A keyword or tag describing the resource ([DCAT, 2020-02-04]"
@@ -232,14 +233,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     language: Annotated[
-        list[Language],
+        Sequence[Language],
         Field(
             description="The language in which the publication was written.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/language"]},
         ),
     ] = []
     publisher: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description=(
                 "An entity responsible for making the publication available "
@@ -250,7 +251,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     repositoryURL: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "The handle of the publication in the repository, where the "
@@ -259,21 +260,21 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     subtitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The subtitle of the publication.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     titleOfBook: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The title of the book in which the book section is published.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
         ),
     ] = []
     titleOfSeries: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The title of the book series that the book belongs to.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -285,7 +286,7 @@ class _RequiredLists(_Stem):
     """Required lists of a bibliographic resource item with an arity of 1-n."""
 
     creator: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="The author of the publication.",
             min_length=1,
@@ -293,7 +294,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The full title of the publication.",
             min_length=1,
@@ -306,14 +307,14 @@ class _SparseLists(_Stem):
     """Required lists of a bibliographic resource item relaxed to an arity of 0-n."""
 
     creator: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="The author of the publication.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
         ),
     ] = []
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The full title of the publication.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -419,25 +420,25 @@ class _VariadicValues(_Stem):
     """All values of a bibliographic resource item as lists with an arity of 0-n."""
 
     accessRestriction: Annotated[
-        list[AccessRestriction],
+        Sequence[AccessRestriction],
         Field(
             description="Indicates how access to the publication is restricted.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     doi: Annotated[
-        list[DoiStr],
+        Sequence[DoiStr],
         Field(description="The Digital Object Identifier (DOI) of the publication."),
     ] = []
     edition: Annotated[
-        list[EditionStr], Field(description="The edition of the publication.")
+        Sequence[EditionStr], Field(description="The edition of the publication.")
     ] = []
     issue: Annotated[
-        list[VolumeOrIssueStr],
+        Sequence[VolumeOrIssueStr],
         Field(description="The issue of the periodical."),
     ] = []
     issued: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description=(
                 "Date of formal issuance of the publication ([DCT, 2020-01-20]"
@@ -447,7 +448,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     license: Annotated[
-        list[License],
+        Sequence[License],
         Field(
             description=(
                 "A legal document giving official permission to do something with "
@@ -458,15 +459,15 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     pages: Annotated[
-        list[PagesStr],
+        Sequence[PagesStr],
         Field(description="The range of pages or a single page."),
     ] = []
     publicationPlace: Annotated[
-        list[PublicationPlaceStr],
+        Sequence[PublicationPlaceStr],
         Field(description="The place where the document was issued."),
     ] = []
     publicationYear: Annotated[
-        list[Year],
+        Sequence[Year],
         Field(
             description="The year in which the publication was issued.",
             json_schema_extra={
@@ -475,7 +476,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     section: Annotated[
-        list[SectionStr],
+        Sequence[SectionStr],
         Field(
             description=(
                 "The name of the chapter of the publication that the book section "
@@ -484,11 +485,11 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     volume: Annotated[
-        list[VolumeOrIssueStr],
+        Sequence[VolumeOrIssueStr],
         Field(description="The volume of the periodical."),
     ] = []
     volumeOfSeries: Annotated[
-        list[VolumeOrIssueStr],
+        Sequence[VolumeOrIssueStr],
         Field(description="The volume of the periodical series."),
     ] = []
 
@@ -659,37 +660,37 @@ class PreventiveBibliographicResource(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveBibliographicResource"], Field(alias="$type", frozen=True)
     ] = "PreventiveBibliographicResource"
-    abstract: list[MergedPrimarySourceIdentifier] = []
-    accessRestriction: list[MergedPrimarySourceIdentifier] = []
-    alternateIdentifier: list[MergedPrimarySourceIdentifier] = []
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    bibliographicResourceType: list[MergedPrimarySourceIdentifier] = []
-    contributingUnit: list[MergedPrimarySourceIdentifier] = []
-    creator: list[MergedPrimarySourceIdentifier] = []
-    distribution: list[MergedPrimarySourceIdentifier] = []
-    doi: list[MergedPrimarySourceIdentifier] = []
-    edition: list[MergedPrimarySourceIdentifier] = []
-    editor: list[MergedPrimarySourceIdentifier] = []
-    editorOfSeries: list[MergedPrimarySourceIdentifier] = []
-    isbnIssn: list[MergedPrimarySourceIdentifier] = []
-    issue: list[MergedPrimarySourceIdentifier] = []
-    issued: list[MergedPrimarySourceIdentifier] = []
-    journal: list[MergedPrimarySourceIdentifier] = []
-    keyword: list[MergedPrimarySourceIdentifier] = []
-    language: list[MergedPrimarySourceIdentifier] = []
-    license: list[MergedPrimarySourceIdentifier] = []
-    pages: list[MergedPrimarySourceIdentifier] = []
-    publicationPlace: list[MergedPrimarySourceIdentifier] = []
-    publicationYear: list[MergedPrimarySourceIdentifier] = []
-    publisher: list[MergedPrimarySourceIdentifier] = []
-    repositoryURL: list[MergedPrimarySourceIdentifier] = []
-    section: list[MergedPrimarySourceIdentifier] = []
-    subtitle: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
-    titleOfBook: list[MergedPrimarySourceIdentifier] = []
-    titleOfSeries: list[MergedPrimarySourceIdentifier] = []
-    volume: list[MergedPrimarySourceIdentifier] = []
-    volumeOfSeries: list[MergedPrimarySourceIdentifier] = []
+    abstract: Sequence[MergedPrimarySourceIdentifier] = []
+    accessRestriction: Sequence[MergedPrimarySourceIdentifier] = []
+    alternateIdentifier: Sequence[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    bibliographicResourceType: Sequence[MergedPrimarySourceIdentifier] = []
+    contributingUnit: Sequence[MergedPrimarySourceIdentifier] = []
+    creator: Sequence[MergedPrimarySourceIdentifier] = []
+    distribution: Sequence[MergedPrimarySourceIdentifier] = []
+    doi: Sequence[MergedPrimarySourceIdentifier] = []
+    edition: Sequence[MergedPrimarySourceIdentifier] = []
+    editor: Sequence[MergedPrimarySourceIdentifier] = []
+    editorOfSeries: Sequence[MergedPrimarySourceIdentifier] = []
+    isbnIssn: Sequence[MergedPrimarySourceIdentifier] = []
+    issue: Sequence[MergedPrimarySourceIdentifier] = []
+    issued: Sequence[MergedPrimarySourceIdentifier] = []
+    journal: Sequence[MergedPrimarySourceIdentifier] = []
+    keyword: Sequence[MergedPrimarySourceIdentifier] = []
+    language: Sequence[MergedPrimarySourceIdentifier] = []
+    license: Sequence[MergedPrimarySourceIdentifier] = []
+    pages: Sequence[MergedPrimarySourceIdentifier] = []
+    publicationPlace: Sequence[MergedPrimarySourceIdentifier] = []
+    publicationYear: Sequence[MergedPrimarySourceIdentifier] = []
+    publisher: Sequence[MergedPrimarySourceIdentifier] = []
+    repositoryURL: Sequence[MergedPrimarySourceIdentifier] = []
+    section: Sequence[MergedPrimarySourceIdentifier] = []
+    subtitle: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
+    titleOfBook: Sequence[MergedPrimarySourceIdentifier] = []
+    titleOfSeries: Sequence[MergedPrimarySourceIdentifier] = []
+    volume: Sequence[MergedPrimarySourceIdentifier] = []
+    volumeOfSeries: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowBibliographicResource(_Stem, WorkflowRule):

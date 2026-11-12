@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -23,7 +24,7 @@ class WorkflowRule(BaseModel, extra="forbid"):
     """Base rule to define workflow rules like forbidden publishing targets."""
 
     forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
+        Sequence[PublishingTarget],
         Field(description="Targets to which the merged item should NOT be published."),
     ] = []
 

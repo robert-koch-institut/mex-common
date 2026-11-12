@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -44,7 +45,7 @@ class _OptionalLists(_Stem):
     """Optional lists of a distribution item with an arity of 0-n."""
 
     accessURL: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A URL of the resource that gives access to a distribution of the "
@@ -56,7 +57,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     downloadURL: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "The URL of the downloadable file in a given format. E.g. CSV file "
@@ -73,7 +74,7 @@ class _RequiredLists(_Stem):
     """Required lists of a distribution item with an arity of 1-n."""
 
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the distribution.",
             min_length=1,
@@ -86,7 +87,7 @@ class _SparseLists(_Stem):
     """Required lists of a distribution item relaxed to an arity of 0-n."""
 
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the distribution.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -198,14 +199,14 @@ class _VariadicValues(_Stem):
     """All values of a distribution item as lists with an arity of 0-n."""
 
     accessRestriction: Annotated[
-        list[AccessRestriction],
+        Sequence[AccessRestriction],
         Field(
             description="Indicates how access to the distribution is restricted.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/accessRights"]},
         ),
     ] = []
     accessService: Annotated[
-        list[MergedAccessPlatformIdentifier],
+        Sequence[MergedAccessPlatformIdentifier],
         Field(
             description=(
                 "A data service that gives access to the distribution of the "
@@ -218,7 +219,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     issued: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description=(
                 "Date of formal issuance of the resource ([DCT, 2020-01-20]"
@@ -228,7 +229,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     license: Annotated[
-        list[License],
+        Sequence[License],
         Field(
             description=(
                 "A legal document giving official permission to do something with "
@@ -239,7 +240,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     mediaType: Annotated[
-        list[MIMEType],
+        Sequence[MIMEType],
         Field(
             description=(
                 "The media type of the distribution as defined by "
@@ -256,7 +257,7 @@ class _VariadicValues(_Stem):
         ),
     ] = []
     modified: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description=(
                 "Date on which the resource was changed ([DCT, 2020-01-20]"
@@ -438,15 +439,15 @@ class PreventiveDistribution(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveDistribution"], Field(alias="$type", frozen=True)
     ] = "PreventiveDistribution"
-    accessRestriction: list[MergedPrimarySourceIdentifier] = []
-    accessService: list[MergedPrimarySourceIdentifier] = []
-    accessURL: list[MergedPrimarySourceIdentifier] = []
-    downloadURL: list[MergedPrimarySourceIdentifier] = []
-    issued: list[MergedPrimarySourceIdentifier] = []
-    license: list[MergedPrimarySourceIdentifier] = []
-    mediaType: list[MergedPrimarySourceIdentifier] = []
-    modified: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
+    accessRestriction: Sequence[MergedPrimarySourceIdentifier] = []
+    accessService: Sequence[MergedPrimarySourceIdentifier] = []
+    accessURL: Sequence[MergedPrimarySourceIdentifier] = []
+    downloadURL: Sequence[MergedPrimarySourceIdentifier] = []
+    issued: Sequence[MergedPrimarySourceIdentifier] = []
+    license: Sequence[MergedPrimarySourceIdentifier] = []
+    mediaType: Sequence[MergedPrimarySourceIdentifier] = []
+    modified: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowDistribution(_Stem, WorkflowRule):

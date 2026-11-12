@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -85,7 +86,7 @@ class _OptionalLists(_Stem):
     """Optional lists of a person item with an arity of 0-n."""
 
     affiliation: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description="An organization that the described person is affiliated with.",
             json_schema_extra={
@@ -97,7 +98,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     email: Annotated[
-        list[EmailStr],
+        Sequence[EmailStr],
         Field(
             description="The email address through which the person can be contacted.",
             json_schema_extra={
@@ -109,7 +110,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     familyName: Annotated[
-        list[FamilyNameStr],
+        Sequence[FamilyNameStr],
         Field(
             description="The name inherited from the family.",
             json_schema_extra={
@@ -121,7 +122,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     givenName: Annotated[
-        list[GivenNameStr],
+        Sequence[GivenNameStr],
         Field(
             description="The name given to the person e.g. by their parents.",
             json_schema_extra={
@@ -133,7 +134,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     isniId: Annotated[
-        list[IsniIdStr],
+        Sequence[IsniIdStr],
         Field(
             description=(
                 "The ISNI (International Standard Name Identifier) of the person."
@@ -142,7 +143,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     memberOf: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description="Organizational unit at RKI the person is associated with.",
             json_schema_extra={
@@ -153,7 +154,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     orcidId: Annotated[
-        list[OrcidIdStr],
+        Sequence[OrcidIdStr],
         Field(
             description="Identifier of a person from the ORCID authority file.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P496"]},
@@ -165,7 +166,7 @@ class _RequiredLists(_Stem):
     """Required lists of a person item with an arity of 1-n."""
 
     fullName: Annotated[
-        list[FullNameStr],
+        Sequence[FullNameStr],
         Field(
             description=(
                 "The full name of a person. Also used if the naming schema "
@@ -181,7 +182,7 @@ class _SparseLists(_Stem):
     """Required lists of a person item relaxed to an arity of 0-n."""
 
     fullName: Annotated[
-        list[FullNameStr],
+        Sequence[FullNameStr],
         Field(
             description=(
                 "The full name of a person. Also used if the naming schema "
@@ -356,14 +357,14 @@ class PreventivePerson(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventivePerson"], Field(alias="$type", frozen=True)
     ] = "PreventivePerson"
-    affiliation: list[MergedPrimarySourceIdentifier] = []
-    email: list[MergedPrimarySourceIdentifier] = []
-    familyName: list[MergedPrimarySourceIdentifier] = []
-    fullName: list[MergedPrimarySourceIdentifier] = []
-    givenName: list[MergedPrimarySourceIdentifier] = []
-    isniId: list[MergedPrimarySourceIdentifier] = []
-    memberOf: list[MergedPrimarySourceIdentifier] = []
-    orcidId: list[MergedPrimarySourceIdentifier] = []
+    affiliation: Sequence[MergedPrimarySourceIdentifier] = []
+    email: Sequence[MergedPrimarySourceIdentifier] = []
+    familyName: Sequence[MergedPrimarySourceIdentifier] = []
+    fullName: Sequence[MergedPrimarySourceIdentifier] = []
+    givenName: Sequence[MergedPrimarySourceIdentifier] = []
+    isniId: Sequence[MergedPrimarySourceIdentifier] = []
+    memberOf: Sequence[MergedPrimarySourceIdentifier] = []
+    orcidId: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowPerson(_Stem, WorkflowRule):

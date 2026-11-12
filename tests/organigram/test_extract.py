@@ -60,8 +60,13 @@ def test_get_extracted_unit_by_synonyms_multiple_units_same_label(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    extracted_child_unit.name.append(Text(value="SHARED Dept."))
-    extracted_parent_unit.name.append(Text(value="SHARED Dept."))
+    shared_name = Text(value="SHARED Dept.")
+    extracted_child_unit = extracted_child_unit.model_copy_validated(
+        {"name": [*extracted_child_unit.name, shared_name]}
+    )
+    extracted_parent_unit = extracted_parent_unit.model_copy_validated(
+        {"name": [*extracted_parent_unit.name, shared_name]}
+    )
 
     mapping = get_extracted_unit_by_synonyms(
         [extracted_child_unit, extracted_parent_unit]
@@ -77,8 +82,13 @@ def test_get_unit_merged_ids_by_synonyms_multiple_units_same_label(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    extracted_child_unit.name.append(Text(value="SHARED Dept."))
-    extracted_parent_unit.name.append(Text(value="SHARED Dept."))
+    shared_name = Text(value="SHARED Dept.")
+    extracted_child_unit = extracted_child_unit.model_copy_validated(
+        {"name": [*extracted_child_unit.name, shared_name]}
+    )
+    extracted_parent_unit = extracted_parent_unit.model_copy_validated(
+        {"name": [*extracted_parent_unit.name, shared_name]}
+    )
 
     mapping = get_unit_merged_ids_by_synonyms(
         [extracted_child_unit, extracted_parent_unit]

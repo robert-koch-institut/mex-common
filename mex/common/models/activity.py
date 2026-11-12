@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
@@ -53,28 +54,28 @@ class _OptionalLists(_Stem):
     """Optional lists of an activity item with an arity of 0-n."""
 
     abstract: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A short text describing the activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/abstract"]},
         ),
     ] = []
     activityType: Annotated[
-        list[ActivityType],
+        Sequence[ActivityType],
         Field(
             description="The type of the activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/type"]},
         ),
     ] = []
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Another name for the activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     documentation: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A link to a document that contains the documentation of the activity."
@@ -85,14 +86,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="(Planned) end of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P582"]},
         ),
     ] = []
     externalAssociate: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description=(
                 "An external institution that is associated with the activity."
@@ -101,7 +102,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     funderOrCommissioner: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description=(
                 "An agent that has either funded or commissioned the activity."
@@ -110,27 +111,27 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     fundingProgram: Annotated[
-        list[str],
+        Sequence[str],
         Field(
             description="The program in which the activity is funded, e.g. Horizon2020."
         ),
     ] = []
     involvedPerson: Annotated[
-        list[MergedPersonIdentifier],
+        Sequence[MergedPersonIdentifier],
         Field(
             description="A person involved in the activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     involvedUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description="An organizational unit that is involved in the activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
     isPartOfActivity: Annotated[
-        list[MergedActivityIdentifier],
+        Sequence[MergedActivityIdentifier],
         Field(
             description="Another activity of which this activity is part.",
             json_schema_extra={
@@ -142,7 +143,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     publication: Annotated[
-        list[MergedBibliographicResourceIdentifier],
+        Sequence[MergedBibliographicResourceIdentifier],
         Field(
             description="A publication related to the activity.",
             json_schema_extra={
@@ -151,28 +152,28 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     relatedActivity: Annotated[
-        list[MergedActivityIdentifier],
+        Sequence[MergedActivityIdentifier],
         Field(
             description="A related Activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/relation"]},
         ),
     ] = []
     shortName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A short name for, or an abbreviated title of, the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1813"]},
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="The start of the activity.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P580"]},
         ),
     ] = []
     succeeds: Annotated[
-        list[MergedActivityIdentifier],
+        Sequence[MergedActivityIdentifier],
         Field(
             description=(
                 "Another activity that ended with the start of the described "
@@ -186,14 +187,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     theme: Annotated[
-        list[Theme],
+        Sequence[Theme],
         Field(
             description="The main theme or subject of the activity.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#theme"]},
         ),
     ] = []
     website: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description="A web presentation of the activity, e.g. on the RKI homepage.",
             json_schema_extra={
@@ -210,7 +211,7 @@ class _RequiredLists(_Stem):
     """Required lists of an activity item with an arity of 1-n."""
 
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent serving as a contact for the activity.",
             min_length=1,
@@ -220,7 +221,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     responsibleUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description="A unit that is responsible for the activity.",
             min_length=1,
@@ -230,7 +231,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The official title of the activity.",
             min_length=1,
@@ -243,7 +244,7 @@ class _SparseLists(_Stem):
     """Required lists of an activity item relaxed to an arity of 0-n."""
 
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent serving as a contact for the activity.",
             json_schema_extra={
@@ -252,7 +253,7 @@ class _SparseLists(_Stem):
         ),
     ] = []
     responsibleUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description="A unit that is responsible for the activity.",
             json_schema_extra={
@@ -261,7 +262,7 @@ class _SparseLists(_Stem):
         ),
     ] = []
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The official title of the activity.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -433,27 +434,27 @@ class PreventiveActivity(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveActivity"], Field(alias="$type", frozen=True)
     ] = "PreventiveActivity"
-    abstract: list[MergedPrimarySourceIdentifier] = []
-    activityType: list[MergedPrimarySourceIdentifier] = []
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    contact: list[MergedPrimarySourceIdentifier] = []
-    documentation: list[MergedPrimarySourceIdentifier] = []
-    end: list[MergedPrimarySourceIdentifier] = []
-    externalAssociate: list[MergedPrimarySourceIdentifier] = []
-    funderOrCommissioner: list[MergedPrimarySourceIdentifier] = []
-    fundingProgram: list[MergedPrimarySourceIdentifier] = []
-    involvedPerson: list[MergedPrimarySourceIdentifier] = []
-    involvedUnit: list[MergedPrimarySourceIdentifier] = []
-    isPartOfActivity: list[MergedPrimarySourceIdentifier] = []
-    publication: list[MergedPrimarySourceIdentifier] = []
-    responsibleUnit: list[MergedPrimarySourceIdentifier] = []
-    relatedActivity: list[MergedPrimarySourceIdentifier] = []
-    shortName: list[MergedPrimarySourceIdentifier] = []
-    start: list[MergedPrimarySourceIdentifier] = []
-    succeeds: list[MergedPrimarySourceIdentifier] = []
-    theme: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
-    website: list[MergedPrimarySourceIdentifier] = []
+    abstract: Sequence[MergedPrimarySourceIdentifier] = []
+    activityType: Sequence[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    contact: Sequence[MergedPrimarySourceIdentifier] = []
+    documentation: Sequence[MergedPrimarySourceIdentifier] = []
+    end: Sequence[MergedPrimarySourceIdentifier] = []
+    externalAssociate: Sequence[MergedPrimarySourceIdentifier] = []
+    funderOrCommissioner: Sequence[MergedPrimarySourceIdentifier] = []
+    fundingProgram: Sequence[MergedPrimarySourceIdentifier] = []
+    involvedPerson: Sequence[MergedPrimarySourceIdentifier] = []
+    involvedUnit: Sequence[MergedPrimarySourceIdentifier] = []
+    isPartOfActivity: Sequence[MergedPrimarySourceIdentifier] = []
+    publication: Sequence[MergedPrimarySourceIdentifier] = []
+    responsibleUnit: Sequence[MergedPrimarySourceIdentifier] = []
+    relatedActivity: Sequence[MergedPrimarySourceIdentifier] = []
+    shortName: Sequence[MergedPrimarySourceIdentifier] = []
+    start: Sequence[MergedPrimarySourceIdentifier] = []
+    succeeds: Sequence[MergedPrimarySourceIdentifier] = []
+    theme: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
+    website: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowActivity(_Stem, WorkflowRule):
@@ -533,7 +534,7 @@ class ActivityMapping(_Stem, BaseMapping):
     )
     shortName: MappingFieldList[list[Text]] = MappingFieldList()
     start: MappingFieldList[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year]
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year]
     ] = MappingFieldList()
     succeeds: MappingFieldList[list[MergedActivityIdentifier]] = MappingFieldList()
     theme: MappingFieldList[list[Theme]] = MappingFieldList()

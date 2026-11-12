@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -46,14 +47,14 @@ class _OptionalLists(_Stem):
     """Optional lists of an organizational unit item with an arity of 0-n."""
 
     alternativeName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the organizational unit.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     email: Annotated[
-        list[EmailStr],
+        Sequence[EmailStr],
         Field(
             description=(
                 "The email address through which the organizational unit can be "
@@ -68,14 +69,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     shortName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A short name or abbreviation of the organizational unit.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1813"]},
         ),
     ] = []
     unitOf: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description=(
                 "Indicates an organization of which this unit is a part, e.g. a "
@@ -85,7 +86,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     website: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description=(
                 "A URL serving as the official web presentation of the "
@@ -106,7 +107,7 @@ class _RequiredLists(_Stem):
     """Required lists of an organizational unit item with an arity of 1-n."""
 
     name: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The official name of the organizational unit.",
             min_length=1,
@@ -119,7 +120,7 @@ class _SparseLists(_Stem):
     """Required lists of an organizational unit item relaxed to an arity of 0-n."""
 
     name: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The official name of the organizational unit.",
             json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/name"]},
@@ -144,7 +145,7 @@ class _VariadicValues(_Stem):
     """All values of an organizational unit item as lists with an arity of 0-n."""
 
     parentUnit: Annotated[
-        list[MergedOrganizationalUnitIdentifier],
+        Sequence[MergedOrganizationalUnitIdentifier],
         Field(
             description=(
                 "The described unit is a subunit of another organizational unit."
@@ -325,13 +326,13 @@ class PreventiveOrganizationalUnit(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveOrganizationalUnit"], Field(alias="$type", frozen=True)
     ] = "PreventiveOrganizationalUnit"
-    alternativeName: list[MergedPrimarySourceIdentifier] = []
-    email: list[MergedPrimarySourceIdentifier] = []
-    name: list[MergedPrimarySourceIdentifier] = []
-    parentUnit: list[MergedPrimarySourceIdentifier] = []
-    shortName: list[MergedPrimarySourceIdentifier] = []
-    unitOf: list[MergedPrimarySourceIdentifier] = []
-    website: list[MergedPrimarySourceIdentifier] = []
+    alternativeName: Sequence[MergedPrimarySourceIdentifier] = []
+    email: Sequence[MergedPrimarySourceIdentifier] = []
+    name: Sequence[MergedPrimarySourceIdentifier] = []
+    parentUnit: Sequence[MergedPrimarySourceIdentifier] = []
+    shortName: Sequence[MergedPrimarySourceIdentifier] = []
+    unitOf: Sequence[MergedPrimarySourceIdentifier] = []
+    website: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowOrganizationalUnit(_Stem, WorkflowRule):

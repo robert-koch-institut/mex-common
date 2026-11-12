@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -53,14 +54,14 @@ class _OptionalLists(_Stem):
     """Optional lists of a location item with an arity of 0-n."""
 
     geoNamesId: Annotated[
-        list[GeoNamesIdStr],
+        Sequence[GeoNamesIdStr],
         Field(
             description="Identifier in the GeoNames geographical database.",
             json_schema_extra={"exactMatch": ["http://www.wikidata.org/entity/P1566"]},
         ),
     ] = []
     wikidataId: Annotated[
-        list[WikidataIdStr],
+        Sequence[WikidataIdStr],
         Field(description="Identifier from Wikidata."),
     ] = []
 
@@ -69,7 +70,7 @@ class _RequiredLists(_Stem):
     """Required lists of a location item with an arity of 1-n."""
 
     name: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Name of the location.",
             min_length=1,
@@ -82,7 +83,7 @@ class _SparseLists(_Stem):
     """Required lists of a location item relaxed to an arity of 0-n."""
 
     name: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Name of the location.",
             json_schema_extra={"closeMatch": ["https://schema.org/name"]},
@@ -245,9 +246,9 @@ class PreventiveLocation(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveLocation"], Field(alias="$type", frozen=True)
     ] = "PreventiveLocation"
-    geoNamesId: list[MergedPrimarySourceIdentifier] = []
-    name: list[MergedPrimarySourceIdentifier] = []
-    wikidataId: list[MergedPrimarySourceIdentifier] = []
+    geoNamesId: Sequence[MergedPrimarySourceIdentifier] = []
+    name: Sequence[MergedPrimarySourceIdentifier] = []
+    wikidataId: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowLocation(_Stem, WorkflowRule):

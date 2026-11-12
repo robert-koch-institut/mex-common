@@ -1,6 +1,14 @@
 import functools
 import warnings
-from collections.abc import Callable, Container, Generator, Iterable, Iterator, Mapping
+from collections.abc import (
+    Callable,
+    Container,
+    Generator,
+    Iterable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 from dataclasses import dataclass
 from functools import lru_cache
 from itertools import zip_longest
@@ -105,8 +113,10 @@ def get_inner_types(
     Returns:
         All inner types found within the annotation
     """
-    # Check whether to unpack lists in addition to annotations and unions
-    types_to_unpack = [Annotated, Union, UnionType] + ([list] if unpack_list else [])
+    # Check whether to unpack lists (or sequences) in addition to annotations and unions
+    types_to_unpack = [Annotated, Union, UnionType] + (
+        [list, Sequence] if unpack_list else []
+    )
 
     # Get the unsubscripted version of the given type annotation
     origin_type = get_origin(annotation)
@@ -213,7 +223,8 @@ def get_list_field_names(model: type[PydanticBaseModel]) -> list[str]:
     for field_name, field_info in get_all_fields(model).items():
         field_types = get_inner_types(field_info.annotation, unpack_list=False)
         if any(
-            isinstance(field_type, type) and issubclass(field_type, list)
+            field_type is Sequence
+            or (isinstance(field_type, type) and issubclass(field_type, list))
             for field_type in field_types
         ):
             field_names.append(field_name)

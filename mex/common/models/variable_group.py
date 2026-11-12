@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -36,7 +37,7 @@ class _RequiredLists(_Stem):
     """Required lists of a variable group item with an arity of 1-n."""
 
     containedBy: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description=(
                 "The resource that the variable group is contained by. Used to "
@@ -47,7 +48,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     label: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the variable group.",
             min_length=1,
@@ -62,7 +63,7 @@ class _SparseLists(_Stem):
     """Required lists of a variable group item relaxed to an arity of 0-n."""
 
     containedBy: Annotated[
-        list[MergedResourceIdentifier],
+        Sequence[MergedResourceIdentifier],
         Field(
             description=(
                 "The resource that the variable group is contained by. Used to "
@@ -72,7 +73,7 @@ class _SparseLists(_Stem):
         ),
     ] = []
     label: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the variable group.",
             json_schema_extra={
@@ -239,8 +240,8 @@ class PreventiveVariableGroup(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveVariableGroup"], Field(alias="$type", frozen=True)
     ] = "PreventiveVariableGroup"
-    containedBy: list[MergedPrimarySourceIdentifier] = []
-    label: list[MergedPrimarySourceIdentifier] = []
+    containedBy: Sequence[MergedPrimarySourceIdentifier] = []
+    label: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowVariableGroup(_Stem, WorkflowRule):
