@@ -1,8 +1,7 @@
 import json
-from collections.abc import Generator, Iterable, Sequence
+from collections.abc import Generator, Iterable
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 
-from pydantic import BaseModel as PydanticBaseModel
 from requests import RequestException
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -55,27 +54,6 @@ class BackendApiSink(BaseSink):
         ]
         for future in as_completed(futures):
             yield from future.result()
-
-    @staticmethod
-    def is_supported(
-        model_list: Sequence[PydanticBaseModel],
-    ) -> bool:
-        """Return whether the given list only contains models the backend can handle.
-
-        The backend API can only handle extracted models and rule-set responses,
-        not merged models or any other pydantic models.
-
-        Args:
-            model_list: List of models to check for backend compatibility.
-
-        Returns:
-            True if all models are supported (extracted models or rule-set responses),
-            False otherwise.
-        """
-        return all(
-            isinstance(item, AnyExtractedModel | AnyRuleSetResponse)
-            for item in model_list
-        )
 
     @staticmethod
     def load_chunk(

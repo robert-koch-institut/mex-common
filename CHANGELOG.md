@@ -49,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- remove unused `is_supported` method from `BackendApiConnector`
+
 ### Fixed
 
 - merged items can no longer be superseded by themselves
