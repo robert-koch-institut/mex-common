@@ -534,7 +534,7 @@ class ActivityMapping(_Stem, BaseMapping):
     )
     shortName: MappingFieldList[list[Text]] = MappingFieldList()
     start: MappingFieldList[
-        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year]
+        list[YearMonthDayTime | YearMonthDay | YearMonth | Year]
     ] = MappingFieldList()
     succeeds: MappingFieldList[list[MergedActivityIdentifier]] = MappingFieldList()
     theme: MappingFieldList[list[Theme]] = MappingFieldList()

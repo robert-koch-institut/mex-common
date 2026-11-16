@@ -1299,7 +1299,7 @@ class ResourceMapping(_Stem, BaseMapping):
     alternativeTitle: MappingFieldList[list[Text]] = MappingFieldList()
     analytics: MappingFieldList[list[MergedDistributionIdentifier]] = MappingFieldList()
     anonymizationPseudonymization: MappingFieldList[
-        Sequence[AnonymizationPseudonymization]
+        list[AnonymizationPseudonymization]
     ] = MappingFieldList()
     conformsTo: MappingFieldList[list[ConformsToStr]] = MappingFieldList()
     contributingUnit: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
