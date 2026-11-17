@@ -178,7 +178,7 @@ def test_transform_wikidata_location_to_extracted_location(
     assert extracted_location
     assert extracted_location.model_dump() == {
         "entityType": "ExtractedLocation",
-        "geoNamesId": ["http://www.geonames.org/2921044"],
+        "geoNamesId": ["https://www.geonames.org/2921044"],
         "hadPrimarySource": Joker(),
         "identifier": Joker(),
         "identifierInPrimarySource": "Q183",

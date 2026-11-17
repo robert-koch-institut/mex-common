@@ -1,7 +1,8 @@
 from uuid import UUID
 
 import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ValidationError
 from pytest import MonkeyPatch
 
 from mex.common.types import IDENTIFIER_PATTERN, Identifier
@@ -11,7 +12,7 @@ class DummyIdentifier(Identifier):
     pass
 
 
-class DummyModel(BaseModel):
+class DummyModel(PydanticBaseModel):
     id: DummyIdentifier
 
 

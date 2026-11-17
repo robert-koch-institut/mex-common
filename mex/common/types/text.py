@@ -4,7 +4,8 @@ from typing import Annotated, Any
 
 from langdetect.detector_factory import PROFILES_DIRECTORY, DetectorFactory
 from langdetect.lang_detect_exception import LangDetectException
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import Field, model_validator
 
 
 @lru_cache(maxsize=1)
@@ -55,7 +56,7 @@ def get_language_by_confidence(
         return None
 
 
-class Text(BaseModel):
+class Text(PydanticBaseModel):
     """Type class for text objects.
 
     Texts can be parsed from nested JSON objects or from raw strings.

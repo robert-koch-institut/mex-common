@@ -1,5 +1,7 @@
+from collections.abc import Sequence
 from typing import Annotated
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field
 
 from mex.common.models.base.model import BaseModel
@@ -22,10 +24,18 @@ class WorkflowRule(BaseModel, extra="forbid"):
     """Base rule to define workflow rules like forbidden publishing targets."""
 
     forbiddenPublishingTarget: Annotated[
-        list[PublishingTarget],
+        Sequence[PublishingTarget],
         Field(description="Targets to which the merged item should NOT be published."),
     ] = []
 
 
-class RuleSet(BaseModel, extra="forbid"):
-    """Base class for a set of additive, subtractive, preventive & workflow rule."""
+class RuleSet(
+    PydanticBaseModel,
+    extra="forbid",
+    populate_by_name=True,
+    validate_assignment=True,
+):
+    """Base class for a set of additive, subtractive, preventive & workflow rule.
+
+    Rule sets are mutable containers, so they are not based on our `BaseModel`.
+    """

@@ -2,7 +2,6 @@ from collections.abc import Generator
 from typing import TypeVar
 
 from mex.common.exceptions import MExError
-from mex.common.logging import logger
 from mex.common.models import (
     ExtractedOrganizationalUnit,
     MergedOrganizationalUnit,
@@ -10,10 +9,9 @@ from mex.common.models import (
 from mex.common.organigram.extract import extract_organigram_units
 from mex.common.organigram.models import OrganigramUnit
 from mex.common.organigram.transform import (
-    transform_organigram_unit_to_extracted_organizational_unit,
+    transform_organigram_units_to_organizational_units,
 )
 from mex.common.types import (
-    MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPrimarySourceIdentifier,
 )
@@ -58,39 +56,9 @@ def get_extracted_organizational_unit_with_parents(
             msg = f"could not find unit for {name}"
             raise MExError(msg)
 
-    organigram_unit_with_parents = list(with_parents(name))
-    extracted_unit_by_id_in_primary_source: dict[str, ExtractedOrganizationalUnit] = {}
-    parent_id_in_primary_source_by_id_in_primary_source: dict[str, str] = {}
-
-    for unit in organigram_unit_with_parents:
-        extracted_unit = transform_organigram_unit_to_extracted_organizational_unit(
-            unit, primary_source_id, rki_organization_id
-        )
-        extracted_unit_by_id_in_primary_source[unit.identifier] = extracted_unit
-        if parent_identifier_in_primary_source := unit.parentUnit:
-            parent_id_in_primary_source_by_id_in_primary_source[unit.identifier] = (
-                parent_identifier_in_primary_source
-            )
-
-    for extracted_unit in extracted_unit_by_id_in_primary_source.values():
-        identifier_in_primary_source = extracted_unit.identifierInPrimarySource
-        if (  # noqa: SIM102
-            parent_identifier_in_primary_source
-            := parent_id_in_primary_source_by_id_in_primary_source.get(
-                identifier_in_primary_source
-            )
-        ):
-            if parent_unit := extracted_unit_by_id_in_primary_source.get(
-                parent_identifier_in_primary_source
-            ):
-                extracted_unit.parentUnit = MergedOrganizationalUnitIdentifier(
-                    parent_unit.stableTargetId
-                )
-    logger.info(
-        "transformed %s organizational units",
-        len(extracted_unit_by_id_in_primary_source),
+    return transform_organigram_units_to_organizational_units(
+        with_parents(name), primary_source_id, rki_organization_id
     )
-    return list(extracted_unit_by_id_in_primary_source.values())
 
 
 def build_child_map(units: list[_TOrganizationalUnit]) -> dict[str, list[str]]:

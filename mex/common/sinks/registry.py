@@ -2,9 +2,8 @@ from collections.abc import Generator, Iterable
 from itertools import tee
 from typing import Final
 
-from mex.common.models import AnyExtractedModel, AnyMergedModel, AnyRuleSetResponse
 from mex.common.settings import BaseSettings
-from mex.common.sinks.base import BaseSink
+from mex.common.sinks.base import BaseSink, LoadItemT
 from mex.common.types import Sink
 
 _SINK_REGISTRY: Final[dict[Sink, type["BaseSink"]]] = {}
@@ -35,8 +34,8 @@ class _MultiSink(BaseSink):
 
     def load(
         self,
-        items: Iterable[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse],
-    ) -> Generator[AnyExtractedModel | AnyMergedModel | AnyRuleSetResponse, None, None]:
+        items: Iterable[LoadItemT],
+    ) -> Generator[LoadItemT, None, None]:
         """Load the given items to multiple sinks simultaneously."""
         for sink, model_gen in zip(
             self._sinks, tee(items, len(self._sinks)), strict=True

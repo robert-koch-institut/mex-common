@@ -130,7 +130,7 @@ def transform_wikidata_location_to_extracted_location(
         wikidataId=_get_wikidata_entity_uri(wikidata_location.identifier),
         name=label,
         geoNamesId=[
-            f"http://www.geonames.org/{value}"
+            f"https://www.geonames.org/{value}"
             for claim in wikidata_location.claims.geonames_id
             if (value := claim.mainsnak.datavalue.value.text)
         ],
