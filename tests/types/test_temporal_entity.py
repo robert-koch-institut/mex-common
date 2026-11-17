@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Any
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel as PydanticBaseModel
 from pytz import timezone
 
 from mex.common.types import (
@@ -273,7 +273,7 @@ def test_temporal_entity_repr() -> None:
     )
 
 
-class DummyModel(BaseModel):
+class DummyModel(PydanticBaseModel):
     birthday: YearMonthDay
 
 

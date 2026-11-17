@@ -60,8 +60,13 @@ def test_get_extracted_unit_by_synonyms_multiple_units_same_label(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    extracted_child_unit.name.append(Text(value="SHARED Dept."))
-    extracted_parent_unit.name.append(Text(value="SHARED Dept."))
+    shared_name = Text(value="SHARED Dept.")
+    extracted_child_unit = extracted_child_unit.model_copy_validated(
+        {"name": [*extracted_child_unit.name, shared_name]}
+    )
+    extracted_parent_unit = extracted_parent_unit.model_copy_validated(
+        {"name": [*extracted_parent_unit.name, shared_name]}
+    )
 
     mapping = get_extracted_unit_by_synonyms(
         [extracted_child_unit, extracted_parent_unit]
@@ -77,8 +82,13 @@ def test_get_unit_merged_ids_by_synonyms_multiple_units_same_label(
     extracted_child_unit: ExtractedOrganizationalUnit,
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
-    extracted_child_unit.name.append(Text(value="SHARED Dept."))
-    extracted_parent_unit.name.append(Text(value="SHARED Dept."))
+    shared_name = Text(value="SHARED Dept.")
+    extracted_child_unit = extracted_child_unit.model_copy_validated(
+        {"name": [*extracted_child_unit.name, shared_name]}
+    )
+    extracted_parent_unit = extracted_parent_unit.model_copy_validated(
+        {"name": [*extracted_parent_unit.name, shared_name]}
+    )
 
     mapping = get_unit_merged_ids_by_synonyms(
         [extracted_child_unit, extracted_parent_unit]
@@ -109,8 +119,12 @@ def test_get_unit_merged_ids_by_emails_multiple_units_same_email(
     extracted_parent_unit: ExtractedOrganizationalUnit,
 ) -> None:
     """Test that multiple units with the same email are all included in the list."""
-    extracted_child_unit.email = ["shared@example.com"]
-    extracted_parent_unit.email = ["shared@example.com", "parent@example.com"]
+    extracted_child_unit = extracted_child_unit.model_copy_validated(
+        update={"email": ["shared@example.com"]}
+    )
+    extracted_parent_unit = extracted_parent_unit.model_copy_validated(
+        update={"email": ["shared@example.com", "parent@example.com"]}
+    )
 
     mapping = get_unit_merged_ids_by_emails(
         [extracted_child_unit, extracted_parent_unit]

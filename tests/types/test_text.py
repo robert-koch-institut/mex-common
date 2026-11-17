@@ -1,5 +1,6 @@
 import pytest
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ValidationError
 
 from mex.common.types import Text
 from mex.common.types.text import (
@@ -45,7 +46,7 @@ def test_text_language_detect() -> None:
     assert none_text.language is None
 
 
-class DummyModel(BaseModel):
+class DummyModel(PydanticBaseModel):
     text: Text
 
 

@@ -1,12 +1,13 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, computed_field
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -97,36 +98,40 @@ WikidataIdStr = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of an organization item."""
+
     stemType: ClassVar[Annotated[Literal["Organization"], Field(frozen=True)]] = (
         "Organization"
     )
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of an organization item with an arity of 0-n."""
+
     alternativeName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the organization.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     country: Annotated[
-        list[MergedLocationIdentifier],
+        Sequence[MergedLocationIdentifier],
         Field(
             description="Country or territory that this organization is in.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P17"]},
         ),
     ] = []
     geprisId: Annotated[
-        list[GeprisIdStr],
+        Sequence[GeprisIdStr],
         Field(
             description="Identifier from GEPRIS authority file.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P4871"]},
         ),
     ] = []
     gndId: Annotated[
-        list[GndIdStr],
+        Sequence[GndIdStr],
         Field(
             description=(
                 "An identifier from the German authority file named Gemeinsame "
@@ -136,7 +141,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     isniId: Annotated[
-        list[IsniIdStr],
+        Sequence[IsniIdStr],
         Field(
             description=(
                 "The ISNI (International Standard Name Identifier) of the organization."
@@ -145,35 +150,37 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     rorId: Annotated[
-        list[RorIdStr],
+        Sequence[RorIdStr],
         Field(
             description="An identifier of the Research Organization Registry (ROR).",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P6782"]},
         ),
     ] = []
     shortName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A short name or abbreviation of the organization.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1813"]},
         ),
     ] = []
     viafId: Annotated[
-        list[ViafIdStr],
+        Sequence[ViafIdStr],
         Field(
             description="Identifier from VIAF (Virtual Authority File).",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P214"]},
         ),
     ] = []
     wikidataId: Annotated[
-        list[WikidataIdStr],
+        Sequence[WikidataIdStr],
         Field(description="Identifier from Wikidata."),
     ] = []
 
 
 class _RequiredLists(_Stem):
+    """Required lists of an organization item with an arity of 1-n."""
+
     officialName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The official name of the organization.",
             min_length=1,
@@ -183,8 +190,10 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of an organization item relaxed to an arity of 0-n."""
+
     officialName: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The official name of the organization.",
             json_schema_extra={"closeMatch": ["http://www.wikidata.org/entity/P1448"]},
@@ -256,7 +265,7 @@ class ExtractedOrganization(BaseOrganization, ExtractedData):
         return self._get_stable_target_id(MergedOrganizationIdentifier)
 
 
-class MergedOrganization(BaseOrganization, MergedItem):
+class MergedOrganization(_SparseLists, BaseOrganization, MergedItem):
     """The result of merging all extracted items and rules for an organization."""
 
     entityType: Annotated[
@@ -360,16 +369,16 @@ class PreventiveOrganization(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveOrganization"], Field(alias="$type", frozen=True)
     ] = "PreventiveOrganization"
-    alternativeName: list[MergedPrimarySourceIdentifier] = []
-    country: list[MergedPrimarySourceIdentifier] = []
-    geprisId: list[MergedPrimarySourceIdentifier] = []
-    gndId: list[MergedPrimarySourceIdentifier] = []
-    isniId: list[MergedPrimarySourceIdentifier] = []
-    officialName: list[MergedPrimarySourceIdentifier] = []
-    rorId: list[MergedPrimarySourceIdentifier] = []
-    shortName: list[MergedPrimarySourceIdentifier] = []
-    viafId: list[MergedPrimarySourceIdentifier] = []
-    wikidataId: list[MergedPrimarySourceIdentifier] = []
+    alternativeName: Sequence[MergedPrimarySourceIdentifier] = []
+    country: Sequence[MergedPrimarySourceIdentifier] = []
+    geprisId: Sequence[MergedPrimarySourceIdentifier] = []
+    gndId: Sequence[MergedPrimarySourceIdentifier] = []
+    isniId: Sequence[MergedPrimarySourceIdentifier] = []
+    officialName: Sequence[MergedPrimarySourceIdentifier] = []
+    rorId: Sequence[MergedPrimarySourceIdentifier] = []
+    shortName: Sequence[MergedPrimarySourceIdentifier] = []
+    viafId: Sequence[MergedPrimarySourceIdentifier] = []
+    wikidataId: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowOrganization(_Stem, WorkflowRule):

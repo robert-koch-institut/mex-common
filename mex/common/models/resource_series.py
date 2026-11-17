@@ -1,12 +1,13 @@
+from collections.abc import Sequence
 from typing import Annotated, ClassVar, Literal
 
 from pydantic import AfterValidator, Field, computed_field
+from pydantic import BaseModel as PydanticBaseModel
 
 from mex.common.models.base.extracted_data import ExtractedData
 from mex.common.models.base.filter import BaseFilter, FilterField
 from mex.common.models.base.mapping import BaseMapping, MappingFieldList
 from mex.common.models.base.merged_item import MergedItem
-from mex.common.models.base.model import BaseModel
 from mex.common.models.base.preview_item import PreviewItem
 from mex.common.models.base.rules import (
     AdditiveRule,
@@ -42,15 +43,19 @@ AnyContactIdentifier = Annotated[
 ]
 
 
-class _Stem(BaseModel):
+class _Stem(PydanticBaseModel):
+    """Pin the stem type for all classes of a resource series item."""
+
     stemType: ClassVar[Annotated[Literal["ResourceSeries"], Field(frozen=True)]] = (
         "ResourceSeries"
     )
 
 
 class _OptionalLists(_Stem):
+    """Optional lists of a resource series item with an arity of 0-n."""
+
     accessPlatform: Annotated[
-        list[MergedAccessPlatformIdentifier],
+        Sequence[MergedAccessPlatformIdentifier],
         Field(
             description="A platform from which the resource series can be accessed.",
             json_schema_extra={
@@ -59,14 +64,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     alternativeTitle: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="An alternative name for the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/alternative"]},
         ),
     ] = []
     contact: Annotated[
-        list[AnyContactIdentifier],
+        Sequence[AnyContactIdentifier],
         Field(
             description="An agent that serves as a contact for the resource series.",
             json_schema_extra={
@@ -75,7 +80,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     documentation: Annotated[
-        list[Link],
+        Sequence[Link],
         Field(
             description="A link to a document documenting the resource series.",
             json_schema_extra={
@@ -84,14 +89,14 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     end: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="End date of the temporal coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#endDate"]},
         ),
     ] = []
     hasLegalBasis: Annotated[
-        list[Text | Link],
+        Sequence[Text | Link],
         Field(
             description=(
                 "The legal basis used to justify processing of personal data. "
@@ -107,27 +112,27 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     keyword: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A keyword or tag describing the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     publisher: Annotated[
-        list[MergedOrganizationIdentifier],
+        Sequence[MergedOrganizationIdentifier],
         Field(
             description="The entity responsible for making the item available.",
         ),
     ] = []
     spatial: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="Spatial coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
     start: Annotated[
-        list[YearMonthDayTime | YearMonthDay | YearMonth | Year],
+        Sequence[YearMonthDayTime | YearMonthDay | YearMonth | Year],
         Field(
             description="Start date of the temporal coverage of the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#startDate"]},
@@ -136,8 +141,10 @@ class _OptionalLists(_Stem):
 
 
 class _RequiredLists(_Stem):
+    """Required lists of a resource series item with an arity of 1-n."""
+
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A text describing the nature of the resource series.",
             min_length=1,
@@ -145,7 +152,7 @@ class _RequiredLists(_Stem):
         ),
     ]
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the resource series.",
             min_length=1,
@@ -155,15 +162,17 @@ class _RequiredLists(_Stem):
 
 
 class _SparseLists(_Stem):
+    """Required lists of a resource series item relaxed to an arity of 0-n."""
+
     description: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="A text describing the nature of the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
         ),
     ] = []
     title: Annotated[
-        list[Text],
+        Sequence[Text],
         Field(
             description="The name of the resource series.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/title"]},
@@ -172,6 +181,8 @@ class _SparseLists(_Stem):
 
 
 class _OptionalValues(_Stem):
+    """Optional values of a resource series item with an arity of 0-1."""
+
     accrualPeriodicity: Annotated[
         Frequency | None,
         Field(
@@ -184,8 +195,10 @@ class _OptionalValues(_Stem):
 
 
 class _VariadicValues(_Stem):
+    """All values of a resource series item as lists with an arity of 0-n."""
+
     accrualPeriodicity: Annotated[
-        list[Frequency],
+        Sequence[Frequency],
         Field(
             description="The frequency with which items are added to a collection.",
             json_schema_extra={
@@ -251,7 +264,7 @@ class ExtractedResourceSeries(BaseResourceSeries, ExtractedData):
         return self._get_stable_target_id(MergedResourceSeriesIdentifier)
 
 
-class MergedResourceSeries(BaseResourceSeries, MergedItem):
+class MergedResourceSeries(_SparseLists, BaseResourceSeries, MergedItem):
     """The result of merging all extracted items and rules for a resource series."""
 
     entityType: Annotated[
@@ -359,19 +372,19 @@ class PreventiveResourceSeries(_Stem, PreventiveRule):
     entityType: Annotated[
         Literal["PreventiveResourceSeries"], Field(alias="$type", frozen=True)
     ] = "PreventiveResourceSeries"
-    accessPlatform: list[MergedPrimarySourceIdentifier] = []
-    accrualPeriodicity: list[MergedPrimarySourceIdentifier] = []
-    alternativeTitle: list[MergedPrimarySourceIdentifier] = []
-    contact: list[MergedPrimarySourceIdentifier] = []
-    description: list[MergedPrimarySourceIdentifier] = []
-    documentation: list[MergedPrimarySourceIdentifier] = []
-    end: list[MergedPrimarySourceIdentifier] = []
-    hasLegalBasis: list[MergedPrimarySourceIdentifier] = []
-    keyword: list[MergedPrimarySourceIdentifier] = []
-    publisher: list[MergedPrimarySourceIdentifier] = []
-    spatial: list[MergedPrimarySourceIdentifier] = []
-    start: list[MergedPrimarySourceIdentifier] = []
-    title: list[MergedPrimarySourceIdentifier] = []
+    accessPlatform: Sequence[MergedPrimarySourceIdentifier] = []
+    accrualPeriodicity: Sequence[MergedPrimarySourceIdentifier] = []
+    alternativeTitle: Sequence[MergedPrimarySourceIdentifier] = []
+    contact: Sequence[MergedPrimarySourceIdentifier] = []
+    description: Sequence[MergedPrimarySourceIdentifier] = []
+    documentation: Sequence[MergedPrimarySourceIdentifier] = []
+    end: Sequence[MergedPrimarySourceIdentifier] = []
+    hasLegalBasis: Sequence[MergedPrimarySourceIdentifier] = []
+    keyword: Sequence[MergedPrimarySourceIdentifier] = []
+    publisher: Sequence[MergedPrimarySourceIdentifier] = []
+    spatial: Sequence[MergedPrimarySourceIdentifier] = []
+    start: Sequence[MergedPrimarySourceIdentifier] = []
+    title: Sequence[MergedPrimarySourceIdentifier] = []
 
 
 class WorkflowResourceSeries(_Stem, WorkflowRule):
