@@ -91,9 +91,9 @@ def test_get_wikidata_organization_with_locations(
 
     expected_qids = set(country_qids)
 
-    assert [
-        location.identifierInPrimarySource for location in result.locations
-    ] == list(expected_qids)
+    assert sorted(
+        [location.identifierInPrimarySource for location in result.locations]
+    ) == sorted(expected_qids)
 
     assert all(
         location.hadPrimarySource == primary_source.stableTargetId
