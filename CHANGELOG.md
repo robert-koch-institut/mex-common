@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [3.8.0] - 2026-11-17
+
+### Added
+
 - `BaseModel.model_copy_validated` to derive changed copies of frozen models, unlike
   `model_copy` this runs all validators on the result
 - optional `parent_unit` argument for
@@ -45,8 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - organigram units get their parent unit assigned when they are created and
   `get_extracted_organizational_unit_with_parents` reuses the organigram transform
 
-### Deprecated
-
 ### Removed
 
 - remove unused `is_supported` method from `BackendApiConnector`
@@ -64,8 +76,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove redundant field definitions, so the field order of additive and preview
   consents and of preview and subtractive bibliographic resources matches the base
 - fixed geonames regex pattern
-
-### Security
 
 ## [3.7.0] - 2026-11-09
 
