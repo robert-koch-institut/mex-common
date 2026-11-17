@@ -40,13 +40,13 @@ def get_wikidata_organization_with_locations(
 
     wikidata_organization = get_wikidata_organization(wikidata_id)
 
-    country_qids = dict.fromkeys(
+    country_qids = {
         claim.mainsnak.datavalue.value.id
         for claim in wikidata_organization.claims.country_id
         if claim.mainsnak.datavalue.value.id is not None
-    )
+    }
 
-    extracted_locations: list[ExtractedLocation] = []
+    extracted_locations: set[ExtractedLocation] = set()
 
     for qid in country_qids:
         wikidata_location = get_wikidata_location(qid)
@@ -57,7 +57,7 @@ def get_wikidata_organization_with_locations(
         )
 
         if extracted_location is not None:
-            extracted_locations.append(extracted_location)
+            extracted_locations.add(extracted_location)
 
     extracted_organization = transform_wikidata_organization_to_extracted_organization(
         wikidata_organization,
@@ -70,6 +70,6 @@ def get_wikidata_organization_with_locations(
 
     return WikidataOrganizationResult(
         organization=extracted_organization,
-        locations=extracted_locations,
+        locations=list(extracted_locations),
         primary_source=primary_source,
     )
