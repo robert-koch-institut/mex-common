@@ -1,8 +1,14 @@
 from typing import Annotated
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, model_validator
 
-from mex.common.models import BaseModel
+from mex.common.models import (
+    BaseModel,
+    ExtractedLocation,
+    ExtractedOrganization,
+    ExtractedPrimarySource,
+)
 
 
 class Value(BaseModel):
@@ -10,6 +16,7 @@ class Value(BaseModel):
 
     text: str | None = None
     language: str | None = None
+    id: str | None = None
 
 
 class DataValue(BaseModel):
@@ -51,12 +58,13 @@ class Claim(BaseModel):
 class ClaimsOrganizations(BaseModel):
     """model class for Claims for Wikidata Organizations."""
 
-    isni_id: Annotated[list[Claim], Field(alias="P213")] = []
-    ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
-    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
-    native_label: Annotated[list[Claim], Field(alias="P1705")] = []
+    country_id: Annotated[list[Claim], Field(alias="P17")] = []
     gepris_id: Annotated[list[Claim], Field(alias="P4871")] = []
     gnd_id: Annotated[list[Claim], Field(alias="P227")] = []
+    isni_id: Annotated[list[Claim], Field(alias="P213")] = []
+    native_label: Annotated[list[Claim], Field(alias="P1705")] = []
+    ror_id: Annotated[list[Claim], Field(alias="P6782")] = []
+    short_name: Annotated[list[Claim], Field(alias="P1813")] = []
     viaf_id: Annotated[list[Claim], Field(alias="P214")] = []
 
 
@@ -110,3 +118,11 @@ class WikidataLocation(BaseModel):
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels
     claims: ClaimsLocations
+
+
+class WikidataOrganizationResult(PydanticBaseModel):
+    """Helper class to return all needed items for an extracted organization."""
+
+    organization: ExtractedOrganization
+    locations: list[ExtractedLocation]
+    primary_source: ExtractedPrimarySource

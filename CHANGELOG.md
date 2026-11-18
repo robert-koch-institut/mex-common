@@ -9,11 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- BREAKING: added a new helper to get_wikidata_organization_with_locations returning a WikidataOrganizationResult
+
 ### Changes
 
 ### Deprecated
 
 ### Removed
+
+- BREAKING: removed transform_wikidata_organizations_to_extracted_organizations (not used anymore)
 
 ### Fixed
 
