@@ -96,11 +96,10 @@ def test_contains_only_types(
     types: list[type],
     expected: bool,  # noqa: FBT001
 ) -> None:
-    field_info = GenericFieldInfo(
-        alias=None,
-        annotation=annotation,
-        frozen=False,
-    )
+    class DummyModel(BaseModel):
+        attribute: annotation
+
+    field_info = get_all_fields(DummyModel)["attribute"]
     assert contains_only_types(field_info, *types) == expected
 
 

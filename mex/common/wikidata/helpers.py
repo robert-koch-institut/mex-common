@@ -1,10 +1,5 @@
-from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from mex.common.models import (
-    ExtractedLocation,
-    ExtractedOrganization,
-    ExtractedPrimarySource,
-)
 from mex.common.primary_source.helpers import (
     get_extracted_primary_source_by_name,
 )
@@ -12,21 +7,16 @@ from mex.common.wikidata.extract import (
     get_wikidata_location,
     get_wikidata_organization,
 )
+from mex.common.wikidata.models import WikidataOrganizationResult
 from mex.common.wikidata.transform import (
     transform_wikidata_location_to_extracted_location,
     transform_wikidata_organization_to_extracted_organization,
 )
 
+if TYPE_CHECKING:
+    from mex.common.models import ExtractedLocation
+
 WIKIDATA_PRIMARY_SOURCE_NAME = "wikidata"
-
-
-@dataclass
-class WikidataOrganizationResult:
-    """Helper class to return all needed items for an extracted organization."""
-
-    organization: ExtractedOrganization
-    locations: list[ExtractedLocation]
-    primary_source: ExtractedPrimarySource
 
 
 def get_wikidata_organization_with_locations(

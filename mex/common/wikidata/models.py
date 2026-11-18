@@ -1,8 +1,14 @@
 from typing import Annotated
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Field, model_validator
 
-from mex.common.models import BaseModel
+from mex.common.models import (
+    BaseModel,
+    ExtractedLocation,
+    ExtractedOrganization,
+    ExtractedPrimarySource,
+)
 
 
 class Value(BaseModel):
@@ -112,3 +118,11 @@ class WikidataLocation(BaseModel):
     identifier: Annotated[str, Field(alias="id")]
     labels: Labels
     claims: ClaimsLocations
+
+
+class WikidataOrganizationResult(PydanticBaseModel):
+    """Helper class to return all needed items for an extracted organization."""
+
+    organization: ExtractedOrganization
+    locations: list[ExtractedLocation]
+    primary_source: ExtractedPrimarySource
