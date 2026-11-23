@@ -639,8 +639,9 @@ class BackendApiConnector(HTTPConnector):
         """Get LDAP persons via the backend that match the provided filters.
 
         This is a structured, exact-match lookup for deterministic identity
-        resolution. For interactive fuzzy search across persons and functional
-        accounts, see `search_person_or_contact_point_in_ldap`.
+        resolution, sent to the backend's `POST /ldap/_search`. Filter values may
+        contain `*` wildcards. For interactive fuzzy search across persons and
+        functional accounts, see `search_person_or_contact_point_in_ldap`.
 
         Args:
             display_name: Display name of the person
@@ -657,18 +658,19 @@ class BackendApiConnector(HTTPConnector):
             Paginated list of ExtractedPersons
         """
         response = self.request(
-            method="GET",
-            endpoint="ldap/persons",
-            params={
-                "display_name": display_name,
-                "employee_id": employee_id,
-                "given_name": given_name,
+            method="POST",
+            endpoint="ldap/_search",
+            payload={
+                "entityType": ["ExtractedPerson"],
+                "displayName": display_name,
+                "employeeId": employee_id,
+                "givenName": given_name,
                 "mail": mail,
-                "object_guid": object_guid,
-                "sam_account_name": sam_account_name,
+                "objectGuid": object_guid,
+                "samAccountName": sam_account_name,
                 "surname": surname,
-                "offset": str(offset),
-                "limit": str(limit),
+                "skip": offset,
+                "limit": limit,
             },
         )
         return PaginatedItemsContainer[ExtractedPerson].model_validate(response)
@@ -730,8 +732,9 @@ class BackendApiConnector(HTTPConnector):
         """Get LDAP functional accounts via the backend that match the filters.
 
         This is a structured, exact-match lookup for deterministic identity
-        resolution. For interactive fuzzy search across persons and functional
-        accounts, see `search_person_or_contact_point_in_ldap`.
+        resolution, sent to the backend's `POST /ldap/_search`. The mail may
+        contain `*` wildcards. For interactive fuzzy search across persons and
+        functional accounts, see `search_person_or_contact_point_in_ldap`.
 
         Args:
             mail: Email address of the functional account
@@ -742,12 +745,13 @@ class BackendApiConnector(HTTPConnector):
             Paginated list of ExtractedContactPoints
         """
         response = self.request(
-            method="GET",
-            endpoint="ldap/functional-accounts",
-            params={
+            method="POST",
+            endpoint="ldap/_search",
+            payload={
+                "entityType": ["ExtractedContactPoint"],
                 "mail": mail,
-                "offset": str(offset),
-                "limit": str(limit),
+                "skip": offset,
+                "limit": limit,
             },
         )
         return PaginatedItemsContainer[ExtractedContactPoint].model_validate(response)

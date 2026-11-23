@@ -682,7 +682,7 @@ def test_get_persons_mocked(
         object_guid="guid-42",
         sam_account_name="TintzmannM",
         surname="Tintzmann",
-        offset=0,
+        offset=3,
         limit=2,
     )
 
@@ -690,24 +690,28 @@ def test_get_persons_mocked(
     assert response.total == 1
 
     assert mocked_backend.call_args == call(
-        "GET",
-        "http://localhost:8080/v0/ldap/persons",
-        {
-            "display_name": "Meinrad Tintzmann",
-            "employee_id": "42",
-            "given_name": "Meinrad",
-            "mail": "TintzmannM@rki.de",
-            "object_guid": "guid-42",
-            "sam_account_name": "TintzmannM",
-            "surname": "Tintzmann",
-            "offset": "0",
-            "limit": "2",
-        },
+        "POST",
+        "http://localhost:8080/v0/ldap/_search",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
         timeout=10,
+        data=json.dumps(
+            {
+                "entityType": ["ExtractedPerson"],
+                "displayName": "Meinrad Tintzmann",
+                "employeeId": "42",
+                "givenName": "Meinrad",
+                "mail": "TintzmannM@rki.de",
+                "objectGuid": "guid-42",
+                "samAccountName": "TintzmannM",
+                "surname": "Tintzmann",
+                "skip": 3,
+                "limit": 2,
+            }
+        ),
     )
 
 
@@ -721,24 +725,28 @@ def test_get_persons_mocked_defaults(
     connector.get_persons()
 
     assert mocked_backend.call_args == call(
-        "GET",
-        "http://localhost:8080/v0/ldap/persons",
-        {
-            "display_name": "*",
-            "employee_id": "*",
-            "given_name": "*",
-            "mail": "*",
-            "object_guid": "*",
-            "sam_account_name": "*",
-            "surname": "*",
-            "offset": "0",
-            "limit": "10",
-        },
+        "POST",
+        "http://localhost:8080/v0/ldap/_search",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
         timeout=10,
+        data=json.dumps(
+            {
+                "entityType": ["ExtractedPerson"],
+                "displayName": "*",
+                "employeeId": "*",
+                "givenName": "*",
+                "mail": "*",
+                "objectGuid": "*",
+                "samAccountName": "*",
+                "surname": "*",
+                "skip": 0,
+                "limit": 10,
+            }
+        ),
     )
 
 
@@ -754,24 +762,28 @@ def test_get_person_mocked(
     assert response == extracted_person
 
     assert mocked_backend.call_args == call(
-        "GET",
-        "http://localhost:8080/v0/ldap/persons",
-        {
-            "display_name": "*",
-            "employee_id": "*",
-            "given_name": "*",
-            "mail": "*",
-            "object_guid": "*",
-            "sam_account_name": "*",
-            "surname": "Tintzmann",
-            "offset": "0",
-            "limit": "2",
-        },
+        "POST",
+        "http://localhost:8080/v0/ldap/_search",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
         timeout=10,
+        data=json.dumps(
+            {
+                "entityType": ["ExtractedPerson"],
+                "displayName": "*",
+                "employeeId": "*",
+                "givenName": "*",
+                "mail": "*",
+                "objectGuid": "*",
+                "samAccountName": "*",
+                "surname": "Tintzmann",
+                "skip": 0,
+                "limit": 2,
+            }
+        ),
     )
 
 
@@ -807,25 +819,59 @@ def test_get_functional_accounts_mocked(
 
     connector = BackendApiConnector.get()
     response = connector.get_functional_accounts(
-        mail="contactc@rki.de", offset=0, limit=2
+        mail="contactc@rki.de", offset=3, limit=2
     )
 
     assert response.items == [contact_point]
     assert response.total == 1
 
     assert mocked_backend.call_args == call(
-        "GET",
-        "http://localhost:8080/v0/ldap/functional-accounts",
-        {
-            "mail": "contactc@rki.de",
-            "offset": "0",
-            "limit": "2",
-        },
+        "POST",
+        "http://localhost:8080/v0/ldap/_search",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
         timeout=10,
+        data=json.dumps(
+            {
+                "entityType": ["ExtractedContactPoint"],
+                "mail": "contactc@rki.de",
+                "skip": 3,
+                "limit": 2,
+            }
+        ),
+    )
+
+
+def test_get_functional_accounts_mocked_defaults(
+    mocked_backend: MagicMock,
+    contact_point: ExtractedContactPoint,
+) -> None:
+    mocked_return = {"items": [contact_point.model_dump()], "total": 1}
+    mocked_backend.return_value.json.return_value = mocked_return
+
+    connector = BackendApiConnector.get()
+    connector.get_functional_accounts()
+
+    assert mocked_backend.call_args == call(
+        "POST",
+        "http://localhost:8080/v0/ldap/_search",
+        None,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "rki/mex",
+        },
+        timeout=10,
+        data=json.dumps(
+            {
+                "entityType": ["ExtractedContactPoint"],
+                "mail": "*",
+                "skip": 0,
+                "limit": 10,
+            }
+        ),
     )
 
 
@@ -842,18 +888,22 @@ def test_get_functional_account_mocked(
     assert response == contact_point
 
     assert mocked_backend.call_args == call(
-        "GET",
-        "http://localhost:8080/v0/ldap/functional-accounts",
-        {
-            "mail": "contactc@rki.de",
-            "offset": "0",
-            "limit": "2",
-        },
+        "POST",
+        "http://localhost:8080/v0/ldap/_search",
+        None,
         headers={
             "Accept": "application/json",
             "User-Agent": "rki/mex",
         },
         timeout=10,
+        data=json.dumps(
+            {
+                "entityType": ["ExtractedContactPoint"],
+                "mail": "contactc@rki.de",
+                "skip": 0,
+                "limit": 2,
+            }
+        ),
     )
 
 
