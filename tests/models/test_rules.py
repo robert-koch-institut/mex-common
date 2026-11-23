@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from mex.common.models import (
     ADDITIVE_MODEL_CLASSES,
     BASE_MODEL_CLASSES_BY_NAME,
@@ -66,7 +68,7 @@ def test_preventive_models_define_all_fields_as_correct_type() -> None:
             if field_name == "entityType":
                 assert field_info.default == preventive_rule.__name__
             else:
-                assert field_info.annotation == list[MergedPrimarySourceIdentifier]
+                assert field_info.annotation == Sequence[MergedPrimarySourceIdentifier]
                 assert field_info.is_required() is False
                 assert field_info.default == []
 

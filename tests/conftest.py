@@ -1,3 +1,4 @@
+from collections.abc import Generator
 from uuid import UUID
 
 import pytest
@@ -14,12 +15,15 @@ from mex.common.models import (
     WorkflowPerson,
 )
 from mex.common.types import (
-    ExtractedPersonIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
+)
+from mex.common.wikidata.extract import (
+    get_wikidata_location,
+    get_wikidata_organization,
 )
 
 pytest_plugins = (
@@ -28,13 +32,21 @@ pytest_plugins = (
 )
 
 
+@pytest.fixture(autouse=True)
+def isolate_caches() -> Generator[None]:
+    # clear the cache to be able to test it.
+    get_wikidata_organization.cache_clear()
+    get_wikidata_location.cache_clear()
+    yield
+    get_wikidata_organization.cache_clear()
+    get_wikidata_location.cache_clear()
+
+
 @pytest.fixture
 def extracted_person() -> ExtractedPerson:
     """Return a dummy extracted person for testing purposes."""
     return ExtractedPerson.model_construct(
         identifierInPrimarySource=str(UUID(int=990, version=4)),
-        identifier=ExtractedPersonIdentifier.generate(seed=550),
-        stableTargetId=MergedPersonIdentifier.generate(seed=876),
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=200),
         affiliation=[MergedOrganizationIdentifier.generate(seed=300)],
         email=["TintzmannM@rki.de"],
@@ -74,12 +86,9 @@ def extracted_organization_rki() -> ExtractedOrganization:
     """Return a dummy rki extracted organization for testing purposes."""
     return ExtractedOrganization.model_construct(
         identifierInPrimarySource="RKI",
-        identifier=ExtractedPersonIdentifier.generate(seed=551),
-        stableTargetId=MergedOrganizationIdentifier.generate(seed=301),
         hadPrimarySource=MergedPrimarySourceIdentifier.generate(seed=201),
         officialName=[Text(value="Robert Koch-Institut")],
         shortName=[Text(value="RKI")],
-        email=["info@rki.de"],
     )
 
 

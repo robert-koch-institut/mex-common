@@ -22,7 +22,8 @@ Each entity type `T` is modelled for the following use cases:
 
 - `BaseT` defines all fields according to `mex-model` except for provenance fields
 - `ExtractedT` defines an automatically extracted metadata item including provenance
-- `MergedT` defines the result of merging extracted items and rules into a single item
+- `MergedT` defines the result of merging extracted items and rules into a single item,
+  or a superseded item that only points to its replacement via `supersededBy`
 - `PreviewT` defines a preview of a merged item without enforcing cardinality validation
 
 - `AdditiveT` defines a rule to add values to specific fields of a merged item
@@ -31,7 +32,8 @@ Each entity type `T` is modelled for the following use cases:
 - `PreventiveT` defines a rule to prevent (or block) specific primary sources from
   contributing to specific fields of a merged item
 - `WorkflowT` defines a rule to prevent a merged item from being published
-- `TRuleSet` classes are used for CRUD operations on a set of four rules
+- `TRuleSetRequest` and `TRuleSetResponse` are used for CRUD operations on a set of
+  four rules
 
 - `TFilter` defines how an entity filter specification should look like
 - `TMapping` defines how a raw-data to extracted item mapping should look like
@@ -40,7 +42,9 @@ Since these models for different use cases have a lot of overlapping attributes,
 we use a number of intermediate private classes to compose the public classes:
 
 - `_Stem` defines a static class attribute `stemType`, e.g. `Person` or `PrimarySource`,
-  which is added to all intermediate and exported classes
+  which is added to all intermediate and exported classes. It is a plain pydantic
+  model, so our own `BaseModel` is only pulled in by the purpose-specific base classes
+  like `ExtractedData`, `MergedItem` or `AdditiveRule`
 - `_OptionalLists` defines all fields typed as lists with an arity of 0-n
 - `_RequiredLists` defines all fields typed as lists with an arity of 1-n
 - `_SparseLists` re-defines all fields from `_RequiredLists` with an arity of 0-n
@@ -52,26 +56,36 @@ we use a number of intermediate private classes to compose the public classes:
   as list fields with an arity of 0-n
 
 - `_BaseRuleSet` bundles the additive, subtractive, preventive and workflow rules for
-   one type
+  one type
 
-These private classes are used to compose the public classes like so:
+These private classes are used to compose the public classes like so, whereby each
+entity type only defines and uses those field mixins it actually has fields for:
 
 - BaseT: _OptionalLists, _RequiredLists, _OptionalValues, _RequiredValues
 - ExtractedT: BaseT, ExtractedData
-- MergedT: BaseT, MergedItem
+- MergedT: _SparseLists, _SparseValues, BaseT, MergedItem
 - PreviewT: _OptionalLists, _SparseLists, _VariadicValues, _SparseValues, PreviewItem
 
 - AdditiveT: _OptionalLists, _SparseLists, _OptionalValues, _SparseValues, AdditiveRule
 - SubtractiveT: _OptionalLists, _SparseLists, _VariadicValues, SubtractiveRule
-- PreventiveT: all fields from BaseT re-typed as MergedPrimarySourceIdentifier
-- WorkflowT: own field forbiddenPublishingTarget
-- TRuleSetRequest: bundle of all four rules for one type used to create new rules
-- TRuleSetResponse: bundle of all four rules for one type including a `stableTargetId`
+- PreventiveT: _Stem, PreventiveRule with all fields from BaseT re-typed as
+  MergedPrimarySourceIdentifier
+- WorkflowT: _Stem, WorkflowRule with its own field forbiddenPublishingTarget
+- _BaseRuleSet: _Stem, RuleSet
+- TRuleSetRequest: _BaseRuleSet used to create new rules
+- TRuleSetResponse: _BaseRuleSet including a `stableTargetId`
 
-- TFilter: a single field containing a list of filter rule definitions
-- TMapping: all BaseT fields re-typed as lists of mapping fields with `setValues` type
+- TFilter: _Stem, BaseFilter with a single field containing a list of filter rules
+- TMapping: _Stem, BaseMapping with all BaseT fields re-typed as lists of mapping
+  fields with `setValues` type
 
-All models intended for developer consumption have two main classifying class variables:
+`MergedT` lists the sparse mixins first, so they take precedence over the required
+fields of `BaseT`: a `MergedItem` validator enforces those fields only on items
+without `supersededBy`. Rule sets are mutable containers based on a plain pydantic
+`RuleSet`, while `BaseT` classes are plain field bundles and all other public classes
+are based on our own `BaseModel`.
+
+All models intended for developer consumption have two main classifying attributes:
 The frozen `entityType` field is added to classes to help with assigning the correct
 class when reading raw JSON entities. Simple duck-typing would not work, because some
 entity-types have overlapping attributes, like `Person.email` and `ContactPoint.email`.

@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel as PydanticBaseModel
 
 
-class Status(BaseModel):
+class Status(PydanticBaseModel):
     """Model for system status responses."""
 
     status: str

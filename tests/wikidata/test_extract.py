@@ -1,11 +1,17 @@
 import json
 from typing import Any
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from pytest import MonkeyPatch
 
 from mex.common.wikidata.connector import WikidataAPIConnector
-from mex.common.wikidata.extract import get_wikidata_organization
+from mex.common.wikidata.extract import (
+    _get_wikidata_raw_item,
+    get_wikidata_location,
+    get_wikidata_locations,
+    get_wikidata_organization,
+)
 from tests.wikidata.conftest import TESTDATA_DIR
 
 
@@ -19,40 +25,10 @@ def test_get_wikidata_organization() -> None:
             "multiple": {"language": "mul", "value": "Robert Koch-Institut"},
         },
         "claims": {
-            "website": [
-                {"mainsnak": {"datavalue": {"value": {"text": "https://www.rki.de/"}}}},
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.rki.de/DE/Home/homepage_node.html"
-                            }
-                        }
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.rki.de/EN/Home/homepage_node.html"
-                            }
-                        }
-                    }
-                },
-            ],
             "isni_id": [
                 {"mainsnak": {"datavalue": {"value": {"text": "0000000109403744"}}}}
             ],
             "ror_id": [{"mainsnak": {"datavalue": {"value": {"text": "01k5qnb77"}}}}],
-            "official_name": [
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {"text": "Robert-Koch-Institut", "language": "de"}
-                        }
-                    }
-                }
-            ],
             "short_name": [
                 {
                     "mainsnak": {
@@ -106,7 +82,6 @@ def test_get_wikidata_organization() -> None:
             ],
         },
     }
-
     organization_details = get_wikidata_organization("Q679041")
 
     assert organization_details.model_dump(exclude_none=True) == expected
@@ -122,25 +97,6 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
             "multiple": None,
         },
         "claims": {
-            "website": [
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "https://www.testgroup.com/",
-                                "language": None,
-                            }
-                        }
-                    }
-                },
-                {
-                    "mainsnak": {
-                        "datavalue": {
-                            "value": {"text": "https://www.test.com", "language": None}
-                        }
-                    }
-                },
-            ],
             "isni_id": [
                 {
                     "mainsnak": {
@@ -162,19 +118,13 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
                     }
                 },
             ],
-            "official_name": [
+            "short_name": [
                 {
                     "mainsnak": {
-                        "datavalue": {
-                            "value": {
-                                "text": "Bayerische Motoren Werke AG",
-                                "language": "de",
-                            }
-                        }
+                        "datavalue": {"value": {"language": "de", "text": "BMW"}}
                     }
                 }
             ],
-            "short_name": [],
             "native_label": [
                 {
                     "mainsnak": {
@@ -234,3 +184,156 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
 def test_get_wikidata_organization_malformed() -> None:
     with pytest.raises(ValueError, match="malformed wikidata url: foobar"):
         get_wikidata_organization("foobar")
+
+
+@pytest.mark.parametrize(
+    "item_id_or_url",
+    [
+        "Q183",
+        "http://www.wikidata.org/entity/Q183",
+        "https://www.wikidata.org/entity/Q183",
+        "https://wikidata.org/entity/Q183",
+        "www.wikidata.org/entity/Q183",
+        "https://www.wikidata.org/entity/Q183/",
+    ],
+)
+def test_get_wikidata_raw_item(
+    monkeypatch: MonkeyPatch,
+    item_id_or_url: str,
+) -> None:
+    connector = MagicMock(spec=WikidataAPIConnector)
+    connector.get_wikidata_item_details_by_id.return_value = {"id": "Q183"}
+
+    monkeypatch.setattr(WikidataAPIConnector, "get", lambda: connector)
+
+    result = _get_wikidata_raw_item(item_id_or_url)
+
+    assert result == {"id": "Q183"}
+    connector.get_wikidata_item_details_by_id.assert_called_once_with("Q183")
+
+
+@pytest.mark.parametrize(
+    "item_id_or_url",
+    [
+        "",
+        "Q",
+        "q183",
+        "Q183 extra",
+        "https://www.wikidata.org/wiki/Q183",
+        "https://example.com/entity/Q183",
+        "https://www.wikidata.org/entity/Q183?foo=bar",
+    ],
+)
+def test_get_wikidata_raw_item_malformed(
+    monkeypatch: MonkeyPatch,
+    item_id_or_url: str,
+) -> None:
+    connector = MagicMock(spec=WikidataAPIConnector)
+    monkeypatch.setattr(WikidataAPIConnector, "get", lambda: connector)
+
+    with pytest.raises(ValueError, match="malformed wikidata url"):
+        _get_wikidata_raw_item(item_id_or_url)
+
+    connector.get_wikidata_item_details_by_id.assert_not_called()
+
+
+def test_get_wikidata_location(monkeypatch: MonkeyPatch) -> None:
+    raw_location = {
+        "id": "Q183",
+        "labels": {
+            "de": {"language": "de", "value": "Deutschland"},
+            "en": {"language": "en", "value": "Germany"},
+        },
+        "claims": {
+            "P1566": [
+                {
+                    "mainsnak": {
+                        "datavalue": {
+                            "value": "2921044",
+                        }
+                    }
+                }
+            ],
+        },
+        "aliases": {},
+    }
+
+    connector = MagicMock(spec=WikidataAPIConnector)
+    connector.get_wikidata_item_details_by_id.return_value = raw_location
+    monkeypatch.setattr(WikidataAPIConnector, "get", lambda: connector)
+
+    location = get_wikidata_location("Q183")
+
+    assert location.model_dump() == {
+        "claims": {
+            "geonames_id": [
+                {
+                    "mainsnak": {
+                        "datavalue": {"value": {"language": None, "text": "2921044"}}
+                    }
+                }
+            ]
+        },
+        "identifier": "Q183",
+        "labels": {
+            "de": {"language": "de", "value": "Deutschland"},
+            "en": {"language": "en", "value": "Germany"},
+            "multiple": None,
+        },
+    }
+    connector.get_wikidata_item_details_by_id.assert_called_once_with("Q183")
+
+
+def test_get_wikidata_location_is_cached(monkeypatch: MonkeyPatch) -> None:
+    raw_location = {
+        "id": "Q183",
+        "labels": {},
+        "claims": {},
+        "aliases": {},
+    }
+
+    connector = MagicMock(spec=WikidataAPIConnector)
+    connector.get_wikidata_item_details_by_id.return_value = raw_location
+    monkeypatch.setattr(WikidataAPIConnector, "get", lambda: connector)
+
+    first_result = get_wikidata_location("Q183")
+    second_result = get_wikidata_location("Q183")
+
+    assert first_result is second_result
+    connector.get_wikidata_item_details_by_id.assert_called_once_with("Q183")
+
+
+def test_get_wikidata_locations_uses_batches() -> None:
+    item_ids = [f"Q{i}" for i in range(100, 220)]
+
+    connector = Mock()
+
+    def get_items(ids: tuple[str, ...]) -> dict[str, Any]:
+        return {
+            item_id: {
+                "id": item_id,
+                "labels": {},
+                "claims": {},
+                "aliases": {},
+            }
+            for item_id in ids
+        }
+
+    connector.get_wikidata_item_details_by_ids.side_effect = get_items
+
+    with patch(
+        "mex.common.wikidata.extract.WikidataAPIConnector.get",
+        return_value=connector,
+    ):
+        locations = list(get_wikidata_locations(item_ids))
+
+    assert len(locations) == 120
+    assert connector.get_wikidata_item_details_by_ids.call_count == 3
+
+    batches = [
+        call.args[0]
+        for call in connector.get_wikidata_item_details_by_ids.call_args_list
+    ]
+
+    assert [len(batch) for batch in batches] == [50, 50, 20]
+    assert [location.identifier for location in locations] == item_ids

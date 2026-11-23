@@ -24,7 +24,7 @@ env:
 
 jobs:
   cruft:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -48,7 +48,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.15"
 
@@ -83,7 +83,7 @@ jobs:
           git checkout -b cruft/mex-template-${template_tag}
           cruft update --checkout "${template_tag}" --skip-apply-ask
           printf '### Changes\n\n- new template %s/releases/tag/%s\n' "$template_url" "$template_tag" > .cruft-pr-body
-          sed -i "0,/^### Changes$/{/^### Changes$/{N;s|\n|\n\n- new template ${template_url}/releases/tag/${template_tag}|}}" CHANGELOG.md
+          sed -i "0,/^### Changes$/{/^### Changes$/{N;N;/\n\n- /{s|\n\n|\n\n- new template ${template_url}/releases/tag/${template_tag}\n|;b;};s|\n\n|\n\n- new template ${template_url}/releases/tag/${template_tag}\n\n|}}" CHANGELOG.md
           if [[ $(find . -type f -name "*.rej" | wc -l) -ne 0 ]]; then
             printf '\n### Conflicts\n' >> .cruft-pr-body
             echo "has_conflicts=true" >> "$GITHUB_OUTPUT"
