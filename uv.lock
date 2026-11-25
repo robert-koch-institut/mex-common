@@ -975,7 +975,7 @@ requires-dist = [
     { name = "click", specifier = ">=8,<9" },
     { name = "langdetect", specifier = ">=1,<2" },
     { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=feature%2Finit_mod_04" },
+    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=main" },
     { name = "pandas", specifier = ">=3,<4" },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pydantic-settings", specifier = ">=2,<3" },
@@ -1005,7 +1005,7 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=3.2,<4" }]
 [[package]]
 name = "mex-model"
 version = "5.2.2"
-source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=feature%2Finit_mod_04#f687cbc1e61be57ae08f8578d8d5ba9e5b354683" }
+source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=main#fb57ac9df89db785e6639d7dcfbf74ce8b8f21f2" }
 
 [[package]]
 name = "mypy"

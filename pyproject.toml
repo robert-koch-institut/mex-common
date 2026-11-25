@@ -12,7 +12,7 @@ dependencies = [
     "click>=8,<9",
     "langdetect>=1,<2",
     "ldap3>=2,<3",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@feature/init_mod_04",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@main",
     "pandas>=3,<4",
     "pydantic-settings>=2,<3",
     "pydantic>=2,<3",
