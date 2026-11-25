@@ -37,9 +37,7 @@ from mex.common.types import (
 )
 
 AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier | MergedContactPointIdentifier,
     AfterValidator(Identifier),
 ]
 
@@ -80,9 +78,7 @@ class _OptionalLists(_Stem):
             description=(
                 "A link to a document that contains the documentation of the activity."
             ),
-            json_schema_extra={
-                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
-            },
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/page"]},
         ),
     ] = []
     end: Annotated[

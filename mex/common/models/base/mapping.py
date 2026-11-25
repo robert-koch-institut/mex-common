@@ -60,7 +60,9 @@ class MappingRule(PydanticBaseModel, Generic[_ValueT], extra="forbid"):
 
     forValues: Annotated[list[str] | None, Field(title="forValues")] = None
     setValues: Annotated[_ValueT | None, Field(title="setValues")] = None
+    transformValues: Annotated[list[str] | None, Field(title="transformValues")] = None
     rule: Annotated[str | None, Field(title="rule")] = None
+    exampleOutputs: Annotated[_ValueT | None, Field(title="exampleOutputs")] = None
 
     def get_mapped_values(self, value_in_primary_source: str) -> _ValueT | None:
         """Return `setValues` if the value is listed in `forValues`."""

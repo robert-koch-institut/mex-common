@@ -23,9 +23,9 @@ from mex.common.types import (
     Link,
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
+    MergedLocationIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
-    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     MergedResourceSeriesIdentifier,
     Text,
@@ -36,9 +36,7 @@ from mex.common.types import (
 )
 
 AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier | MergedContactPointIdentifier,
     AfterValidator(Identifier),
 ]
 
@@ -83,9 +81,7 @@ class _OptionalLists(_Stem):
         Sequence[Link],
         Field(
             description="A link to a document documenting the resource series.",
-            json_schema_extra={
-                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
-            },
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/page"]},
         ),
     ] = []
     end: Annotated[
@@ -112,7 +108,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     keyword: Annotated[
-        Sequence[Text],
+        Sequence[Text | Link],
         Field(
             description="A keyword or tag describing the resource series.",
             json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
@@ -125,9 +121,11 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     spatial: Annotated[
-        Sequence[Text],
+        Sequence[MergedLocationIdentifier],
         Field(
-            description="Spatial coverage of the resource series.",
+            description=(
+                "Location or geographic region covered by the resource series."
+            ),
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
@@ -217,7 +215,9 @@ class BaseResourceSeries(
             "A collection of resources that are published separately, but share "
             "some characteristics that group them."
         ),
-        "closeMatch": ["http://healthdataportal.eu/ns/health#DatasetSeries"],
+        "closeMatch": [
+            "https://data.health.europa.eu/healthdcat-ap/ns/health/DatasetSeries"
+        ],
     },
 ):
     """All fields for a valid resource series except for provenance."""
@@ -440,9 +440,9 @@ class ResourceSeriesMapping(_Stem, BaseMapping):
         MappingFieldList()
     )
     hasLegalBasis: MappingFieldList[list[Text | Link]] = MappingFieldList()
-    keyword: MappingFieldList[list[Text]] = MappingFieldList()
+    keyword: MappingFieldList[list[Text | Link]] = MappingFieldList()
     publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
-    spatial: MappingFieldList[list[Text]] = MappingFieldList()
+    spatial: MappingFieldList[list[MergedLocationIdentifier]] = MappingFieldList()
     start: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
         MappingFieldList()
     )

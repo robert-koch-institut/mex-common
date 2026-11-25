@@ -24,16 +24,13 @@ from mex.common.types import (
     MergedAccessPlatformIdentifier,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
-    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     TechnicalAccessibility,
     Text,
 )
 
 AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier | MergedContactPointIdentifier,
     AfterValidator(Identifier),
 ]
 

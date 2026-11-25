@@ -7,12 +7,34 @@ from pydantic import ValidationError
 from mex.common.types import VOCABULARY_ENUMS, AnyVocabularyEnum, VocabularyEnum
 from mex.model import VOCABULARY_JSON_BY_NAME
 
+DIGIT_WORDS = [
+    "ZERO",
+    "ONE",
+    "TWO",
+    "THREE",
+    "FOUR",
+    "FIVE",
+    "SIX",
+    "SEVEN",
+    "EIGHT",
+    "NINE",
+]
+
 
 def concept_to_member_name(pref_label_en: str) -> str:
-    """Derive the enum member name from the english prefLabel of a concept."""
-    return "_".join(
+    """Derive the enum member name from the english prefLabel of a concept.
+
+    A trailing `+` (e.g. SPDX `GPL-2.0+`) is spelled out as `PLUS` and a leading
+    digit is spelled out as a word, to get unique and valid python identifiers.
+    """
+    pref_label_en = re.sub(r"\+$", " plus", pref_label_en)
+    name = "_".join(
         word.upper() for word in re.split("[^a-zA-Z0-9]", pref_label_en) if word
     )
+    if name[0].isdigit():
+        rest = name[1:]
+        name = f"{DIGIT_WORDS[int(name[0])]}{'' if rest.startswith('_') else '_'}{rest}"
+    return name
 
 
 def scheme_to_vocabulary_name(scheme: str) -> str:

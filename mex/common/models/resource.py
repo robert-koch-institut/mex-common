@@ -22,7 +22,9 @@ from mex.common.types import (
     DataProcessingState,
     ExtractedResourceIdentifier,
     Frequency,
+    GeopoliticalResolution,
     HealthCategory,
+    HealthStandard,
     Identifier,
     Language,
     License,
@@ -32,6 +34,7 @@ from mex.common.types import (
     MergedBibliographicResourceIdentifier,
     MergedContactPointIdentifier,
     MergedDistributionIdentifier,
+    MergedLocationIdentifier,
     MergedOrganizationalUnitIdentifier,
     MergedOrganizationIdentifier,
     MergedPersonIdentifier,
@@ -50,17 +53,6 @@ from mex.common.types import (
 from mex.common.types.identifier import MergedResourceSeriesIdentifier
 from mex.common.types.vocabulary import CodingSystem, Purpose
 
-ConformsToStr = Annotated[
-    str,
-    Field(
-        examples=[
-            "FHIR",
-            "LOINC",
-            "SNOMED",
-            "ICD-10",
-        ],
-    ),
-]
 DoiStr = Annotated[
     str,
     Field(
@@ -114,9 +106,7 @@ VersionStr = Annotated[
     Field(examples=["v1", "2023-01-16", "Schema 9"], max_length=100),
 ]
 AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier | MergedContactPointIdentifier,
     AfterValidator(Identifier),
 ]
 MaxTypicalAgeInt = Annotated[
@@ -169,7 +159,9 @@ class _OptionalLists(_Stem):
         Field(
             description="An analytics distribution of the dataset.",
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#analytics"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/analytics"
+                ]
             },
         ),
     ] = []
@@ -182,11 +174,11 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     conformsTo: Annotated[
-        Sequence[ConformsToStr],
+        Sequence[HealthStandard],
         Field(
             description=(
                 "Standards used in the creation, analysis or transmission of the "
-                "resource."
+                "resource. The Health Standards controlled vocabulary must be used."
             ),
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/conformsTo"]},
         ),
@@ -214,13 +206,6 @@ class _OptionalLists(_Stem):
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/creator"]},
         ),
     ] = []
-    description: Annotated[
-        Sequence[Text],
-        Field(
-            description="A text describing the nature of the resource.",
-            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
-        ),
-    ] = []
     distribution: Annotated[
         Sequence[MergedDistributionIdentifier],
         Field(description="An available distribution of the resource."),
@@ -229,9 +214,7 @@ class _OptionalLists(_Stem):
         Sequence[Link],
         Field(
             description="A link to a document documenting the resource.",
-            json_schema_extra={
-                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
-            },
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/page"]},
         ),
     ] = []
     end: Annotated[
@@ -251,6 +234,15 @@ class _OptionalLists(_Stem):
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/contributor"]},
         ),
     ] = []
+    geopoliticalResolution: Annotated[
+        Sequence[GeopoliticalResolution],
+        Field(
+            description=(
+                "Geopolitical resolution or administrative level of the location "
+                "information of the resource."
+            ),
+        ),
+    ] = []
     hasCodeValues: Annotated[
         Sequence[Text],
         Field(
@@ -260,7 +252,9 @@ class _OptionalLists(_Stem):
                 "coding system 'ICD-10'."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#hasCodeValues"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/hasCodeValues"
+                ]
             },
         ),
     ] = []
@@ -269,7 +263,9 @@ class _OptionalLists(_Stem):
         Field(
             description=("Coding systems in use (e.g. ICD-10, SNOMED-CT)."),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#hasCodingSystem"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/hasCodingSystem"
+                ]
             },
         ),
     ] = []
@@ -328,7 +324,9 @@ class _OptionalLists(_Stem):
                 "Regulation on the European Health Data Space."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#healthCategory"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/healthCategory"
+                ]
             },
         ),
     ] = []
@@ -379,13 +377,6 @@ class _OptionalLists(_Stem):
                 "physically or logically included."
             ),
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/isPartOf"]},
-        ),
-    ] = []
-    keyword: Annotated[
-        Sequence[Text],
-        Field(
-            description="A keyword or tag describing the resource.",
-            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     landingPage: Annotated[
@@ -441,7 +432,7 @@ class _OptionalLists(_Stem):
             ),
             json_schema_extra={
                 "closeMatch": [
-                    "http://healthdataportal.eu/ns/health#populationcoverage"
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/populationcoverage"
                 ]
             },
         ),
@@ -457,7 +448,7 @@ class _OptionalLists(_Stem):
             json_schema_extra={
                 "closeMatch": [
                     "http://purl.org/dc/terms/provenance",
-                    "http://healthdataportal.eu/ns/health#provenance",
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/provenance",
                 ]
             },
         ),
@@ -488,6 +479,13 @@ class _OptionalLists(_Stem):
             json_schema_extra={
                 "closeMatch": ["http://www.w3.org/2004/02/skos/core#note"]
             },
+        ),
+    ] = []
+    relatedActivity: Annotated[
+        Sequence[MergedActivityIdentifier],
+        Field(
+            description="An Activity that is related to the Resource.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/relation"]},
         ),
     ] = []
     relatedResource: Annotated[
@@ -544,9 +542,9 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     spatial: Annotated[
-        Sequence[Text],
+        Sequence[MergedLocationIdentifier],
         Field(
-            description="Spatial coverage of the resource.",
+            description="Location or geographic region covered by the resource.",
             json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/spatial"]},
         ),
     ] = []
@@ -576,6 +574,22 @@ class _RequiredLists(_Stem):
             json_schema_extra={
                 "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
             },
+        ),
+    ]
+    description: Annotated[
+        Sequence[Text],
+        Field(
+            description="A text describing the nature of the resource.",
+            min_length=1,
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
+        ),
+    ]
+    keyword: Annotated[
+        Sequence[Text | Link],
+        Field(
+            description="A keyword or tag describing the resource.",
+            min_length=1,
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ]
     resourceCreationMethod: Annotated[
@@ -629,6 +643,20 @@ class _SparseLists(_Stem):
             json_schema_extra={
                 "closeMatch": ["http://www.w3.org/ns/dcat#contactPoint"]
             },
+        ),
+    ] = []
+    description: Annotated[
+        Sequence[Text],
+        Field(
+            description="A text describing the nature of the resource.",
+            json_schema_extra={"closeMatch": ["http://purl.org/dc/terms/description"]},
+        ),
+    ] = []
+    keyword: Annotated[
+        Sequence[Text | Link],
+        Field(
+            description="A keyword or tag describing the resource.",
+            json_schema_extra={"closeMatch": ["http://www.w3.org/ns/dcat#keyword"]},
         ),
     ] = []
     resourceCreationMethod: Annotated[
@@ -719,7 +747,9 @@ class _OptionalValues(_Stem):
                 "collection, expressed in years."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#maxtypicalage"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/maxtypicalage"
+                ]
             },
         ),
     ] = None
@@ -731,7 +761,9 @@ class _OptionalValues(_Stem):
                 "collection, expressed in years."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#mintypicalage"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/mintypicalage"
+                ]
             },
         ),
     ] = None
@@ -751,7 +783,9 @@ class _OptionalValues(_Stem):
                 "hospital admissions) according to the dataset's content."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#numberOfRecords"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/numberOfRecords"
+                ]
             },
         ),
     ] = None
@@ -764,7 +798,7 @@ class _OptionalValues(_Stem):
             ),
             json_schema_extra={
                 "closeMatch": [
-                    "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/numberOfUniqueIndividuals"
                 ]
             },
         ),
@@ -889,7 +923,9 @@ class _VariadicValues(_Stem):
                 "collection, expressed in years."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#maxtypicalage"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/maxtypicalage"
+                ]
             },
         ),
     ] = []
@@ -901,7 +937,9 @@ class _VariadicValues(_Stem):
                 "collection, expressed in years."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#mintypicalage"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/mintypicalage"
+                ]
             },
         ),
     ] = []
@@ -921,7 +959,9 @@ class _VariadicValues(_Stem):
                 "hospital admissions) according to the dataset's content."
             ),
             json_schema_extra={
-                "closeMatch": ["http://healthdataportal.eu/ns/health#numberOfRecords"]
+                "closeMatch": [
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/numberOfRecords"
+                ]
             },
         ),
     ] = []
@@ -934,7 +974,7 @@ class _VariadicValues(_Stem):
             ),
             json_schema_extra={
                 "closeMatch": [
-                    "http://healthdataportal.eu/ns/health#numberOfUniqueIndividuals"
+                    "https://data.health.europa.eu/healthdcat-ap/ns/health/numberOfUniqueIndividuals"
                 ]
             },
         ),
@@ -1164,6 +1204,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     doi: Sequence[MergedPrimarySourceIdentifier] = []
     end: Sequence[MergedPrimarySourceIdentifier] = []
     externalPartner: Sequence[MergedPrimarySourceIdentifier] = []
+    geopoliticalResolution: Sequence[MergedPrimarySourceIdentifier] = []
     hasCodeValues: Sequence[MergedPrimarySourceIdentifier] = []
     hasCodingSystem: Sequence[MergedPrimarySourceIdentifier] = []
     hasLegalBasis: Sequence[MergedPrimarySourceIdentifier] = []
@@ -1196,6 +1237,7 @@ class PreventiveResource(_Stem, PreventiveRule):
     publication: Sequence[MergedPrimarySourceIdentifier] = []
     publisher: Sequence[MergedPrimarySourceIdentifier] = []
     qualityInformation: Sequence[MergedPrimarySourceIdentifier] = []
+    relatedActivity: Sequence[MergedPrimarySourceIdentifier] = []
     relatedResource: Sequence[MergedPrimarySourceIdentifier] = []
     resourceCreationMethod: Sequence[MergedPrimarySourceIdentifier] = []
     resourceTypeGeneral: Sequence[MergedPrimarySourceIdentifier] = []
@@ -1284,6 +1326,8 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingFieldList[list[AnyContactIdentifier]],
         Field(min_length=1),
     ]
+    description: Annotated[MappingFieldList[list[Text]], Field(min_length=1)]
+    keyword: Annotated[MappingFieldList[list[Text | Link]], Field(min_length=1)]
     resourceCreationMethod: Annotated[
         MappingFieldList[list[ResourceCreationMethod]], Field(min_length=1)
     ]
@@ -1301,13 +1345,12 @@ class ResourceMapping(_Stem, BaseMapping):
     anonymizationPseudonymization: MappingFieldList[
         list[AnonymizationPseudonymization]
     ] = MappingFieldList()
-    conformsTo: MappingFieldList[list[ConformsToStr]] = MappingFieldList()
+    conformsTo: MappingFieldList[list[HealthStandard]] = MappingFieldList()
     contributingUnit: MappingFieldList[list[MergedOrganizationalUnitIdentifier]] = (
         MappingFieldList()
     )
     contributor: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
     creator: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
-    description: MappingFieldList[list[Text]] = MappingFieldList()
     distribution: MappingFieldList[list[MergedDistributionIdentifier]] = (
         MappingFieldList()
     )
@@ -1316,6 +1359,9 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingFieldList()
     )
     externalPartner: MappingFieldList[list[MergedOrganizationIdentifier]] = (
+        MappingFieldList()
+    )
+    geopoliticalResolution: MappingFieldList[list[GeopoliticalResolution]] = (
         MappingFieldList()
     )
     hasCodeValues: MappingFieldList[list[Text]] = MappingFieldList()
@@ -1337,7 +1383,6 @@ class ResourceMapping(_Stem, BaseMapping):
         MappingFieldList()
     )
     isPartOf: MappingFieldList[list[MergedResourceIdentifier]] = MappingFieldList()
-    keyword: MappingFieldList[list[Text]] = MappingFieldList()
     landingPage: MappingFieldList[list[Link]] = MappingFieldList()
     language: MappingFieldList[list[Language]] = MappingFieldList()
     loincId: MappingFieldList[list[LoincIdStr]] = MappingFieldList()
@@ -1351,6 +1396,9 @@ class ResourceMapping(_Stem, BaseMapping):
     )
     publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
     qualityInformation: MappingFieldList[list[Text]] = MappingFieldList()
+    relatedActivity: MappingFieldList[list[MergedActivityIdentifier]] = (
+        MappingFieldList()
+    )
     relatedResource: MappingFieldList[list[MergedResourceIdentifier]] = (
         MappingFieldList()
     )
@@ -1361,7 +1409,7 @@ class ResourceMapping(_Stem, BaseMapping):
     rights: MappingFieldList[list[Text]] = MappingFieldList()
     sample: MappingFieldList[list[MergedDistributionIdentifier]] = MappingFieldList()
     source: MappingFieldList[list[MergedResourceIdentifier]] = MappingFieldList()
-    spatial: MappingFieldList[list[Text]] = MappingFieldList()
+    spatial: MappingFieldList[list[MergedLocationIdentifier]] = MappingFieldList()
     start: MappingFieldList[YearMonthDayTime | YearMonthDay | YearMonth | Year] = (
         MappingFieldList()
     )
