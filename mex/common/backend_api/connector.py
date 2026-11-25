@@ -601,7 +601,7 @@ class BackendApiConnector(HTTPConnector):
     ) -> PaginatedItemsContainer[ExtractedPerson | ExtractedContactPoint]:
         """Search for persons or contact points in LDAP.
 
-        This is an interactive, fuzzy, free-text search across both persons and
+        This is a fuzzy, free-text search across both persons and
         functional accounts in a single call. For structured, exact-match lookups
         of a specific person or functional account by attribute, see `get_persons`/
         `get_person` and `get_functional_accounts`/`get_functional_account` instead.
@@ -640,7 +640,7 @@ class BackendApiConnector(HTTPConnector):
 
         This is a structured, exact-match lookup for deterministic identity
         resolution, sent to the backend's `POST /ldap/_search`. Filter values may
-        contain `*` wildcards. For interactive fuzzy search across persons and
+        contain `*` wildcards. For fuzzy search across persons and
         functional accounts, see `search_person_or_contact_point_in_ldap`.
 
         Args:
@@ -733,7 +733,7 @@ class BackendApiConnector(HTTPConnector):
 
         This is a structured, exact-match lookup for deterministic identity
         resolution, sent to the backend's `POST /ldap/_search`. The mail may
-        contain `*` wildcards. For interactive fuzzy search across persons and
+        contain `*` wildcards. For fuzzy search across persons and
         functional accounts, see `search_person_or_contact_point_in_ldap`.
 
         Args:
