@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - concepts for `CodingSystem` (e.g. `EMDN`, `NCIT`, `HPO`) and `Frequency`
   (e.g. `EVERY_5_YEARS`, `AS_NEEDED`, `NEVER`, `OTHER`)
 - `License` now covers the 729 licenses of the SPDX license list
+- add exampleOutputs and transformValues to mapping rules
 
 ### Changes
 
