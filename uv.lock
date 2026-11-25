@@ -3,19 +3,19 @@ revision = 5
 requires-python = ">=3.11, <3.16"
 resolution-markers = [
     "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
     "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.12.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -121,11 +121,11 @@ wheels = [
 
 [[package]]
 name = "babel"
-version = "2.18.0"
+version = "2.19.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7d/b2/51899539b6ceeeb420d40ed3cd4b7a40519404f9baf3d4ac99dc413a834b/babel-2.18.0.tar.gz", hash = "sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d", size = 9959554, upload-time = "2026-02-01T12:30:56.078Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/32/44/744169ce3677a541439bc9506ef08bd85674e9d6e3895ebe5a87ff65fb7a/babel-2.19.0.tar.gz", hash = "sha256:fddd2cbbbac7c299af3c2880be23609c331bd94f0912baca6cb0abfe054dfc27", size = 10695455, upload-time = "2026-11-24T20:14:32.427Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/f5/21d2de20e8b8b0408f0681956ca2c69f1320a3848ac50e6e7f39c6159675/babel-2.18.0-py3-none-any.whl", hash = "sha256:e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35", size = 10196845, upload-time = "2026-02-01T12:30:53.445Z" },
+    { url = "https://files.pythonhosted.org/packages/71/3b/ddf4b07be846bfa361683729b5948c9c61a87fbdf09e69540d8e586bb7c5/babel-2.19.0-py3-none-any.whl", hash = "sha256:6d49734aed1d595b2c065d012174df8c83964692f26fc461702281634dd7555b", size = 10983582, upload-time = "2026-11-24T20:14:30.163Z" },
 ]
 
 [[package]]
@@ -452,10 +452,10 @@ version = "0.22.4"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.12.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ae/b6/03bb70946330e88ffec97aefd3ea75ba575cb2e762061e0e62a213befee8/docutils-0.22.4.tar.gz", hash = "sha256:4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968", size = 2291750, upload-time = "2025-12-18T19:00:26.443Z" }
@@ -469,10 +469,10 @@ version = "0.23"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
     "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
@@ -975,7 +975,7 @@ requires-dist = [
     { name = "click", specifier = ">=8,<9" },
     { name = "langdetect", specifier = ">=1,<2" },
     { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", git = "https://github.com/robert-koch-institut/mex-model.git?rev=main" },
+    { name = "mex-model", specifier = ">=5.3,<5.4" },
     { name = "pandas", specifier = ">=3,<4" },
     { name = "pydantic", specifier = ">=2,<3" },
     { name = "pydantic-settings", specifier = ">=2,<3" },
@@ -1004,8 +1004,12 @@ fuzzing = [{ name = "mex-artificial", specifier = ">=3.2,<4" }]
 
 [[package]]
 name = "mex-model"
-version = "5.2.2"
-source = { git = "https://github.com/robert-koch-institut/mex-model.git?rev=main#fb57ac9df89db785e6639d7dcfbf74ce8b8f21f2" }
+version = "5.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/39/4628eff1eec2668dad595a8be32d0dc17e17666f37e21a377c7251322b2f/mex_model-5.3.0.tar.gz", hash = "sha256:a73d11bf6e5d03c1585bc63dd6a0bcb6783b131a0a83dd70a02c1fb74d9c2fcd", size = 122347, upload-time = "2026-11-25T12:07:47.113Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/30/a1d6fe0ad0e1d2b383a29d73dd853e14f602942728d1cf641991af6232e5/mex_model-5.3.0-py3-none-any.whl", hash = "sha256:20ee95407dd2001ee1cde31b6f10079cd1b0dcf319b0bef4489f3b96b3d416f5", size = 165557, upload-time = "2026-11-25T12:07:45.936Z" },
+]
 
 [[package]]
 name = "mypy"
@@ -1166,16 +1170,16 @@ version = "2.5.5"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
     "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/4e/3a/8770c288c47f0b5c2a786d3c20e79f66fd245f2d42cd232d7cd5e00e83e5/numpy-2.5.5.tar.gz", hash = "sha256:5cddc243c75114ba845f01b1f87aca1572dbf7b6c2d88636ed3e1d2bccd7f1bf", size = 20873892, upload-time = "2026-11-15T21:32:28.607Z" }
@@ -1867,10 +1871,10 @@ version = "9.2.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and sys_platform == 'emscripten'",
     "python_full_version == '3.14.*' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.15' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.14.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
