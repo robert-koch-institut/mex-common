@@ -127,7 +127,7 @@ class CodingSystem(VocabularyEnum):
     ICPC_3 = "https://mex.rki.de/item/coding-system-19"
     ICPC_2 = "https://mex.rki.de/item/coding-system-20"
     MESH = "https://mex.rki.de/item/coding-system-21"
-    PROC_CODES_NAT = "https://mex.rki.de/item/coding-system-22"
+    OTHER = "https://mex.rki.de/item/coding-system-22"
     EMDN = "https://mex.rki.de/item/coding-system-23"
     ICD_10_NAT = "https://mex.rki.de/item/coding-system-24"
     ORDO = "https://mex.rki.de/item/coding-system-25"
@@ -138,7 +138,7 @@ class CodingSystem(VocabularyEnum):
     NCIT = "https://mex.rki.de/item/coding-system-30"
     HPO = "https://mex.rki.de/item/coding-system-31"
     NPU = "https://mex.rki.de/item/coding-system-32"
-    OTHER = "https://mex.rki.de/item/coding-system-33"
+    PROC_CODES_NAT = "https://mex.rki.de/item/coding-system-33"
 
 
 class ConsentStatus(VocabularyEnum):
@@ -1164,7 +1164,7 @@ class ResourceCreationMethod(VocabularyEnum):
         "https://mex.rki.de/item/resource-creation-method-3"
     )
     DISEASE_SURVEILLANCE = "https://mex.rki.de/item/resource-creation-method-31"
-    LABORATORY = "https://mex.rki.de/item/resource-creation-method-4"
+    LABORATORY_TESTS = "https://mex.rki.de/item/resource-creation-method-4"
     SEQUENCING = "https://mex.rki.de/item/resource-creation-method-5"
     NATIONAL_HEALTH_REGISTRIES = "https://mex.rki.de/item/resource-creation-method-6"
     MODELS_AND_SIMULATIONS = "https://mex.rki.de/item/resource-creation-method-7"

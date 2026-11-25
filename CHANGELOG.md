@@ -24,11 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: resource `conformsTo` now uses the `HealthStandard` vocabulary
 - BREAKING: `spatial` of resources and resource series now references merged locations
 - `keyword` of resources, resource series and bibliographic resources accepts links
-- BREAKING: renamed vocabulary members `License.CC_BY_4_0` (was
-  `CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL`) and
-  `ResourceCreationMethod.LABORATORY` (was `LABORATORY_TESTS`)
-- BREAKING: `CodingSystem.OTHER` moved to `coding-system-33`, `coding-system-22` is now
-  `PROC_CODES_NAT`
+- BREAKING: renamed vocabulary member `License.CC_BY_4_0` (was
+  `CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL`)
 - vocabulary members spell out a leading digit and a trailing `+`, e.g.
   `License.ZERO_BSD` or `License.GPL_2_0_PLUS`
 - update HealthDCAT-AP namespace in `closeMatch` annotations to the official one
