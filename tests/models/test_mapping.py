@@ -14,6 +14,7 @@ from mex.common.models import (
     MappingRuleList,
     VariableGroupMapping,
 )
+from mex.common.testing.joker import Joker
 
 
 def test_all_mapping_classes_are_defined() -> None:
@@ -218,10 +219,30 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "setValues",
                     },
+                    "transformValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "transformValues",
+                    },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "rule",
+                    },
+                    "exampleOutputs": {
+                        "anyOf": [
+                            {
+                                "pattern": "^[a-zA-Z0-9]{14,22}$",
+                                "title": "MergedPrimarySourceIdentifier",
+                                "type": "string",
+                            },
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "exampleOutputs",
                     },
                 },
                 "title": "MappingRule[MergedPrimarySourceIdentifier]",
@@ -253,10 +274,33 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "setValues",
                     },
+                    "transformValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "transformValues",
+                    },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "rule",
+                    },
+                    "exampleOutputs": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "pattern": "^[a-zA-Z0-9]{14,22}$",
+                                    "title": "MergedResourceIdentifier",
+                                    "type": "string",
+                                },
+                                "type": "array",
+                            },
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "exampleOutputs",
                     },
                 },
                 "title": "MappingRule[list[MergedResourceIdentifier]]",
@@ -281,10 +325,26 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "setValues",
                     },
+                    "transformValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "transformValues",
+                    },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "rule",
+                    },
+                    "exampleOutputs": {
+                        "anyOf": [
+                            {"items": {"$ref": "#/$defs/Text"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "exampleOutputs",
                     },
                 },
                 "title": "MappingRule[list[Text]]",
@@ -306,17 +366,30 @@ def test_mapping_model_schema() -> None:
                         "default": None,
                         "title": "setValues",
                     },
+                    "transformValues": {
+                        "anyOf": [
+                            {"items": {"type": "string"}, "type": "array"},
+                            {"type": "null"},
+                        ],
+                        "default": None,
+                        "title": "transformValues",
+                    },
                     "rule": {
                         "anyOf": [{"type": "string"}, {"type": "null"}],
                         "default": None,
                         "title": "rule",
+                    },
+                    "exampleOutputs": {
+                        "anyOf": [{"type": "string"}, {"type": "null"}],
+                        "default": None,
+                        "title": "exampleOutputs",
                     },
                 },
                 "title": "MappingRule[str]",
                 "type": "object",
             },
             "Text": {
-                "description": 'Type class for text objects.\n\nTexts can be parsed from nested JSON objects or from raw strings.\n\nExample:\n    Text(value="foo") == Text.model_validate("foo")',
+                "description": Joker(),
                 "properties": {
                     "value": {"minLength": 1, "title": "Value", "type": "string"},
                     "language": {
@@ -338,12 +411,6 @@ def test_mapping_model_schema() -> None:
         "additionalProperties": False,
         "description": "Mapping for describing a variable group transformation.",
         "properties": {
-            "$type": {
-                "const": "VariableGroupMapping",
-                "default": "VariableGroupMapping",
-                "title": "$Type",
-                "type": "string",
-            },
             "hadPrimarySource": {
                 "items": {
                     "$ref": "#/$defs/MappingField_MergedPrimarySourceIdentifier_"
@@ -357,6 +424,12 @@ def test_mapping_model_schema() -> None:
                 "minItems": 1,
                 "title": "Identifierinprimarysource",
                 "type": "array",
+            },
+            "$type": {
+                "const": "VariableGroupMapping",
+                "default": "VariableGroupMapping",
+                "title": "$Type",
+                "type": "string",
             },
             "containedBy": {
                 "items": {
