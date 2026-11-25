@@ -223,7 +223,7 @@ class _OptionalLists(_Stem):
         ),
     ] = []
     keyword: Annotated[
-        Sequence[Text],
+        Sequence[Text | Link],
         Field(
             description=(
                 "A keyword or tag describing the resource ([DCAT, 2020-02-04]"
@@ -772,7 +772,7 @@ class BibliographicResourceMapping(_Stem, BaseMapping):
     editorOfSeries: MappingFieldList[list[MergedPersonIdentifier]] = MappingFieldList()
     isbnIssn: MappingFieldList[list[IsbnIssnStr]] = MappingFieldList()
     journal: MappingFieldList[list[Text]] = MappingFieldList()
-    keyword: MappingFieldList[list[Text]] = MappingFieldList()
+    keyword: MappingFieldList[list[Text | Link]] = MappingFieldList()
     language: MappingFieldList[list[Language]] = MappingFieldList()
     publisher: MappingFieldList[list[MergedOrganizationIdentifier]] = MappingFieldList()
     subtitle: MappingFieldList[list[Text]] = MappingFieldList()

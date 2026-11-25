@@ -67,8 +67,11 @@ from mex.common.types.vocabulary import (
     ConsentStatus,
     ConsentType,
     DataProcessingState,
+    DatatypeStandardized,
     Frequency,
+    GeopoliticalResolution,
     HealthCategory,
+    HealthStandard,
     Language,
     License,
     MIMEType,
@@ -113,6 +116,7 @@ __all__ = (
     "ConsentStatus",
     "ConsentType",
     "DataProcessingState",
+    "DatatypeStandardized",
     "ExtractedAccessPlatformIdentifier",
     "ExtractedActivityIdentifier",
     "ExtractedBibliographicResourceIdentifier",
@@ -130,7 +134,9 @@ __all__ = (
     "ExtractedVariableGroupIdentifier",
     "ExtractedVariableIdentifier",
     "Frequency",
+    "GeopoliticalResolution",
     "HealthCategory",
+    "HealthStandard",
     "Identifier",
     "IdentityProvider",
     "Language",
@@ -188,8 +194,11 @@ AnyVocabularyEnum = (
     | ConsentStatus
     | ConsentType
     | DataProcessingState
+    | DatatypeStandardized
     | Frequency
+    | GeopoliticalResolution
     | HealthCategory
+    | HealthStandard
     | Language
     | License
     | MIMEType

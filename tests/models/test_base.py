@@ -151,6 +151,8 @@ def extracted_resource() -> ExtractedResource:
         identifierInPrimarySource="resource-1",
         accessRestriction="https://mex.rki.de/item/access-restriction-1",
         contact=["bFQoRhcVH5DHU6"],
+        description=["A resource"],
+        keyword=["resource"],
         resourceCreationMethod="https://mex.rki.de/item/resource-creation-method-1",
         theme=["https://mex.rki.de/item/theme-11"],
         title=["Resource"],

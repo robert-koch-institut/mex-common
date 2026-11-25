@@ -295,6 +295,10 @@ def test_ensure_rule_set_returns_existing() -> None:
                     unitInCharge=[Identifier.generate(seed=999)],
                     theme=[Theme.PUBLIC_HEALTH],
                     title=[Text(value="Dummy resource")],
+                    description=[
+                        Text(value="A dummy resource", language=TextLanguage.EN)
+                    ],
+                    keyword=[Text(value="dummy", language=TextLanguage.EN)],
                 )
             ],
             ResourceRuleSetRequest(
@@ -312,6 +316,10 @@ def test_ensure_rule_set_returns_existing() -> None:
                 "theme": ["https://mex.rki.de/item/theme-1"],
                 "title": [{"value": "Dummy resource", "language": TextLanguage.EN}],
                 "unitInCharge": ["bFQoRhcVH5DIax"],
+                "description": [
+                    {"value": "A dummy resource", "language": TextLanguage.EN}
+                ],
+                "keyword": [{"value": "dummy", "language": TextLanguage.EN}],
                 "entityType": "MergedResource",
                 "identifier": "bFQoRhcVH5DHU6",
             },
@@ -554,6 +562,10 @@ def test_ensure_rule_set_returns_existing() -> None:
                     unitInCharge=[Identifier.generate(seed=999)],
                     theme=[Theme.PUBLIC_HEALTH],
                     title=[Text(value="Dummy resource")],
+                    description=[
+                        Text(value="A dummy resource", language=TextLanguage.EN)
+                    ],
+                    keyword=[Text(value="dummy", language=TextLanguage.EN)],
                 )
             ],
             ResourceRuleSetRequest(
@@ -565,7 +577,11 @@ def test_ensure_rule_set_returns_existing() -> None:
             {
                 "accessRestriction": ["https://mex.rki.de/item/access-restriction-1"],
                 "contact": ["bFQoRhcVH5DIax"],
+                "description": [
+                    {"value": "A dummy resource", "language": TextLanguage.EN}
+                ],
                 "entityType": "PreviewResource",
+                "keyword": [{"value": "dummy", "language": TextLanguage.EN}],
                 "identifier": "bFQoRhcVH5DHU6",
                 "resourceCreationMethod": [
                     "https://mex.rki.de/item/resource-creation-method-1"

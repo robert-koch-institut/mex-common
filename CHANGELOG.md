@@ -9,13 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- vocabulary enums `DatatypeStandardized`, `GeopoliticalResolution` and `HealthStandard`
+- resource fields `geopoliticalResolution` and `relatedActivity`
+- concepts for `CodingSystem` (e.g. `EMDN`, `NCIT`, `HPO`) and `Frequency`
+  (e.g. `EVERY_5_YEARS`, `AS_NEEDED`, `NEVER`, `OTHER`)
+- `License` now covers the 729 licenses of the SPDX license list
+
 ### Changes
 
 - upgrade mex-model to 5.3.0
+- BREAKING: `contact` of access platforms, activities, primary sources, resources and
+  resource series no longer accepts person identifiers
+- BREAKING: resource `description` and `keyword` are now required
+- BREAKING: resource `conformsTo` now uses the `HealthStandard` vocabulary
+- BREAKING: `spatial` of resources and resource series now references merged locations
+- `keyword` of resources, resource series and bibliographic resources accepts links
+- BREAKING: renamed vocabulary members `License.CC_BY_4_0` (was
+  `CREATIVE_COMMONS_ATTRIBUTION_4_0_INTERNATIONAL`) and
+  `ResourceCreationMethod.LABORATORY` (was `LABORATORY_TESTS`)
+- BREAKING: `CodingSystem.OTHER` moved to `coding-system-33`, `coding-system-22` is now
+  `PROC_CODES_NAT`
+- vocabulary members spell out a leading digit and a trailing `+`, e.g.
+  `License.ZERO_BSD` or `License.GPL_2_0_PLUS`
+- update HealthDCAT-AP namespace in `closeMatch` annotations to the official one
+- `documentation` now matches `foaf:page` instead of `dct:isReferencedBy`
 
 ### Deprecated
 
 ### Removed
+
+- BREAKING: `Frequency` members `THREE_TIMES_A_YEAR`, `SEMIMONTHLY`,
+  `THREE_TIMES_A_MONTH` and `THREE_TIMES_A_WEEK`
 
 ### Fixed
 

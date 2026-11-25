@@ -32,9 +32,7 @@ VersionStr = Annotated[
     Field(examples=["v1", "2023-01-16", "Schema 9"], max_length=100),
 ]
 AnyContactIdentifier = Annotated[
-    MergedOrganizationalUnitIdentifier
-    | MergedPersonIdentifier
-    | MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier | MergedContactPointIdentifier,
     AfterValidator(Identifier),
 ]
 
@@ -85,9 +83,7 @@ class _OptionalLists(_Stem):
         Sequence[Link],
         Field(
             description="A link to a document documenting the primary source.",
-            json_schema_extra={
-                "closeMatch": ["http://purl.org/dc/terms/isReferencedBy"]
-            },
+            json_schema_extra={"closeMatch": ["http://xmlns.com/foaf/0.1/page"]},
         ),
     ] = []
     locatedAt: Annotated[
@@ -176,10 +172,7 @@ class BasePrimarySource(
             "A collection of information that is managed and curated by an RKI unit "
             "and lists activities and/or resources."
         ),
-        "closeMatch": [
-            "http://www.w3.org/ns/dcat#Catalog",
-            "http://www.w3.org/ns/prov#PrimarySource",
-        ],
+        "closeMatch": ["http://www.w3.org/ns/prov#PrimarySource"],
     },
 ):
     """All fields for a valid primary source except for provenance."""
