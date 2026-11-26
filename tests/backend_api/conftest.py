@@ -7,6 +7,7 @@ from mex.common.backend_api.connector import (
     BackendApiConnector,
     LDAPBackendApiConnector,
 )
+from mex.common.models import ExtractedOrganizationalUnit
 
 
 @pytest.fixture
@@ -31,3 +32,11 @@ def mocked_ldap_backend(monkeypatch: MonkeyPatch) -> MagicMock:
     )
     monkeypatch.setattr(LDAPBackendApiConnector, "_send_request", mocked_send_request)
     return mocked_send_request
+
+
+@pytest.fixture
+def mocked_units_by_identifier_in_primary_source() -> dict[
+    str, ExtractedOrganizationalUnit
+]:
+    """Return an empty org-unit mapping, for canned actors without a unit."""
+    return {}
