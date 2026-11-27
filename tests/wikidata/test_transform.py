@@ -22,7 +22,6 @@ from mex.common.wikidata.transform import (
     transform_wikidata_location_to_extracted_location,
     transform_wikidata_locations_to_extracted_locations,
     transform_wikidata_organization_to_extracted_organization,
-    transform_wikidata_organizations_to_extracted_organizations,
 )
 from tests.wikidata.conftest import TESTDATA_DIR
 
@@ -80,69 +79,6 @@ def test_transform_wikidata_organization_to_extracted_organization(
     assert extracted_organization.model_dump()["gndId"] == expected["gndId"]
     assert extracted_organization.model_dump()["isniId"] == expected["isniId"]
     assert extracted_organization.model_dump()["viafId"] == expected["viafId"]
-
-
-def test_transform_wikidata_organizations_to_extracted_organizations(
-    extracted_primary_source_ids: dict[str, MergedPrimarySourceIdentifier],
-) -> None:
-    """Test wikidata organization transformation to extracted organization."""
-    expected = {
-        "identifier": Joker(),
-        "hadPrimarySource": Joker(),
-        "identifierInPrimarySource": "Q26678",
-        "stableTargetId": Joker(),
-        "alternativeName": [
-            {"value": "alias_en_3", "language": None},
-            {"value": "alias_de_2", "language": None},
-            {"value": "alias_en_1", "language": None},
-            {"value": "alias_en_2", "language": None},
-            {"value": "alias_de_1", "language": None},
-            {"value": "test_native_name", "language": TextLanguage.DE},
-            {"value": "alias_de_3", "language": None},
-            {"value": "alias_en_4", "language": None},
-        ],
-        "geprisId": [],
-        "gndId": ["https://d-nb.info/gnd/2005475-0"],
-        "isniId": ["https://isni.org/isni/000000012308257X"],
-        "officialName": [
-            Text(value="TEST", language=TextLanguage.EN),
-            Text(value="TEST", language=TextLanguage.DE),
-        ],
-        "rorId": ["https://ror.org/05vs9tj88", "https://ror.org/044kkbh92"],
-        "shortName": [],
-        "viafId": ["https://viaf.org/viaf/129013645"],
-        "wikidataId": ["http://www.wikidata.org/entity/Q26678"],
-    }
-
-    with (TESTDATA_DIR / "items_details.json").open(encoding="utf-8") as fh:
-        wikidata_organizations = [
-            WikidataOrganization.model_validate(item) for item in json.load(fh)
-        ]
-
-    extracted_organizations = list(
-        transform_wikidata_organizations_to_extracted_organizations(
-            wikidata_organizations, extracted_primary_source_ids["wikidata"]
-        )
-    )
-
-    assert len(extracted_organizations) == 1
-
-    extracted_organization_dict = extracted_organizations[0].model_dump()
-
-    assert sorted(
-        extracted_organization_dict["alternativeName"],
-        key=itemgetter("value"),
-    ) == sorted(cast("list[Any]", expected["alternativeName"]), key=itemgetter("value"))
-
-    assert (
-        extracted_organization_dict["identifierInPrimarySource"]
-        == expected["identifierInPrimarySource"]
-    )
-    assert extracted_organization_dict["rorId"] == expected["rorId"]
-    assert extracted_organization_dict["wikidataId"] == expected["wikidataId"]
-    assert extracted_organization_dict["gndId"] == expected["gndId"]
-    assert extracted_organization_dict["isniId"] == expected["isniId"]
-    assert extracted_organization_dict["viafId"] == expected["viafId"]
 
 
 def test_transform_wikidata_location_to_extracted_location(

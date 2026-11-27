@@ -25,6 +25,7 @@ def test_get_wikidata_organization() -> None:
             "multiple": {"language": "mul", "value": "Robert Koch-Institut"},
         },
         "claims": {
+            "country_id": [{"mainsnak": {"datavalue": {"value": {"id": "Q183"}}}}],
             "isni_id": [
                 {"mainsnak": {"datavalue": {"value": {"text": "0000000109403744"}}}}
             ],
@@ -97,11 +98,24 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
             "multiple": None,
         },
         "claims": {
+            "country_id": [
+                {
+                    "mainsnak": {
+                        "datavalue": {
+                            "value": {"id": "Q183", "language": None, "text": None}
+                        }
+                    }
+                }
+            ],
             "isni_id": [
                 {
                     "mainsnak": {
                         "datavalue": {
-                            "value": {"text": "0000 0001 2308 257X", "language": None}
+                            "value": {
+                                "id": None,
+                                "text": "0000 0001 2308 257X",
+                                "language": None,
+                            }
                         }
                     }
                 }
@@ -109,19 +123,25 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
             "ror_id": [
                 {
                     "mainsnak": {
-                        "datavalue": {"value": {"text": "05vs9tj88", "language": None}}
+                        "datavalue": {
+                            "value": {"id": None, "text": "05vs9tj88", "language": None}
+                        }
                     }
                 },
                 {
                     "mainsnak": {
-                        "datavalue": {"value": {"text": "044kkbh92", "language": None}}
+                        "datavalue": {
+                            "value": {"id": None, "text": "044kkbh92", "language": None}
+                        }
                     }
                 },
             ],
             "short_name": [
                 {
                     "mainsnak": {
-                        "datavalue": {"value": {"language": "de", "text": "BMW"}}
+                        "datavalue": {
+                            "value": {"id": None, "language": "de", "text": "BMW"}
+                        }
                     }
                 }
             ],
@@ -129,7 +149,11 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
                 {
                     "mainsnak": {
                         "datavalue": {
-                            "value": {"text": "test_native_name", "language": "de"}
+                            "value": {
+                                "id": None,
+                                "text": "test_native_name",
+                                "language": "de",
+                            }
                         }
                     }
                 }
@@ -138,14 +162,18 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
             "gnd_id": [
                 {
                     "mainsnak": {
-                        "datavalue": {"value": {"text": "2005475-0", "language": None}}
+                        "datavalue": {
+                            "value": {"id": None, "text": "2005475-0", "language": None}
+                        }
                     }
                 }
             ],
             "viaf_id": [
                 {
                     "mainsnak": {
-                        "datavalue": {"value": {"text": "129013645", "language": None}}
+                        "datavalue": {
+                            "value": {"id": None, "text": "129013645", "language": None}
+                        }
                     }
                 }
             ],
@@ -182,7 +210,7 @@ def test_get_wikidata_organization_mocked(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_get_wikidata_organization_malformed() -> None:
-    with pytest.raises(ValueError, match="malformed wikidata url: foobar"):
+    with pytest.raises(ValueError, match="Malformed Wikidata ID or URL: foobar"):
         get_wikidata_organization("foobar")
 
 
@@ -231,7 +259,7 @@ def test_get_wikidata_raw_item_malformed(
     connector = MagicMock(spec=WikidataAPIConnector)
     monkeypatch.setattr(WikidataAPIConnector, "get", lambda: connector)
 
-    with pytest.raises(ValueError, match="malformed wikidata url"):
+    with pytest.raises(ValueError, match="Malformed Wikidata ID or URL"):
         _get_wikidata_raw_item(item_id_or_url)
 
     connector.get_wikidata_item_details_by_id.assert_not_called()
@@ -269,7 +297,9 @@ def test_get_wikidata_location(monkeypatch: MonkeyPatch) -> None:
             "geonames_id": [
                 {
                     "mainsnak": {
-                        "datavalue": {"value": {"language": None, "text": "2921044"}}
+                        "datavalue": {
+                            "value": {"id": None, "language": None, "text": "2921044"}
+                        }
                     }
                 }
             ]

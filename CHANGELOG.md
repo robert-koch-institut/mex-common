@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- BREAKING: added a new helper to get_wikidata_organization_with_locations returning a WikidataOrganizationResult
 - `BackendApiConnector.get_persons`/`.get_person`/`.get_functional_accounts`/
   `.get_functional_account` methods calling the backend's new `POST /ldap/_search`
   endpoint, named and shaped identically to `LDAPConnector`'s equivalent methods
@@ -21,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+- BREAKING: removed transform_wikidata_organizations_to_extracted_organizations (not used anymore)
 
 ### Fixed
 

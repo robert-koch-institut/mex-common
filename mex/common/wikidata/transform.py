@@ -1,7 +1,12 @@
 from collections.abc import Generator, Iterable, Sequence
 
 from mex.common.models import ExtractedLocation, ExtractedOrganization
-from mex.common.types import MergedPrimarySourceIdentifier, Text, TextLanguage
+from mex.common.types import (
+    MergedLocationIdentifier,
+    MergedPrimarySourceIdentifier,
+    Text,
+    TextLanguage,
+)
 from mex.common.wikidata.models import (
     Aliases,
     Claim,
@@ -11,33 +16,11 @@ from mex.common.wikidata.models import (
 )
 
 
-def transform_wikidata_organizations_to_extracted_organizations(
-    wikidata_organizations: Iterable[WikidataOrganization],
-    wikidata_primary_source_id: MergedPrimarySourceIdentifier,
-) -> Generator[ExtractedOrganization, None, None]:
-    """Transform wikidata organizations into ExtractedOrganizations.
-
-    Wikidata organizations without labels are skipped.
-
-    Args:
-        wikidata_organizations: Iterable of wikidata organization to be transformed
-        wikidata_primary_source_id: Extracted primary source id for wikidata
-
-    Returns:
-        Generator of ExtractedOrganizations
-    """
-    for wikidata_organization in wikidata_organizations:
-        if extracted_organization := (
-            transform_wikidata_organization_to_extracted_organization(
-                wikidata_organization, wikidata_primary_source_id
-            )
-        ):
-            yield extracted_organization
-
-
 def transform_wikidata_organization_to_extracted_organization(
     wikidata_organization: WikidataOrganization,
     wikidata_primary_source_id: MergedPrimarySourceIdentifier,
+    *,
+    country: Sequence[MergedLocationIdentifier] = (),
 ) -> ExtractedOrganization | None:
     """Transform one wikidata organization into an ExtractedOrganization.
 
@@ -46,6 +29,7 @@ def transform_wikidata_organization_to_extracted_organization(
     Args:
         wikidata_organization: wikidata organization to be transformed
         wikidata_primary_source_id: Extracted primary source id for wikidata
+        country: optional list of extracted locations referenced by the organization
 
     Returns:
         ExtractedOrganization or None
@@ -81,6 +65,7 @@ def transform_wikidata_organization_to_extracted_organization(
         alternativeName=_get_alternative_names(
             wikidata_organization.claims.native_label, wikidata_organization.aliases
         ),
+        country=list(country),
     )
 
 
