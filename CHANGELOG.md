@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - BREAKING: added a new helper to get_wikidata_organization_with_locations returning a WikidataOrganizationResult
+- `BackendApiConnector.get_persons`/`.get_person`/`.get_functional_accounts`/
+  `.get_functional_account` methods calling the backend's new `POST /ldap/_search`
+  endpoint, named and shaped identically to `LDAPConnector`'s equivalent methods
+- `mocked_backend_ldap` shared test fixture in `mex.common.testing.mocked_ldap`, mocking
+  the new `BackendApiConnector` LDAP lookup methods with the same canned actors used by
+  `mocked_ldap`
 
 ### Changes
 

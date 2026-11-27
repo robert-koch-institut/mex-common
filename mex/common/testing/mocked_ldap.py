@@ -6,6 +6,7 @@ from uuid import UUID
 
 import pytest
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.ldap.models import LDAPActor, LDAPFunctionalAccount, LDAPPerson
 from mex.common.ldap.transform import (
@@ -223,6 +224,80 @@ def ldap_mock_query_searcher(actors: list[LDAPActor]) -> Callable[..., Any]:
         )
 
     return mock_search
+
+
+def backend_actor_mock_searcher(
+    pairs: list[tuple[LDAPActor, ExtractedPerson | ExtractedContactPoint]],
+) -> Callable[..., Any]:
+    """Create a mocked `BackendApiConnector` list method for canned actors.
+
+    Filters the given `(raw LDAPActor, already-transformed Extracted item)` pairs
+    by the same attribute-matching rules `ldap_mock_searcher` uses, but returns the
+    already-transformed `ExtractedPerson`/`ExtractedContactPoint` instead of the raw
+    LDAP actor - mirroring what the real `BackendApiConnector.get_persons`/
+    `.get_functional_accounts` return.
+    """
+
+    def mock_search(
+        _self: BackendApiConnector,
+        *,
+        limit: int = 10,
+        offset: int = 0,
+        **kwargs: str,
+    ) -> PaginatedItemsContainer[ExtractedPerson | ExtractedContactPoint]:
+        matched = [
+            extracted for raw, extracted in pairs if _actor_matches(raw, **kwargs)
+        ]
+        return PaginatedItemsContainer[ExtractedPerson | ExtractedContactPoint](
+            items=matched[offset : offset + limit], total=len(matched)
+        )
+
+    return mock_search
+
+
+@pytest.fixture
+def mocked_backend_ldap(  # noqa: PLR0913, PLR0917
+    monkeypatch: pytest.MonkeyPatch,
+    ldap_contact_point: LDAPFunctionalAccount,
+    contact_point: ExtractedContactPoint,
+    ldap_roland_resolved: LDAPPerson,
+    roland_resolved: ExtractedPerson,
+    ldap_juturna_felicitas: LDAPPerson,
+    juturna_felicitas: ExtractedPerson,
+    ldap_frieda_fictitious: LDAPPerson,
+    frieda_fictitious: ExtractedPerson,
+) -> None:
+    """Mock `BackendApiConnector`'s LDAP lookup methods with canned actors.
+
+    Patches `get_persons` and `get_functional_accounts` to filter the same canned
+    actors `mocked_ldap` uses, but returns them as already-identified
+    `ExtractedPerson`/`ExtractedContactPoint` instances, as the real backend
+    endpoints would. `get_person`/`get_functional_account` are deliberately left
+    unpatched - they call through to the patched list methods, exercising the real
+    uniqueness-check logic. For consumers that resolve persons/functional accounts
+    via `mex-backend`'s API instead of a direct LDAP connection.
+    """
+    monkeypatch.setattr(
+        BackendApiConnector,
+        "__init__",
+        lambda self: setattr(self, "session", MagicMock()),
+    )
+    monkeypatch.setattr(
+        BackendApiConnector,
+        "get_functional_accounts",
+        backend_actor_mock_searcher([(ldap_contact_point, contact_point)]),
+    )
+    monkeypatch.setattr(
+        BackendApiConnector,
+        "get_persons",
+        backend_actor_mock_searcher(
+            [
+                (ldap_roland_resolved, roland_resolved),
+                (ldap_juturna_felicitas, juturna_felicitas),
+                (ldap_frieda_fictitious, frieda_fictitious),
+            ]
+        ),
+    )
 
 
 @pytest.fixture(params=["ldap_patched_connector", "ldap_mock_server"])
